@@ -1,0 +1,139 @@
+﻿cmake_minimum_required (VERSION 3.20)
+
+# Enable Hot Reload for MSVC compilers if supported.
+if (POLICY CMP0141)
+  cmake_policy(SET CMP0141 NEW)
+  set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "$<IF:$<AND:$<C_COMPILER_ID:MSVC>,$<CXX_COMPILER_ID:MSVC>>,$<$<CONFIG:Debug,RelWithDebInfo>:EditAndContinue>,$<$<CONFIG:Debug,RelWithDebInfo>:ProgramDatabase>>")
+endif()
+
+
+#-------------------------------------------------
+# Project
+#-------------------------------------------------
+project (
+	LightYear
+	VERSION 0.1.0
+	LANGUAGES C CXX
+)
+
+
+#-------------------------------------------------
+# CMAKE Language Config
+#-------------------------------------------------
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+string(APPEND CMAKE_CXX_FLAGS "-Wall")
+
+set(SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
+set(HDRS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/includes")
+set(SRCS 
+	"src/LightYear.cpp"
+	"src/Renderer/Mesh.cpp"
+	"src/Renderer/Shader.cpp" 
+	"src/Renderer/Model.cpp"
+	"src/Utils/TextureLoader.cpp" 
+	"src/Utils/Log.cpp")
+
+file(GLOB_RECURSE SOURCES "${SRC_DIR}/*.cpp")
+file(GLOB_RECURSE HEADERS "${HDRS_DIR}/*.h")
+
+
+#-------------------------------------------------
+# Clang Tidy Setup
+#-------------------------------------------------
+find_program(CLANG_TIDY "clang-tidy")
+if (CLANG_TIDY)
+	message(STATUS "Found clang tidy: ${CLANG_TIDY}")
+	set(CMAKE_CXX_CLANG_TIDY "${CLANG_TIDY}")
+else()
+	message(STATUS "clang-tidy not found, skipping clang-tidy integration")
+endif()
+
+
+#-------------------------------------------------
+# Clang Format Setup
+#-------------------------------------------------
+find_program(CLANG_FORMAT "clang-format")
+if (CLANG_FORMAT)
+	message(STATUS "Found clang-format: ${CLANG_FORMAT}")
+
+	# Apply to below source files
+	file(GLOB_RECURSE ALL_SOURCES_FILES
+		${CMAKE_CURRENT_SOURCE_DIR}/*.cpp
+		${CMAKE_CURRENT_SOURCE_DIR}/*.hpp
+		${CMAKE_CURRENT_SOURCE_DIR}/*.c
+		${CMAKE_CURRENT_SOURCE_DIR}/*.h
+	)
+
+	add_custom_target(clang_format
+		COMMAND ${CLANG_FORMAT} -i ${ALL_SOURCE_FILES}
+		COMMENT "Running clang-format on all source files"
+	)
+else()
+	message(STATUS "clang-format not found, skipping clang-format target creation")
+endif()
+
+
+#-------------------------------------------------
+# Setup Dependencies
+#-------------------------------------------------
+find_package(OpenGL REQUIRED )
+include_directories(${OPENGL_INCLUDE_DIRS})
+
+# Glad
+set(GLAD_DIR "${CMAKE_CURRENT_SOURCE_DIR}/extern/glad")
+add_library(glad STATIC "${GLAD_DIR}/glad.c")
+target_include_directories(glad PRIVATE "${GLAD_DIR}")
+
+# GLFW
+set(GLFW_DIR "${CMAKE_CURRENT_SOURCE_DIR}/extern/glfw")
+set(GLFW_BUILD_EXAMPLES OFF CACHE INTERNAL "Build the glfw example programs")
+set(GLFW_BUILD_TESTS OFF CACHE INTERNAL "Build the glfw test programs")
+set(GLFW_BUILD_DOCS OFF CACHE INTERNAL "Build the glfw documentation")
+set(GLFW_INSTALL OFF CACHE INTERNAL "Generate installation target")
+add_subdirectory(${GLFW_DIR} "glfw-binaries")
+
+# ImGUI
+set(IMGUI_DIR "${CMAKE_CURRENT_SOURCE_DIR}/extern/imgui")
+add_library(imgui STATIC
+  "${IMGUI_DIR}/imgui.cpp"
+  "${IMGUI_DIR}/imgui_demo.cpp"
+  "${IMGUI_DIR}/imgui_draw.cpp"
+  "${IMGUI_DIR}/imgui_widgets.cpp"
+  "${IMGUI_DIR}/imgui_tables.cpp"
+  "${IMGUI_DIR}/backends/imgui_impl_glfw.cpp"
+  "${IMGUI_DIR}/backends/imgui_impl_opengl3.cpp"
+)
+target_include_directories(imgui PRIVATE "${IMGUI_DIR}")
+target_include_directories(imgui PRIVATE "${GLFW_DIR}/include")
+target_link_libraries(imgui PUBLIC glfw ${OPENGL_LIBRARIES})
+
+# GLM
+set(GLM_DIR "${CMAKE_CURRENT_SOURCE_DIR}/extern/glm")
+
+# STB
+set(STB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/extern/stb")
+
+# SPDLOG
+set(SPDLOG_DIR "${CMAKE_CURRENT_SOURCE_DIR}/extern/spdlog")
+add_subdirectory("${SPDLOG_DIR}")
+
+
+#-------------------------------------------------
+# Project Executable
+#-------------------------------------------------
+add_library (LightYear ${SOURCES} ${HEADERS})
+target_include_directories(LightYear PRIVATE "${HDRS_DIR}")
+target_include_directories(LightYear PRIVATE "${GLAD_DIR}")
+target_include_directories(LightYear PRIVATE "${GLFW_DIR}/include")
+target_include_directories(LightYear PRIVATE "${IMGUI_DIR}")
+target_include_directories(LightYear PRIVATE "${GLM_DIR}")
+target_include_directories(LightYear PRIVATE "${STB_DIR}")
+target_link_libraries(LightYear PRIVATE glad imgui glfw spdlog::spdlog $<$<BOOL:${MINGW}>:ws_32>)
+
+
+#-------------------------------------------------
+# Pre-Compiled Headers
+#-------------------------------------------------
+target_precompile_headers(LightYear PRIVATE "${HDRS_DIR}/lypch.h")

@@ -1,0 +1,70 @@
+Checks: >
+  # Core Best Practices
+  cppcoreguidelines-*, 
+  modernize-*,
+  readability-*,
+  performance-*,
+  bugprone-*,
+
+  # Avoid C-style Casts
+  google-runtime-int,
+
+  # Memory and Smart Pointers
+  cppcoreguidelines-owning-memory,
+  cppcoreguidelines-no-malloc,
+  cppcoreguidelines-no-exceptions,
+  
+  # Virtual Functions & Polymorphism
+  modernize-use-override,
+  modernize-use-default-member-init,
+
+  # Performance Improvements
+  performance-no-int-to-ptr,
+  performance-move-const-arg,
+  performance-unnecessary-copy-initialization,
+  performance-trivially-destructible,
+
+  # Readability & Formatting
+  readability-identifier-naming,
+  readability-function-size,
+
+  # Avoid Dangling Pointers & References
+  clang-analyzer-core.NullDereference,
+  clang-analyzer-cplusplus.NewDeleteLeaks,
+  clang-analyzer-security.*,
+
+  # Fixes & Suggestions
+  fixit
+
+WarningsAsErrors: '*'  # Treat all warnings as errors
+
+CheckOptions:
+  # Naming Convention Matches Your Style
+  - key: readability-identifier-naming.ClassCase
+    value: CamelCase  # e.g., CameraComponent, ShaderManager
+  - key: readability-identifier-naming.FunctionCase
+    value: camelBack  # e.g., loadShader(), renderFrame()
+  - key: readability-identifier-naming.VariableCase
+    value: camelBack  # e.g., vertexCount, shaderID
+  - key: readability-identifier-naming.ConstantCase
+    value: UPPER_CASE  # e.g., MAX_LIGHTS
+  - key: readability-identifier-naming.NamespaceCase
+    value: lower_case  # e.g., render_engine::core
+
+  # Enforce Smart Pointer Usage
+  - key: cppcoreguidelines-no-malloc
+    value: 'true'
+  - key: cppcoreguidelines-owning-memory
+    value: 'true'
+
+  # Prefer `= default` instead of empty constructors/destructors
+  - key: modernize-use-default-member-init
+    value: 'true'
+
+  # Suggest `override` for virtual functions
+  - key: modernize-use-override
+    value: 'true'
+
+  # Detect unnecessary copies
+  - key: performance-unnecessary-copy-initialization
+    value: 'true'

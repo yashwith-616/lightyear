@@ -1,0 +1,19 @@
+[submodule "LightYear/extern/imgui"]
+	path = LightYear/extern/imgui
+	url = https://github.com/ocornut/imgui.git
+	branch = docking
+[submodule "LightYear/extern/glfw"]
+	path = LightYear/extern/glfw
+	url = https://github.com/glfw/glfw.git
+[submodule "LightYear/extern/glm"]
+	path = LightYear/extern/glm
+	url = https://github.com/g-truc/glm.git
+[submodule "LightYear/extern/stb"]
+	path = LightYear/extern/stb
+	url = https://github.com/nothings/stb.git
+[submodule "LightYear/extern/entt"]
+	path = LightYear/extern/entt
+	url = git@github.com:skypjack/entt.git
+[submodule "LightYear/extern/spdlog"]
+	path = LightYear/extern/spdlog
+	url = git@github.com:gabime/spdlog.git
