@@ -1,10 +1,11 @@
 #pragma once
 
+#include "Lightyear/LightyearAPI.h"
 #include <lypch.h>
 
 namespace Lightyear::utils {
 
-	class TextureLoader {
+	class LIGHTYEAR_API TextureLoader {
 	public:
 		explicit TextureLoader(const std::filesystem::path& filepath);
 

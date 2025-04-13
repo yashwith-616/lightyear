@@ -1,11 +1,12 @@
 #pragma once
 
+#include "Lightyear/LightyearAPI.h"
 #include <lypch.h>
 #include <spdlog/spdlog.h>
 
 namespace Lightyear::utils {
 
-class Log {
+class LIGHTYEAR_API Log {
 public:
     static void Init();
 

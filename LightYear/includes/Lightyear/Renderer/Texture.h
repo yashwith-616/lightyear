@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Lightyear/LightyearAPI.h"
 #include <lypch.h>
 
 namespace Lightyear::renderer {
@@ -11,7 +12,7 @@ namespace Lightyear::renderer {
 		HEIGHT
 	};
 	
-	class Texture {
+	class LIGHTYEAR_API Texture {
 	public:
 		unsigned int id_;
 		TextureType type;

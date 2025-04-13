@@ -1,12 +1,13 @@
 #pragma once
 
+#include "Lightyear/LightyearAPI.h"
 #include <glad.h>
 #include <glm/glm.hpp>
 #include <lypch.h>
 
 namespace Lightyear::renderer {
 
-class Shader {
+class LIGHTYEAR_API Shader {
 public:
     unsigned int id_;
 

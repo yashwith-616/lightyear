@@ -23,21 +23,12 @@ project (
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
-string(APPEND CMAKE_CXX_FLAGS "-Wall")
+#string(APPEND CMAKE_CXX_FLAGS "-Wall")
 
 set(SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
 set(HDRS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/includes")
-set(SRCS 
-	"src/LightYear.cpp"
-	"src/Renderer/Mesh.cpp"
-	"src/Renderer/Shader.cpp" 
-	"src/Renderer/Model.cpp"
-	"src/Utils/TextureLoader.cpp" 
-	"src/Utils/Log.cpp")
-
 file(GLOB_RECURSE SOURCES "${SRC_DIR}/*.cpp")
 file(GLOB_RECURSE HEADERS "${HDRS_DIR}/*.h")
-
 
 #-------------------------------------------------
 # Clang Tidy Setup
@@ -121,10 +112,10 @@ add_subdirectory("${SPDLOG_DIR}")
 
 
 #-------------------------------------------------
-# Project Executable
+# Project Library
 #-------------------------------------------------
-add_library (LightYear ${SOURCES} ${HEADERS})
-target_include_directories(LightYear PRIVATE "${HDRS_DIR}")
+add_library (LightYear SHARED ${SOURCES} "${HEADERS}")
+target_include_directories(LightYear PUBLIC "${HDRS_DIR}")
 target_include_directories(LightYear PRIVATE "${GLAD_DIR}")
 target_include_directories(LightYear PRIVATE "${GLFW_DIR}/include")
 target_include_directories(LightYear PRIVATE "${IMGUI_DIR}")
@@ -134,6 +125,22 @@ target_link_libraries(LightYear PRIVATE glad imgui glfw spdlog::spdlog $<$<BOOL:
 
 
 #-------------------------------------------------
+# Compile definations
+#-------------------------------------------------
+target_compile_definitions(LightYear PRIVATE LY_BUILD_DLL LY_PLATFORM_WINDOWS)
+
+
+#-------------------------------------------------
 # Pre-Compiled Headers
 #-------------------------------------------------
 target_precompile_headers(LightYear PRIVATE "${HDRS_DIR}/lypch.h")
+
+
+#-------------------------------------------------
+# Post build step
+#-------------------------------------------------
+add_custom_command(TARGET LightYear POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    $<TARGET_FILE:LightYear>
+    $<TARGET_FILE_DIR:Sandbox>
+)

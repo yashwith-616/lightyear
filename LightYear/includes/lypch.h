@@ -15,6 +15,7 @@
 #include <algorithm>
 #include <execution>
 #include <cstdint>
+#include <functional>
 
 #include <thread>
 #include <mutex>
@@ -26,3 +27,5 @@
 #include <memory>
 #include <new>
 #include <utility>
+
+constexpr uint8_t BIT(uint8_t x) { return 1 << x; }

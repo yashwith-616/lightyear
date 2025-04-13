@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Lightyear/LightyearAPI.h"
 #include "Shader.h"
 #include "Vertex.h"
 #include "Texture.h"
@@ -7,7 +8,7 @@
 
 namespace Lightyear::renderer {
 
-	class Mesh {
+	class LIGHTYEAR_API Mesh {
 	public:
 		std::vector<Vertex> vertices_;
 		std::vector<unsigned int> indices_;

@@ -1,6 +1,6 @@
-#include "Utils/TextureLoader.h"
+#include "Lightyear/Utils/TextureLoader.h"
+#include "Lightyear/Utils/Log.h"
 #include <glad.h>
-#include "Utils/Log.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>

@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.20)
-project(LightYearProject)
+project(LightYearWorkspace)
+
 
 ##################################################
 # Add the subprojects
@@ -11,9 +12,9 @@ add_subdirectory(Sandbox)
 ##################################################
 # Set build output directories
 ##################################################
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)    # .lib files
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)    # .dll files (Windows dynamic libraries)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)    # .exe files
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 
 ##################################################
