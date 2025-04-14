@@ -52,11 +52,45 @@ private:
     float m_YOffset { 0.f };
 };
 
-/*
-TODO:
-1. MouseButtonEvent:
-    a. MouseButtonPressedEvent
-    b. MouseButtonReleasedEvent
-*/
+class LIGHTYEAR_API MouseButtonEvent : public Event {
+public:
+    inline int GetMouseButton() const { return m_Button; }
 
-}
+    EVENT_CLASS_CATEGORY(EC_INPUT | EC_MOUSE)
+protected:
+    MouseButtonEvent(int button)
+        : m_Button(button)
+    {
+    }
+
+    int m_Button;
+};
+
+class LIGHTYEAR_API MouseButtonPressedEvent : public MouseButtonEvent {
+public:
+    MouseButtonPressedEvent(int button)
+        : MouseButtonEvent(button)
+    {
+    }
+
+    std::string ToString() const override
+    {
+        return std::format("MouseButtonPressedEvent: {}", m_Button);
+    }
+    EVENT_CLASS_TYPE(MouseButtonPressed)
+};
+
+class LIGHTYEAR_API MouseButtonReleased Event : public MouseButtonEvent {
+public:
+    MouseButtonReleased(int button)
+        : MouseButtonEvent(button)
+    {
+    }
+
+    std::string ToString() const override
+    {
+        return std::format("MouseButtonPressedEvent: {}", m_Button);
+    }
+
+    EVENT_CLASS_TYPE(MouseButtonPressed)
+};
