@@ -80,7 +80,7 @@ public:
     EVENT_CLASS_TYPE(MouseButtonPressed)
 };
 
-class LIGHTYEAR_API MouseButtonReleased Event : public MouseButtonEvent {
+class LIGHTYEAR_API MouseButtonReleased : public MouseButtonEvent{
 public:
     MouseButtonReleased(int button)
         : MouseButtonEvent(button)
@@ -94,3 +94,5 @@ public:
 
     EVENT_CLASS_TYPE(MouseButtonPressed)
 };
+
+}

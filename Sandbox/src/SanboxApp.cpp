@@ -12,6 +12,4 @@ SandboxApp::~SandboxApp()
 void SandboxApp::Run()
 {
 	super::Run();
-
-	while (true);
 }

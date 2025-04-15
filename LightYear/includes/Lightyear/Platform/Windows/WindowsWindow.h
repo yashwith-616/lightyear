@@ -33,8 +33,8 @@ private:
 		unsigned int Height, Width;
 		bool VSync;
 
-		EventCallbackFn EventCallback;
-	};
+                EventCallbackFn EventCallback;
+        };
 
 	WindowsData m_Data;
 };

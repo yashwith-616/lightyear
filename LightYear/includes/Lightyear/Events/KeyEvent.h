@@ -18,7 +18,7 @@ protected:
     int m_KeyCode;
 };
 
-class LIGHYTYEAR_API KeyPressedEvent : public KeyEvent {
+class LIGHTYEAR_API KeyPressedEvent : public KeyEvent {
 public:
     KeyPressedEvent(int keycode, int repeatCount)
         : KeyEvent(keycode)
@@ -40,7 +40,7 @@ private:
 
 
 class LIGHTYEAR_API KeyReleasedEvent : public KeyEvent {
-public;
+public:
     KeyReleasedEvent(int keycode) : KeyEvent(keycode) {}
 
     std::string ToString() const override {
