@@ -3,7 +3,7 @@
 #include "Lightyear/LightyearAPI.h"
 #include <lypch.h>
 
-namespace Lightyear::renderer {
+namespace ly {
 	
 	enum class TextureType : uint8_t {
 		DIFFUSE,

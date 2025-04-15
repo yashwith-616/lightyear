@@ -2,11 +2,11 @@
 
 #include "Lightyear/LightyearAPI.h"
 
-namespace Lightyear::renderer {
+namespace ly {
 
-	class LIGHTYEAR_API Model {
-	public:
-		Model();
-	};
+class LIGHTYEAR_API Model {
+public:
+    Model();
+};
 
 }

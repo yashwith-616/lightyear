@@ -1,6 +1,6 @@
 #include "Lightyear/Core/Application.h"
 #include "Lightyear/Platform/Window.h"
-#include "Lightyear/Utils/Log.h"
+#include "Lightyear/Core/Log.h"
 #include "iostream"
 
 namespace ly {

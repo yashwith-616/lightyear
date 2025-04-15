@@ -1,9 +1,9 @@
 #include "Lightyear/Renderer/Shader.h"
-#include <Lightyear/Utils/Log.h>
+#include <Lightyear/Core/Log.h>
 #include <glad.h>
 #include <lypch.h>
 
-namespace Lightyear::renderer {
+namespace ly {
 
 Shader::Shader(std::string_view vertexPath, std::string_view fragmentPath)
     : id_(0)

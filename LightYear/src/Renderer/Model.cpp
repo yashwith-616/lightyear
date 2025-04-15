@@ -1,6 +1,6 @@
 #include "Lightyear/Renderer/Model.h"
 
-namespace Lightyear::renderer {
+namespace ly {
 Model::Model()
 {
 }

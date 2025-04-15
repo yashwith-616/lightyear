@@ -1,11 +1,11 @@
 #include "Lightyear/Utils/TextureLoader.h"
-#include "Lightyear/Utils/Log.h"
+#include "Lightyear/Core/Log.h"
 #include <glad.h>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
-namespace Lightyear::utils {
+namespace ly {
 
 TextureLoader::TextureLoader(const std::filesystem::path& filepath)
 {

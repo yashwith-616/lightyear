@@ -3,7 +3,7 @@
 #include "Lightyear/LightyearAPI.h"
 #include "glm/glm.hpp"
 
-namespace Lightyear::renderer {
+namespace ly {
 
 	inline constexpr int MAX_BONE_INFLUENCE = 4;
 

@@ -5,7 +5,7 @@
 #include <glm/glm.hpp>
 #include <lypch.h>
 
-namespace Lightyear::renderer {
+namespace ly {
 
 class LIGHTYEAR_API Shader {
 public:

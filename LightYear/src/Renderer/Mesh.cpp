@@ -2,7 +2,7 @@
 
 #include <glad.h>
 
-namespace Lightyear::renderer {
+namespace ly {
 
 Mesh::Mesh(std::vector<Vertex> vertexes, std::vector<unsigned int> indices, std::vector<Texture> textures)
 {
