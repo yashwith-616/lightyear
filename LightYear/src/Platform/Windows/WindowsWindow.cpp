@@ -32,8 +32,6 @@ WindowsWindow::~WindowsWindow()
 
 void WindowsWindow::OnUpdate()
 {
-    glClearColor(0, 0, 0, 0.7);
-    glClear(GL_COLOR_BUFFER_BIT);
     glfwPollEvents();
     glfwSwapBuffers(m_Window);
 }
