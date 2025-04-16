@@ -80,19 +80,19 @@ public:
     EVENT_CLASS_TYPE(MouseButtonPressed)
 };
 
-class LIGHTYEAR_API MouseButtonReleased : public MouseButtonEvent{
+class LIGHTYEAR_API MouseButtonReleasedEvent : public MouseButtonEvent {
 public:
-    MouseButtonReleased(int button)
+    MouseButtonReleasedEvent(int button)
         : MouseButtonEvent(button)
     {
     }
 
     std::string ToString() const override
     {
-        return std::format("MouseButtonPressedEvent: {}", m_Button);
+        return std::format("MouseButtonReleasedEvent: {}", m_Button);
     }
 
-    EVENT_CLASS_TYPE(MouseButtonPressed)
+    EVENT_CLASS_TYPE(MouseButtonReleased)
 };
 
 }

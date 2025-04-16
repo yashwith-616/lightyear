@@ -127,7 +127,7 @@ target_link_libraries(LightYear PRIVATE glad imgui glfw spdlog::spdlog $<$<BOOL:
 #-------------------------------------------------
 # Compile definations
 #-------------------------------------------------
-target_compile_definitions(LightYear PRIVATE LY_BUILD_DLL LY_PLATFORM_WINDOWS)
+target_compile_definitions(LightYear PRIVATE LY_BUILD_DLL LY_PLATFORM_WINDOWS GLFW_INCLUDE_NONE)
 
 
 #-------------------------------------------------

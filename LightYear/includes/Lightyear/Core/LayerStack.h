@@ -3,6 +3,8 @@
 #include "LightYear/LightyearAPI.h"
 #include <lypch.h>
 
+class Layer;
+
 namespace ly {
 
 	class LIGHTYEAR_API LayerStack {
