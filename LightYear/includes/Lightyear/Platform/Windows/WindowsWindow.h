@@ -6,37 +6,37 @@ namespace ly {
 
 class LIGHTYEAR_API WindowsWindow : public Window {
 public:
-	WindowsWindow(const WindowProps& props);
-	virtual ~WindowsWindow();
+  WindowsWindow(const WindowProps& props);
+  virtual ~WindowsWindow();
 
-	void OnUpdate() override;
-	inline unsigned int GetWidth() const override { return m_Data.Width; }
-	inline unsigned int GetHeight() const override { return m_Data.Height; }
+  void OnUpdate() override;
+  inline unsigned int GetWidth() const override { return m_Data.Width; }
+  inline unsigned int GetHeight() const override { return m_Data.Height; }
 
-	// Window Attributes
-	inline void SetEventCallback(const EventCallbackFn& callback) override {
-		m_Data.EventCallback = callback;
-	}
+  // Window Attributes
+  inline void SetEventCallback(const EventCallbackFn& callback) override {
+    m_Data.EventCallback = callback;
+  }
 
-	void SetVSync(bool isEnabled) override;
-	bool IsVSync() const override;
-
-private:
-	virtual void Init(const WindowProps& props);
-	virtual void ShutDown();
+  void SetVSync(bool isEnabled) override;
+  bool IsVSync() const override;
 
 private:
-	GLFWwindow* m_Window;
+  virtual void Init(const WindowProps& props);
+  virtual void ShutDown();
 
-	struct WindowsData {
-		std::string Title;
-		unsigned int Height, Width;
-		bool VSync;
+private:
+  GLFWwindow* m_Window;
 
-                EventCallbackFn EventCallback;
-        };
+  struct WindowsData {
+    std::string Title;
+    unsigned int Height, Width;
+    bool VSync;
 
-	WindowsData m_Data;
+    EventCallbackFn EventCallback;
+  };
+
+  WindowsData m_Data;
 };
 
-}
+}  // namespace ly

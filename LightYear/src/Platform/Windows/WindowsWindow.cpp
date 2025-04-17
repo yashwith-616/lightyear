@@ -1,56 +1,47 @@
 #include "LightYear/Platform/Windows/WindowsWindow.h"
+#include <cassert>
 #include "Lightyear/Core/Log.h"
 #include "Lightyear/Events/ApplicationEvent.h"
 #include "Lightyear/Events/KeyEvent.h"
 #include "Lightyear/Events/MouseEvent.h"
-#include "glfw/glfw3.h"
 #include "glad.h"
-#include <cassert>
+#include "glfw/glfw3.h"
 
 namespace ly {
 
-static bool s_GLFWInitialized { false };
+static bool s_GLFWInitialized{ false };
 
-static void GLFWErrorCallback(int error, const char* description)
-{
+static void GLFWErrorCallback(int error, const char* description) {
     LY_CORE_ERROR("GLFW Error ({0}): {1}", error, description);
 }
 
-Window* Window::Create(const WindowProps& props)
-{
+Window* Window::Create(const WindowProps& props) {
     return new WindowsWindow(props);
 }
 
-WindowsWindow::WindowsWindow(const WindowProps& props)
-{
+WindowsWindow::WindowsWindow(const WindowProps& props) {
     Init(props);
 }
 
-WindowsWindow::~WindowsWindow()
-{
-}
+WindowsWindow::~WindowsWindow() {}
 
-void WindowsWindow::OnUpdate()
-{
+void WindowsWindow::OnUpdate() {
     glfwPollEvents();
     glfwSwapBuffers(m_Window);
 }
 
-void WindowsWindow::SetVSync(bool isEnabled)
-{
+void WindowsWindow::SetVSync(bool isEnabled) {
     glfwSwapInterval(isEnabled ? 1 : 0);
     m_Data.VSync = isEnabled;
 }
 
-bool WindowsWindow::IsVSync() const
-{
+bool WindowsWindow::IsVSync() const {
     return m_Data.VSync;
 }
 
-void WindowsWindow::Init(const WindowProps& props)
-{
-    m_Data.Title = props.Title;
-    m_Data.Width = props.Width;
+void WindowsWindow::Init(const WindowProps& props) {
+    m_Data.Title  = props.Title;
+    m_Data.Width  = props.Width;
     m_Data.Height = props.Height;
 
     if (!s_GLFWInitialized) {
@@ -59,11 +50,11 @@ void WindowsWindow::Init(const WindowProps& props)
         s_GLFWInitialized = true;
     }
 
-    m_Window = glfwCreateWindow(
-        static_cast<int>(props.Width),
-        static_cast<int>(props.Height),
-        m_Data.Title.c_str(),
-        nullptr, nullptr);
+    m_Window = glfwCreateWindow(static_cast<int>(props.Width),
+                                static_cast<int>(props.Height),
+                                m_Data.Title.c_str(),
+                                nullptr,
+                                nullptr);
 
     glfwMakeContextCurrent(m_Window);
     int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
@@ -75,8 +66,8 @@ void WindowsWindow::Init(const WindowProps& props)
     // Set windows callback
     glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height) {
         WindowsData& data = *static_cast<WindowsData*>(glfwGetWindowUserPointer(window));
-        data.Width = width;
-        data.Height = height;
+        data.Width        = width;
+        data.Height       = height;
 
         WindowResizeEvent resizeEvent(data.Width, data.Height);
         data.EventCallback(resizeEvent);
@@ -84,8 +75,7 @@ void WindowsWindow::Init(const WindowProps& props)
 
     glfwSetWindowCloseCallback(m_Window, [](GLFWwindow* window) {
         WindowsData& data = *static_cast<WindowsData*>(glfwGetWindowUserPointer(window));
-
-        WindowCloseEvent windowCloseEvent {};
+        WindowCloseEvent windowCloseEvent{};
         data.EventCallback(windowCloseEvent);
     });
 
@@ -94,63 +84,61 @@ void WindowsWindow::Init(const WindowProps& props)
         WindowsData& data = *static_cast<WindowsData*>(glfwGetWindowUserPointer(window));
 
         switch (action) {
-        case GLFW_PRESS: {
-            MouseButtonPressedEvent pressedEvent(button);
-            data.EventCallback(pressedEvent);
-            break;
-        }
-        case GLFW_RELEASE: {
-            MouseButtonReleasedEvent releasedEvent(button);
-            data.EventCallback(releasedEvent);
-            break;
-        }
+            case GLFW_PRESS: {
+                MouseButtonPressedEvent pressedEvent(button);
+                data.EventCallback(pressedEvent);
+                break;
+            }
+            case GLFW_RELEASE: {
+                MouseButtonReleasedEvent releasedEvent(button);
+                data.EventCallback(releasedEvent);
+                break;
+            }
         }
     });
 
     glfwSetScrollCallback(m_Window, [](GLFWwindow* window, double xoffset, double yoffset) {
         WindowsData& data = *static_cast<WindowsData*>(glfwGetWindowUserPointer(window));
-
         MouseScrolledEvent scrolledEvent(xoffset, yoffset);
         data.EventCallback(scrolledEvent);
     });
 
     glfwSetCursorPosCallback(m_Window, [](GLFWwindow* window, double xpos, double ypos) {
         WindowsData& data = *static_cast<WindowsData*>(glfwGetWindowUserPointer(window));
-
         MouseMovedEvent mouseMoveEvent(xpos, ypos);
         data.EventCallback(mouseMoveEvent);
     });
 
     // Set Keyboard Events
-    glfwSetKeyCallback(m_Window, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
-        WindowsData& data = *static_cast<WindowsData*>(glfwGetWindowUserPointer(window));
+    glfwSetKeyCallback(
+        m_Window, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
+            WindowsData& data = *static_cast<WindowsData*>(glfwGetWindowUserPointer(window));
 
-        switch (action) {
-        case GLFW_PRESS: {
-            KeyPressedEvent pressedEvent(key, 0);
-            data.EventCallback(pressedEvent);
-            break;
-        }
-        case GLFW_RELEASE: {
-            KeyReleasedEvent releasedEvent(key);
-            data.EventCallback(releasedEvent);
-            break;
-        }
-        case GLFW_REPEAT: {
-            KeyPressedEvent repeatEvent(key, 1);
-            data.EventCallback(repeatEvent);
-            break;
-        }
-        }
-    });
+            switch (action) {
+                case GLFW_PRESS: {
+                    KeyPressedEvent pressedEvent(key, 0);
+                    data.EventCallback(pressedEvent);
+                    break;
+                }
+                case GLFW_RELEASE: {
+                    KeyReleasedEvent releasedEvent(key);
+                    data.EventCallback(releasedEvent);
+                    break;
+                }
+                case GLFW_REPEAT: {
+                    KeyPressedEvent repeatEvent(key, 1);
+                    data.EventCallback(repeatEvent);
+                    break;
+                }
+            }
+        });
 
     // Set Error Callbacks
     glfwSetErrorCallback(GLFWErrorCallback);
 }
 
-void WindowsWindow::ShutDown()
-{
+void WindowsWindow::ShutDown() {
     glfwDestroyWindow(m_Window);
 }
 
-}
+}  // namespace ly
