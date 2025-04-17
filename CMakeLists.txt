@@ -54,9 +54,3 @@ if (CLANG_FORMAT)
 else()
 	message(STATUS "clang-format not found, skipping clang-format target creation")
 endif()
-
-
-##################################################
-# Clang format the project on build
-##################################################
-

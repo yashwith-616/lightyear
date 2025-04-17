@@ -2,8 +2,7 @@
 
 #include <lypch.h>
 #include "LightYear/LightyearAPI.h"
-
-class Layer;
+#include "Lightyear/Core/Layer.h"
 
 namespace ly {
 
