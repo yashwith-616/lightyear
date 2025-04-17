@@ -14,5 +14,8 @@ public:
     virtual void OnDetach();
     virtual void OnUpdate();
     virtual void OnEvent(Event& event);
+
+private:
+    float m_Time{ 0.f };
 };
 }  // namespace ly

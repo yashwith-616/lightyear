@@ -5,9 +5,12 @@
 
 namespace ly {
 
+Application* Application::s_Application = nullptr;
+
 Application::Application() {
     m_Window = std::unique_ptr<Window>(Window::Create());
     m_Window->SetEventCallback(std::bind(&Application::OnEvent, this, std::placeholders::_1));
+    s_Application = this;
 }
 
 Application::~Application() {}
@@ -44,10 +47,12 @@ bool Application::OnWindowClose(WindowCloseEvent& event) {
 
 void Application::PushLayer(Layer* layer) {
     m_LayerStack.PushLayer(layer);
+    layer->OnAttach();
 }
 
 void Application::PushOverlay(Layer* layer) {
     m_LayerStack.PushOverlay(layer);
+    layer->OnAttach();
 }
 
 }  // namespace ly
