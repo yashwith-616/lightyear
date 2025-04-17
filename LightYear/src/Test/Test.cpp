@@ -2,5 +2,5 @@
 #include <iostream>
 
 void Test::sayHello() {
-	std::cout << "Saying Hello\n";
+    std::cout << "Saying Hello\n";
 }

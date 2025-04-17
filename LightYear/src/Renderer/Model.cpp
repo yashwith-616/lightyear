@@ -1,7 +1,5 @@
 #include "Lightyear/Renderer/Model.h"
 
 namespace ly {
-Model::Model()
-{
-}
-}
+Model::Model() {}
+}  // namespace ly

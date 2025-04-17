@@ -9,4 +9,4 @@ public:
     Model();
 };
 
-}
+}  // namespace ly

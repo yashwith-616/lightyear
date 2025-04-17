@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Lightyear/LightyearAPI.h"
 #include <lypch.h>
 #include <spdlog/spdlog.h>
+#include "Lightyear/LightyearAPI.h"
 
 namespace ly {
 
@@ -17,7 +17,7 @@ private:
     static std::shared_ptr<spdlog::logger> s_CoreLogger;
     static std::shared_ptr<spdlog::logger> s_ClientLogger;
 };
-}
+}  // namespace ly
 
 // All Core logs
 #define LY_CORE_INFO(...) ly::Log::GetCoreLogger()->info(__VA_ARGS__)

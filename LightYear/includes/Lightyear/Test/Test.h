@@ -5,5 +5,5 @@
 
 class LIGHTYEAR_API Test {
 public:
-	void sayHello();
+    void sayHello();
 };

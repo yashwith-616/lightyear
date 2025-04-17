@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Lightyear/LightyearAPI.h"
 #include <lypch.h>
+#include "Lightyear/LightyearAPI.h"
 
 namespace ly {
 
@@ -17,7 +17,7 @@ public:
 
 private:
     std::vector<unsigned char> textureData_;
-    int width_ {}, height_ {}, nrChannels_ {};
-    bool bIsInitialized_ { false };
+    int width_{}, height_{}, nrChannels_{};
+    bool bIsInitialized_{ false };
 };
-}
+}  // namespace ly

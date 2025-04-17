@@ -1,17 +1,12 @@
-#include "Sandbox/SandboxApp.h"
 #include "Sandbox/Core/ExampleLayer.h"
+#include "Sandbox/SandboxApp.h"
 
-SandboxApp::SandboxApp()
-{
-	PushLayer(new ExampleLayer());
+SandboxApp::SandboxApp() {
+    PushLayer(new ExampleLayer());
 }
 
-SandboxApp::~SandboxApp()
-{
+SandboxApp::~SandboxApp() {}
 
-}
-
-void SandboxApp::Run()
-{
-	super::Run();
+void SandboxApp::Run() {
+    super::Run();
 }

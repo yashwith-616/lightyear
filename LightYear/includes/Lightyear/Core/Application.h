@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Lightyear/Events/ApplicationEvent.h"
-#include "Lightyear/Events/Event.h"
 #include "Lightyear/Core/Layer.h"
 #include "Lightyear/Core/LayerStack.h"
+#include "Lightyear/Events/ApplicationEvent.h"
+#include "Lightyear/Events/Event.h"
 #include "Lightyear/LightyearAPI.h"
 #include "lypch.h"
 
@@ -21,7 +21,7 @@ public:
     virtual void Run();
 
     virtual void OnEvent(Event& event);
-    
+
     virtual void PushLayer(Layer* layer);
     virtual void PushOverlay(Layer* layer);
 
@@ -33,6 +33,5 @@ private:
     bool m_Running = true;
 
     LayerStack m_LayerStack;
-    
 };
-}
+}  // namespace ly

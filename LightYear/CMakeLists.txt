@@ -31,42 +31,6 @@ file(GLOB_RECURSE SOURCES "${SRC_DIR}/*.cpp")
 file(GLOB_RECURSE HEADERS "${HDRS_DIR}/*.h")
 
 #-------------------------------------------------
-# Clang Tidy Setup
-#-------------------------------------------------
-find_program(CLANG_TIDY "clang-tidy")
-if (CLANG_TIDY)
-	message(STATUS "Found clang tidy: ${CLANG_TIDY}")
-	set(CMAKE_CXX_CLANG_TIDY "${CLANG_TIDY}")
-else()
-	message(STATUS "clang-tidy not found, skipping clang-tidy integration")
-endif()
-
-
-#-------------------------------------------------
-# Clang Format Setup
-#-------------------------------------------------
-find_program(CLANG_FORMAT "clang-format")
-if (CLANG_FORMAT)
-	message(STATUS "Found clang-format: ${CLANG_FORMAT}")
-
-	# Apply to below source files
-	file(GLOB_RECURSE ALL_SOURCES_FILES
-		${CMAKE_CURRENT_SOURCE_DIR}/*.cpp
-		${CMAKE_CURRENT_SOURCE_DIR}/*.hpp
-		${CMAKE_CURRENT_SOURCE_DIR}/*.c
-		${CMAKE_CURRENT_SOURCE_DIR}/*.h
-	)
-
-	add_custom_target(clang_format
-		COMMAND ${CLANG_FORMAT} -i ${ALL_SOURCE_FILES}
-		COMMENT "Running clang-format on all source files"
-	)
-else()
-	message(STATUS "clang-format not found, skipping clang-format target creation")
-endif()
-
-
-#-------------------------------------------------
 # Setup Dependencies
 #-------------------------------------------------
 find_package(OpenGL REQUIRED )

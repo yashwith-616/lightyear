@@ -1,31 +1,33 @@
 #pragma once
 
-#include <string>
-#include <string_view>
+#include <algorithm>
 #include <array>
-#include <vector>
-#include <stack>
-#include <queue>
-#include <unordered_map>
-#include <unordered_set>
-#include <filesystem>
-#include <fstream>
 #include <chrono>
 #include <cmath>
-#include <algorithm>
-#include <execution>
 #include <cstdint>
+#include <execution>
+#include <filesystem>
+#include <fstream>
 #include <functional>
+#include <queue>
+#include <stack>
+#include <string>
+#include <string_view>
+#include <unordered_map>
+#include <unordered_set>
+#include <vector>
 
-#include <thread>
-#include <mutex>
-#include <shared_mutex>
-#include <future>
 #include <atomic>
 #include <condition_variable>
+#include <future>
+#include <mutex>
+#include <shared_mutex>
+#include <thread>
 
 #include <memory>
 #include <new>
 #include <utility>
 
-constexpr uint8_t BIT(uint8_t x) { return 1 << x; }
+constexpr uint8_t BIT(uint8_t x) {
+    return 1 << x;
+}

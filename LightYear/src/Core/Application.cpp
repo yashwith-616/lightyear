@@ -5,18 +5,14 @@
 
 namespace ly {
 
-Application::Application()
-{
+Application::Application() {
     m_Window = std::unique_ptr<Window>(Window::Create());
     m_Window->SetEventCallback(std::bind(&Application::OnEvent, this, std::placeholders::_1));
 }
 
-Application::~Application()
-{
-}
+Application::~Application() {}
 
-void Application::Run()
-{
+void Application::Run() {
     while (m_Running) {
         glClearColor(0, 0, 0, 0.7);
         glClear(GL_COLOR_BUFFER_BIT);
@@ -29,33 +25,29 @@ void Application::Run()
     }
 }
 
-void Application::OnEvent(Event& event)
-{
+void Application::OnEvent(Event& event) {
     // LY_CORE_INFO("OnEvent: {}", event);
     EventDispatcher dispatcher(event);
-    dispatcher.Dispatch<WindowCloseEvent>(std::bind(&Application::OnWindowClose, this, std::placeholders::_1));
+    dispatcher.Dispatch<WindowCloseEvent>(
+        std::bind(&Application::OnWindowClose, this, std::placeholders::_1));
 
     for (auto it = m_LayerStack.end(); it != m_LayerStack.begin();) {
         (*--it)->OnEvent(event);
-        if (event.bIsHandled)
-            break;
+        if (event.bIsHandled) break;
     }
 }
 
-bool Application::OnWindowClose(WindowCloseEvent& event)
-{
+bool Application::OnWindowClose(WindowCloseEvent& event) {
     m_Running = false;
     return true;
 }
 
-void Application::PushLayer(Layer* layer)
-{
+void Application::PushLayer(Layer* layer) {
     m_LayerStack.PushLayer(layer);
 }
 
-void Application::PushOverlay(Layer* layer)
-{
+void Application::PushOverlay(Layer* layer) {
     m_LayerStack.PushOverlay(layer);
 }
 
-}
+}  // namespace ly

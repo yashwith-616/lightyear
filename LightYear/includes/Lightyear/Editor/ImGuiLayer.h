@@ -1,7 +1,7 @@
 #pragma once
 
 #include "LightYear/Core/Layer.h"
-#include "LightyearAPI.h"
+#include "Lightyear/LightyearAPI.h"
 
 namespace ly {
 
