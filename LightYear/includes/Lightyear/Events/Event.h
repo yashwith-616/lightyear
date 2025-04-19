@@ -20,6 +20,7 @@ enum class EventType : uint8_t {
 
     KeyPressed,
     KeyReleased,
+    KeyTyped,
 
     MouseButtonPressed,
     MouseButtonReleased,

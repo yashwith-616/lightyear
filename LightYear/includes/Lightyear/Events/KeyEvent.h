@@ -41,4 +41,13 @@ public:
     EVENT_CLASS_TYPE(KeyReleased)
 };
 
+class LIGHTYEAR_API KeyTypedEvent : public KeyEvent {
+public:
+    KeyTypedEvent(int keycode) : KeyEvent(keycode) {}
+
+    std::string ToString() const override { return std::format("KeyTypedEvent: {}", m_KeyCode); }
+
+    EVENT_CLASS_TYPE(KeyTyped)
+};
+
 }  // namespace ly

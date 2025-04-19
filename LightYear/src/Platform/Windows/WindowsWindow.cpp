@@ -133,6 +133,12 @@ void WindowsWindow::Init(const WindowProps& props) {
             }
         });
 
+    glfwSetCharCallback(m_Window, [](GLFWwindow* window, unsigned int keycode) {
+        WindowsData& data = *static_cast<WindowsData*>(glfwGetWindowUserPointer(window));
+        KeyTypedEvent typedEvent(keycode);
+        data.EventCallback(typedEvent);
+    });
+
     // Set Error Callbacks
     glfwSetErrorCallback(GLFWErrorCallback);
 }
