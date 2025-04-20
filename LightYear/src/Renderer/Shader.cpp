@@ -1,5 +1,4 @@
 #include "Lightyear/Renderer/Shader.h"
-#include <Lightyear/Core/Log.h>
 #include <glad.h>
 #include <lypch.h>
 
@@ -14,7 +13,7 @@ Shader::Shader(std::string_view vertexPath, std::string_view fragmentPath) : id_
         GLuint fragmentShader = compileShader(fragmentCode.c_str(), GL_FRAGMENT_SHADER);
         this->id_             = linkProgram(vertexShader, fragmentShader);
     } catch (const std::exception& e) {
-        LY_CLIENT_ERROR("ERROR::SHADER::FILE_NOT_SUCCESSFULLY_READ: {}", e.what());
+        LY_CORE_LOG(LogType::Error, "ERROR::SHADER::FILE_NOT_SUCCESSFULLY_READ: {}", e.what());
     }
 }
 
@@ -69,13 +68,13 @@ void Shader::checkCompilerErrors(GLuint shaderHandle, std::string_view type) {
         if (success) return;
 
         glGetProgramInfoLog(shaderHandle, infoLog.size(), nullptr, infoLog.data());
-        LY_CLIENT_ERROR("ERROR::PROGRAM_LINKING_ERROR ({})", infoLog.data());
+        LY_CORE_LOG(LogType::Error, "ERROR::PROGRAM_LINKING_ERROR ({})", infoLog.data());
     } else {
         glGetShaderiv(shaderHandle, GL_COMPILE_STATUS, &success);
         if (success) return;
 
         glGetShaderInfoLog(shaderHandle, infoLog.size(), nullptr, infoLog.data());
-        LY_CLIENT_ERROR("ERROR::SHADER_COMPILATION_ERROR ({})", infoLog.data());
+        LY_CORE_LOG(LogType::Error, "ERROR::SHADER_COMPILATION_ERROR ({})", infoLog.data());
     }
 }
 }  // namespace ly

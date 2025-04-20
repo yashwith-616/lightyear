@@ -1,16 +1,15 @@
 #pragma once
 
-#include "Lightyear/Core/Layer.h"
 #include "Lightyear/Core/LayerStack.h"
-#include "Lightyear/Events/ApplicationEvent.h"
-#include "Lightyear/Events/Event.h"
-#include "Lightyear/LightyearAPI.h"
-#include "Lightyear/Platform/Window.h"
+#include "Lightyear/LightyearCore.h"
 #include "lypch.h"
 
-class Layer;
-
 namespace ly {
+
+class Layer;
+class Event;
+class WindowCloseEvent;
+class Window;
 
 class LIGHTYEAR_API Application {
 public:

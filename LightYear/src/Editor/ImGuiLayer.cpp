@@ -1,10 +1,14 @@
-#include "Lightyear/Editor/ImGuiLayer.h"
-#include "GLFW/glfw3.h"
 #include "Lightyear/Core/Application.h"
-#include "Lightyear/Core/Log.h"
-#include "backends/imgui_impl_opengl3.h"
-#include "imgui.h"
-#include "lypch.h"
+#include "Lightyear/Editor/ImGuiLayer.h"
+#include "Lightyear/Events/ApplicationEvent.h"
+#include "Lightyear/Events/KeyEvent.h"
+#include "Lightyear/Events/MouseEvent.h"
+#include "Lightyear/Platform/Windows/WindowsWindow.h"
+#include <lypch.h>
+
+#include <backends/imgui_impl_opengl3.h>
+#include <GLFW/glfw3.h>
+#include <imgui.h>
 
 #define DELEGATE_SINGLE_PARAM(x) std::bind(x, this, std::placeholders::_1)
 
@@ -12,6 +16,8 @@ namespace ly {
 
 constexpr float g_FixedFrameTime         = (1.f / 60.f);
 constexpr std::string_view g_GLSLVersion = "#version 410 core";
+
+ImGuiLayer::ImGuiLayer() : Layer("ImGUILayer") {}
 
 ImGuiLayer::~ImGuiLayer() {
     // Destroy ImGUI
@@ -127,11 +133,13 @@ bool ImGuiLayer::OnMouseScrolledEvent(MouseScrolledEvent& event) {
 
 bool ImGuiLayer::OnKeyPressedEvent(KeyPressedEvent& event) {
     ImGuiIO& io = ImGui::GetIO();
-    // io.AddKeyEvent(event.GetKeyCode(), true);
+    io.AddKeyEvent(static_cast<ImGuiKey>(event.GetKeyCode()), true);
     return false;
 }
 
 bool ImGuiLayer::OnKeyReleasedEvent(KeyReleasedEvent& event) {
+    ImGuiIO& io = ImGui::GetIO();
+    io.AddKeyEvent(static_cast<ImGuiKey>(event.GetKeyCode()), false);
     return false;
 }
 

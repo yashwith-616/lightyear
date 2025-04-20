@@ -1,16 +1,22 @@
 #pragma once
 
 #include "LightYear/Core/Layer.h"
-#include "Lightyear/Events/ApplicationEvent.h"
-#include "Lightyear/Events/KeyEvent.h"
-#include "Lightyear/Events/MouseEvent.h"
-#include "Lightyear/LightyearAPI.h"
+#include "Lightyear/LightyearCore.h"
 
 namespace ly {
 
+class MouseButtonPressedEvent;
+class MouseButtonReleasedEvent;
+class MouseMovedEvent;
+class MouseScrolledEvent;
+class KeyPressedEvent;
+class KeyReleasedEvent;
+class KeyTypedEvent;
+class WindowResizeEvent;
+
 class LIGHTYEAR_API ImGuiLayer : public Layer {
 public:
-    ImGuiLayer() : Layer("ImguiLayer") {}
+    ImGuiLayer();
     ~ImGuiLayer();
 
     virtual void OnAttach();

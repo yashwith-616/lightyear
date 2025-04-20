@@ -1,10 +1,11 @@
 #pragma once
 
 #include <lypch.h>
-#include "LightYear/Events/Event.h"
-#include "LightYear/LightyearAPI.h"
+#include "Lightyear/LightyearCore.h"
 
 namespace ly {
+
+class Event;
 
 class LIGHTYEAR_API Layer {
 public:

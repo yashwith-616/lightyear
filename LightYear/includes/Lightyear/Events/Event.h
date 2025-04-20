@@ -1,7 +1,7 @@
 #pragma once
 
 #include <lypch.h>
-#include "LightYear/LightyearAPI.h"
+#include "LightYear/LightyearCore.h"
 
 namespace ly {
 

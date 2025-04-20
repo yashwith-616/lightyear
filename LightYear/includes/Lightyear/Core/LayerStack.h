@@ -1,10 +1,11 @@
 #pragma once
 
 #include <lypch.h>
-#include "LightYear/LightyearAPI.h"
-#include "Lightyear/Core/Layer.h"
+#include "Lightyear/LightyearCore.h"
 
 namespace ly {
+
+class Layer;
 
 class LIGHTYEAR_API LayerStack {
 public:

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <lypch.h>
-#include "Lightyear/LightyearAPI.h"
+#include "Lightyear/LightyearCore.h"
 #include "Shader.h"
 #include "Texture.h"
 #include "Vertex.h"

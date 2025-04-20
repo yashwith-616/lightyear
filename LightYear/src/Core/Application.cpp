@@ -1,7 +1,11 @@
 #include "Lightyear/Core/Application.h"
+#include <glad.h>
+#include "Lightyear/Core/Layer.h"
+#include "Lightyear/Core/LayerStack.h"
 #include "Lightyear/Core/Log.h"
-#include "Lightyear/Platform/Window.h"
-#include "glad.h"
+#include "Lightyear/Core/Window.h"
+#include "Lightyear/Events/ApplicationEvent.h"
+#include "Lightyear/Events/Event.h"
 
 namespace ly {
 

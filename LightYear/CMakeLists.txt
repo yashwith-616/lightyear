@@ -85,7 +85,7 @@ target_include_directories(LightYear PRIVATE "${GLFW_DIR}/include")
 target_include_directories(LightYear PRIVATE "${IMGUI_DIR}")
 target_include_directories(LightYear PRIVATE "${GLM_DIR}")
 target_include_directories(LightYear PRIVATE "${STB_DIR}")
-target_link_libraries(LightYear PRIVATE glad imgui glfw spdlog::spdlog $<$<BOOL:${MINGW}>:ws_32>)
+target_link_libraries(LightYear PRIVATE glad imgui glfw PUBLIC spdlog::spdlog $<$<BOOL:${MINGW}>:ws_32>)
 
 
 #-------------------------------------------------

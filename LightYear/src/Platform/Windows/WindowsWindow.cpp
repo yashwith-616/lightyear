@@ -1,18 +1,16 @@
 #include "LightYear/Platform/Windows/WindowsWindow.h"
-#include <cassert>
-#include "Lightyear/Core/Log.h"
 #include "Lightyear/Events/ApplicationEvent.h"
 #include "Lightyear/Events/KeyEvent.h"
 #include "Lightyear/Events/MouseEvent.h"
-#include "glad.h"
-#include "glfw/glfw3.h"
+#include <glad.h>
+#include <GLFW/glfw3.h>
 
 namespace ly {
 
 static bool s_GLFWInitialized{ false };
 
 static void GLFWErrorCallback(int error, const char* description) {
-    LY_CORE_ERROR("GLFW Error ({0}): {1}", error, description);
+    LY_CORE_LOG(LogType::Error, "GLFW Error ({0}): {1}", error, description);
 }
 
 Window* Window::Create(const WindowProps& props) {
@@ -23,7 +21,9 @@ WindowsWindow::WindowsWindow(const WindowProps& props) {
     Init(props);
 }
 
-WindowsWindow::~WindowsWindow() {}
+WindowsWindow::~WindowsWindow() {
+    ShutDown();
+}
 
 void WindowsWindow::OnUpdate() {
     glfwPollEvents();
@@ -43,10 +43,12 @@ void WindowsWindow::Init(const WindowProps& props) {
     m_Data.Title  = props.Title;
     m_Data.Width  = props.Width;
     m_Data.Height = props.Height;
+    LY_CORE_LOG(
+        LogType::Info, "Creating window {0} ({1}, {2})", props.Title, props.Width, props.Height);
 
     if (!s_GLFWInitialized) {
         int success = glfwInit();
-        assert(success && "Could not be initialized");
+        LY_CORE_ASSERT(success, "Failed to initialize GLFW");
         s_GLFWInitialized = true;
     }
 
@@ -58,7 +60,7 @@ void WindowsWindow::Init(const WindowProps& props) {
 
     glfwMakeContextCurrent(m_Window);
     int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-    assert(status && "Failed to initalize GLAD");
+    LY_CORE_ASSERT(status, "Failed to initalize GLAD");
 
     glfwSetWindowUserPointer(m_Window, &m_Data);
     SetVSync(true);
@@ -145,6 +147,7 @@ void WindowsWindow::Init(const WindowProps& props) {
 
 void WindowsWindow::ShutDown() {
     glfwDestroyWindow(m_Window);
+    glfwTerminate();
 }
 
 }  // namespace ly

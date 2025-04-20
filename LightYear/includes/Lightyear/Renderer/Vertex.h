@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Lightyear/LightyearAPI.h"
+#include "Lightyear/LightyearCore.h"
 #include "glm/glm.hpp"
 
 namespace ly {

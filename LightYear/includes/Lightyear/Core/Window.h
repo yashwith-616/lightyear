@@ -1,9 +1,11 @@
 #pragma once
 
-#include "Lightyear/Events/Event.h"
-#include "Lightyear/LightyearAPI.h"
+#include <lypch.h>
+#include "Lightyear/LightyearCore.h"
 
 namespace ly {
+
+class Event;
 
 struct WindowProps {
     std::string Title;
@@ -33,6 +35,7 @@ public:
     virtual void SetEventCallback(const EventCallbackFn& callback) = 0;
     virtual void SetVSync(bool isEnabled)                          = 0;
     virtual bool IsVSync() const                                   = 0;
+    virtual void* GetNativeWindow() const                          = 0;
 
     static Window* Create(const WindowProps& props = WindowProps());
 };

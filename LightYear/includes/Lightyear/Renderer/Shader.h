@@ -3,7 +3,7 @@
 #include <glad.h>
 #include <lypch.h>
 #include <glm/glm.hpp>
-#include "Lightyear/LightyearAPI.h"
+#include "Lightyear/LightyearCore.h"
 
 namespace ly {
 

@@ -1,6 +1,5 @@
 #include "Lightyear/Utils/TextureLoader.h"
 #include <glad.h>
-#include "Lightyear/Core/Log.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
@@ -19,7 +18,7 @@ TextureLoader::TextureLoader(const std::filesystem::path& filepath) {
         stbi_image_free(rawData);
         bIsInitialized_ = true;
     } else {
-        LY_CLIENT_ERROR("ERROR::TEXTURE_FAILES_TO_LOAD");
+        LY_CORE_LOG(LogType::Error, "ERROR::TEXTURE_FAILES_TO_LOAD");
     }
 }
 
