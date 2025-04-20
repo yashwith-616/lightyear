@@ -1,8 +1,8 @@
 #pragma once
 
 #include <lypch.h>
-#include <spdlog/spdlog.h>
 #include <spdlog/fmt/ostr.h>
+#include <spdlog/spdlog.h>
 #include "Lightyear/LightyearCore.h"
 
 namespace ly {
@@ -47,5 +47,5 @@ private:
 }  // namespace ly
 
 // ===== Log Macros =====
-#define LY_LOG(type, ...)      ::ly::Log::LogMessage(type, ::ly::Log::GetClientLogger(), __VA_ARGS__)
+#define LY_LOG(type, ...) ::ly::Log::LogMessage(type, ::ly::Log::GetClientLogger(), __VA_ARGS__)
 #define LY_CORE_LOG(type, ...) ::ly::Log::LogMessage(type, ::ly::Log::GetCoreLogger(), __VA_ARGS__)

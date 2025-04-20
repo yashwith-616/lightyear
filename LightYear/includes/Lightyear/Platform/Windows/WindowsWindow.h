@@ -31,7 +31,7 @@ private:
     GLFWwindow* m_Window;
 
     struct WindowsData {
-        std::string Title {"Demo"};
+        std::string Title{ "Demo" };
         unsigned int Height{ 0 };
         unsigned int Width{ 0 };
         bool VSync{ true };

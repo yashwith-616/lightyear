@@ -1,9 +1,9 @@
 #include "LightYear/Platform/Windows/WindowsWindow.h"
+#include <GLFW/glfw3.h>
+#include <glad.h>
 #include "Lightyear/Events/ApplicationEvent.h"
 #include "Lightyear/Events/KeyEvent.h"
 #include "Lightyear/Events/MouseEvent.h"
-#include <glad.h>
-#include <GLFW/glfw3.h>
 
 namespace ly {
 

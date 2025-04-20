@@ -1,13 +1,13 @@
-#include "Lightyear/Core/Application.h"
 #include "Lightyear/Editor/ImGuiLayer.h"
+#include <lypch.h>
+#include "Lightyear/Core/Application.h"
 #include "Lightyear/Events/ApplicationEvent.h"
 #include "Lightyear/Events/KeyEvent.h"
 #include "Lightyear/Events/MouseEvent.h"
 #include "Lightyear/Platform/Windows/WindowsWindow.h"
-#include <lypch.h>
 
-#include <backends/imgui_impl_opengl3.h>
 #include <GLFW/glfw3.h>
+#include <backends/imgui_impl_opengl3.h>
 #include <imgui.h>
 
 #define DELEGATE_SINGLE_PARAM(x) std::bind(x, this, std::placeholders::_1)

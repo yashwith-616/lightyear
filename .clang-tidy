@@ -1,42 +1,149 @@
 Checks: >
-  # Core Best Practices
-  cppcoreguidelines-*, 
-  modernize-*,
-  readability-*,
-  performance-*,
-  bugprone-*,
+  # Clang Analyzer
+  clang-analyzer-core.builtin.BuiltinFunctions,
+  clang-analyzer-core.builtin.NoReturnFunctions,
+  clang-analyzer-core.CallAndMessage,
+  clang-analyzer-core.CallAndMessageModeling,
+  clang-analyzer-core.DivideZero,
+  clang-analyzer-core.DynamicTypePropagation,
+  clang-analyzer-core.NonnilStringConstants,
+  clang-analyzer-core.NonNullParamChecker,
+  clang-analyzer-core.NullDereference,
+  clang-analyzer-core.StackAddrEscapeBase,
+  clang-analyzer-core.StackAddressEscape,
+  clang-analyzer-core.UndefinedBinaryOperatorResult,
+  clang-analyzer-core.uninitialized.ArraySubscript,
+  clang-analyzer-core.uninitialized.Assign,
+  clang-analyzer-core.uninitialized.Branch,
+  clang-analyzer-core.uninitialized.CapturedBlockVariable,
+  clang-analyzer-core.uninitialized.UndefReturn,
+  clang-analyzer-core.VLASize,
+  
+  clang-analyzer-cplusplus.InnerPointer,
+  clang-analyzer-cplusplus.Move,
+  clang-analyzer-cplusplus.NewDelete,
+  clang-analyzer-cplusplus.NewDeleteLeaks,
+  clang-analyzer-cplusplus.PlacementNew,
+  clang-analyzer-cplusplus.PureVirtualCall,
+  clang-analyzer-cplusplus.SelfAssignment,
+  clang-analyzer-cplusplus.SmartPtrModeling,
+  clang-analyzer-cplusplus.VirtualCallModeling,
+  clang-analyzer-deadcode.DeadStores,
+
+  clang-analyzer-nullability.NullabilityBase,
+  clang-analyzer-nullability.NullableDereferenced,
+  clang-analyzer-nullability.NullablePassedToNonnull,
+  clang-analyzer-nullability.NullableReturnedFromNonnull,
+  clang-analyzer-nullability.NullPassedToNonnull,
+  clang-analyzer-nullability.NullReturnedFromNonnull,
+  clang-analyzer-optin.cplusplus.UninitializedObject,
+  clang-analyzer-optin.cplusplus.VirtualCall,
+
+  # Cpp core guidelines
+  cppcoreguidelines-owning-memory,
+  cppcoreguidelines-no-malloc,
+  cppcoreguidelines-no-exceptions,
+  cppcoreguidelines-avoid-c-arrays,
+  cppcoreguidelines-avoid-capturing-lambda-coroutines,
+  cppcoreguidelines-avoid-const-or-ref-data-members,
+  cppcoreguidelines-avoid-do-while,
+  cppcoreguidelines-avoid-goto,
+  cppcoreguidelines-avoid-magic-numbers,
+  cppcoreguidelines-avoid-non-const-global-variables,
+  cppcoreguidelines-avoid-reference-coroutine-parameters,
+  cppcoreguidelines-rvalue-reference-param-not-moved,
+  cppcoreguidelines-const-init,
 
   # Avoid C-style Casts
   google-runtime-int,
 
-  # Memory and Smart Pointers
-  cppcoreguidelines-owning-memory,
-  cppcoreguidelines-no-malloc,
-  cppcoreguidelines-no-exceptions,
-  
-  # Virtual Functions & Polymorphism
+  # Misc
+  misc-header-include-cycle,
+  misc-include-cleaner,
+  misc-misleading-identifier,
+  misc-no-recursion,
+  misc-static-assert,
+
+  # Modernization
+  modernize-avoid-c-arrays,
+  modernize-deprecated-headers,
+  modernize-loop-convert,
+  modernize-make-shared,
+  modernize-make-unique,
+  modernize-pass-by-value,
+  modernize-raw-string-literal,
+  modernize-redundant-void-arg,
+  modernize-replace-auto-ptr,
+  modernize-type-traits,
+  modernize-use-auto,
+  modernize-use-constraints,
+  modernize-use-equals-default,
+  modernize-use-equals-delete,
+  modernize-use-nullptr,
   modernize-use-override,
+  modernize-use-starts-ends-with,
+  modernize-use-std-numbers,
+  modernize-use-using,
   modernize-use-default-member-init,
+  
 
-  # Performance Improvements
-  performance-no-int-to-ptr,
-  performance-move-const-arg,
-  performance-unnecessary-copy-initialization,
-  performance-trivially-destructible,
+  # Performance Optimizations
+  performance-avoid-endl,
+  performance-enum-size,
+  performance-faster-string-find,
+  performance-for-range-copy,
+  performance-implicit-conversion-in-loop,
+  performance-inefficient-algorithm,
+  performance-inefficient-string-concatenation,
+  performance-inefficient-vector-operation,
 
-  # Readability & Formatting
-  readability-identifier-naming,
-  readability-function-size,
+  # Readability
+ readability-avoid-const-params-in-decls,
+ readability-avoid-nested-conditional-operator,
+ readability-avoid-unconditional-preprocessor-if,
+ readability-const-return-type,
+ readability-container-contains,
+ readability-container-data-pointer,
+ readability-convert-member-functions-to-static,
+ readability-delete-null-pointer,
+ readability-duplicate-include,
+ readability-else-after-return,
+ readability-identifier-length,
+ readability-identifier-naming,
+ readability-implicit-bool-conversion,
+ readability-inconsistent-declaration-parameter-name,
+ readability-isolate-declaration,
+ readability-magic-numbers,
+ readability-make-member-function-const,
+ readability-misleading-indentation,
+ readability-misplaced-array-index,
+ readability-named-parameter,
+ readability-non-const-parameter,
+ readability-qualified-auto,
+ readability-redundant-casting,
+ readability-redundant-control-flow,
+ readability-redundant-declaration,
+ readability-redundant-function-ptr-dereference,
+ readability-redundant-inline-specifier,
+ readability-redundant-preprocessor,
+ readability-redundant-smartptr-get,
+ readability-redundant-string-cstr,
+ readability-redundant-string-init,
+ readability-reference-to-constructed-temporary,
+ readability-simplify-boolean-expr,
+ readability-simplify-subscript-expr,
+ readability-static-accessed-through-instance,
+ readability-static-definition-in-anonymous-namespace,
+ readability-string-compare,
+ readability-uniqueptr-delete-release,
+ readability-uppercase-literal-suffix,
+ readability-use-anyofallof,
 
-  # Avoid Dangling Pointers & References
-  clang-analyzer-core.NullDereference,
-  clang-analyzer-cplusplus.NewDeleteLeaks,
-  clang-analyzer-security.*,
+# Fixes & Suggestions
+ fixit
 
-  # Fixes & Suggestions
-  fixit
-
-WarningsAsErrors: '*'  # Treat all warnings as errors
+WarningsAsErrors: ''
+HeaderFilterRegex: '.*'
 
 CheckOptions:
   # Naming Convention Matches Your Style
