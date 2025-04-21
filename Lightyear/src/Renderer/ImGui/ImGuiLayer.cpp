@@ -1,4 +1,4 @@
-#include "Lightyear/Editor/ImGuiLayer.h"
+#include "Lightyear/Renderer/ImGui/ImGuiLayer.h"
 #include <lypch.h>
 #include "Lightyear/Core/Application.h"
 #include "Lightyear/Events/ApplicationEvent.h"
@@ -9,8 +9,6 @@
 #include <GLFW/glfw3.h>
 #include <backends/imgui_impl_opengl3.h>
 #include <imgui.h>
-
-#define DELEGATE_SINGLE_PARAM(x) std::bind(x, this, std::placeholders::_1)
 
 namespace ly {
 
@@ -87,22 +85,26 @@ void ImGuiLayer::OnUpdate() {
 void ImGuiLayer::OnEvent(Event& event) {
     EventDispatcher dispatcher{ event };
 
+    // Imgui Mouse Events
     dispatcher.Dispatch<MouseButtonPressedEvent>(
-        DELEGATE_SINGLE_PARAM(&ImGuiLayer::OnMouseButtonPressedEvent));
-
+        [this](MouseButtonPressedEvent& e) { return OnMouseButtonPressedEvent(e); });
     dispatcher.Dispatch<MouseButtonReleasedEvent>(
-        DELEGATE_SINGLE_PARAM(&ImGuiLayer::OnMouseButtonReleaseEvent));
-
+        [this](MouseButtonReleasedEvent& e) { return OnMouseButtonReleaseEvent(e); });
     dispatcher.Dispatch<MouseScrolledEvent>(
-        DELEGATE_SINGLE_PARAM(&ImGuiLayer::OnMouseScrolledEvent));
+        [this](MouseScrolledEvent& e) { return OnMouseScrolledEvent(e); });
+    dispatcher.Dispatch<MouseMovedEvent>(
+        [this](MouseMovedEvent& e) { return OnMouseMovedEvent(e); });
 
-    dispatcher.Dispatch<MouseMovedEvent>(DELEGATE_SINGLE_PARAM(&ImGuiLayer::OnMouseMovedEvent));
+    // Imgui Key Events
+    dispatcher.Dispatch<KeyPressedEvent>(
+        [this](KeyPressedEvent& e) { return OnKeyPressedEvent(e); });
+    dispatcher.Dispatch<KeyReleasedEvent>(
+        [this](KeyReleasedEvent& e) { return OnKeyReleasedEvent(e); });
+    dispatcher.Dispatch<KeyTypedEvent>([this](KeyTypedEvent& e) { return OnKeyTypedEvent(e); });
 
-    dispatcher.Dispatch<KeyPressedEvent>(DELEGATE_SINGLE_PARAM(&ImGuiLayer::OnKeyPressedEvent));
-    dispatcher.Dispatch<KeyReleasedEvent>(DELEGATE_SINGLE_PARAM(&ImGuiLayer::OnKeyReleasedEvent));
-    dispatcher.Dispatch<KeyTypedEvent>(DELEGATE_SINGLE_PARAM(&ImGuiLayer::OnKeyTypedEvent));
-
-    dispatcher.Dispatch<WindowResizeEvent>(DELEGATE_SINGLE_PARAM(&ImGuiLayer::OnWindowResizeEvent));
+    // Imgui Window Events
+    dispatcher.Dispatch<WindowResizeEvent>(
+        [this](WindowResizeEvent& e) { return OnWindowResizeEvent(e); });
 }
 
 #pragma region ImGui Callbacks

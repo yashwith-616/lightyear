@@ -1,9 +1,9 @@
 #include "LightYear/Platform/Windows/WindowsWindow.h"
 #include <GLFW/glfw3.h>
-#include <glad.h>
 #include "Lightyear/Events/ApplicationEvent.h"
 #include "Lightyear/Events/KeyEvent.h"
 #include "Lightyear/Events/MouseEvent.h"
+#include "Lightyear/Platform/OpenGL/OpenGLContext.h"
 
 namespace ly {
 
@@ -19,6 +19,7 @@ Window* Window::Create(const WindowProps& props) {
 
 WindowsWindow::WindowsWindow(const WindowProps& props) {
     Init(props);
+    SetupWindowCallbacks();
 }
 
 WindowsWindow::~WindowsWindow() {
@@ -27,7 +28,7 @@ WindowsWindow::~WindowsWindow() {
 
 void WindowsWindow::OnUpdate() {
     glfwPollEvents();
-    glfwSwapBuffers(m_Window);
+    m_Context->SwapBuffers();
 }
 
 void WindowsWindow::SetVSync(bool isEnabled) {
@@ -43,6 +44,7 @@ void WindowsWindow::Init(const WindowProps& props) {
     m_Data.Title  = props.Title;
     m_Data.Width  = props.Width;
     m_Data.Height = props.Height;
+
     LY_CORE_LOG(
         LogType::Info, "Creating window {0} ({1}, {2})", props.Title, props.Width, props.Height);
 
@@ -58,13 +60,20 @@ void WindowsWindow::Init(const WindowProps& props) {
                                 nullptr,
                                 nullptr);
 
-    glfwMakeContextCurrent(m_Window);
-    int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-    LY_CORE_ASSERT(status, "Failed to initalize GLAD");
+    // TODO: Need to Add OpenGLContext
+    m_Context = new OpenGLContext(m_Window);
+    m_Context->Init();
 
     glfwSetWindowUserPointer(m_Window, &m_Data);
     SetVSync(true);
+}
 
+void WindowsWindow::ShutDown() {
+    glfwDestroyWindow(m_Window);
+    glfwTerminate();
+}
+
+void WindowsWindow::SetupWindowCallbacks() {
     // Set windows callback
     glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height) {
         WindowsData& data = *static_cast<WindowsData*>(glfwGetWindowUserPointer(window));
@@ -143,11 +152,6 @@ void WindowsWindow::Init(const WindowProps& props) {
 
     // Set Error Callbacks
     glfwSetErrorCallback(GLFWErrorCallback);
-}
-
-void WindowsWindow::ShutDown() {
-    glfwDestroyWindow(m_Window);
-    glfwTerminate();
 }
 
 }  // namespace ly

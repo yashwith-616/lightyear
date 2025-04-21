@@ -143,7 +143,8 @@ Checks: >
  fixit
 
 WarningsAsErrors: ''
-HeaderFilterRegex: '^(?!.*(imgui|win32|stb_image|imstb|base.h|format.h|chrono.h)).*'
+HeaderFilterRegex: '.*(Lightyear/includes/.*|Sandbox/includes/.*|Lightyear/src/.*|Sandbox/src/.*)'
+
 
 CheckOptions:
   # Naming Convention Matches Your Style

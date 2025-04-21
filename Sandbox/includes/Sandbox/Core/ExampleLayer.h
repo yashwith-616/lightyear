@@ -1,22 +1,13 @@
 #pragma once
 
-#include "Lightyear.h"
 #include <iostream>
+#include "Lightyear.h"
 
 class ExampleLayer : public ly::Layer {
 public:
-    ExampleLayer()
-        : Layer("Example")
-    {
-    }
+    ExampleLayer() : Layer("Example") {}
 
-    void OnUpdate() override
-    {
-        std::cout << "Example update\n";
-    }
+    void OnUpdate() override {}
 
-    void OnEvent(ly::Event& event) override
-    {
-        std::cout << "On Event: " << event.ToString() << '\n';
-    }
+    void OnEvent(ly::Event& event) override {}
 };
