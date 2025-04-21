@@ -11,7 +11,7 @@ endif()
 # Project
 #-------------------------------------------------
 project (
-	LightYear
+	Lightyear
 	VERSION 0.1.0
 	LANGUAGES C CXX
 )
@@ -78,33 +78,33 @@ add_subdirectory("${SPDLOG_DIR}")
 #-------------------------------------------------
 # Project Library
 #-------------------------------------------------
-add_library (LightYear SHARED ${SOURCES} "${HEADERS}")
-target_include_directories(LightYear PUBLIC "${HDRS_DIR}")
-target_include_directories(LightYear PRIVATE "${GLAD_DIR}")
-target_include_directories(LightYear PRIVATE "${GLFW_DIR}/include")
-target_include_directories(LightYear PRIVATE "${IMGUI_DIR}")
-target_include_directories(LightYear PRIVATE "${GLM_DIR}")
-target_include_directories(LightYear PRIVATE "${STB_DIR}")
-target_link_libraries(LightYear PRIVATE glad imgui glfw PUBLIC spdlog::spdlog $<$<BOOL:${MINGW}>:ws_32>)
+add_library (Lightyear SHARED ${SOURCES} "${HEADERS}")
+target_include_directories(Lightyear PUBLIC "${HDRS_DIR}")
+target_include_directories(Lightyear PRIVATE "${GLAD_DIR}")
+target_include_directories(Lightyear PRIVATE "${GLFW_DIR}/include")
+target_include_directories(Lightyear PRIVATE "${IMGUI_DIR}")
+target_include_directories(Lightyear PRIVATE "${GLM_DIR}")
+target_include_directories(Lightyear PRIVATE "${STB_DIR}")
+target_link_libraries(Lightyear PRIVATE glad imgui glfw PUBLIC spdlog::spdlog $<$<BOOL:${MINGW}>:ws_32>)
 
 
 #-------------------------------------------------
 # Compile definations
 #-------------------------------------------------
-target_compile_definitions(LightYear PRIVATE LY_BUILD_DLL LY_PLATFORM_WINDOWS GLFW_INCLUDE_NONE)
+target_compile_definitions(Lightyear PRIVATE LY_BUILD_DLL LY_PLATFORM_WINDOWS GLFW_INCLUDE_NONE)
 
 
 #-------------------------------------------------
 # Pre-Compiled Headers
 #-------------------------------------------------
-target_precompile_headers(LightYear PRIVATE "${HDRS_DIR}/lypch.h")
+target_precompile_headers(Lightyear PRIVATE "${HDRS_DIR}/lypch.h")
 
 
 #-------------------------------------------------
 # Post build step
 #-------------------------------------------------
-add_custom_command(TARGET LightYear POST_BUILD
+add_custom_command(TARGET Lightyear POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
-    $<TARGET_FILE:LightYear>
+    $<TARGET_FILE:Lightyear>
     $<TARGET_FILE_DIR:Sandbox>
 )

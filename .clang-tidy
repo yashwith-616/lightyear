@@ -143,7 +143,7 @@ Checks: >
  fixit
 
 WarningsAsErrors: ''
-HeaderFilterRegex: '.*'
+HeaderFilterRegex: '^(?!.*(imgui|win32|stb_image|imstb|base.h|format.h|chrono.h)).*'
 
 CheckOptions:
   # Naming Convention Matches Your Style

@@ -24,7 +24,7 @@ file(GLOB_RECURSE HEADERS "${HDRS_DIR}/*.h")
 #-------------------------------------------------
 add_executable(Sandbox ${SOURCES})
 target_include_directories(Sandbox PUBLIC "${HDRS_DIR}")
-target_link_libraries(Sandbox PRIVATE LightYear)
+target_link_libraries(Sandbox PRIVATE Lightyear)
 
 
 #-------------------------------------------------

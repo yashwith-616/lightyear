@@ -1,11 +1,11 @@
 ﻿cmake_minimum_required(VERSION 3.20)
-project(LightYearWorkspace)
+project(LightyearWorkspace)
 
 
 ##################################################
 # Add the subprojects
 ##################################################
-add_subdirectory(LightYear)
+add_subdirectory(Lightyear)
 add_subdirectory(Sandbox)
 
 
@@ -49,7 +49,7 @@ if (CLANG_FORMAT)
     set(CLANGFORMAT_EXECUTABLE ${CLANG_FORMAT})
     list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
     include(ClangFormat)
-    target_clangformat_setup(LightYear)
+    target_clangformat_setup(Lightyear)
     target_clangformat_setup(Sandbox)
 else()
 	message(STATUS "clang-format not found, skipping clang-format target creation")
