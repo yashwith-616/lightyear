@@ -11,12 +11,21 @@ OpenGLContext::OpenGLContext(GLFWwindow* windowHandle) : m_WindowHandle(windowHa
 void OpenGLContext::Init() {
     glfwMakeContextCurrent(m_WindowHandle);
     int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-    LY_CORE_ASSERT(status, "Failed to initalize GLAD");
+    LY_CORE_ASSERT(status, "Failed to initialize GLAD");
+
+    // Log System Metrics
+    const std::string_view glVendor   = reinterpret_cast<const char*>(glGetString(GL_VENDOR));
+    const std::string_view glRenderer = reinterpret_cast<const char*>(glGetString(GL_RENDERER));
+    const std::string_view glVersion  = reinterpret_cast<const char*>(glGetString(GL_VERSION));
+
     LY_CORE_LOG(LogType::Info,
-                "OpenGL Renderer:\n\tVendor: {0}\n\tRenderer: {1}\n\tVersion: {2}",
-                reinterpret_cast<const char*>(glGetString(GL_VENDOR)),
-                reinterpret_cast<const char*>(glGetString(GL_RENDERER)),
-                reinterpret_cast<const char*>(glGetString(GL_VERSION)));
+                "OpenGL Renderer:\n"
+                "\tVendor   : {}\n"
+                "\tRenderer : {}\n"
+                "\tVersion  : {}",
+                glVendor,
+                glRenderer,
+                glVersion);
 }
 
 void OpenGLContext::SwapBuffers() {
