@@ -22,21 +22,11 @@ public:
                            fmt::format_string<Args...> fmt,
                            Args&&... args) {
         switch (type) {
-            case LogType::Trace:
-                logger->trace(fmt, std::forward<Args>(args)...);
-                break;
-            case LogType::Info:
-                logger->info(fmt, std::forward<Args>(args)...);
-                break;
-            case LogType::Warn:
-                logger->warn(fmt, std::forward<Args>(args)...);
-                break;
-            case LogType::Error:
-                logger->error(fmt, std::forward<Args>(args)...);
-                break;
-            case LogType::Fatal:
-                logger->critical(fmt, std::forward<Args>(args)...);
-                break;
+            case LogType::Trace: logger->trace(fmt, std::forward<Args>(args)...); break;
+            case LogType::Info: logger->info(fmt, std::forward<Args>(args)...); break;
+            case LogType::Warn: logger->warn(fmt, std::forward<Args>(args)...); break;
+            case LogType::Error: logger->error(fmt, std::forward<Args>(args)...); break;
+            case LogType::Fatal: logger->critical(fmt, std::forward<Args>(args)...); break;
         }
     }
 

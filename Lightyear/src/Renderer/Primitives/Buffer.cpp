@@ -1,4 +1,6 @@
 #include "Lightyear/Renderer/Primitives/Buffer.h"
+#include "Lightyear/Platform/OpenGL/OpenGLBuffer.h"
+#include "Lightyear/Renderer/Abstract/Renderer.h"
 
 namespace ly::renderer {
 
@@ -17,10 +19,10 @@ void BufferLayout::CalculateOffsetsAndStride() {
 
 VertexBuffer* VertexBuffer::Create(uint32_t size) {
     switch (Renderer::GetAPI()) {
-        case Renderer::API::None:
+        case RendererAPI::API::None:
             LY_CORE_ASSERT(false, "Renderer::API::None is currently not supported");
             return nullptr;
-        case Renderer::API::OpenGL: return new OpenGLVertexBuffer(size);
+        case RendererAPI::API::OpenGL: return new OpenGLVertexBuffer(size);
     }
 
     LY_CORE_ASSERT(false, "Unknown Renderer API!");
@@ -29,10 +31,10 @@ VertexBuffer* VertexBuffer::Create(uint32_t size) {
 
 VertexBuffer* VertexBuffer::Create(float* vertices, uint32_t size) {
     switch (Renderer::GetAPI()) {
-        case Renderer::API::None:
+        case RendererAPI::API::None:
             LY_CORE_ASSERT(false, "Renderer::API::None is currently not supported");
             return nullptr;
-        case Renderer::API::OpenGL: return new OpenGLVertexBuffer(vertices, size);
+        case RendererAPI::API::OpenGL: return new OpenGLVertexBuffer(vertices, size);
     }
 
     LY_CORE_ASSERT(false, "Unknown Renderer API!");
@@ -41,10 +43,10 @@ VertexBuffer* VertexBuffer::Create(float* vertices, uint32_t size) {
 
 IndexBuffer* IndexBuffer::Create(uint32_t* indices, uint32_t size) {
     switch (Renderer::GetAPI()) {
-        case Renderer::API::None:
+        case RendererAPI::API::None:
             LY_CORE_ASSERT(false, "Renderer::API::None is currently not supported");
             return nullptr;
-        case Renderer::API::OpenGL: return new OpenGLIndexBuffer(indices, size);
+        case RendererAPI::API::OpenGL: return new OpenGLIndexBuffer(indices, size);
     }
 
     LY_CORE_ASSERT(false, "Unknown Renderer API!");

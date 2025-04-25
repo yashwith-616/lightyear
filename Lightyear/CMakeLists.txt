@@ -31,6 +31,12 @@ file(GLOB_RECURSE SOURCES "${SRC_DIR}/*.cpp")
 file(GLOB_RECURSE HEADERS "${HDRS_DIR}/*.h")
 
 #-------------------------------------------------
+# Optional Parameters
+#-------------------------------------------------
+option(LY_GRAPHICS_DEBUG "Enable graphic context debugging" ON)
+
+
+#-------------------------------------------------
 # Setup Dependencies
 #-------------------------------------------------
 find_package(OpenGL REQUIRED )
@@ -91,7 +97,16 @@ target_link_libraries(Lightyear PRIVATE glad imgui glfw PUBLIC spdlog::spdlog $<
 #-------------------------------------------------
 # Compile definations
 #-------------------------------------------------
-target_compile_definitions(Lightyear PRIVATE LY_BUILD_DLL LY_PLATFORM_WINDOWS GLFW_INCLUDE_NONE)
+target_compile_definitions(Lightyear 
+	PRIVATE 
+	LY_BUILD_DLL 
+	LY_PLATFORM_WINDOWS 
+	GLFW_INCLUDE_NONE
+)
+
+if (LY_GRAPHICS_DEBUG)
+	target_compile_definitions(Lightyear PRIVATE LY_OPENGL_DEBUG)
+endif()
 
 
 #-------------------------------------------------
