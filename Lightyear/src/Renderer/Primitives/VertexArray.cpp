@@ -1,6 +1,7 @@
 #include "Lightyear/Renderer/Primitives/VertexArray.h"
 #include "Lightyear/Renderer/Abstract/Renderer.h"
 #include "Lightyear/Renderer/Abstract/RendererAPI.h"
+#include "Lightyear/Platform/OpenGL/OpenGLVertexArray.h"
 
 namespace ly::renderer {
 

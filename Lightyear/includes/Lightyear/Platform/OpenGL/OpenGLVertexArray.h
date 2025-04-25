@@ -17,16 +17,16 @@ public:
     virtual void SetIndexBuffer(const IndexBuffer& indexBuffer) override;
 
     virtual const std::vector<VertexBuffer>& GetVertexBuffers() const override {
-        return m_VertexBuffers;
+        return m_Vertexbuffers;
     }
 
-    virtual const IndexBuffer& GetIndexBuffer() const override { return m_IndexBuffer; }
+    virtual const IndexBuffer& GetIndexBuffer() const override { return *m_IndexBuffer; }
 
 private:
     VertexArrayHandle m_RenderID;
     uint32_t m_VertexBufferIndex{ 0 };
-    std::vector<VertexBuffer&> m_Vertexbuffers;
-    IndexBuffer& m_IndexBuffer;
+    std::vector<VertexBuffer> m_Vertexbuffers;
+    IndexBuffer* m_IndexBuffer;
 };
 
 }  // namespace ly::renderer

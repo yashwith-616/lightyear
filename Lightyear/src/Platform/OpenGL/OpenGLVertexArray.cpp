@@ -1,10 +1,11 @@
 #include "Lightyear/Platform/OpenGL/OpenGLVertexArray.h"
-#include "OpenGLBuffer.h"
+#include "Lightyear/Platform/OpenGL/OpenGLBuffer.h"
 #include "glad.h"
 
 namespace ly::renderer {
+
 OpenGLVertexArray::OpenGLVertexArray() {
-    glCreateVertexArrays(1, &m_RendererID);
+    glCreateVertexArrays(1, &m_RenderID);
 }
 
 OpenGLVertexArray::~OpenGLVertexArray() {
@@ -24,10 +25,10 @@ void OpenGLVertexArray::AddVertexBuffer(const VertexBuffer& vertexBuffer) {
 }
 
 void OpenGLVertexArray::SetIndexBuffer(const IndexBuffer& indexBuffer) {
-    glBindVertexArray(m_RendererID);
-    indexBuffer->Bind();
+    glBindVertexArray(m_RenderID);
+    indexBuffer.Bind();
 
-    m_IndexBuffer = indexBuffer;
+    *m_IndexBuffer = indexBuffer;
 }
 
 }  // namespace ly::renderer
