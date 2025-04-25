@@ -22,7 +22,8 @@ VertexBuffer* VertexBuffer::Create(uint32_t size) {
         case RendererAPI::API::None:
             LY_CORE_ASSERT(false, "Renderer::API::None is currently not supported");
             return nullptr;
-        case RendererAPI::API::OpenGL: return new OpenGLVertexBuffer(size);
+        case RendererAPI::API::OpenGL:
+            return new OpenGLVertexBuffer(size);
     }
 
     LY_CORE_ASSERT(false, "Unknown Renderer API!");
@@ -34,7 +35,8 @@ VertexBuffer* VertexBuffer::Create(float* vertices, uint32_t size) {
         case RendererAPI::API::None:
             LY_CORE_ASSERT(false, "Renderer::API::None is currently not supported");
             return nullptr;
-        case RendererAPI::API::OpenGL: return new OpenGLVertexBuffer(vertices, size);
+        case RendererAPI::API::OpenGL:
+            return new OpenGLVertexBuffer(vertices, size);
     }
 
     LY_CORE_ASSERT(false, "Unknown Renderer API!");
@@ -46,7 +48,8 @@ IndexBuffer* IndexBuffer::Create(uint32_t* indices, uint32_t size) {
         case RendererAPI::API::None:
             LY_CORE_ASSERT(false, "Renderer::API::None is currently not supported");
             return nullptr;
-        case RendererAPI::API::OpenGL: return new OpenGLIndexBuffer(indices, size);
+        case RendererAPI::API::OpenGL:
+            return new OpenGLIndexBuffer(indices, size);
     }
 
     LY_CORE_ASSERT(false, "Unknown Renderer API!");

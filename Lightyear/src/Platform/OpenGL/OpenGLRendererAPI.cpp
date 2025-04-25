@@ -4,7 +4,38 @@
 
 namespace ly::renderer {
 
-void OpenGLRendererAPI::Init() {
+static void OpenGLMessageCallback(unsigned source,
+                                  unsigned type,
+                                  unsigned id,
+                                  unsigned severity,
+                                  int length,
+                                  const char* message,
+                                  const void* userParam) {
+    switch (severity) {
+        case GL_DEBUG_SEVERITY_HIGH:
+            LY_CORE_LOG(LogType::Fatal, "{0}", message);
+            break;
+        case GL_DEBUG_SEVERITY_MEDIUM:
+            LY_CORE_LOG(LogType::Error, "{0}", message);
+            break;
+        case GL_DEBUG_SEVERITY_LOW:
+            LY_CORE_LOG(LogType::Warn, "{0}", message);
+            break;
+        case GL_DEBUG_SEVERITY_NOTIFICATION:
+            LY_CORE_LOG(LogType::Trace, "{0}", message);
+            break;
+        default:
+            LY_CORE_ASSERT(false, "Unknown severity level!");
+            break;
+    }
+
+    LY_CORE_ASSERT(false, "Unknown severity level!");
+}
+
+/**
+ * @brief Initialize openGL debugging callbacks and error control
+ */
+static void InitDebugging() {
 #ifdef LY_OPENGL_DEBUG
     glEnable(GL_DEBUG_OUTPUT);
     glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
@@ -12,11 +43,29 @@ void OpenGLRendererAPI::Init() {
     glDebugMessageControl(
         GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, NULL, GL_FALSE);
 #endif
+}
+
+/**
+ * @brief Checks for any openGL errors after initializing the openGL state
+ */
+static void CheckOpenGLErrors() {
+#ifdef LY_OPENGL_DEBUG
+    GLenum error = glGetError();
+    if (error != GL_NO_ERROR) {
+        LY_CORE_LOG(LogType::Error, "OpenGL error: {0}", error);
+    }
+#endif
+}
+
+void OpenGLRendererAPI::Init() {
+    InitDebugging();
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_LINE_SMOOTH);
+
+    CheckOpenGLErrors();
 }
 
 void OpenGLRendererAPI::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
@@ -44,23 +93,6 @@ void OpenGLRendererAPI::DrawLines(const VertexArray& vertexArray, uint32_t verte
 
 void OpenGLRendererAPI::SetLineWidth(float width) {
     glLineWidth(width);
-}
-
-void OpenGLMessageCallback(unsigned source,
-                           unsigned type,
-                           unsigned id,
-                           unsigned severity,
-                           int length,
-                           const char* message,
-                           const void* userParam) {
-    switch (severity) {
-        case GL_DEBUG_SEVERITY_HIGH: LY_CORE_LOG(LogType::Fatal, message); return;
-        case GL_DEBUG_SEVERITY_MEDIUM: LY_CORE_LOG(LogType::Error, message); return;
-        case GL_DEBUG_SEVERITY_LOW: LY_CORE_LOG(LogType::Warn, message); return;
-        case GL_DEBUG_SEVERITY_NOTIFICATION: LY_CORE_LOG(LogType::Trace, message); return;
-    }
-
-    LY_CORE_ASSERT(false, "Unknown severity level!");
 }
 
 }  // namespace ly::renderer

@@ -7,7 +7,6 @@ AccessModifierOffset: -4
 AlignConsecutiveAssignments: Consecutive
 AlignEscapedNewlines: Right
 AllowShortBlocksOnASingleLine: Empty
-AllowShortCaseLabelsOnASingleLine: true
 AllowShortIfStatementsOnASingleLine: WithoutElse
 AllowShortLoopsOnASingleLine: true
 AlwaysBreakTemplateDeclarations: true

@@ -1,5 +1,4 @@
 #include "Lightyear/Renderer/Abstract/Renderer.h"
-#include "Renderer.h"
 
 namespace ly::renderer {
 

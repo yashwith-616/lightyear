@@ -21,11 +21,20 @@ void Mesh::draw(Shader& shader) {
 
         std::string_view uniformName;
         switch (textures_[i].type) {
-            case TextureType::DIFFUSE: uniformName = "u_diffuseTexture"; break;
-            case TextureType::SPECULAR: uniformName = "u_specularTexture"; break;
-            case TextureType::NORMAL: uniformName = "u_normalTexture"; break;
-            case TextureType::HEIGHT: uniformName = "u_heightTexture"; break;
-            default: continue;  // Skip unknown texture types.
+            case TextureType::DIFFUSE:
+                uniformName = "u_diffuseTexture";
+                break;
+            case TextureType::SPECULAR:
+                uniformName = "u_specularTexture";
+                break;
+            case TextureType::NORMAL:
+                uniformName = "u_normalTexture";
+                break;
+            case TextureType::HEIGHT:
+                uniformName = "u_heightTexture";
+                break;
+            default:
+                continue;  // Skip unknown texture types.
         }
 
         // Set the uniform to the texture unit index
