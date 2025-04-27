@@ -123,3 +123,8 @@ add_custom_command(TARGET Lightyear POST_BUILD
     $<TARGET_FILE:Lightyear>
     $<TARGET_FILE_DIR:Sandbox>
 )
+
+add_custom_command(TARGET Lightyear POST_BUILD
+    COMMAND ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR} --target clangformat
+    COMMENT "Running clang-format"
+)
