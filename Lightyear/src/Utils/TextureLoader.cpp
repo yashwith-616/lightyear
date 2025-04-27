@@ -9,8 +9,7 @@ namespace ly {
 TextureLoader::TextureLoader(const std::filesystem::path& filepath) {
     stbi_set_flip_vertically_on_load(true);
 
-    unsigned char* rawData =
-        stbi_load(filepath.string().c_str(), &width_, &height_, &nrChannels_, 0);
+    unsigned char* rawData = stbi_load(filepath.string().c_str(), &width_, &height_, &nrChannels_, 0);
     if (rawData) {
         size_t imageSize = width_ * height_ * nrChannels_;
         textureData_.resize(imageSize);

@@ -90,21 +90,16 @@ void ImGuiLayer::OnEvent(Event& event) {
         [this](MouseButtonPressedEvent& e) { return OnMouseButtonPressedEvent(e); });
     dispatcher.Dispatch<MouseButtonReleasedEvent>(
         [this](MouseButtonReleasedEvent& e) { return OnMouseButtonReleaseEvent(e); });
-    dispatcher.Dispatch<MouseScrolledEvent>(
-        [this](MouseScrolledEvent& e) { return OnMouseScrolledEvent(e); });
-    dispatcher.Dispatch<MouseMovedEvent>(
-        [this](MouseMovedEvent& e) { return OnMouseMovedEvent(e); });
+    dispatcher.Dispatch<MouseScrolledEvent>([this](MouseScrolledEvent& e) { return OnMouseScrolledEvent(e); });
+    dispatcher.Dispatch<MouseMovedEvent>([this](MouseMovedEvent& e) { return OnMouseMovedEvent(e); });
 
     // Imgui Key Events
-    dispatcher.Dispatch<KeyPressedEvent>(
-        [this](KeyPressedEvent& e) { return OnKeyPressedEvent(e); });
-    dispatcher.Dispatch<KeyReleasedEvent>(
-        [this](KeyReleasedEvent& e) { return OnKeyReleasedEvent(e); });
+    dispatcher.Dispatch<KeyPressedEvent>([this](KeyPressedEvent& e) { return OnKeyPressedEvent(e); });
+    dispatcher.Dispatch<KeyReleasedEvent>([this](KeyReleasedEvent& e) { return OnKeyReleasedEvent(e); });
     dispatcher.Dispatch<KeyTypedEvent>([this](KeyTypedEvent& e) { return OnKeyTypedEvent(e); });
 
     // Imgui Window Events
-    dispatcher.Dispatch<WindowResizeEvent>(
-        [this](WindowResizeEvent& e) { return OnWindowResizeEvent(e); });
+    dispatcher.Dispatch<WindowResizeEvent>([this](WindowResizeEvent& e) { return OnWindowResizeEvent(e); });
 }
 
 #pragma region ImGui Callbacks

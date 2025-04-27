@@ -18,8 +18,7 @@ public:
     template <typename T>
         requires(!std::is_arithmetic_v<T>)
     void setUniform(std::string_view name, const T& value) const {
-        static_assert(sizeof(T) == 0,
-                      "Unsupported uniform type! Specialize setUniform<T> for this type");
+        static_assert(sizeof(T) == 0, "Unsupported uniform type! Specialize setUniform<T> for this type");
     }
 
     // Specialization for int

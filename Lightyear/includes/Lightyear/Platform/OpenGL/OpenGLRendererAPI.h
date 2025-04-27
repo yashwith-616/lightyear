@@ -12,8 +12,7 @@ public:
     virtual void SetClearColor(const glm::vec4& color) override;
     virtual void Clear() override;
 
-    virtual void DrawIndexed(const std::shared_ptr<VertexArray>& vertexArray,
-                             uint32_t indexCount = 0) override;
+    virtual void DrawIndexed(const std::shared_ptr<VertexArray>& vertexArray, uint32_t indexCount = 0) override;
     virtual void DrawLines(const VertexArray& vertexArray, uint32_t vertexCount = 0) override;
 
     virtual void SetLineWidth(float width) override;

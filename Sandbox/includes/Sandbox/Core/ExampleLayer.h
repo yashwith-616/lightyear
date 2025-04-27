@@ -3,51 +3,44 @@
 #include <iostream>
 #include "Lightyear.h"
 
+namespace renderer = ly::renderer;
+
+static std::array<std::array<float, 3>, 4> planeVertices{
+    { { -0.5f, -0.5f, 0.0f }, { 0.5f, -0.5f, 0.0f }, { 0.5f, 0.5f, 0.0f }, { -0.5f, 0.5f, 0.0f } }
+};
+
+static std::array<uint32_t, 6> planeIndices{ 0, 1, 2, 2, 3, 0 };
+
 class ExampleLayer : public ly::Layer {
 public:
     ExampleLayer() : Layer("Example") {}
 
     void OnUpdate() override {
-#pragma region Buffer Layout setup
-        std::array<std::array<float, 3>, 4> planeVertices{ {
-            { -0.5f, -0.5f, 0.0f },  // Bottom-left
-            { 0.5f, -0.5f, 0.0f },   // Bottom-right
-            { 0.5f, 0.5f, 0.0f },    // Top-right
-            { -0.5f, 0.5f, 0.0f }    // Top-left
-        } };
+        // Required Data
+        float* vBufferData   = planeVertices.data()->data();
+        uint32_t vBufferSize = static_cast<uint32_t>(planeVertices.size() * sizeof(planeVertices[0]));
+        uint32_t iBufferSize = static_cast<uint32_t>(planeIndices.size() * sizeof(uint32_t));
 
-        std::array<uint32_t, 6> planeIndices{ 0, 1, 2, 2, 3, 0 };
+        // Initiate Buffer Layout
+        auto planeBufferLayout = { renderer::BufferElement(renderer::ShaderDataType::Float3, "Position", true) };
 
-        // Define the buffer element for vertex positions
-        auto planeBufferElement =
-            ly::renderer::BufferElement(ly::renderer::ShaderDataType::Float3, "Position", true);
-
-        // Define buffer layout
-        auto planeBufferLayout = { planeBufferElement };
-
-        size_t val = static_cast<uint32_t>(planeVertices.size() * sizeof(planeVertices[0]));
-
-        // Create vertex buffer and calculate the correct size in bytes
-        ly::renderer::VertexBuffer* planeVertexBuffer = ly::renderer::VertexBuffer::Create(
-            planeVertices.data()->data(),
-            static_cast<uint32_t>(planeVertices.size() * sizeof(planeVertices[0])));
+        // Initiate plane vertex buffer
+        auto* planeVertexBuffer = renderer::VertexBuffer::Create(vBufferData, vBufferSize);
         planeVertexBuffer->SetLayout(planeBufferLayout);
 
-        // Create index buffer
-        ly::renderer::IndexBuffer* planeIndexBuffer = ly::renderer::IndexBuffer::Create(
-            planeIndices.data(), static_cast<uint32_t>(planeIndices.size() * sizeof(uint32_t)));
+        // Initiate Index Buffer
+        auto* planeIndexBuffer = renderer::IndexBuffer::Create(planeIndices.data(), iBufferSize);
 
-        // Create vertex array and set buffers
-        ly::renderer::VertexArray* planeVertexArray = ly::renderer::VertexArray::Create();
-        planeVertexArray->AddVertexBuffer(
-            std::shared_ptr<ly::renderer::VertexBuffer>(planeVertexBuffer));
+        // Create Vertex Array
+        auto* planeVertexArray = renderer::VertexArray::Create();
+        planeVertexArray->AddVertexBuffer(std::shared_ptr<renderer::VertexBuffer>(planeVertexBuffer));
         planeVertexArray->SetIndexBuffer(planeIndexBuffer);
-#pragma endregion
 
-        auto* renderAPI = ly::renderer::RendererAPI::Create();
+        // Render
+        auto* renderAPI = renderer::RendererAPI::Create();
         renderAPI->Init();
         renderAPI->Clear();
-        renderAPI->DrawIndexed(*planeVertexArray);
+        renderAPI->DrawIndexed(std::shared_ptr<renderer::VertexArray>(planeVertexArray));
     }
 
     void OnEvent(ly::Event& event) override {}

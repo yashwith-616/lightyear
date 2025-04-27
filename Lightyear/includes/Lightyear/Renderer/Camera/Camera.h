@@ -27,7 +27,6 @@ protected:
 
 protected:
     void RecalculateViewMatrix() = 0;
-
 };
 
 }  // namespace ly::renderer
