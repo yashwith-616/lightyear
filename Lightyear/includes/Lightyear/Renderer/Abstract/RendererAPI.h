@@ -7,6 +7,16 @@ namespace ly::renderer {
 
 class VertexArray;
 
+/**
+ * @brief This API is abstraction over DirectX, OpenGL, Vulkan
+ * and other specifications. Will not be used by client directly
+ *
+ * It consits of a static enum API which will be configured by the
+ * renderer before the application starts or used.
+ *
+ * This class will receive direct calls from RenderCommand and will
+ * not be called by any other class
+ */
 class LIGHTYEAR_API RendererAPI {
 public:
     enum class API { None = 0, OpenGL };
@@ -19,8 +29,9 @@ public:
     virtual void SetClearColor(const glm::vec4& color)                                = 0;
     virtual void Clear()                                                              = 0;
 
-    virtual void DrawIndexed(const VertexArray& vertexArray, uint32_t indexCount = 0) = 0;
-    virtual void DrawLines(const VertexArray& vertexArray, uint32_t vertexCount = 0)  = 0;
+    virtual void DrawIndexed(const std::shared_ptr<VertexArray>& vertexArray,
+                             uint32_t indexCount = 0)                                = 0;
+    virtual void DrawLines(const VertexArray& vertexArray, uint32_t vertexCount = 0) = 0;
 
     virtual void SetLineWidth(float width) = 0;
 

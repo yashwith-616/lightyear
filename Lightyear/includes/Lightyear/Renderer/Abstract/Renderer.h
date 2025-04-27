@@ -7,7 +7,7 @@ namespace ly::renderer {
 
 class VertexArray;
 
-class Renderer {
+class LIGHTYEAR_API Renderer {
 public:
     static void Init();
     static void Shutdown();

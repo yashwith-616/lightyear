@@ -16,11 +16,6 @@ inline void RenderCommand::Clear() {
 }
 
 void RenderCommand::DrawIndexed(const std::shared_ptr<VertexArray>& vertexArray) {
-    // s_RendererAPI->DrawIndexed(vertexArray);
-    LY_CORE_ASSERT("Implementation is incomplete");
-}
-
-inline void RenderCommand::DrawIndexed(const VertexArray& vertexArray) {
     s_RendererAPI->DrawIndexed(vertexArray);
 }
 
