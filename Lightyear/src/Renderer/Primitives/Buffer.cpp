@@ -4,7 +4,9 @@
 
 namespace ly::renderer {
 
-BufferLayout::BufferLayout(std::initializer_list<BufferElement> elements) {}
+BufferLayout::BufferLayout(std::initializer_list<BufferElement> elements) : m_Elements(elements) {
+    CalculateOffsetsAndStride();
+}
 
 void BufferLayout::CalculateOffsetsAndStride() {
     size_t offset = 0;

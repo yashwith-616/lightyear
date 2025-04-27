@@ -86,10 +86,10 @@ add_subdirectory("${SPDLOG_DIR}")
 #-------------------------------------------------
 add_library (Lightyear SHARED ${SOURCES} "${HEADERS}")
 target_include_directories(Lightyear PUBLIC "${HDRS_DIR}")
+target_include_directories(Lightyear PUBLIC "${GLM_DIR}")
 target_include_directories(Lightyear PRIVATE "${GLAD_DIR}")
 target_include_directories(Lightyear PRIVATE "${GLFW_DIR}/include")
 target_include_directories(Lightyear PRIVATE "${IMGUI_DIR}")
-target_include_directories(Lightyear PRIVATE "${GLM_DIR}")
 target_include_directories(Lightyear PRIVATE "${STB_DIR}")
 target_link_libraries(Lightyear PRIVATE glad imgui glfw PUBLIC spdlog::spdlog $<$<BOOL:${MINGW}>:ws_32>)
 

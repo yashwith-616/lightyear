@@ -10,8 +10,9 @@ RendererAPI* RendererAPI::Create() {
     switch (s_API) {
         case RendererAPI::API::None:
             LY_CORE_ASSERT(false, "RendererAPI::None is currently not supported!");
+            break;
         case RendererAPI::API::OpenGL:
-            new OpenGLRendererAPI();
+            return new OpenGLRendererAPI();
     }
 
     LY_CORE_ASSERT(false, "Invalid RendererAPI!");

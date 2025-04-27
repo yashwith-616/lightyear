@@ -1,5 +1,6 @@
 #include "Lightyear/Platform/OpenGL/OpenGLRendererAPI.h"
 #include <glad.h>
+#include "Lightyear/Platform/OpenGL/OpenGLVertexArray.h"
 #include "Lightyear/Renderer/Primitives/Buffer.h"
 
 namespace ly::renderer {
@@ -32,6 +33,7 @@ static void OpenGLMessageCallback(unsigned source,
     LY_CORE_ASSERT(false, "Unknown severity level!");
 }
 
+#pragma region OpenGL Debug
 /**
  * @brief Initialize openGL debugging callbacks and error control
  */
@@ -57,6 +59,8 @@ static void CheckOpenGLErrors() {
 #endif
 }
 
+#pragma endregion OpenGL Debug
+
 void OpenGLRendererAPI::Init() {
     InitDebugging();
 
@@ -76,19 +80,23 @@ void OpenGLRendererAPI::SetClearColor(const glm::vec4& color) {
     glClearColor(color.x, color.y, color.z, color.a);
 }
 
+/**
+ * @brief Clear any test buffers that is initialized by openGL
+ * // TODO: May use Stencil Buffer in the future
+ */
 void OpenGLRendererAPI::Clear() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void OpenGLRendererAPI::DrawIndexed(const VertexArray& vertexArray, uint32_t indexCount) {
-    // vertexArray->bind();
-    // uint32_t count = indexCount ? indexCount : vertexArray->GetIndexBuffer()->GetCount();
-    // glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, nullptr)
+    vertexArray.Bind();
+    uint32_t count = indexCount ? indexCount : vertexArray.GetIndexBuffer().GetCount();
+    glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, nullptr);
 }
 
 void OpenGLRendererAPI::DrawLines(const VertexArray& vertexArray, uint32_t vertexCount) {
-    // vertexArray->bind();
-    // glDrawArrays(GL_LINES, 0, vertexCount);
+    vertexArray.Bind();
+    glDrawArrays(GL_LINES, 0, vertexCount);
 }
 
 void OpenGLRendererAPI::SetLineWidth(float width) {

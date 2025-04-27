@@ -4,7 +4,7 @@
 
 namespace ly::renderer {
 
-enum class ShaderDataType {
+enum class ShaderDataType : uint8_t {
     None = 0,
 
     Float,
@@ -22,6 +22,8 @@ enum class ShaderDataType {
 
     Bool
 };
+
+enum class VertexAttributeType : uint8_t { None = 0, Position, Normal, TexCoord };
 
 using TextureHandle      = uint32_t;
 using VertexBufferHandle = uint32_t;

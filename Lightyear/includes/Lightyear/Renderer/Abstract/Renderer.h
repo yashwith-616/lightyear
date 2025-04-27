@@ -5,6 +5,8 @@
 
 namespace ly::renderer {
 
+class VertexArray;
+
 class Renderer {
 public:
     static void Init();
@@ -15,7 +17,7 @@ public:
     static void BeginScene();
     static void EndScene();
 
-    static void Submit();
+    static void Submit(const std::shared_ptr<VertexArray>& vertexArray);
 
     static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
 

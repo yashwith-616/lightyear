@@ -1,4 +1,5 @@
 #include "Lightyear/Renderer/Abstract/Renderer.h"
+#include "Lightyear/Renderer/Abstract/RenderCommand.h"
 
 namespace ly::renderer {
 
@@ -12,6 +13,8 @@ void Renderer::BeginScene() {}
 
 void Renderer::EndScene() {}
 
-void ly::renderer::Renderer::Submit() {}
+void Renderer::Submit(const std::shared_ptr<VertexArray>& vertexArray) {
+    RenderCommand::DrawIndexed(vertexArray);
+}
 
 }  // namespace ly::renderer

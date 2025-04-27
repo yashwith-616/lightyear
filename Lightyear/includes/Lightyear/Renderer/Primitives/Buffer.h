@@ -35,18 +35,28 @@ static uint32_t ShaderDataTypeSize(ShaderDataType type) {
     return 0;
 };
 
-struct BufferElement {
-    std::string Name;
-    ShaderDataType Type;
-    uint32_t Size;
-    uint32_t Offset;
-    bool IsNormalized;
+/**
+ * @brief Represents a single attribute inside a vertex buffer layout
+ *
+ * Stores metadata like name, shader type, size, offset, and normalization state,
+ * which is necessary for correctly interpreting vertex data in GPU shaders
+ */
+struct LIGHTYEAR_API BufferElement {
+    std::string_view Name{};
+    uint32_t Size{ 0 };
+    uint32_t Offset{ 0 };
+    ShaderDataType Type{ ShaderDataType::None };
+    bool IsNormalized{ true };
 
     BufferElement() = default;
-    BufferElement(ShaderDataType type, const std::string& name, bool isNormalized)
+    BufferElement(ShaderDataType type, std::string_view name, bool isNormalized)
         : Name(name), Type(type), Size(ShaderDataTypeSize(type)), Offset(0),
           IsNormalized(isNormalized) {}
 
+    /**
+     * @brief Returns how many components make up this attribute (e.g., Float3 = 3 components).
+     * @return Number of components for this ShaderDataType.
+     */
     uint32_t GetComponentCount() const {
         switch (Type) {
             case ShaderDataType::Float:
@@ -78,7 +88,16 @@ struct BufferElement {
     }
 };
 
-class BufferLayout {
+/**
+ * @brief Describes the layout of elements within a vertex buffer
+ *
+ * BufferLayout determines the structure of a vertex by specifying the sequence of attributes
+ * and how they are packed
+ *
+ * It stores list of BufferElements, calculates offsets for each attribute, and determines the
+ * stride (the total size of the vertex)
+ */
+class LIGHTYEAR_API BufferLayout {
 public:
     BufferLayout() {}
 
@@ -100,6 +119,9 @@ private:
     uint32_t m_Stride = 0;
 };
 
+/**
+ * @brief Manages vertex buffer attributes and their memory layout within a buffer.
+ */
 class LIGHTYEAR_API VertexBuffer {
 public:
     virtual ~VertexBuffer() {}
@@ -116,6 +138,9 @@ public:
     static VertexBuffer* Create(float* vertices, uint32_t size);
 };
 
+/**
+ * @brief Holds indices that define the order in which vertices are drawn.
+ */
 class LIGHTYEAR_API IndexBuffer {
 public:
     virtual ~IndexBuffer() {}
