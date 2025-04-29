@@ -23,6 +23,15 @@ enum class ShaderDataType : uint8_t {
     Bool
 };
 
+enum class ShaderType : uint8_t {
+    None = 0,
+
+    Vertex,
+    Fragment,
+    Geometry,
+    Compute
+};
+
 enum class VertexAttributeType : uint8_t { None = 0, Position, Normal, TexCoord };
 
 using TextureHandle      = uint32_t;
