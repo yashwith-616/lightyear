@@ -6,7 +6,7 @@
 
 namespace ly::renderer {
 
-class OpenGLShader : Shader {
+class OpenGLShader : public Shader {
 public:
     OpenGLShader(std::string_view vertexPath, std::string_view fragmentPath);
 
