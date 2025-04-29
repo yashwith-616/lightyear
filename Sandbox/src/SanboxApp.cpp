@@ -3,8 +3,8 @@
 #include "Sandbox/SandboxApp.h"
 
 SandboxApp::SandboxApp() {
-    PushLayer(new ExampleLayer());
     PushLayer(new ly::ImGuiLayer());
+    PushLayer(new ExampleLayer());
 }
 
 SandboxApp::~SandboxApp() {}

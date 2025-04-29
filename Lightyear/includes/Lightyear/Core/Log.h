@@ -16,6 +16,7 @@ public:
     inline static std::shared_ptr<spdlog::logger>& GetCoreLogger() { return s_CoreLogger; }
     inline static std::shared_ptr<spdlog::logger>& GetClientLogger() { return s_ClientLogger; }
 
+    // Template specialization for compile-time format strings (fmt::format_string)
     template <typename... Args>
     static void LogMessage(LogType type,
                            std::shared_ptr<spdlog::logger> logger,

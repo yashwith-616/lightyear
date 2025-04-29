@@ -15,9 +15,7 @@ public:
     std::vector<Texture> textures_;
     unsigned int vao_;
 
-    Mesh(std::vector<Vertex> vertexes,
-         std::vector<unsigned int> indices,
-         std::vector<Texture> textures);
+    Mesh(std::vector<Vertex> vertexes, std::vector<unsigned int> indices, std::vector<Texture> textures);
 
     /**
      * @brief Draw the mesh with this shader

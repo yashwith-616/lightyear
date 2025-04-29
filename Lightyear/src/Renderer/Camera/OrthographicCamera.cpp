@@ -1,0 +1,22 @@
+#include "Lightyear/Renderer/Camera/OrthographicCamera.h"
+
+namespace ly::renderer {
+
+OrthographicCamera::OrthographicCamera(float left, float right, float bottom, float top)
+    : m_ProjectionMatrix(glm::ortho(left, right, bottom, top, -1.f, -1.f)) {
+    // Ensure the camera has a valid ViewProjection matrix initialized at the start.
+    m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
+}
+
+/**
+ * @brief Recalculate the view projection matrix everytime the camera moves
+ */
+void OrthographicCamera::RecalculateViewMatrix() {
+    glm::mat4 transform = glm::translate(
+        glm::mat4(1.f, m_Position) * glm::rotate(glm::mat4(1.f), m_Rotation, glm::vec3(0, 0, 1));
+
+    m_ViewMatrix = glm::inverse(transform);
+    m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
+}
+
+}  // namespace ly::renderer

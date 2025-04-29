@@ -37,20 +37,20 @@ enum EventCategory {
     EC_MOUSEBUTTON = BIT(4)
 };
 
-#define EVENT_CLASS_TYPE(type)                                                                     \
-    static EventType GetStaticType() {                                                             \
-        return EventType::##type;                                                                  \
-    }                                                                                              \
-    virtual EventType GetEventType() const override {                                              \
-        return GetStaticType();                                                                    \
-    }                                                                                              \
-    virtual std::string_view GetName() const override {                                            \
-        return #type;                                                                              \
+#define EVENT_CLASS_TYPE(type)                                                                                         \
+    static EventType GetStaticType() {                                                                                 \
+        return EventType::##type;                                                                                      \
+    }                                                                                                                  \
+    virtual EventType GetEventType() const override {                                                                  \
+        return GetStaticType();                                                                                        \
+    }                                                                                                                  \
+    virtual std::string_view GetName() const override {                                                                \
+        return #type;                                                                                                  \
     }
 
-#define EVENT_CLASS_CATEGORY(category)                                                             \
-    virtual int GetCategoryFlags() const override {                                                \
-        return category;                                                                           \
+#define EVENT_CLASS_CATEGORY(category)                                                                                 \
+    virtual int GetCategoryFlags() const override {                                                                    \
+        return category;                                                                                               \
     }
 
 /**
@@ -68,9 +68,7 @@ public:
     virtual int GetCategoryFlags() const     = 0;
     virtual std::string ToString() const { return static_cast<std::string>(GetName()); }
 
-    inline bool IsInCategory(EventCategory category) const noexcept {
-        return GetCategoryFlags() & category;
-    }
+    inline bool IsInCategory(EventCategory category) const noexcept { return GetCategoryFlags() & category; }
 
 protected:
     bool m_Handled{ false };
