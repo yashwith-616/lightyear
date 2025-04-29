@@ -1,17 +1,17 @@
 #include "Lightyear/Renderer/Primitives/Shader.h"
-#include "Lightyear/Renderer/Abstract/Renderer.h"
-#include "Lightyear/Platform/OpenGL/OpenGLShader.h"
 #include <glad.h>
+#include "Lightyear/Platform/OpenGL/OpenGLShader.h"
+#include "Lightyear/Renderer/Abstract/Renderer.h"
 
 namespace ly::renderer {
 
 Shader* Shader::Create(std::string_view vertexPath, std::string_view fragmentPath) {
     switch (Renderer::GetAPI()) {
-    case RendererAPI::API::None:
-        LY_CORE_ASSERT(false, "RendererAPI::None is currently not supported!");
-        return nullptr;
-    case RendererAPI::API::OpenGL:
-        return new OpenGLShader(vertexPath, fragmentPath);
+        case RendererAPI::API::None:
+            LY_CORE_ASSERT(false, "RendererAPI::None is currently not supported!");
+            return nullptr;
+        case RendererAPI::API::OpenGL:
+            return new OpenGLShader(vertexPath, fragmentPath);
     }
 
     LY_CORE_ASSERT(false, "Invalid RendererAPI!");
