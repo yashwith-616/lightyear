@@ -35,7 +35,8 @@ void Application::Run() {
 void Application::OnEvent(Event& event) {
     // LY_CORE_INFO("OnEvent: {}", event);
     EventDispatcher dispatcher(event);
-    dispatcher.Dispatch<WindowCloseEvent>([this](WindowCloseEvent& event) { return OnWindowClose(event); });
+    dispatcher.Dispatch<WindowCloseEvent>(
+        [this](WindowCloseEvent& event) { return OnWindowClose(event); });
 
     for (auto it = m_LayerStack.end(); it != m_LayerStack.begin();) {
         (*--it)->OnEvent(event);

@@ -21,7 +21,9 @@ public:
     virtual void SetVSync(bool isEnabled) override;
     virtual bool IsVSync() const override;
     virtual void* GetNativeWindow() const override { return static_cast<void*>(m_Window); }
-    inline void SetEventCallback(const EventCallbackFn& callback) override { m_Data.EventCallback = callback; }
+    inline void SetEventCallback(const EventCallbackFn& callback) override {
+        m_Data.EventCallback = callback;
+    }
 
 protected:
     /**

@@ -11,7 +11,9 @@ public:
     inline unsigned int GetWidth() { return m_Width; }
     inline unsigned int GetHeight() { return m_Height; }
 
-    std::string ToString() const override { return std::format("WindowResizeEvent: {}, {}", m_Width, m_Height); }
+    std::string ToString() const override {
+        return std::format("WindowResizeEvent: {}, {}", m_Width, m_Height);
+    }
 
     EVENT_CLASS_CATEGORY(EC_APPLICATION)
     EVENT_CLASS_TYPE(WindowResize)

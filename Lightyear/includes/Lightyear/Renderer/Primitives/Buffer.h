@@ -50,7 +50,8 @@ struct LIGHTYEAR_API BufferElement {
 
     BufferElement() = default;
     BufferElement(ShaderDataType type, std::string_view name, bool isNormalized)
-        : Name(name), Type(type), Size(ShaderDataTypeSize(type)), Offset(0), IsNormalized(isNormalized) {}
+        : Name(name), Type(type), Size(ShaderDataTypeSize(type)), Offset(0),
+          IsNormalized(isNormalized) {}
 
     /**
      * @brief Returns how many components make up this attribute (e.g., Float3 = 3 components).

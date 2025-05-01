@@ -11,7 +11,9 @@ public:
     inline float GetX() const { return m_MouseX; }
     inline float GetY() const { return m_MouseY; }
 
-    std::string ToString() const override { return std::format("MouseMovedEvent: {}, {}", m_MouseX, m_MouseY); }
+    std::string ToString() const override {
+        return std::format("MouseMovedEvent: {}, {}", m_MouseX, m_MouseY);
+    }
 
     EVENT_CLASS_TYPE(MouseMoved)
     EVENT_CLASS_CATEGORY(EC_INPUT | EC_MOUSE)
@@ -28,7 +30,9 @@ public:
     inline float GetXOffset() const { return m_XOffset; }
     inline float GetYOffset() const { return m_YOffset; }
 
-    std::string ToString() const override { return std::format("MouseScrolledEvent: {}, {}", m_XOffset, m_YOffset); }
+    std::string ToString() const override {
+        return std::format("MouseScrolledEvent: {}, {}", m_XOffset, m_YOffset);
+    }
 
     EVENT_CLASS_TYPE(MouseScrolled)
     EVENT_CLASS_CATEGORY(EC_INPUT | EC_MOUSE)
@@ -53,7 +57,9 @@ class LIGHTYEAR_API MouseButtonPressedEvent : public MouseButtonEvent {
 public:
     MouseButtonPressedEvent(int button) : MouseButtonEvent(button) {}
 
-    std::string ToString() const override { return std::format("MouseButtonPressedEvent: {}", m_Button); }
+    std::string ToString() const override {
+        return std::format("MouseButtonPressedEvent: {}", m_Button);
+    }
     EVENT_CLASS_TYPE(MouseButtonPressed)
 };
 
@@ -61,7 +67,9 @@ class LIGHTYEAR_API MouseButtonReleasedEvent : public MouseButtonEvent {
 public:
     MouseButtonReleasedEvent(int button) : MouseButtonEvent(button) {}
 
-    std::string ToString() const override { return std::format("MouseButtonReleasedEvent: {}", m_Button); }
+    std::string ToString() const override {
+        return std::format("MouseButtonReleasedEvent: {}", m_Button);
+    }
 
     EVENT_CLASS_TYPE(MouseButtonReleased)
 };
