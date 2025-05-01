@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Application.h"
 #include "Lightyear/LightYearCore.h"
 
 #ifdef LY_PLATFORM_WINDOWS

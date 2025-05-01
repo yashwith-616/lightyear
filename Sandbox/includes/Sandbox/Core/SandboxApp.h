@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Lightyear/Core/Entrypoint.h"
 #include "Lightyear.h"
 
 class SandboxApp : public ly::Application {

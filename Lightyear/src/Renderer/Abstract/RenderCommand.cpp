@@ -15,7 +15,7 @@ inline void RenderCommand::Clear() {
     s_RendererAPI->Clear();
 }
 
-void RenderCommand::DrawIndexed(const std::shared_ptr<VertexArray>& vertexArray) {
+inline void RenderCommand::DrawIndexed(const std::shared_ptr<VertexArray>& vertexArray) {
     s_RendererAPI->DrawIndexed(vertexArray);
 }
 

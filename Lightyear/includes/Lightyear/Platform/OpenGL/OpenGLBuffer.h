@@ -20,7 +20,7 @@ public:
     virtual void SetLayout(const BufferLayout& layout) override { m_Layout = layout; }
 
 private:
-    VertexBufferHandle m_RenderID;
+    VertexBufferHandle m_RenderID{ 0 };
     BufferLayout m_Layout;
 };
 
@@ -35,7 +35,7 @@ public:
     virtual uint32_t GetCount() const { return m_Count; }
 
 private:
-    IndexBufferHandle m_RenderID;
-    uint32_t m_Count;
+    IndexBufferHandle m_RenderID{ 0 };
+    uint32_t m_Count{ 0 };
 };
 }  // namespace ly::renderer
