@@ -31,3 +31,9 @@ target_link_libraries(Sandbox PRIVATE Lightyear)
 # Compile definations
 #-------------------------------------------------
 target_compile_definitions(Sandbox PRIVATE LY_PLATFORM_WINDOWS)
+
+
+#-------------------------------------------------
+# Add definations
+#-------------------------------------------------
+add_definitions(-DASSET_DIR="${CMAKE_CURRENT_SOURCE_DIR}/assets")
