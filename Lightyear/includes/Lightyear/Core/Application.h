@@ -33,6 +33,9 @@ private:
     std::unique_ptr<Window> m_Window;
     bool m_Running = true;
 
+    float m_Frametime{ 1 / 60.f };
+    float m_LastFrameTime{ 0.f };
+
     LayerStack m_LayerStack;
 
     static Application* s_Application;

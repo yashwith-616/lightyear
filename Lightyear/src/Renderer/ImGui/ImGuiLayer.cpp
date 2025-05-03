@@ -62,7 +62,7 @@ void ImGuiLayer::OnAttach() {
 
 void ImGuiLayer::OnDetach() {}
 
-void ImGuiLayer::OnUpdate() {
+void ImGuiLayer::OnUpdate(float deltaTime) {
     ImGuiIO& io    = ImGui::GetIO();
     Window& window = Application::Get().GetWindow();
     io.DisplaySize = ImVec2(window.GetWidth(), window.GetHeight());

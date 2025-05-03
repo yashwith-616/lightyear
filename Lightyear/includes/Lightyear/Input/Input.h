@@ -2,8 +2,9 @@
 
 #include <glm/glm.hpp>
 #include "KeyCodes.h"
-#include "Lightyear/LightyearCore.h"
 #include "MouseCodes.h"
+
+#include "Lightyear/LightyearCore.h"
 
 namespace ly {
 

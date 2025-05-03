@@ -30,6 +30,7 @@ public:
     virtual void OnUpdate()                = 0;
     virtual unsigned int GetWidth() const  = 0;
     virtual unsigned int GetHeight() const = 0;
+    virtual float GetTime() const          = 0;
 
     // Window Attributes
     virtual void SetEventCallback(const EventCallbackFn& callback) = 0;

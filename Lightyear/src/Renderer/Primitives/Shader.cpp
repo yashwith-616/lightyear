@@ -5,13 +5,13 @@
 
 namespace ly::renderer {
 
-Shader* Shader::Create(std::string_view vertexPath, std::string_view fragmentPath) {
+ly::Ref<Shader> Shader::Create(std::string_view vertexPath, std::string_view fragmentPath) {
     switch (Renderer::GetAPI()) {
         case RendererAPI::API::None:
             LY_CORE_ASSERT(false, "RendererAPI::None is currently not supported!");
             return nullptr;
         case RendererAPI::API::OpenGL:
-            return new OpenGLShader(vertexPath, fragmentPath);
+            return MakeRef<OpenGLShader>(vertexPath, fragmentPath);
     }
 
     LY_CORE_ASSERT(false, "Invalid RendererAPI!");

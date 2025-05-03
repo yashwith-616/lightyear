@@ -40,6 +40,10 @@ bool WindowsWindow::IsVSync() const {
     return m_Data.VSync;
 }
 
+float WindowsWindow::GetTime() const {
+    return static_cast<float>(glfwGetTime());
+}
+
 void WindowsWindow::Init(const WindowProps& props) {
     m_Data.Title  = props.Title;
     m_Data.Width  = props.Width;

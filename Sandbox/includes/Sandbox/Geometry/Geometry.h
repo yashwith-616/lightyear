@@ -12,18 +12,18 @@ public:
 
     Geometry();
 
-    static void DrawPlane(ly::renderer::RendererAPI* renderAPI);
+    static ly::Ref<ly::renderer::VertexArray> GetPlane();
 
-    static void DrawCube(ly::renderer::RendererAPI* renderAPI);
+    static ly::Ref<ly::renderer::VertexArray> GetCube();
 
-    static void DrawSphere(ly::renderer::RendererAPI* renderAPI);
+    static ly::Ref<ly::renderer::VertexArray> GetSphere();
 
-    static void DrawCylinder(ly::renderer::RendererAPI* renderAPI);
+    static ly::Ref<ly::renderer::VertexArray> GetCylinder();
 
     /**
      * @brief This is an OpenGL only function
      */
-    static void DrawTeapot(ly::renderer::RendererAPI* renderAPI);
+    static ly::Ref<ly::renderer::VertexArray> GetTeapot();
 
     static Geometry* s_Geometry;
 };

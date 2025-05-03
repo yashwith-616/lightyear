@@ -4,7 +4,7 @@
 
 namespace ly::renderer {
 
-class OrthographicCamera : public Camera {
+class LIGHTYEAR_API OrthographicCamera : public Camera {
 public:
     OrthographicCamera(float left, float right, float bottom, float top);
 

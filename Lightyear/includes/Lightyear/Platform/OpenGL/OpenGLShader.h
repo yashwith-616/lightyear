@@ -12,6 +12,70 @@ public:
 
     virtual void Use() const override;
 
+    template <typename T>
+        requires(!std::is_arithmetic_v<T>)
+    void SetUniform(std::string_view name, const T& value) const {
+        static_assert(sizeof(T) == 0,
+                      "Unsupported uniform type! Specialize setUniform<T> for this type");
+    }
+
+    // Specialization for int
+    template <std::integral T>
+    inline void SetUniform(std::string_view name, const T value) const {
+        glUniform1i(glGetUniformLocation(m_ShaderHandle, name.data()), static_cast<int>(value));
+    }
+
+    // Specialization for float
+    template <std::floating_point T>
+    inline void SetUniform(std::string_view name, const T value) const {
+        glUniform1f(glGetUniformLocation(m_ShaderHandle, name.data()), static_cast<float>(value));
+    }
+
+    // Specialization for bool
+    template <std::same_as<bool> T>
+    inline void SetUniform(std::string_view name, const T value) const {
+        glUniform1i(glGetUniformLocation(m_ShaderHandle, name.data()), static_cast<bool>(value));
+    }
+
+    // Specialization for glm::vec2
+    template <>
+    inline void SetUniform<glm::vec2>(std::string_view name, const glm::vec2& value) const {
+        glUniform2fv(glGetUniformLocation(m_ShaderHandle, name.data()), 1, &value[0]);
+    }
+
+    // Specialization for glm::vec3
+    template <>
+    inline void SetUniform<glm::vec3>(std::string_view name, const glm::vec3& value) const {
+        glUniform3fv(glGetUniformLocation(m_ShaderHandle, name.data()), 1, &value[0]);
+    }
+
+    // Specialization for glm::vec4
+    template <>
+    inline void SetUniform<glm::vec4>(std::string_view name, const glm::vec4& value) const {
+        glUniform4fv(glGetUniformLocation(m_ShaderHandle, name.data()), 1, &value[0]);
+    }
+
+    // Specialization for glm::mat2
+    template <>
+    inline void SetUniform<glm::mat2>(std::string_view name, const glm::mat2& value) const {
+        glUniformMatrix2fv(
+            glGetUniformLocation(m_ShaderHandle, name.data()), 1, GL_FALSE, &value[0][0]);
+    }
+
+    // Specialization for glm::mat3
+    template <>
+    inline void SetUniform<glm::mat3>(std::string_view name, const glm::mat3& value) const {
+        glUniformMatrix3fv(
+            glGetUniformLocation(m_ShaderHandle, name.data()), 1, GL_FALSE, &value[0][0]);
+    }
+
+    // Specialization for glm::mat4
+    template <>
+    inline void SetUniform<glm::mat4>(std::string_view name, const glm::mat4& value) const {
+        glUniformMatrix4fv(
+            glGetUniformLocation(m_ShaderHandle, name.data()), 1, GL_FALSE, &value[0][0]);
+    }
+
 private:
     ShaderHandle m_ShaderHandle;
 

@@ -10,7 +10,7 @@ public:
     virtual ~Shader()        = default;
     virtual void Use() const = 0;
 
-    static Shader* Create(std::string_view vertexPath, std::string_view fragmentPath);
+    static ly::Ref<Shader> Create(std::string_view vertexPath, std::string_view fragmentPath);
 
 protected:
     /**

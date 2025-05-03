@@ -1,10 +1,13 @@
 #pragma once
 
+#include "Lightyear/LightyearCore.h"
 #include "RendererAPI.h"
 #include "glm/glm.hpp"
 
 namespace ly::renderer {
 
+class Camera;
+class Shader;
 class VertexArray;
 
 class LIGHTYEAR_API Renderer {
@@ -14,10 +17,12 @@ public:
 
     static void OnWindowResize(uint32_t width, uint32_t height);
 
-    static void BeginScene();
+    static void BeginScene(const Ref<Camera>& camera);
     static void EndScene();
 
-    static void Submit(const std::shared_ptr<VertexArray>& vertexArray);
+    static void Submit(const Ref<Shader>& shader,
+                       const Ref<VertexArray>& vertexArray,
+                       const glm::mat4& transform);
 
     static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
 

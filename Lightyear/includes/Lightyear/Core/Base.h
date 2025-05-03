@@ -1,6 +1,8 @@
 #pragma once
 
+#include <glm/glm.hpp>
 #include <memory>
+#include "spdlog/fmt/fmt.h"
 
 constexpr uint8_t BIT(uint8_t x) {
     return 1 << x;
@@ -15,7 +17,59 @@ namespace ly {
 template <typename T>
 using Scope = std::unique_ptr<T>;
 
+template <typename T, typename... Args>
+constexpr std::unique_ptr<T> MakeScope(Args&&... args) {
+    return std::make_unique<T>(std::forward<Args>(args)...);
+}
+
 template <typename T>
 using Ref = std::shared_ptr<T>;
 
+template <typename T, typename... Args>
+constexpr std::shared_ptr<T> MakeRef(Args&&... args) {
+    return std::make_shared<T>(std::forward<Args>(args)...);
+}
+
 }  // namespace ly
+
+namespace fmt {
+
+template <>
+struct formatter<glm::vec4> {
+    constexpr auto parse(format_parse_context& ctx) { return ctx.begin(); }
+
+    template <typename FormatContext>
+    auto format(const glm::vec4& v, FormatContext& ctx) const {
+        return format_to(ctx.out(), "vec4({}, {}, {}, {})", v.x, v.y, v.z, v.w);
+    }
+};
+
+template <>
+struct formatter<glm::mat4> {
+    constexpr auto parse(format_parse_context& ctx) { return ctx.begin(); }
+
+    template <typename FormatContext>
+    auto format(const glm::mat4& m, FormatContext& ctx) const {
+        return format_to(
+            ctx.out(),
+            "mat4([\n  {}, {}, {}, {}\n  {}, {}, {}, {}\n  {}, {}, {}, {}\n  {}, {}, {}, {}\n])",
+            m[0][0],
+            m[0][1],
+            m[0][2],
+            m[0][3],
+            m[1][0],
+            m[1][1],
+            m[1][2],
+            m[1][3],
+            m[2][0],
+            m[2][1],
+            m[2][2],
+            m[2][3],
+            m[3][0],
+            m[3][1],
+            m[3][2],
+            m[3][3]);
+    }
+};
+
+}  // namespace fmt

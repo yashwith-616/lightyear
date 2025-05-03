@@ -20,12 +20,18 @@ Application::Application() {
 Application::~Application() {}
 
 void Application::Run() {
+    m_LastFrameTime = m_Window->GetTime();
+
     while (m_Running) {
+        float currentTime = m_Window->GetTime();
+        m_Frametime       = currentTime - m_LastFrameTime;
+        m_LastFrameTime   = currentTime;
+
         glClearColor(0, 0, 0, 0.7);
         glClear(GL_COLOR_BUFFER_BIT);
 
         for (Layer* layer : m_LayerStack) {
-            layer->OnUpdate();
+            layer->OnUpdate(m_Frametime);
         }
 
         m_Window->OnUpdate();
@@ -33,7 +39,6 @@ void Application::Run() {
 }
 
 void Application::OnEvent(Event& event) {
-    // LY_CORE_INFO("OnEvent: {}", event);
     EventDispatcher dispatcher(event);
     dispatcher.Dispatch<WindowCloseEvent>(
         [this](WindowCloseEvent& event) { return OnWindowClose(event); });

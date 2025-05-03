@@ -3,11 +3,10 @@
 #include <lypch.h>
 #include <glm/glm.hpp>
 #include "Lightyear/LightyearCore.h"
+#include "Lightyear/Renderer/Abstract/RendererAPI.h"
+#include "Lightyear/Renderer/Primitives/VertexArray.h"
 
 namespace ly::renderer {
-
-class RendererAPI;
-class VertexArray;
 
 /**
  * @brief This is a static class which is utilized by the renderer to issue draw calls to the GPU.
@@ -18,14 +17,20 @@ class VertexArray;
  */
 class LIGHTYEAR_API RenderCommand {
 public:
-    inline static void SetClearColor(const glm::vec4& color);
+    inline static void Init() { s_RendererAPI->Init(); }
 
-    inline static void Clear();
+    inline static void SetClearColor(const glm::vec4& color) {
+        s_RendererAPI->SetClearColor(color);
+    }
 
-    inline static void DrawIndexed(const std::shared_ptr<VertexArray>& vertexArray);
+    inline static void Clear() { s_RendererAPI->Clear(); }
+
+    inline static void DrawIndexed(const Ref<VertexArray>& vertexArray) {
+        s_RendererAPI->DrawIndexed(vertexArray);
+    }
 
 private:
-    static RendererAPI* s_RendererAPI;
+    static Scope<RendererAPI> s_RendererAPI;
 };
 
 }  // namespace ly::renderer

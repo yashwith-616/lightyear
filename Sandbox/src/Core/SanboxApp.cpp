@@ -3,7 +3,6 @@
 #include "Sandbox/Layers/ExampleLayer.h"
 
 SandboxApp::SandboxApp() {
-    PushLayer(new ly::ImGuiLayer());
     PushLayer(new ExampleLayer());
 }
 

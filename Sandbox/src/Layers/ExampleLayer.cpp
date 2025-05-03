@@ -1,28 +1,76 @@
 #include "Sandbox/Layers/ExampleLayer.h"
+#include "Sandbox/Core/Camera/EditorCamera.h"
 #include "Sandbox/Geometry/Geometry.h"
 #include "glm/glm.hpp"
 
 namespace renderer = ly::renderer;
 
 ExampleLayer::ExampleLayer() : Layer("Example") {
-    m_RenderAPI = renderer::RendererAPI::Create();
-    m_Shader    = renderer::Shader::Create(ASSET_DIR "/Shaders/Vertex/default2.vert",
-                                        ASSET_DIR "/Shaders/Fragment/default2.frag");
+    m_Shader  = renderer::Shader::Create(ASSET_DIR "/Shaders/Vertex/default.vert",
+                                        ASSET_DIR "/Shaders/Fragment/default.frag");
+    m_Shader2 = renderer::Shader::Create(ASSET_DIR "/Shaders/Vertex/default2.vert",
+                                         ASSET_DIR "/Shaders/Fragment/default2.frag");
 
-    m_Shader2 = renderer::Shader::Create(ASSET_DIR "/Shaders/Vertex/default.vert",
-                                         ASSET_DIR "/Shaders/Fragment/default.frag");
+    float aspect = 1280.f / 720.f;
+    m_Camera     = ly::MakeRef<EditorCamera>(-aspect, aspect, -1.f, 1.f);
 }
 
-void ExampleLayer::OnUpdate() {
-    m_RenderAPI->Init();
-    m_RenderAPI->SetClearColor(glm::vec4(0.f, 0.f, 0.f, 0.3f));
-    m_RenderAPI->Clear();
+void ExampleLayer::OnUpdate(float deltaTime) {
+    PollInput(deltaTime);
 
-    m_Shader->Use();
-    Geometry::DrawPlane(m_RenderAPI);
+    renderer::RenderCommand::SetClearColor(glm::vec4(0.f, 0.f, 0.f, 0.5f));
+    renderer::RenderCommand::Clear();
 
-    m_Shader2->Use();
-    Geometry::DrawCube(m_RenderAPI);
+    renderer::Renderer::BeginScene(m_Camera);
+
+    renderer::Renderer::Submit(m_Shader, Geometry::GetCube(), glm::mat4(1.f));
+    renderer::Renderer::Submit(m_Shader2, Geometry::GetPlane(), glm::mat4(1.f));
+
+    renderer::Renderer::EndScene();
 }
 
 void ExampleLayer::OnEvent(ly::Event& event) {}
+
+/**
+ * @brief Move the camera based on the following action
+ * @param deltaTime the deltaTime
+ */
+void ExampleLayer::PollInput(float deltaTime) {
+    if (ly::Input::IsKeyPressed(ly::Key::Q)) {
+        m_Camera->DebugCamera();
+        m_Camera->MoveUp(deltaTime * m_Camera->GetSpeed());
+    }
+
+    if (ly::Input::IsKeyPressed(ly::Key::E)) {
+        m_Camera->DebugCamera();
+        m_Camera->MoveUp(deltaTime * m_Camera->GetSpeed() * -1.f);
+    }
+
+    if (ly::Input::IsKeyPressed(ly::Key::D)) {
+        m_Camera->DebugCamera();
+        m_Camera->MoveRight(deltaTime * m_Camera->GetSpeed());
+    }
+
+    if (ly::Input::IsKeyPressed(ly::Key::A)) {
+        m_Camera->DebugCamera();
+        m_Camera->MoveRight(deltaTime * m_Camera->GetSpeed() * -1.f);
+    }
+
+    if (ly::Input::IsKeyPressed(ly::Key::W)) {
+        m_Camera->DebugCamera();
+        m_Camera->MoveForward(deltaTime * m_Camera->GetSpeed());
+    }
+
+    if (ly::Input::IsKeyPressed(ly::Key::S)) {
+        m_Camera->DebugCamera();
+        m_Camera->MoveForward(deltaTime * m_Camera->GetSpeed() * -1.f);
+    }
+
+    if (ly::Input::IsKeyPressed(ly::Key::J)) {
+        m_Camera->SetSpeed(m_Camera->GetSpeed() + 50000);
+    }
+
+    if (ly::Input::IsKeyPressed(ly::Key::K)) {
+        m_Camera->SetSpeed(m_Camera->GetSpeed() - 50000);
+    }
+}

@@ -13,6 +13,6 @@ void Layer::OnDetach() {}
 
 void Layer::OnEvent(Event& event) {}
 
-void Layer::OnUpdate() {}
+void Layer::OnUpdate(float deltaTime) {}
 
 }  // namespace ly

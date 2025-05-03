@@ -49,16 +49,22 @@ Geometry::Geometry() {
     s_Geometry = this;
 }
 
-void Geometry::DrawPlane(ly::renderer::RendererAPI* renderAPI) {
-    renderAPI->DrawIndexed(ly::Ref<ly::renderer::VertexArray>(GetGeomtry()->m_PlaneVertexArray));
+ly::Ref<ly::renderer::VertexArray> Geometry::GetPlane() {
+    return GetGeomtry()->m_PlaneVertexArray;
 }
 
-void Geometry::DrawCube(ly::renderer::RendererAPI* renderAPI) {
-    renderAPI->DrawIndexed(ly::Ref<ly::renderer::VertexArray>(GetGeomtry()->m_CubeVertexArray));
+ly::Ref<ly::renderer::VertexArray> Geometry::GetCube() {
+    return GetGeomtry()->m_CubeVertexArray;
 }
 
-void Geometry::DrawSphere(ly::renderer::RendererAPI* renderAPI) {}
+ly::Ref<ly::renderer::VertexArray> Geometry::GetCylinder() {
+    return GetGeomtry()->m_CylinderVertexArray;
+}
 
-void Geometry::DrawCylinder(ly::renderer::RendererAPI* renderAPI) {}
+ly::Ref<ly::renderer::VertexArray> Geometry::GetSphere() {
+    return GetGeomtry()->m_SphereVertexArray;
+}
 
-void Geometry::DrawTeapot(ly::renderer::RendererAPI* renderAPI) {}
+ly::Ref<ly::renderer::VertexArray> Geometry::GetTeapot() {
+    return GetGeomtry()->m_TeapotVertexArray;
+}

@@ -25,6 +25,8 @@ public:
         m_Data.EventCallback = callback;
     }
 
+    virtual float GetTime() const override;
+
 protected:
     /**
      * @brief Initializes GLFW window with the given properties such as context, title, width,
