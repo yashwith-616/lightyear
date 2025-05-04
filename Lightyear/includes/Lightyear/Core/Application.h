@@ -2,14 +2,13 @@
 
 #include <lypch.h>
 #include "Lightyear/Core/LayerStack.h"
+#include "Lightyear/Core/Window.h"
 #include "Lightyear/LightyearCore.h"
 
 namespace ly {
 
-class Layer;
 class Event;
 class WindowCloseEvent;
-class Window;
 
 class LIGHTYEAR_API Application {
 public:
@@ -19,13 +18,14 @@ public:
     virtual void Run();
     virtual void OnEvent(Event& event);
 
-    virtual void PushLayer(Layer* layer);
-    virtual void PushOverlay(Layer* layer);
+    virtual void PushLayer(Scope<Layer> layer);
+    virtual void PushOverlay(Scope<Layer> overlay);
 
     inline static Application& Get() {
         LY_CORE_ASSERT(s_Application, "Application is not initiated");
-        return *s_Application; 
+        return *s_Application;
     }
+
     inline static void SetApplication(Scope<Application> application) {
         s_Application = std::move(application);
     }

@@ -1,16 +1,18 @@
 #pragma once
 
 #include <lypch.h>
+#include "Lightyear/Core/Layer.h"
 #include "Lightyear/LightyearCore.h"
 
 namespace ly {
-
-class Layer;
 
 class LIGHTYEAR_API LayerStack {
 public:
     LayerStack();
     ~LayerStack() = default;
+
+    LayerStack(const LayerStack&)            = delete;
+    LayerStack& operator=(const LayerStack&) = delete;
 
     void PushLayer(Scope<Layer> layer);
     void PushOverlay(Scope<Layer> overlay);

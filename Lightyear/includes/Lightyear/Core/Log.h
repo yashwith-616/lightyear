@@ -13,13 +13,13 @@ class LIGHTYEAR_API Log {
 public:
     static void Init();
 
-    inline static Ref<spdlog::logger>& GetCoreLogger() { return s_CoreLogger; }
-    inline static Ref<spdlog::logger>& GetClientLogger() { return s_ClientLogger; }
+    inline static std::shared_ptr<spdlog::logger>& GetCoreLogger() { return s_CoreLogger; }
+    inline static std::shared_ptr<spdlog::logger>& GetClientLogger() { return s_ClientLogger; }
 
     // Template specialization for compile-time format strings (fmt::format_string)
     template <typename... Args>
     static void LogMessage(LogType type,
-                           Ref<spdlog::logger> logger,
+                           std::shared_ptr<spdlog::logger> logger,
                            fmt::format_string<Args...> fmt,
                            Args&&... args) {
         switch (type) {
@@ -42,8 +42,8 @@ public:
     }
 
 private:
-    static Ref<spdlog::logger> s_CoreLogger;
-    static Ref<spdlog::logger> s_ClientLogger;
+    static std::shared_ptr<spdlog::logger> s_CoreLogger;
+    static std::shared_ptr<spdlog::logger> s_ClientLogger;
 };
 }  // namespace ly
 

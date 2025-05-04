@@ -37,7 +37,7 @@ CText Shader::ReadFile(CPath shaderFilePath) {
     std::ifstream file(shaderFilePath, std::ios::binary | std::ios::ate);
     if (!file) {
         throw std::runtime_error(
-            std::format("ERROR::SHADER::FILE_NOT_SUCCESSFULLY_READ: {}", shaderFilePath));
+            std::format("ERROR::SHADER::FILE_NOT_SUCCESSFULLY_READ: {}", shaderFilePath.string()));
     }
 
     // Get size of file by reading the current position of the file pointer(at the end)

@@ -1,5 +1,4 @@
 #include "Lightyear/Core/LayerStack.h"
-#include "Lightyear/Core/Layer.h"
 
 namespace ly {
 
@@ -8,11 +7,11 @@ LayerStack::LayerStack() {
 }
 
 void LayerStack::PushLayer(Scope<Layer> layer) {
-    m_LayerInsert = m_Layers.emplace(m_LayerInsert, layer);
+    m_LayerInsert = m_Layers.emplace(m_LayerInsert, std::move(layer));
 }
 
 void LayerStack::PushOverlay(Scope<Layer> overlay) {
-    m_Layers.emplace_back(overlay);
+    m_Layers.emplace_back(std::move(overlay));
 }
 
 void LayerStack::PopLayer(Layer* layer) {

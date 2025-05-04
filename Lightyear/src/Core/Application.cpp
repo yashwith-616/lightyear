@@ -3,7 +3,6 @@
 #include "Lightyear/Core/LayerStack.h"
 #include "Lightyear/Core/Log.h"
 #include "Lightyear/Core/Timestep.h"
-#include "Lightyear/Core/Window.h"
 #include "Lightyear/Events/ApplicationEvent.h"
 #include "Lightyear/Events/Event.h"
 
@@ -50,14 +49,14 @@ bool Application::OnWindowClose(WindowCloseEvent& event) {
     return true;
 }
 
-void Application::PushLayer(Layer* layer) {
-    m_LayerStack.PushLayer(layer);
+void Application::PushLayer(Scope<Layer> layer) {
     layer->OnAttach();
+    m_LayerStack.PushLayer(std::move(layer));
 }
 
-void Application::PushOverlay(Layer* layer) {
-    m_LayerStack.PushOverlay(layer);
-    layer->OnAttach();
+void Application::PushOverlay(Scope<Layer> overlay) {
+    overlay->OnAttach();
+    m_LayerStack.PushOverlay(std::move(overlay));
 }
 
 }  // namespace ly

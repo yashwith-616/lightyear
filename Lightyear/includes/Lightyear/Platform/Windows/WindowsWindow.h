@@ -1,3 +1,5 @@
+#pragma once
+
 #include "Lightyear/Core/Window.h"
 #include "Lightyear/LightyearCore.h"
 
@@ -20,7 +22,7 @@ public:
     // Window Attributes
     virtual void SetVSync(bool isEnabled) override;
     virtual bool IsVSync() const override;
-    virtual void* GetNativeWindow() const override { return static_cast<void*>(m_Window.get()); }
+    virtual void* GetNativeWindow() const override { return static_cast<void*>(m_Window); }
     inline void SetEventCallback(const EventCallbackFn& callback) override {
         m_Data.EventCallback = callback;
     }
@@ -53,7 +55,7 @@ protected:
     virtual void SetupWindowCallbacks();
 
 private:
-    Scope<GLFWwindow> m_Window;
+    GLFWwindow* m_Window;
     Scope<RendererContext> m_Context;
 
     /**
