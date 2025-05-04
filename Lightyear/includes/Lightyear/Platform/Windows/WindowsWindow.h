@@ -14,13 +14,13 @@ public:
 
     virtual void OnUpdate() override;
 
-    inline unsigned int GetWidth() const override { return m_Data.Width; }
-    inline unsigned int GetHeight() const override { return m_Data.Height; }
+    inline uint32_t GetWidth() const override { return m_Data.Width; }
+    inline uint32_t GetHeight() const override { return m_Data.Height; }
 
     // Window Attributes
     virtual void SetVSync(bool isEnabled) override;
     virtual bool IsVSync() const override;
-    virtual void* GetNativeWindow() const override { return static_cast<void*>(m_Window); }
+    virtual void* GetNativeWindow() const override { return static_cast<void*>(m_Window.get()); }
     inline void SetEventCallback(const EventCallbackFn& callback) override {
         m_Data.EventCallback = callback;
     }
@@ -53,8 +53,8 @@ protected:
     virtual void SetupWindowCallbacks();
 
 private:
-    GLFWwindow* m_Window;
-    RendererContext* m_Context;
+    Scope<GLFWwindow> m_Window;
+    Scope<RendererContext> m_Context;
 
     /**
      * @brief Holds data related to a GLFW window.
@@ -63,9 +63,9 @@ private:
      * It is used within GLFW callbacks to access and update window data, and to dispatch events.
      */
     struct WindowsData {
-        std::string Title{ "Demo" };
-        unsigned int Height{ 0 };
-        unsigned int Width{ 0 };
+        CLabel Title{ "Demo" };
+        uint32_t Height{ 0 };
+        uint32_t Width{ 0 };
         bool VSync{ true };
 
         EventCallbackFn EventCallback;

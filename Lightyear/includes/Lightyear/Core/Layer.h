@@ -9,7 +9,7 @@ class Event;
 
 class LIGHTYEAR_API Layer {
 public:
-    Layer(const std::string& name = "Layer");
+    Layer(const CName& name = "Layer");
     virtual ~Layer();
 
     virtual void OnAttach();
@@ -17,10 +17,10 @@ public:
     virtual void OnUpdate(float deltaTime);
     virtual void OnEvent(Event& event);
 
-    inline const std::string& GetName() const { return m_DebugName; }
+    inline const CName& GetName() const { return m_DebugName; }
 
 protected:
-    std::string m_DebugName;
+    CName m_DebugName;
 };
 
 }  // namespace ly

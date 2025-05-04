@@ -4,6 +4,18 @@
 
 namespace ly::renderer {
 
+enum class ShaderType : uint8_t {
+    None = 0,
+    Vertex,
+    Fragment,
+    Geometry,
+    Compute,
+    TessControl,
+    TessEvaluation,
+    Pixel,
+    Max
+};
+
 enum class ShaderDataType : uint8_t {
     None = 0,
 
@@ -23,15 +35,6 @@ enum class ShaderDataType : uint8_t {
     Bool
 };
 
-enum class ShaderType : uint8_t {
-    None = 0,
-
-    Vertex,
-    Fragment,
-    Geometry,
-    Compute
-};
-
 enum class VertexAttributeType : uint8_t { None = 0, Position, Normal, TexCoord };
 
 using TextureHandle      = uint32_t;
@@ -48,5 +51,7 @@ using PipelineHandle      = uint32_t;
 using MaterialHandle      = uint32_t;
 using SamplerHandle       = uint32_t;
 using ComputeShaderHandle = uint32_t;
+
+constexpr size_t ShaderTypeCount = static_cast<size_t>(ShaderType::Max);
 
 }  // namespace ly::renderer

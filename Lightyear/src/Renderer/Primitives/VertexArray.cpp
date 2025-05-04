@@ -5,13 +5,13 @@
 
 namespace ly::renderer {
 
-VertexArray* VertexArray::Create() {
+Ref<VertexArray> VertexArray::Create() {
     switch (Renderer::GetAPI()) {
         case RendererAPI::API::None:
             LY_CORE_ASSERT(false, "RendererAPI::None is currently not supported!");
             return nullptr;
         case RendererAPI::API::OpenGL:
-            return new OpenGLVertexArray();
+            return MakeRef<OpenGLVertexArray>();
     }
 
     LY_CORE_ASSERT(false, "Invalid RendererAPI!");

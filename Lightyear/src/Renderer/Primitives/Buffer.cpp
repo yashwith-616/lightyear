@@ -19,39 +19,39 @@ void BufferLayout::CalculateOffsetsAndStride() {
     }
 }
 
-VertexBuffer* VertexBuffer::Create(uint32_t size) {
+Ref<VertexBuffer> VertexBuffer::Create(uint32_t size) {
     switch (Renderer::GetAPI()) {
         case RendererAPI::API::None:
             LY_CORE_ASSERT(false, "Renderer::API::None is currently not supported");
             return nullptr;
         case RendererAPI::API::OpenGL:
-            return new OpenGLVertexBuffer(size);
+            return MakeRef<OpenGLVertexBuffer>(size);
     }
 
     LY_CORE_ASSERT(false, "Unknown Renderer API!");
     return nullptr;
 }
 
-VertexBuffer* VertexBuffer::Create(float* vertices, uint32_t size) {
+Ref<VertexBuffer> VertexBuffer::Create(float* vertices, uint32_t size) {
     switch (Renderer::GetAPI()) {
         case RendererAPI::API::None:
             LY_CORE_ASSERT(false, "Renderer::API::None is currently not supported");
             return nullptr;
         case RendererAPI::API::OpenGL:
-            return new OpenGLVertexBuffer(vertices, size);
+            return MakeRef<OpenGLVertexBuffer>(vertices, size);
     }
 
     LY_CORE_ASSERT(false, "Unknown Renderer API!");
     return nullptr;
 }
 
-IndexBuffer* IndexBuffer::Create(uint32_t* indices, uint32_t size) {
+Ref<IndexBuffer> IndexBuffer::Create(uint32_t* indices, uint32_t size) {
     switch (Renderer::GetAPI()) {
         case RendererAPI::API::None:
             LY_CORE_ASSERT(false, "Renderer::API::None is currently not supported");
             return nullptr;
         case RendererAPI::API::OpenGL:
-            return new OpenGLIndexBuffer(indices, size);
+            return MakeRef<OpenGLIndexBuffer>(indices, size);
     }
 
     LY_CORE_ASSERT(false, "Unknown Renderer API!");

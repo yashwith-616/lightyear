@@ -50,7 +50,7 @@ void OpenGLVertexArray::Unbind() const {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void OpenGLVertexArray::AddVertexBuffer(const std::shared_ptr<VertexBuffer>& vertexBuffer) {
+void OpenGLVertexArray::AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer) {
     LY_CORE_ASSERT(vertexBuffer.GetLayout().GetElements().size(), "Vertex Buffer has no layout");
 
     Bind();
@@ -106,10 +106,10 @@ void OpenGLVertexArray::AddVertexBuffer(const std::shared_ptr<VertexBuffer>& ver
     m_Vertexbuffers.push_back(vertexBuffer);
 }
 
-void OpenGLVertexArray::SetIndexBuffer(const IndexBuffer* indexBuffer) {
+void OpenGLVertexArray::SetIndexBuffer(const Ref<IndexBuffer>& indexBuffer) {
     glBindVertexArray(m_RenderID);
     indexBuffer->Bind();
-    m_IndexBuffer = const_cast<IndexBuffer*>(indexBuffer);
+    m_IndexBuffer = indexBuffer;
 }
 
 }  // namespace ly::renderer

@@ -44,7 +44,7 @@ enum EventCategory {
     virtual EventType GetEventType() const override {                                              \
         return GetStaticType();                                                                    \
     }                                                                                              \
-    virtual std::string_view GetName() const override {                                            \
+    virtual CName GetName() const override {                                                       \
         return #type;                                                                              \
     }
 
@@ -63,10 +63,10 @@ public:
     virtual ~Event() = default;
     bool bIsHandled{ false };
 
-    virtual EventType GetEventType() const   = 0;
-    virtual std::string_view GetName() const = 0;
-    virtual int GetCategoryFlags() const     = 0;
-    virtual std::string ToString() const { return static_cast<std::string>(GetName()); }
+    virtual EventType GetEventType() const = 0;
+    virtual CName GetName() const          = 0;
+    virtual int GetCategoryFlags() const   = 0;
+    virtual CText ToString() const { return static_cast<CText>(GetName()); }
 
     inline bool IsInCategory(EventCategory category) const noexcept {
         return GetCategoryFlags() & category;

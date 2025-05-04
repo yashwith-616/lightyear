@@ -1,29 +1,43 @@
 #include "Lightyear/Renderer/Primitives/Shader.h"
-#include <glad.h>
 #include "Lightyear/Platform/OpenGL/OpenGLShader.h"
 #include "Lightyear/Renderer/Abstract/Renderer.h"
 
+#include <glad.h>
+
 namespace ly::renderer {
 
-ly::Ref<Shader> Shader::Create(std::string_view vertexPath, std::string_view fragmentPath) {
+ly::Ref<Shader> Shader::Create(CName name, std::unordered_map<ShaderType, CPath> shaderFiles) {
     switch (Renderer::GetAPI()) {
         case RendererAPI::API::None:
             LY_CORE_ASSERT(false, "RendererAPI::None is currently not supported!");
             return nullptr;
         case RendererAPI::API::OpenGL:
-            return MakeRef<OpenGLShader>(vertexPath, fragmentPath);
+            return MakeRef<OpenGLShader>(name, shaderFiles);
     }
 
     LY_CORE_ASSERT(false, "Invalid RendererAPI!");
     return nullptr;
 }
 
-std::string Shader::ReadFile(std::string_view shaderFilePath) {
+static ly::Ref<Shader> Create(CName name, std::unordered_map<ShaderType, CText> shaderSrcs) {
+    switch (Renderer::GetAPI()) {
+        case RendererAPI::API::None:
+            LY_CORE_ASSERT(false, "RendererAPI::None is currently not supported!");
+            return nullptr;
+        case RendererAPI::API::OpenGL:
+            return MakeRef<OpenGLShader>(name, shaderSrcs);
+    }
+
+    LY_CORE_ASSERT(false, "Invalid RendererAPI!");
+    return nullptr;
+}
+
+CText Shader::ReadFile(CPath shaderFilePath) {
     // Open file in binary, and point the pointer to end of file.
-    std::ifstream file(shaderFilePath.data(), std::ios::binary | std::ios::ate);
+    std::ifstream file(shaderFilePath, std::ios::binary | std::ios::ate);
     if (!file) {
-        throw std::runtime_error(std::format("ERROR::SHADER::FILE_NOT_SUCCESSFULLY_READ: {}",
-                                             std::string(shaderFilePath)));
+        throw std::runtime_error(
+            std::format("ERROR::SHADER::FILE_NOT_SUCCESSFULLY_READ: {}", shaderFilePath));
     }
 
     // Get size of file by reading the current position of the file pointer(at the end)
