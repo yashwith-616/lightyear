@@ -1,9 +1,10 @@
 #include "LightYear/Platform/Windows/WindowsWindow.h"
-#include <GLFW/glfw3.h>
 #include "Lightyear/Events/ApplicationEvent.h"
 #include "Lightyear/Events/KeyEvent.h"
 #include "Lightyear/Events/MouseEvent.h"
 #include "Lightyear/Platform/OpenGL/OpenGLContext.h"
+
+#include <GLFW/glfw3.h>
 
 namespace ly {
 
@@ -13,8 +14,8 @@ static void GLFWErrorCallback(int error, const char* description) {
     LY_CORE_LOG(LogType::Error, "GLFW Error ({0}): {1}", error, description);
 }
 
-Window* Window::Create(const WindowProps& props) {
-    return new WindowsWindow(props);
+Scope<Window> Window::Create(const WindowProps& props) {
+    return MakeScope<WindowsWindow>(props);
 }
 
 WindowsWindow::WindowsWindow(const WindowProps& props) {
@@ -32,7 +33,7 @@ void WindowsWindow::OnUpdate() {
 }
 
 void WindowsWindow::SetVSync(bool isEnabled) {
-    glfwSwapInterval(isEnabled ? 1 : 0);
+    glfwSwapInterval(isEnabled ? GLFW_TRUE : GLFW_FALSE);
     m_Data.VSync = isEnabled;
 }
 
@@ -60,12 +61,11 @@ void WindowsWindow::Init(const WindowProps& props) {
 
     m_Window = glfwCreateWindow(static_cast<int>(props.Width),
                                 static_cast<int>(props.Height),
-                                m_Data.Title.c_str(),
+                                m_Data.Title.data(),
                                 nullptr,
                                 nullptr);
 
-    // TODO: Need to Add OpenGLContext
-    m_Context = new OpenGLContext(m_Window);
+    m_Context = MakeScope<OpenGLContext>(m_Window);
     m_Context->Init();
 
     glfwSetWindowUserPointer(m_Window, &m_Data);

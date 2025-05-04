@@ -10,12 +10,12 @@ static ly::Ref<ly::renderer::VertexArray> Init(float* vertexData,
         ly::renderer::ShaderDataType::Float3, "Positions", false);
     ly::renderer::BufferLayout bufferLayout = { bufferElement };
 
-    auto* vertexBuffer = ly::renderer::VertexBuffer::Create(vertexData, vertexSize);
+    auto vertexBuffer = ly::renderer::VertexBuffer::Create(vertexData, vertexSize);
     vertexBuffer->SetLayout(bufferLayout);
 
-    auto* indexBuffer = ly::renderer::IndexBuffer::Create(indexData, indexSize);
+    auto indexBuffer = ly::renderer::IndexBuffer::Create(indexData, indexSize);
 
-    auto* vertexArray = ly::renderer::VertexArray::Create();
+    auto vertexArray = ly::renderer::VertexArray::Create();
     vertexArray->AddVertexBuffer(ly::Ref<ly::renderer::VertexBuffer>(vertexBuffer));
     vertexArray->SetIndexBuffer(indexBuffer);
 

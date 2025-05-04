@@ -1,37 +1,32 @@
 #include "Lightyear/Core/Application.h"
-#include <glad.h>
 #include "Lightyear/Core/Layer.h"
 #include "Lightyear/Core/LayerStack.h"
 #include "Lightyear/Core/Log.h"
-#include "Lightyear/Core/Window.h"
+#include "Lightyear/Core/Timestep.h"
 #include "Lightyear/Events/ApplicationEvent.h"
 #include "Lightyear/Events/Event.h"
 
+#include <glad.h>
+
 namespace ly {
 
-Application* Application::s_Application = nullptr;
+Scope<Application> Application::s_Application = nullptr;
 
 Application::Application() {
-    m_Window = std::unique_ptr<Window>(Window::Create());
+    m_Window = Window::Create();
     m_Window->SetEventCallback(std::bind(&Application::OnEvent, this, std::placeholders::_1));
-    s_Application = this;
 }
-
-Application::~Application() {}
 
 void Application::Run() {
     m_LastFrameTime = m_Window->GetTime();
 
     while (m_Running) {
         float currentTime = m_Window->GetTime();
-        m_Frametime       = currentTime - m_LastFrameTime;
-        m_LastFrameTime   = currentTime;
+        Timestep timestep(currentTime - m_LastFrameTime);
+        m_LastFrameTime = currentTime;
 
-        glClearColor(0, 0, 0, 0.7);
-        glClear(GL_COLOR_BUFFER_BIT);
-
-        for (Layer* layer : m_LayerStack) {
-            layer->OnUpdate(m_Frametime);
+        for (const Scope<Layer>& layer : m_LayerStack) {
+            layer->OnUpdate(timestep);
         }
 
         m_Window->OnUpdate();
@@ -54,14 +49,14 @@ bool Application::OnWindowClose(WindowCloseEvent& event) {
     return true;
 }
 
-void Application::PushLayer(Layer* layer) {
-    m_LayerStack.PushLayer(layer);
+void Application::PushLayer(Scope<Layer> layer) {
     layer->OnAttach();
+    m_LayerStack.PushLayer(std::move(layer));
 }
 
-void Application::PushOverlay(Layer* layer) {
-    m_LayerStack.PushOverlay(layer);
-    layer->OnAttach();
+void Application::PushOverlay(Scope<Layer> overlay) {
+    overlay->OnAttach();
+    m_LayerStack.PushOverlay(std::move(overlay));
 }
 
 }  // namespace ly

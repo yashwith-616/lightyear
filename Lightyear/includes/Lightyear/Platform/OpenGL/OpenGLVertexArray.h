@@ -13,20 +13,24 @@ public:
     virtual void Bind() const override;
     virtual void Unbind() const override;
 
-    virtual void AddVertexBuffer(const std::shared_ptr<VertexBuffer>& vertexBuffer) override;
-    virtual void SetIndexBuffer(const IndexBuffer* indexBuffer) override;
+    virtual void AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer) override;
+    virtual void SetIndexBuffer(const Ref<IndexBuffer>& indexBuffer) override;
 
-    virtual const std::vector<std::shared_ptr<VertexBuffer>>& GetVertexBuffers() const override {
+    virtual const std::vector<Ref<VertexBuffer>>& GetVertexBuffers() const override {
         return m_Vertexbuffers;
     }
 
-    virtual const IndexBuffer& GetIndexBuffer() const override { return *m_IndexBuffer; }
+    virtual const IndexBuffer& GetIndexBuffer() const override {
+        LY_CORE_ASSERT(m_IndexBuffer, "IndexBuffer is null");
+        return *m_IndexBuffer;
+    }
 
 private:
     VertexArrayHandle m_RenderID;
     uint32_t m_VertexBufferIndex{ 0 };
-    std::vector<std::shared_ptr<VertexBuffer>> m_Vertexbuffers;
-    IndexBuffer* m_IndexBuffer{ nullptr };
+
+    Ref<IndexBuffer> m_IndexBuffer{};
+    std::vector<Ref<VertexBuffer>> m_Vertexbuffers{};
 };
 
 }  // namespace ly::renderer

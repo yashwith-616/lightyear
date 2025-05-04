@@ -2,14 +2,66 @@
 
 namespace ly::renderer {
 
-OpenGLShader::OpenGLShader(std::string_view vertexPath, std::string_view fragmentPath) {
+OpenGLShader::OpenGLShader(CName name, std::unordered_map<ShaderType, CPath> shaderFiles)
+    : m_Name(name) {
     try {
-        std::string vertexCode   = ReadFile(vertexPath);
-        std::string fragmentCode = ReadFile(fragmentPath);
+        std::array<ShaderHandle, ShaderTypeCount> shaderHandles = {};
+        for (const auto& [shaderType, path] : shaderFiles) {
+            CText shaderSrc = ReadFile(path);
+            ShaderHandle shaderHandle =
+                CompileShader(shaderSrc.data(), GetGLShaderType(shaderType));
+            size_t index         = static_cast<size_t>(shaderType);
+            shaderHandles[index] = CompileShader(shaderSrc.data(), GetGLShaderType(shaderType));
+        }
 
-        ShaderHandle vertexShader   = CompileShader(vertexCode.c_str(), GL_VERTEX_SHADER);
-        ShaderHandle fragmentShader = CompileShader(fragmentCode.c_str(), GL_FRAGMENT_SHADER);
-        m_ShaderHandle              = LinkProgram(vertexShader, fragmentShader);
+        m_ShaderHandle = glCreateProgram();
+        for (const ShaderHandle shaderHandle : shaderHandles) {
+            if (shaderHandle != 0) {
+                glAttachShader(m_ShaderHandle, shaderHandle);
+            }
+        }
+
+        glLinkProgram(m_ShaderHandle);
+        CheckCompilerErrors(m_ShaderHandle, GL_PROGRAM);
+
+        for (const ShaderHandle shaderHandle : shaderHandles) {
+            if (shaderHandle != 0) {
+                glDeleteShader(shaderHandle);
+            }
+        }
+
+    } catch (const std::exception& e) {
+        LY_CORE_LOG(LogType::Error, "ERROR::SHADER::FILE_NOT_SUCCESSFULLY_READ: {}", e.what());
+    }
+}
+
+OpenGLShader::OpenGLShader(CName name, std::unordered_map<ShaderType, CText> shaderSrcs)
+    : m_Name(name) {
+    try {
+        std::array<ShaderHandle, ShaderTypeCount> shaderHandles = {};
+        for (const auto& [shaderType, shaderSrc] : shaderSrcs) {
+            ShaderHandle shaderHandle =
+                CompileShader(shaderSrc.data(), GetGLShaderType(shaderType));
+            size_t index         = static_cast<size_t>(shaderType);
+            shaderHandles[index] = CompileShader(shaderSrc.data(), GetGLShaderType(shaderType));
+        }
+
+        m_ShaderHandle = glCreateProgram();
+        for (const ShaderHandle shaderHandle : shaderHandles) {
+            if (shaderHandle != 0) {
+                glAttachShader(m_ShaderHandle, shaderHandle);
+            }
+        }
+
+        glLinkProgram(m_ShaderHandle);
+        CheckCompilerErrors(m_ShaderHandle, GL_PROGRAM);
+
+        for (const ShaderHandle shaderHandle : shaderHandles) {
+            if (shaderHandle != 0) {
+                glDeleteShader(shaderHandle);
+            }
+        }
+
     } catch (const std::exception& e) {
         LY_CORE_LOG(LogType::Error, "ERROR::SHADER::FILE_NOT_SUCCESSFULLY_READ: {}", e.what());
     }
@@ -19,32 +71,23 @@ void OpenGLShader::Use() const {
     glUseProgram(m_ShaderHandle);
 }
 
+void OpenGLShader::UnBind() const {
+    glUseProgram(0);
+}
+
 ShaderHandle OpenGLShader::CompileShader(const char* shaderCode, GLenum shaderType) {
     ShaderHandle shaderHandle = glCreateShader(shaderType);
     glShaderSource(shaderHandle, 1, &shaderCode, nullptr);
     glCompileShader(shaderHandle);
-    CheckCompilerErrors(shaderHandle, shaderType == GL_VERTEX_SHADER ? "VERTEX" : "FRAGMENT");
+    CheckCompilerErrors(shaderHandle, shaderType);
     return shaderHandle;
 }
 
-ShaderHandle OpenGLShader::LinkProgram(ShaderHandle vertexShader, ShaderHandle fragmentShader) {
-    ShaderHandle programHandle = glCreateProgram();
-    glAttachShader(programHandle, vertexShader);
-    glAttachShader(programHandle, fragmentShader);
-    glLinkProgram(programHandle);
-    CheckCompilerErrors(programHandle, "PROGRAM");
-
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
-
-    return programHandle;
-}
-
-void OpenGLShader::CheckCompilerErrors(ShaderHandle shaderHandle, std::string_view type) {
+void OpenGLShader::CheckCompilerErrors(ShaderHandle shaderHandle, GLenum shaderType) {
     GLint success = 0;
     std::array<GLchar, 1024> infoLog{};
 
-    if (type == "PROGRAM") {
+    if (shaderType == GL_PROGRAM) {
         glGetProgramiv(shaderHandle, GL_LINK_STATUS, &success);
         if (success) return;
 
@@ -56,6 +99,26 @@ void OpenGLShader::CheckCompilerErrors(ShaderHandle shaderHandle, std::string_vi
 
         glGetShaderInfoLog(shaderHandle, infoLog.size(), nullptr, infoLog.data());
         LY_CORE_LOG(LogType::Error, "ERROR::SHADER_COMPILATION_ERROR ({})", infoLog.data());
+    }
+}
+
+GLenum OpenGLShader::GetGLShaderType(ShaderType shaderType) const {
+    switch (shaderType) {
+        case ShaderType::Vertex:
+            return GL_VERTEX_SHADER;
+        case ShaderType::Pixel:
+        case ShaderType::Fragment:
+            return GL_FRAGMENT_SHADER;
+        case ShaderType::Compute:
+            return GL_COMPUTE_SHADER;
+        case ShaderType::Geometry:
+            return GL_GEOMETRY_SHADER;
+        case ShaderType::TessControl:
+            return GL_TESS_CONTROL_SHADER;
+        case ShaderType::TessEvaluation:
+            return GL_TESS_EVALUATION_SHADER;
+        default:
+            throw std::invalid_argument("Unsupported ShaderType");
     }
 }
 

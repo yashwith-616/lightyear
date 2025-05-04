@@ -3,7 +3,7 @@
 #include "Sandbox/Layers/ExampleLayer.h"
 
 SandboxApp::SandboxApp() {
-    PushLayer(new ExampleLayer());
+    PushLayer(ly::MakeScope<ExampleLayer>());
 }
 
 SandboxApp::~SandboxApp() {}

@@ -22,7 +22,7 @@ public:
 
     inline int GetRepeatCount() const { return m_RepeatCount; }
 
-    std::string ToString() const override {
+    CText ToString() const override {
         return std::format("KeyPressedEvent: {} ({} repeats)", m_KeyCode, m_RepeatCount);
     }
 
@@ -36,7 +36,7 @@ class LIGHTYEAR_API KeyReleasedEvent : public KeyEvent {
 public:
     KeyReleasedEvent(int keycode) : KeyEvent(keycode) {}
 
-    std::string ToString() const override { return std::format("KeyReleasedEvent: {}", m_KeyCode); }
+    CText ToString() const override { return std::format("KeyReleasedEvent: {}", m_KeyCode); }
 
     EVENT_CLASS_TYPE(KeyReleased)
 };
@@ -45,7 +45,7 @@ class LIGHTYEAR_API KeyTypedEvent : public KeyEvent {
 public:
     KeyTypedEvent(int keycode) : KeyEvent(keycode) {}
 
-    std::string ToString() const override { return std::format("KeyTypedEvent: {}", m_KeyCode); }
+    CText ToString() const override { return std::format("KeyTypedEvent: {}", m_KeyCode); }
 
     EVENT_CLASS_TYPE(KeyTyped)
 };

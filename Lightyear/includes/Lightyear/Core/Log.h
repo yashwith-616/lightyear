@@ -1,9 +1,11 @@
 #pragma once
 
-#include <lypch.h>
 #include <spdlog/fmt/ostr.h>
 #include <spdlog/spdlog.h>
-#include "Lightyear/LightyearCore.h"
+
+#include <lypch.h>
+#include "Base.h"
+#include "Export.h"
 
 namespace ly {
 
@@ -13,13 +15,13 @@ class LIGHTYEAR_API Log {
 public:
     static void Init();
 
-    inline static std::shared_ptr<spdlog::logger>& GetCoreLogger() { return s_CoreLogger; }
-    inline static std::shared_ptr<spdlog::logger>& GetClientLogger() { return s_ClientLogger; }
+    inline static Ref<spdlog::logger>& GetCoreLogger() { return s_CoreLogger; }
+    inline static Ref<spdlog::logger>& GetClientLogger() { return s_ClientLogger; }
 
     // Template specialization for compile-time format strings (fmt::format_string)
     template <typename... Args>
     static void LogMessage(LogType type,
-                           std::shared_ptr<spdlog::logger> logger,
+                           Ref<spdlog::logger> logger,
                            fmt::format_string<Args...> fmt,
                            Args&&... args) {
         switch (type) {
@@ -42,8 +44,8 @@ public:
     }
 
 private:
-    static std::shared_ptr<spdlog::logger> s_CoreLogger;
-    static std::shared_ptr<spdlog::logger> s_ClientLogger;
+    static Ref<spdlog::logger> s_CoreLogger;
+    static Ref<spdlog::logger> s_ClientLogger;
 };
 }  // namespace ly
 

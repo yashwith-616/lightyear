@@ -42,14 +42,14 @@ static uint32_t ShaderDataTypeSize(ShaderDataType type) {
  * which is necessary for correctly interpreting vertex data in GPU shaders
  */
 struct LIGHTYEAR_API BufferElement {
-    std::string_view Name{};
+    CName Name{};
     uint32_t Size{ 0 };
     uint32_t Offset{ 0 };
     ShaderDataType Type{ ShaderDataType::None };
     bool IsNormalized{ true };
 
     BufferElement() = default;
-    BufferElement(ShaderDataType type, std::string_view name, bool isNormalized)
+    BufferElement(ShaderDataType type, CName name, bool isNormalized)
         : Name(name), Type(type), Size(ShaderDataTypeSize(type)), Offset(0),
           IsNormalized(isNormalized) {}
 
@@ -134,8 +134,8 @@ public:
     virtual const BufferLayout& GetLayout() const      = 0;
     virtual void SetLayout(const BufferLayout& layout) = 0;
 
-    static VertexBuffer* Create(uint32_t size);
-    static VertexBuffer* Create(float* vertices, uint32_t size);
+    static Ref<VertexBuffer> Create(uint32_t size);
+    static Ref<VertexBuffer> Create(float* vertices, uint32_t size);
 };
 
 /**
@@ -150,7 +150,7 @@ public:
 
     virtual uint32_t GetCount() const = 0;
 
-    static IndexBuffer* Create(uint32_t* indices, uint32_t size);
+    static Ref<IndexBuffer> Create(uint32_t* indices, uint32_t size);
 };
 
 }  // namespace ly::renderer

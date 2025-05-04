@@ -14,9 +14,7 @@ OpenGLVertexBuffer::OpenGLVertexBuffer(uint32_t size) {
 
 OpenGLVertexBuffer::OpenGLVertexBuffer(float* vertices, uint32_t size) {
     glCreateBuffers(1, &m_RenderID);
-
-    if (m_RenderID <= 0) LY_CORE_ASSERT(false, "VertexBuffer render ID is not initialized");
-
+    LY_CORE_ASSERT(m_RenderID <= 0, "VertexBuffer render ID is not initialized");
     glBindBuffer(GL_ARRAY_BUFFER, m_RenderID);
     glBufferData(GL_ARRAY_BUFFER, size, vertices, GL_STATIC_DRAW);
 }

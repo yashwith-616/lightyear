@@ -6,12 +6,12 @@ namespace ly {
 
 class LIGHTYEAR_API WindowResizeEvent : public Event {
 public:
-    WindowResizeEvent(unsigned int width, unsigned int height) : m_Width(width), m_Height(height) {}
+    WindowResizeEvent(uint32_t width, uint32_t height) : m_Width(width), m_Height(height) {}
 
-    inline unsigned int GetWidth() { return m_Width; }
-    inline unsigned int GetHeight() { return m_Height; }
+    inline uint32_t GetWidth() { return m_Width; }
+    inline uint32_t GetHeight() { return m_Height; }
 
-    std::string ToString() const override {
+    CText ToString() const override {
         return std::format("WindowResizeEvent: {}, {}", m_Width, m_Height);
     }
 
@@ -31,10 +31,4 @@ public:
     EVENT_CLASS_CATEGORY(EC_APPLICATION)
 };
 
-// TODO: The below may not be required
-class LIGHTYEAR_API AppTickEvent : public Event {};
-
-class LIGHTYEAR_API AppUpdatedEvent : public Event {};
-
-class LIGHTYEAR_API AppRenderEvent : public Event {};
 }  // namespace ly
