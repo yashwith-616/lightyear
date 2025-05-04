@@ -34,7 +34,7 @@ file(GLOB_RECURSE HEADERS "${HDRS_DIR}/*.h")
 # Optional Parameters
 #-------------------------------------------------
 option(LY_GRAPHICS_DEBUG "Enable graphic context debugging" ON)
-
+option(LY_ENABLE_DEPRECATION_WARNINGS "Enable deprecations warning" ON)
 
 #-------------------------------------------------
 # Setup Dependencies
@@ -108,6 +108,9 @@ if (LY_GRAPHICS_DEBUG)
 	target_compile_definitions(Lightyear PRIVATE LY_OPENGL_DEBUG)
 endif()
 
+if (LY_ENABLE_DEPRECATION_WARNINGS)
+	target_compile_definitions(Lightyear PUBLIC LY_ENABLE_DEPRECATION_WARNINGS)
+endif()
 
 #-------------------------------------------------
 # Pre-Compiled Headers

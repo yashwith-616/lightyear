@@ -6,13 +6,15 @@
 namespace renderer = ly::renderer;
 
 ExampleLayer::ExampleLayer() : Layer("Example") {
-    std::unordered_map<renderer::ShaderType, ly::CPath> shader1;
-    shader1.emplace(renderer::ShaderType::Vertex, ASSET_DIR "/assets/Shaders/Vertex/default.vert");
-    shader1.emplace(renderer::ShaderType::Fragment,
-                    ASSET_DIR "/assets/Shaders/Fragment/default.frag");
+    std::unordered_map<renderer::ShaderType, ly::CPath> shader1 = {
+        { renderer::ShaderType::Vertex, ASSET_DIR "/Shaders/Vertex/default.vert" },
+        { renderer::ShaderType::Fragment, ASSET_DIR "/Shaders/Fragment/default.frag" }
+    };
 
-    m_Shader = renderer::Shader::Create("default_shader", shader1);
-    // m_Shader2 = renderer::Shader::Create("default_shader2", shader1);
+    std::unordered_map<renderer::ShaderType, ly::CPath> shader2 = {
+        { renderer::ShaderType::Vertex, ASSET_DIR "/Shaders/Vertex/default2.vert" },
+        { renderer::ShaderType::Fragment, ASSET_DIR "/Shaders/Fragment/default2.frag" }
+    };
 
     float aspect = 1280.f / 720.f;
     m_Camera     = ly::MakeRef<EditorCamera>(-aspect, aspect, -1.f, 1.f);
@@ -27,7 +29,7 @@ void ExampleLayer::OnUpdate(float deltaTime) {
     renderer::Renderer::BeginScene(m_Camera);
 
     renderer::Renderer::Submit(m_Shader, Geometry::GetCube(), glm::mat4(1.f));
-    // renderer::Renderer::Submit(m_Shader2, Geometry::GetPlane(), glm::mat4(1.f));
+    renderer::Renderer::Submit(m_Shader2, Geometry::GetPlane(), glm::mat4(1.f));
 
     renderer::Renderer::EndScene();
 }
