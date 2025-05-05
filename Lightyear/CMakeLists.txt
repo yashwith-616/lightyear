@@ -102,6 +102,7 @@ target_compile_definitions(Lightyear
 	LY_BUILD_DLL 
 	LY_PLATFORM_WINDOWS 
 	GLFW_INCLUDE_NONE
+	STB_IMAGE_IMPLEMENTATION
 )
 
 if (LY_GRAPHICS_DEBUG)
@@ -111,6 +112,7 @@ endif()
 if (LY_ENABLE_DEPRECATION_WARNINGS)
 	target_compile_definitions(Lightyear PUBLIC LY_ENABLE_DEPRECATION_WARNINGS)
 endif()
+
 
 #-------------------------------------------------
 # Pre-Compiled Headers

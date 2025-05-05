@@ -17,6 +17,7 @@
     #endif
 #endif
 
+// Deprecated function use warnings
 #ifdef LY_ENABLE_DEPRECATION_WARNINGS
     #ifdef _WIN32
         #if defined(LY_BUILD_STATIC)
@@ -33,4 +34,13 @@
     #endif
 #else
     #define LY_DEPRECATED(msg)
+#endif
+
+// Forceinline functions
+#ifdef _MSC_VER
+    #define FORCEINLINE __forceinline
+#elif defined(__GNUC__) || defined(__clang__)
+    #define FORCEINLINE inline __attribute__((always_inline))
+#else
+    #define FORCEINLINE inline
 #endif

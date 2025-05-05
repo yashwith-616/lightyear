@@ -12,6 +12,7 @@
 #include "Lightyear/Renderer/Primitives/Buffer.h"
 #include "Lightyear/Renderer/Primitives/RenderTypes.h"
 #include "Lightyear/Renderer/Primitives/Shader.h"
+#include "Lightyear/Renderer/Primitives/Texture.h"
 #include "Lightyear/Renderer/Primitives/VertexArray.h"
 
 // Camera

@@ -1,3 +1,10 @@
 .vs
 build
 out
+
+*.hdr
+*.exr
+*.psd
+*.zip
+*.7z
+*.png
