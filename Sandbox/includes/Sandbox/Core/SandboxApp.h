@@ -8,7 +8,7 @@ public:
     using super = ly::Application;
 
     SandboxApp();
-    ~SandboxApp();
+    virtual ~SandboxApp() = default;
 
     virtual void Run() override;
 };

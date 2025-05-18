@@ -4,9 +4,8 @@
 
 SandboxApp::SandboxApp() {
     PushLayer(ly::MakeScope<ExampleLayer>());
+    PushLayer(ly::MakeScope<ly::ImGuiLayer>());
 }
-
-SandboxApp::~SandboxApp() {}
 
 void SandboxApp::Run() {
     super::Run();

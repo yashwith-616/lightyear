@@ -6,7 +6,8 @@
 
 namespace ly::renderer {
 
-ly::Ref<Shader> Shader::Create(CName name, std::unordered_map<ShaderType, CPath> shaderFiles) {
+ly::Ref<Shader> Shader::Create(const CName& name,
+                               const std::unordered_map<ShaderType, CPath>& shaderFiles) {
     switch (Renderer::GetAPI()) {
         case RendererAPI::API::None:
             LY_CORE_ASSERT(false, "RendererAPI::None is currently not supported!");
@@ -19,7 +20,8 @@ ly::Ref<Shader> Shader::Create(CName name, std::unordered_map<ShaderType, CPath>
     return nullptr;
 }
 
-static ly::Ref<Shader> Create(CName name, std::unordered_map<ShaderType, CText> shaderSrcs) {
+static ly::Ref<Shader> Create(const CName& name,
+                              const std::unordered_map<ShaderType, CText>& shaderSrcs) {
     switch (Renderer::GetAPI()) {
         case RendererAPI::API::None:
             LY_CORE_ASSERT(false, "RendererAPI::None is currently not supported!");

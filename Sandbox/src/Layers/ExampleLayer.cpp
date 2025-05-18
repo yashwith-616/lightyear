@@ -5,16 +5,21 @@
 
 namespace renderer = ly::renderer;
 
-ExampleLayer::ExampleLayer() : Layer("Example") {
-    std::unordered_map<renderer::ShaderType, ly::CPath> shader1 = {
-        { renderer::ShaderType::Vertex, ASSET_DIR "/Shaders/Vertex/default.vert" },
-        { renderer::ShaderType::Fragment, ASSET_DIR "/Shaders/Fragment/default.frag" }
-    };
+// Sample Shader 1
+const std::unordered_map<renderer::ShaderType, ly::CPath> g_shader1 = {
+    { renderer::ShaderType::Vertex, ASSET_DIR "/Shaders/Vertex/default.vert" },
+    { renderer::ShaderType::Fragment, ASSET_DIR "/Shaders/Fragment/default.frag" }
+};
 
-    std::unordered_map<renderer::ShaderType, ly::CPath> shader2 = {
-        { renderer::ShaderType::Vertex, ASSET_DIR "/Shaders/Vertex/default2.vert" },
-        { renderer::ShaderType::Fragment, ASSET_DIR "/Shaders/Fragment/default2.frag" }
-    };
+// Sample Shader 2
+const std::unordered_map<renderer::ShaderType, ly::CPath> g_shader2 = {
+    { renderer::ShaderType::Vertex, ASSET_DIR "/Shaders/Vertex/default2.vert" },
+    { renderer::ShaderType::Fragment, ASSET_DIR "/Shaders/Fragment/default2.frag" }
+};
+
+ExampleLayer::ExampleLayer() : Layer("Example") {
+    m_Shader  = ly::renderer::Shader::Create("Shader1", g_shader1);
+    m_Shader2 = ly::renderer::Shader::Create("Shader2", g_shader2);
 
     float aspect = 1280.f / 720.f;
     m_Camera     = ly::MakeRef<EditorCamera>(-aspect, aspect, -1.f, 1.f);

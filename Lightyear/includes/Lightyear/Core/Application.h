@@ -13,7 +13,7 @@ class WindowCloseEvent;
 class LIGHTYEAR_API Application {
 public:
     Application();
-    ~Application() = default;
+    virtual ~Application() { LY_CORE_LOG(LogType::Trace, "Application is Destoryed!"); }
 
     virtual void Run();
     virtual void OnEvent(Event& event);
@@ -25,6 +25,8 @@ public:
         LY_CORE_ASSERT(s_Application, "Application is not initiated");
         return *s_Application;
     }
+
+    inline static void Destroy() { s_Application.reset(); }
 
     inline static void SetApplication(Scope<Application> application) {
         s_Application = std::move(application);

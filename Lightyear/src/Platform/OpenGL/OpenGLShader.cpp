@@ -2,7 +2,8 @@
 
 namespace ly::renderer {
 
-OpenGLShader::OpenGLShader(CName name, std::unordered_map<ShaderType, CPath> shaderFiles)
+OpenGLShader::OpenGLShader(const CName& name,
+                           const std::unordered_map<ShaderType, CPath>& shaderFiles)
     : m_Name(name) {
     try {
         std::array<ShaderHandle, ShaderTypeCount> shaderHandles = {};
@@ -35,7 +36,8 @@ OpenGLShader::OpenGLShader(CName name, std::unordered_map<ShaderType, CPath> sha
     }
 }
 
-OpenGLShader::OpenGLShader(CName name, std::unordered_map<ShaderType, CText> shaderSrcs)
+OpenGLShader::OpenGLShader(const CName& name,
+                           const std::unordered_map<ShaderType, CText>& shaderSrcs)
     : m_Name(name) {
     try {
         std::array<ShaderHandle, ShaderTypeCount> shaderHandles = {};

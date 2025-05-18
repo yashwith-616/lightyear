@@ -6,7 +6,7 @@
 
 struct GLFWwindow;
 
-namespace ly {
+namespace ly::renderer {
 
 class LIGHTYEAR_API OpenGLContext : public RendererContext {
 public:
@@ -19,4 +19,4 @@ private:
     GLFWwindow* m_WindowHandle;
 };
 
-}  // namespace ly
+}  // namespace ly::renderer

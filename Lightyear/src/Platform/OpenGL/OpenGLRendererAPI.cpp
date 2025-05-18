@@ -5,6 +5,7 @@
 
 namespace ly::renderer {
 
+#pragma region OpenGL Debug
 static void OpenGLMessageCallback(unsigned source,
                                   unsigned type,
                                   unsigned id,
@@ -33,7 +34,6 @@ static void OpenGLMessageCallback(unsigned source,
     LY_CORE_ASSERT(false, "Unknown severity level!");
 }
 
-#pragma region OpenGL Debug
 /**
  * @brief Initialize openGL debugging callbacks and error control
  */

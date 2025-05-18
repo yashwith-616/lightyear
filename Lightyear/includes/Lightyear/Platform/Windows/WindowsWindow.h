@@ -7,7 +7,9 @@ struct GLFWwindow;
 
 namespace ly {
 
+namespace renderer {
 class RendererContext;
+}  // namespace renderer
 
 class LIGHTYEAR_API WindowsWindow : public Window {
 public:
@@ -55,8 +57,8 @@ protected:
     virtual void SetupWindowCallbacks();
 
 private:
-    GLFWwindow* m_Window;
-    Scope<RendererContext> m_Context;
+    GLFWwindow* m_Window{ nullptr };
+    Scope<renderer::RendererContext> m_Context{};
 
     /**
      * @brief Holds data related to a GLFW window.

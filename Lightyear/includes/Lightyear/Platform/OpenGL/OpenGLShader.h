@@ -13,14 +13,14 @@ public:
      * @param name The compiled shader name
      * @param shaderFiles The ShaderType along with the path to file
      */
-    OpenGLShader(CName name, std::unordered_map<ShaderType, CPath> shaderFiles);
+    OpenGLShader(const CName& name, const std::unordered_map<ShaderType, CPath>& shaderFiles);
 
     /**
      * @brief Create OpenGL shaders from source code
      * @param name The compiled shader name
      * @param shaderSrcs The ShaderType along with it's source code
      */
-    OpenGLShader(CName name, std::unordered_map<ShaderType, CText> shaderSrcs);
+    OpenGLShader(const CName& name, const std::unordered_map<ShaderType, CText>& shaderSrcs);
 
     virtual void Use() const override;
 
