@@ -11,6 +11,7 @@ namespace ly::renderer {
 class LIGHTYEAR_API OpenGLContext : public RendererContext {
 public:
     OpenGLContext(GLFWwindow* windowHandle);
+    ~OpenGLContext();
 
     virtual void Init() override;
     virtual void SwapBuffers() override;

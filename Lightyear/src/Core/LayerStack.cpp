@@ -2,9 +2,7 @@
 
 namespace ly {
 
-LayerStack::~LayerStack() {
-    LY_CORE_LOG(LogType::Info, "Destroying Layer stack!");
-}
+LayerStack::~LayerStack() {}
 
 void LayerStack::PushLayer(Scope<Layer> layer) {
     m_Layers.insert(m_Layers.begin() + m_LayerInsertIndex, std::move(layer));

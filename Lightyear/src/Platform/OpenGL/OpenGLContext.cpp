@@ -18,6 +18,10 @@ OpenGLContext::OpenGLContext(GLFWwindow* windowHandle) : m_WindowHandle(windowHa
     LY_CORE_ASSERT(windowHandle, "Window Handle is null!");
 }
 
+OpenGLContext::~OpenGLContext() {
+    LY_CORE_LOG(LogType::Info, "Render context is being destroyed!");
+}
+
 void OpenGLContext::Init() {
     glfwMakeContextCurrent(m_WindowHandle);
     int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);

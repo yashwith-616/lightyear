@@ -5,6 +5,8 @@
 #include "Lightyear/Platform/OpenGL/OpenGLContext.h"
 #include "Lightyear/Renderer/Abstract/Renderer.h"
 
+#include <iostream>
+
 #include <GLFW/glfw3.h>
 
 namespace ly {
@@ -12,7 +14,9 @@ namespace ly {
 static bool s_GLFWInitialized{ false };
 
 static void GLFWErrorCallback(int error, const char* description) {
-    LY_CORE_LOG(LogType::Error, "GLFW Error ({0}): {1}", error, description);
+    // TODO: Fix
+    std::cerr << std::format("GLFW Error ({0}): {1}", error, description) << '\n';
+    // LY_CORE_LOG(LogType::Error, "GLFW Error ({0}): {1}", error, description);
 }
 
 Scope<Window> Window::Create(const WindowProps& props) {
@@ -25,7 +29,6 @@ WindowsWindow::WindowsWindow(const WindowProps& props) {
 }
 
 WindowsWindow::~WindowsWindow() {
-    LY_CORE_LOG(LogType::Trace, "Destroying windows window!");
     ShutDown();
 }
 
@@ -65,8 +68,6 @@ void WindowsWindow::Init(const WindowProps& props) {
 #endif
     }
 
-    // Optional but recommended for debugging
-
     if (!s_GLFWInitialized) {
         int success = glfwInit();
         LY_CORE_ASSERT(success, "Failed to initialize GLFW");
@@ -93,7 +94,9 @@ void WindowsWindow::Init(const WindowProps& props) {
 void WindowsWindow::ShutDown() {
     LY_CORE_ASSERT(m_Window != nullptr, "GLFWWindow is nullptr");
 
-    glfwDestroyWindow(m_Window);
+    if (m_Window) {
+        glfwDestroyWindow(m_Window);
+    }
     glfwTerminate();
 }
 

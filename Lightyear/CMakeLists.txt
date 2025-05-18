@@ -105,8 +105,8 @@ target_link_libraries(Lightyear
         glad
         imgui
         glfw
-        spdlog::spdlog
     PUBLIC 
+        spdlog::spdlog
         $<$<BOOL:${MINGW}>:ws_32>
 )
 

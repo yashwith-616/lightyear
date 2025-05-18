@@ -19,8 +19,6 @@ namespace ly {
 ImGUILayer::ImGUILayer() : Layer("ImGUILayer") {}
 
 ImGUILayer::~ImGUILayer() {
-    LY_CORE_LOG(LogType::Trace, "Destroying IMGUI Editor Layer!");
-
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
