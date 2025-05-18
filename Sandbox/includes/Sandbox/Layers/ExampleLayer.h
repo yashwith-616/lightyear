@@ -7,8 +7,9 @@ class EditorCamera;
 class ExampleLayer : public ly::Layer {
 public:
     ExampleLayer();
-    void OnUpdate(float deltaTime) override;
-    void OnEvent(ly::Event& event) override;
+    virtual void OnUpdate(float deltaTime) override;
+    virtual void OnEvent(ly::Event& event) override;
+    virtual void OnEditorRender() override;
 
 private:
     void PollInput(float deltaTime);

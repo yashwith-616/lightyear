@@ -8,8 +8,8 @@ namespace ly {
 
 class LIGHTYEAR_API LayerStack {
 public:
-    LayerStack();
-    ~LayerStack() = default;
+    LayerStack() {};
+    ~LayerStack();
 
     LayerStack(const LayerStack&)            = delete;
     LayerStack& operator=(const LayerStack&) = delete;
@@ -23,8 +23,9 @@ public:
     std::vector<Scope<Layer>>::iterator end() { return m_Layers.end(); }
 
 private:
-    std::vector<Scope<Layer>> m_Layers;
-    std::vector<Scope<Layer>>::iterator m_LayerInsert;
+    // TODO: Use PMR or Arena allocations instead for better performance
+    std::vector<Scope<Layer>> m_Layers{};
+    size_t m_LayerInsertIndex{ 0 };
 };
 
 }  // namespace ly

@@ -15,6 +15,7 @@ public:
     virtual void OnAttach();
     virtual void OnDetach();
     virtual void OnUpdate(float deltaTime);
+    virtual void OnEditorRender();
     virtual void OnEvent(Event& event);
 
     inline const CName& GetName() const { return m_DebugName; }

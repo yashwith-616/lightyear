@@ -10,6 +10,7 @@ public:
     SandboxApp();
     virtual ~SandboxApp() = default;
 
+    virtual void Init() override;
     virtual void Run() override;
 };
 

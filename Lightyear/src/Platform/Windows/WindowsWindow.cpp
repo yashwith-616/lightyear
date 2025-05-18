@@ -25,6 +25,7 @@ WindowsWindow::WindowsWindow(const WindowProps& props) {
 }
 
 WindowsWindow::~WindowsWindow() {
+    LY_CORE_LOG(LogType::Trace, "Destroying windows window!");
     ShutDown();
 }
 

@@ -41,6 +41,8 @@ void ExampleLayer::OnUpdate(float deltaTime) {
 
 void ExampleLayer::OnEvent(ly::Event& event) {}
 
+void ExampleLayer::OnEditorRender() {}
+
 /**
  * @brief Move the camera based on the following action
  * @param deltaTime the deltaTime

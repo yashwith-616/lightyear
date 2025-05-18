@@ -1,10 +1,11 @@
-#include "Lightyear/Renderer/ImGui/ImGuiLayer.h"
 #include "Sandbox/Core/SandboxApp.h"
 #include "Sandbox/Layers/ExampleLayer.h"
 
-SandboxApp::SandboxApp() {
+SandboxApp::SandboxApp() {}
+
+void SandboxApp::Init() {
+    Application::Init();
     PushLayer(ly::MakeScope<ExampleLayer>());
-    PushLayer(ly::MakeScope<ly::ImGuiLayer>());
 }
 
 void SandboxApp::Run() {

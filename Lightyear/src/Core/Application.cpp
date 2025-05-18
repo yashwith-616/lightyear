@@ -3,18 +3,29 @@
 #include "Lightyear/Core/LayerStack.h"
 #include "Lightyear/Core/Log.h"
 #include "Lightyear/Core/Timestep.h"
+#include "Lightyear/Editor/ImGUILayer.h"
 #include "Lightyear/Events/ApplicationEvent.h"
+#include "Lightyear/Events/EditorEvent.h"
 #include "Lightyear/Events/Event.h"
-
-#include <glad.h>
+#include "Lightyear/Renderer/Abstract/Renderer.h"
 
 namespace ly {
 
 Scope<Application> Application::s_Application = nullptr;
 
 Application::Application() {
+    LY_CORE_ASSERT(!s_Application, "Application already exists!");
     m_Window = Window::Create();
     m_Window->SetEventCallback(std::bind(&Application::OnEvent, this, std::placeholders::_1));
+}
+
+Application::~Application() {
+    renderer::Renderer::Shutdown();
+}
+
+void Application::Init() {
+    renderer::Renderer::Init();
+    PushOverlay(MakeScope<ImGUILayer>());
 }
 
 void Application::Run() {
@@ -29,6 +40,17 @@ void Application::Run() {
             layer->OnUpdate(timestep);
         }
 
+        //---- Update Game Engine Editor
+        EditorUpdateBeginEvent beginEvent;
+        OnEvent(beginEvent);
+
+        for (const Scope<Layer>& layer : m_LayerStack) {
+            layer->OnEditorRender();
+        }
+
+        EditorUpdateEndEvent endEvent;
+        OnEvent(endEvent);
+
         m_Window->OnUpdate();
     }
 }
@@ -40,7 +62,9 @@ void Application::OnEvent(Event& event) {
 
     for (auto it = m_LayerStack.end(); it != m_LayerStack.begin();) {
         (*--it)->OnEvent(event);
-        if (event.bIsHandled) break;
+        if (event.bIsHandled) {
+            break;
+        }
     }
 }
 

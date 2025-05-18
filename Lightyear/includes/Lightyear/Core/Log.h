@@ -7,10 +7,8 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include "glm/gtx/string_cast.hpp"
 
-#pragma warning(push, 0)
 #include <spdlog/fmt/ostr.h>
 #include <spdlog/spdlog.h>
-#pragma warning(pop)
 
 namespace ly {
 
@@ -19,6 +17,7 @@ enum class LogType { Trace, Info, Warn, Error, Fatal };
 class LIGHTYEAR_API Log {
 public:
     static void Init();
+    static void Shutdown();
 
     inline static Ref<spdlog::logger>& GetCoreLogger() { return s_CoreLogger; }
     inline static Ref<spdlog::logger>& GetClientLogger() { return s_ClientLogger; }

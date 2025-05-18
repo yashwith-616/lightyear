@@ -2,7 +2,6 @@
 
 #include <lypch.h>
 #include <glm/glm.hpp>
-#include "spdlog/fmt/fmt.h"
 
 namespace ly {
 
@@ -11,6 +10,7 @@ constexpr uint32_t DEFAULT_WINDOW_HEIGHT{ 720 };
 constexpr uint32_t DEFAULT_WINDOW_WIDTH{ 1280 };
 constexpr std::string_view DEFAULT_WINDOW_TITLE{ "LightYear" };
 constexpr float DEFAULT_FRAMETIME{ 1 / 60.f };
+constexpr std::string_view GLSL_VERSION = "#version 460 core";
 
 constexpr uint8_t BIT(uint8_t x) {
     return 1 << x;

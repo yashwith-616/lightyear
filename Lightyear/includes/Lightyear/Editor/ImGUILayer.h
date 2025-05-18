@@ -13,15 +13,16 @@ class KeyPressedEvent;
 class KeyReleasedEvent;
 class KeyTypedEvent;
 class WindowResizeEvent;
+class EditorUpdateBeginEvent;
+class EditorUpdateEndEvent;
 
-class LIGHTYEAR_API ImGuiLayer : public Layer {
+class LIGHTYEAR_API ImGUILayer : public Layer {
 public:
-    ImGuiLayer();
-    ~ImGuiLayer();
+    ImGUILayer();
+    ~ImGUILayer();
 
     virtual void OnAttach();
     virtual void OnDetach();
-    virtual void OnUpdate(float deltaTime);
     virtual void OnEvent(Event& event);
 
 protected:
@@ -34,6 +35,9 @@ protected:
     bool OnKeyReleasedEvent(KeyReleasedEvent& event);
     bool OnKeyTypedEvent(KeyTypedEvent& event);
     bool OnWindowResizeEvent(WindowResizeEvent& event);
+
+    bool OnEditorUpdateBeginEvent(EditorUpdateBeginEvent& event);
+    bool OnEditorUpdateEndEvent(EditorUpdateEndEvent& event);
 
 private:
     float m_Time{ 0.f };

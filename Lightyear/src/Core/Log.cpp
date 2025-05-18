@@ -10,22 +10,30 @@ Ref<spdlog::logger> Log::s_ClientLogger;
 
 void Log::Init() {
     std::vector<spdlog::sink_ptr> logSinks;
-    logSinks.emplace_back(std::make_shared<spdlog::sinks::stdout_color_sink_mt>());
-    logSinks.emplace_back(
-        std::make_shared<spdlog::sinks::basic_file_sink_mt>("Lightyear.log", true));
+    logSinks.emplace_back(MakeRef<spdlog::sinks::stdout_color_sink_mt>());
+    logSinks.emplace_back(MakeRef<spdlog::sinks::basic_file_sink_mt>("log/Lightyear.log", true));
 
-    logSinks[0]->set_pattern("%^[%T] %n: %v%$");
-    logSinks[1]->set_pattern("[%T] [%l] %n: %v");
+    logSinks[0]->set_pattern("[%H:%M:%S %z] [%n] [%^---%L---%$] [thread %t] %v");
+    logSinks[1]->set_pattern("[%H:%M:%S %z] [%n] [%^---%L---%$] [thread %t] %v");
 
-    s_CoreLogger = std::make_shared<spdlog::logger>("LIGHTYEAR", begin(logSinks), end(logSinks));
+    std::string name  = "LIGHTYEAR";
+    std::string name2 = "APP";
+
+    s_CoreLogger = MakeRef<spdlog::logger>(name, logSinks.begin(), logSinks.end());
     spdlog::register_logger(s_CoreLogger);
     s_CoreLogger->set_level(spdlog::level::trace);
     s_CoreLogger->flush_on(spdlog::level::trace);
 
-    s_ClientLogger = std::make_shared<spdlog::logger>("APP", begin(logSinks), end(logSinks));
+    s_ClientLogger = MakeRef<spdlog::logger>(name2, logSinks.begin(), logSinks.end());
     spdlog::register_logger(s_ClientLogger);
     s_ClientLogger->set_level(spdlog::level::trace);
     s_ClientLogger->flush_on(spdlog::level::trace);
+
+    LY_CORE_LOG(LogType::Info, "Logger name: {}", ly::Log::GetCoreLogger()->name());
+}
+
+void Log::Shutdown() {
+    spdlog::shutdown();
 }
 
 }  // namespace ly
