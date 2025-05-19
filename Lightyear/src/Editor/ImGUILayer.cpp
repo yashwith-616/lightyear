@@ -88,6 +88,12 @@ void ImGUILayer::OnEvent(Event& event) {
         [this](EditorUpdateEndEvent& e) { return OnEditorUpdateEndEvent(e); });
 }
 
+void ImGUILayer::OnEditorRender() {
+    // TODO: Need to setup the editor render
+
+    ImGui::ShowDemoWindow();
+}
+
 #pragma region ImGui Callbacks
 
 bool ImGUILayer::OnMouseButtonPressedEvent(MouseButtonPressedEvent& event) {

@@ -70,5 +70,11 @@ inline OStream& operator<<(OStream& os, glm::qua<T, Q> quaternion) {
 }  // namespace ly
 
 // ===== Log Macros =====
-#define LY_LOG(type, ...) ::ly::Log::LogMessage(type, ::ly::Log::GetClientLogger(), __VA_ARGS__)
-#define LY_CORE_LOG(type, ...) ::ly::Log::LogMessage(type, ::ly::Log::GetCoreLogger(), __VA_ARGS__)
+#ifdef LY_DEBUG
+    #define LY_LOG(type, ...) ::ly::Log::LogMessage(type, ::ly::Log::GetClientLogger(), __VA_ARGS__)
+    #define LY_CORE_LOG(type, ...)                                                                 \
+        ::ly::Log::LogMessage(type, ::ly::Log::GetCoreLogger(), __VA_ARGS__)
+#else
+    #define LY_LOG(type, ...)
+    #define LY_CORE_LOG(type, ...)
+#endif

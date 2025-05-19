@@ -24,6 +24,7 @@ public:
     virtual void OnAttach();
     virtual void OnDetach();
     virtual void OnEvent(Event& event);
+    virtual void OnEditorRender();
 
 protected:
     bool OnMouseButtonPressedEvent(MouseButtonPressedEvent& event);

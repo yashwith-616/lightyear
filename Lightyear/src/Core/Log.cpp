@@ -3,6 +3,8 @@
 #include <spdlog/sinks/basic_file_sink.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
 
+#include <iostream>
+
 namespace ly {
 
 Ref<spdlog::logger> Log::s_CoreLogger;
@@ -11,25 +13,26 @@ Ref<spdlog::logger> Log::s_ClientLogger;
 void Log::Init() {
     std::vector<spdlog::sink_ptr> logSinks;
     logSinks.emplace_back(MakeRef<spdlog::sinks::stdout_color_sink_mt>());
-    logSinks.emplace_back(MakeRef<spdlog::sinks::basic_file_sink_mt>("log/Lightyear.log", true));
+    logSinks.emplace_back(MakeRef<spdlog::sinks::basic_file_sink_mt>("log/lightyear.log", true));
 
-    logSinks[0]->set_pattern("[%H:%M:%S %z] [%n] [%^---%L---%$] [thread %t] %v");
-    logSinks[1]->set_pattern("[%H:%M:%S %z] [%n] [%^---%L---%$] [thread %t] %v");
+    logSinks[0]->set_pattern("%^[%Y-%m-%d %H:%M:%S.%e %z] [%n] [%l] [thread %t] %v%$");
+    logSinks[1]->set_pattern("%^[%Y-%m-%d %H:%M:%S %z] [%n] [%l] [thread %t] %v%$");
 
-    std::string name  = "LIGHTYEAR";
-    std::string name2 = "APP";
-
-    s_CoreLogger = MakeRef<spdlog::logger>(name, logSinks.begin(), logSinks.end());
+    s_CoreLogger = MakeRef<spdlog::logger>("LIGHTYEAR", logSinks.begin(), logSinks.end());
     spdlog::register_logger(s_CoreLogger);
     s_CoreLogger->set_level(spdlog::level::trace);
     s_CoreLogger->flush_on(spdlog::level::trace);
 
-    s_ClientLogger = MakeRef<spdlog::logger>(name2, logSinks.begin(), logSinks.end());
+    s_ClientLogger = MakeRef<spdlog::logger>("APP", logSinks.begin(), logSinks.end());
     spdlog::register_logger(s_ClientLogger);
     s_ClientLogger->set_level(spdlog::level::trace);
     s_ClientLogger->flush_on(spdlog::level::trace);
 
-    LY_CORE_LOG(LogType::Info, "Logger name: {}", ly::Log::GetCoreLogger()->name());
+    spdlog::set_error_handler([](const std::string& msg) {
+        std::cerr << "[SPDLOG ERROR] " << msg << std::endl;
+        std::ofstream fallbackLog("log/error_fallback.log", std::ios::app);
+        fallbackLog << "[SPDLOG ERROR] " << msg << std::endl;
+    });
 }
 
 void Log::Shutdown() {
