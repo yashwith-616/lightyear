@@ -87,27 +87,27 @@ set(ENTT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/extern/entt/single_include")
 #-------------------------------------------------
 # Project Library
 #-------------------------------------------------
-add_library (Lightyear SHARED ${SOURCES} "${HEADERS}")
+add_library (Lightyear STATIC ${SOURCES} "${HEADERS}")
 target_include_directories(Lightyear
     PUBLIC
         "${HDRS_DIR}"
         "${GLM_DIR}"
-    PRIVATE
-        "${GLAD_DIR}"
-        "${GLFW_DIR}/include"
         "${IMGUI_DIR}"
+        "${GLAD_DIR}"
+    PRIVATE
+        "${GLFW_DIR}/include"
         "${STB_DIR}"
         "${ENTT_DIR}"
 )
 
 target_link_libraries(Lightyear
-    PRIVATE
-        glad
-        imgui
-        glfw
     PUBLIC 
+        imgui
         spdlog::spdlog
         $<$<BOOL:${MINGW}>:ws_32>
+        glad
+    PRIVATE
+        glfw
 )
 
 #-------------------------------------------------
@@ -115,7 +115,8 @@ target_link_libraries(Lightyear
 #-------------------------------------------------
 target_compile_definitions(Lightyear 
 	PRIVATE 
-	LY_BUILD_DLL 
+	#LY_BUILD_DLL
+    LY_BUILD_STATIC
 	LY_PLATFORM_WINDOWS 
 	GLFW_INCLUDE_NONE
 	STB_IMAGE_IMPLEMENTATION

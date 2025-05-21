@@ -10,6 +10,7 @@
 #include "Lightyear/Renderer/Abstract/Renderer.h"
 
 #include "Lightyear/Renderer/Primitives/Buffer.h"
+#include "Lightyear/Renderer/Primitives/Framebuffer.h"
 #include "Lightyear/Renderer/Primitives/RenderTypes.h"
 #include "Lightyear/Renderer/Primitives/Shader.h"
 #include "Lightyear/Renderer/Primitives/Texture.h"

@@ -9,6 +9,7 @@ namespace ly::renderer {
 class Camera;
 class Shader;
 class VertexArray;
+class Texture;
 
 class LIGHTYEAR_API Renderer {
 public:
@@ -22,6 +23,7 @@ public:
 
     static void Submit(const Ref<Shader>& shader,
                        const Ref<VertexArray>& vertexArray,
+                       const Ref<Texture>& texture,
                        const glm::mat4& transform);
 
     static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }

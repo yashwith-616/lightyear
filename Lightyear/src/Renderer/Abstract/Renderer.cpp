@@ -3,6 +3,7 @@
 #include "Lightyear/Renderer/Abstract/RendererAPI.h"
 #include "Lightyear/Renderer/Camera/Camera.h"
 #include "Lightyear/Renderer/Primitives/Shader.h"
+#include "Lightyear/Renderer/Primitives/Texture.h"
 #include "Lightyear/Renderer/Primitives/VertexArray.h"
 
 #include "Lightyear/Platform/OpenGL/OpenGLShader.h"
@@ -27,12 +28,16 @@ void Renderer::EndScene() {}
 
 void Renderer::Submit(const Ref<Shader>& shader,
                       const Ref<VertexArray>& vertexArray,
+                      const Ref<Texture>& texture,
                       const glm::mat4& transform = glm::mat4(1.f)) {
     // TODO: Need to abstract away openGL call here
     Ref<OpenGLShader> openGLShader = std::dynamic_pointer_cast<OpenGLShader>(shader);
     openGLShader->Use();
     openGLShader->SetUniform("u_ViewProjection", s_SceneData.ViewProjectionMatrix);
     openGLShader->SetUniform("u_Transform", transform);
+
+    texture->Bind(1);
+    openGLShader->SetUniform("u_Color", 1);
 
     vertexArray->Bind();
     RenderCommand::DrawIndexed(vertexArray);

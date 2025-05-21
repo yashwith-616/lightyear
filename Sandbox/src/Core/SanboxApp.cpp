@@ -1,11 +1,12 @@
 #include "Sandbox/Core/SandboxApp.h"
-#include "Sandbox/Layers/ExampleLayer.h"
+#include "Sandbox/Editor/EditorLayer.h"
+#include "Sandbox/Extras/ExampleLayer.h"
 
 SandboxApp::SandboxApp() {}
 
 void SandboxApp::Init() {
     Application::Init();
-    PushLayer(ly::MakeScope<ExampleLayer>());
+    PushLayer(ly::MakeScope<EditorLayer>());
 }
 
 void SandboxApp::Run() {

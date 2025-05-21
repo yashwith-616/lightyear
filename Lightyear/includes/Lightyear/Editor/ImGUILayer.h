@@ -26,6 +26,9 @@ public:
     virtual void OnEvent(Event& event);
     virtual void OnEditorRender();
 
+    void Begin();
+    void End();
+
 protected:
     bool OnMouseButtonPressedEvent(MouseButtonPressedEvent& event);
     bool OnMouseButtonReleaseEvent(MouseButtonReleasedEvent& event);
@@ -36,9 +39,6 @@ protected:
     bool OnKeyReleasedEvent(KeyReleasedEvent& event);
     bool OnKeyTypedEvent(KeyTypedEvent& event);
     bool OnWindowResizeEvent(WindowResizeEvent& event);
-
-    bool OnEditorUpdateBeginEvent(EditorUpdateBeginEvent& event);
-    bool OnEditorUpdateEndEvent(EditorUpdateEndEvent& event);
 
 private:
     float m_Time{ 0.f };

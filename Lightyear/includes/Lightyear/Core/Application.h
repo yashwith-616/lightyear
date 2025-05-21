@@ -48,6 +48,8 @@ private:
     float m_Frametime{ DEFAULT_FRAMETIME };
     float m_LastFrameTime{ 0.f };
 
+    ImGUILayer* m_ImGUILayer{ nullptr };
+
 private:
     static Scope<Application> s_Application;
 };

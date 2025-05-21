@@ -26,7 +26,8 @@ protected:
     float m_Rotation = 0.f;
 
 protected:
-    virtual void RecalculateViewMatrix() = 0;
+    virtual void RecalculateViewMatrix()                                                       = 0;
+    virtual void RecalculateProjectionMatrix(float left, float right, float bottom, float top) = 0;
 };
 
 }  // namespace ly::renderer

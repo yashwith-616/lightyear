@@ -25,7 +25,7 @@ ImGUILayer::~ImGUILayer() {
 }
 
 void ImGUILayer::OnAttach() {
-    IMGUI_CHECKVERSION();
+    LY_CORE_LOG(LogType::Info, "Initialized ImGUI");
 
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
@@ -82,16 +82,37 @@ void ImGUILayer::OnEvent(Event& event) {
     // Imgui Window Events
     dispatcher.Dispatch<WindowResizeEvent>(
         [this](WindowResizeEvent& e) { return OnWindowResizeEvent(e); });
-    dispatcher.Dispatch<EditorUpdateBeginEvent>(
-        [this](EditorUpdateBeginEvent& e) { return OnEditorUpdateBeginEvent(e); });
-    dispatcher.Dispatch<EditorUpdateEndEvent>(
-        [this](EditorUpdateEndEvent& e) { return OnEditorUpdateEndEvent(e); });
 }
 
-void ImGUILayer::OnEditorRender() {
-    // TODO: Need to setup the editor render
+void ImGUILayer::OnEditorRender() {}
 
-    ImGui::ShowDemoWindow();
+/**
+ * @brief Initialize ImGUI backends such as Window manager and the RHI
+ */
+void ImGUILayer::Begin() {
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
+}
+
+/**
+ * @brief Prepare ImGUI for next update. Render the current update.
+ */
+void ImGUILayer::End() {
+    ImGuiIO& io      = ImGui::GetIO();
+    Application& app = Application::Get();
+    io.DisplaySize = ImVec2((float)app.GetWindow().GetWidth(), (float)app.GetWindow().GetHeight());
+
+    // Rendering
+    ImGui::Render();
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+    if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+        GLFWwindow* backup_current_context = glfwGetCurrentContext();
+        ImGui::UpdatePlatformWindows();
+        ImGui::RenderPlatformWindowsDefault();
+        glfwMakeContextCurrent(backup_current_context);
+    }
 }
 
 #pragma region ImGui Callbacks
@@ -142,41 +163,6 @@ bool ImGUILayer::OnWindowResizeEvent(WindowResizeEvent& event) {
     ImGuiIO& io    = ImGui::GetIO();
     io.DisplaySize = ImVec2(event.GetWidth(), event.GetHeight());
     return false;
-}
-
-/**
- * @brief Initialize ImGUI backends such as Window manager and the RHI
- * @param event the Editor update begin event
- * @return True, always handle this event
- */
-bool ImGUILayer::OnEditorUpdateBeginEvent(EditorUpdateBeginEvent& event) {
-    ImGui_ImplOpenGL3_NewFrame();
-    ImGui_ImplGlfw_NewFrame();
-    ImGui::NewFrame();
-    return true;
-}
-
-/**
- * @brief Prepare ImGUI for next update. Render the current update.
- * @param event the editor update end event
- * @return True, always handle this event
- */
-bool ImGUILayer::OnEditorUpdateEndEvent(EditorUpdateEndEvent& event) {
-    ImGuiIO& io      = ImGui::GetIO();
-    Application& app = Application::Get();
-    io.DisplaySize = ImVec2((float)app.GetWindow().GetWidth(), (float)app.GetWindow().GetHeight());
-
-    // Rendering
-    ImGui::Render();
-    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-    if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
-        GLFWwindow* backup_current_context = glfwGetCurrentContext();
-        ImGui::UpdatePlatformWindows();
-        ImGui::RenderPlatformWindowsDefault();
-        glfwMakeContextCurrent(backup_current_context);
-    }
-    return true;
 }
 
 #pragma endregion

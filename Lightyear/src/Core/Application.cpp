@@ -25,7 +25,9 @@ Application::~Application() {
 
 void Application::Init() {
     renderer::Renderer::Init();
-    PushOverlay(MakeScope<ImGUILayer>());
+    auto imguiLayer = MakeScope<ImGUILayer>();
+    m_ImGUILayer    = imguiLayer.get();
+    PushLayer(std::move(imguiLayer));
 }
 
 void Application::Run() {
@@ -41,16 +43,11 @@ void Application::Run() {
         }
 
         //---- Update Game Engine Editor
-        EditorUpdateBeginEvent beginEvent;
-        OnEvent(beginEvent);
-
+        m_ImGUILayer->Begin();
         for (const Scope<Layer>& layer : m_LayerStack) {
             layer->OnEditorRender();
         }
-
-        EditorUpdateEndEvent endEvent;
-        OnEvent(endEvent);
-
+        m_ImGUILayer->End();
         m_Window->OnUpdate();
     }
 }

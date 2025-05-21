@@ -14,12 +14,16 @@ public:
     virtual void AddYaw(float value);
     virtual void AddRoll(float value);
 
+    virtual void AddZoom(float value);
+
+    virtual void Resize(float width, float height);
+
     virtual void DebugCamera();
 
     inline void SetSpeed(float speed) { m_Speed = speed; }
-
     inline float GetSpeed() const { return m_Speed; }
 
 protected:
     float m_Speed{ 1000.f * 100.f };
+    float m_Zoom{ 1.f };
 };

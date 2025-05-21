@@ -21,4 +21,20 @@ void OrthographicCamera::RecalculateViewMatrix() {
     m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
 }
 
+/**
+ * @brief Recalculate projection matrix and cache it
+ *
+ * @param left the left range of the camera view
+ * @param right the right range of the camera view
+ * @param bottom the bottom range of the camera view
+ * @param top the top range of the camera view
+ */
+void OrthographicCamera::RecalculateProjectionMatrix(float left,
+                                                     float right,
+                                                     float bottom,
+                                                     float top) {
+    m_ProjectionMatrix = glm::ortho(left, right, bottom, top, -1.0f, 1.0f);
+    ;
+}
+
 }  // namespace ly::renderer

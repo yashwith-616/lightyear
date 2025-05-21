@@ -1,8 +1,8 @@
 #pragma once
 
-#include <glad.h>
 #include <glm/glm.hpp>
 #include "Lightyear/Renderer/Primitives/Shader.h"
+#include "glad.h"
 
 namespace ly::renderer {
 

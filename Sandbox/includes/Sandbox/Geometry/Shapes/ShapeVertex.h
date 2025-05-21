@@ -2,9 +2,61 @@
 
 #include <array>
 
+// clang-format off
+
+
 // ----- Cube Vertex Position -----
-constexpr float g_CubeVertices[] = { -0.5f, -0.5f, -0.5f, 0.5f, -0.5f, -0.5f, 0.5f, 0.5f, -0.5f, -0.5f, 0.5f, -0.5f,
-                                     -0.5f, -0.5f, 0.5f,  0.5f, -0.5f, 0.5f,  0.5f, 0.5f, 0.5f,  -0.5f, 0.5f, 0.5f };
+static constexpr std::array<std::array<float, 5>, 36> g_CubeVertices = { {
+    // Back face
+    {{ -0.5f, -0.5f, -0.5f, 0.0f, 0.0f }},
+    {{  0.5f,  0.5f, -0.5f, 1.0f, 1.0f }},
+    {{  0.5f, -0.5f, -0.5f, 1.0f, 0.0f }},
+    {{  0.5f,  0.5f, -0.5f, 1.0f, 1.0f }},
+    {{ -0.5f, -0.5f, -0.5f, 0.0f, 0.0f }},
+    {{ -0.5f,  0.5f, -0.5f, 0.0f, 1.0f }},
+
+    // Front face
+    {{ -0.5f, -0.5f,  0.5f, 0.0f, 0.0f }},
+    {{  0.5f, -0.5f,  0.5f, 1.0f, 0.0f }},
+    {{  0.5f,  0.5f,  0.5f, 1.0f, 1.0f }},
+    {{  0.5f,  0.5f,  0.5f, 1.0f, 1.0f }},
+    {{ -0.5f,  0.5f,  0.5f, 0.0f, 1.0f }},
+    {{ -0.5f, -0.5f,  0.5f, 0.0f, 0.0f }},
+
+    // Left face
+    {{ -0.5f,  0.5f,  0.5f, 1.0f, 0.0f }},
+    {{ -0.5f,  0.5f, -0.5f, 1.0f, 1.0f }},
+    {{ -0.5f, -0.5f, -0.5f, 0.0f, 1.0f }},
+    {{ -0.5f, -0.5f, -0.5f, 0.0f, 1.0f }},
+    {{ -0.5f, -0.5f,  0.5f, 0.0f, 0.0f }},
+    {{ -0.5f,  0.5f,  0.5f, 1.0f, 0.0f }},
+
+    // Right face
+    {{  0.5f,  0.5f,  0.5f, 1.0f, 0.0f }},
+    {{  0.5f, -0.5f, -0.5f, 0.0f, 1.0f }},
+    {{  0.5f,  0.5f, -0.5f, 1.0f, 1.0f }},
+    {{  0.5f, -0.5f, -0.5f, 0.0f, 1.0f }},
+    {{  0.5f,  0.5f,  0.5f, 1.0f, 0.0f }},
+    {{  0.5f, -0.5f,  0.5f, 0.0f, 0.0f }},
+
+    // Bottom face
+    {{ -0.5f, -0.5f, -0.5f, 0.0f, 1.0f }},
+    {{  0.5f, -0.5f, -0.5f, 1.0f, 1.0f }},
+    {{  0.5f, -0.5f,  0.5f, 1.0f, 0.0f }},
+    {{  0.5f, -0.5f,  0.5f, 1.0f, 0.0f }},
+    {{ -0.5f, -0.5f,  0.5f, 0.0f, 0.0f }},
+    {{ -0.5f, -0.5f, -0.5f, 0.0f, 1.0f }},
+
+    // Top face
+    {{ -0.5f,  0.5f, -0.5f, 0.0f, 1.0f }},
+    {{  0.5f,  0.5f,  0.5f, 1.0f, 0.0f }},
+    {{  0.5f,  0.5f, -0.5f, 1.0f, 1.0f }},
+    {{  0.5f,  0.5f,  0.5f, 1.0f, 0.0f }},
+    {{ -0.5f,  0.5f, -0.5f, 0.0f, 1.0f }},
+    {{ -0.5f,  0.5f,  0.5f, 0.0f, 0.0f }}
+}};
+
+
 
 // ----- Cube Index Position -----
 constexpr uint32_t g_CubeIndices[] = {
@@ -16,8 +68,12 @@ constexpr uint32_t g_CubeIndices[] = {
     5, 1, 2, 2, 6, 5   // right face
 };
 
-static std::array<std::array<float, 3>, 4> g_PlaneVertices{
-    { { -0.5f, -0.5f, 0.0f }, { 0.5f, -0.5f, 0.0f }, { 0.5f, 0.5f, 0.0f }, { -0.5f, 0.5f, 0.0f } }
+static std::array<std::array<float, 5>, 4> g_PlaneVertices{
+    // { x,     y,     z,     u,     v }
+    std::array<float, 5>{ -0.5f, -0.5f, 0.0f, 0.0f, 0.0f },  // Bottom-left
+    std::array<float, 5>{ 0.5f, -0.5f, 0.0f, 1.0f, 0.0f },   // Bottom-right
+    std::array<float, 5>{ 0.5f, 0.5f, 0.0f, 1.0f, 1.0f },    // Top-right
+    std::array<float, 5>{ -0.5f, 0.5f, 0.0f, 0.0f, 1.0f }    // Top-left
 };
 
 static std::array<uint32_t, 6> g_PlaneIndices{ 0, 1, 2, 2, 3, 0 };
@@ -27,3 +83,5 @@ constexpr size_t g_CubeIndexCount  = sizeof(g_CubeIndices);
 
 constexpr size_t g_PlaneVertexCount = g_PlaneVertices.size() * sizeof(g_PlaneVertices[0]);
 constexpr size_t g_PlaneIndexCount  = g_PlaneIndices.size() * sizeof(uint32_t);
+
+// clang-format on

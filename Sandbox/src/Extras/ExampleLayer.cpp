@@ -1,7 +1,8 @@
-#include "Sandbox/Layers/ExampleLayer.h"
+#include "Sandbox/Extras/ExampleLayer.h"
 #include "Sandbox/Core/Camera/EditorCamera.h"
 #include "Sandbox/Geometry/Geometry.h"
 #include "glm/glm.hpp"
+#include "imgui.h"
 
 namespace renderer = ly::renderer;
 
@@ -33,15 +34,17 @@ void ExampleLayer::OnUpdate(float deltaTime) {
 
     renderer::Renderer::BeginScene(m_Camera);
 
-    renderer::Renderer::Submit(m_Shader, Geometry::GetCube(), glm::mat4(1.f));
-    renderer::Renderer::Submit(m_Shader2, Geometry::GetPlane(), glm::mat4(1.f));
+    // renderer::Renderer::Submit(m_Shader, Geometry::GetCube(), glm::mat4(1.f));
+    // renderer::Renderer::Submit(m_Shader2, Geometry::GetPlane(), glm::mat4(1.f));
 
     renderer::Renderer::EndScene();
 }
 
 void ExampleLayer::OnEvent(ly::Event& event) {}
 
-void ExampleLayer::OnEditorRender() {}
+void ExampleLayer::OnEditorRender() {
+    ImGui::ShowDemoWindow();
+}
 
 /**
  * @brief Move the camera based on the following action

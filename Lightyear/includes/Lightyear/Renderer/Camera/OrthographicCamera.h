@@ -9,7 +9,11 @@ public:
     OrthographicCamera(float left, float right, float bottom, float top);
 
 protected:
-    virtual void RecalculateViewMatrix();
+    virtual void RecalculateViewMatrix() override;
+    virtual void RecalculateProjectionMatrix(float left,
+                                             float right,
+                                             float bottom,
+                                             float top) override;
 };
 
 }  // namespace ly::renderer
