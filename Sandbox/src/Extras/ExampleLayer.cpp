@@ -23,7 +23,7 @@ ExampleLayer::ExampleLayer() : Layer("Example") {
     m_Shader2 = ly::renderer::Shader::Create("Shader2", g_shader2);
 
     float aspect = 1280.f / 720.f;
-    m_Camera     = ly::MakeRef<EditorCamera>(-aspect, aspect, -1.f, 1.f);
+    m_Camera     = ly::MakeRef<EditorCamera>(aspect);
 }
 
 void ExampleLayer::OnUpdate(float deltaTime) {

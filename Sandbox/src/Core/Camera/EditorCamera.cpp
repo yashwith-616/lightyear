@@ -1,7 +1,6 @@
 #include "Sandbox/Core/Camera/EditorCamera.h"
 
-EditorCamera::EditorCamera(float left, float right, float bottom, float top)
-    : OrthographicCamera(left, right, bottom, top) {}
+EditorCamera::EditorCamera(float aspectRatio) : SceneCamera(aspectRatio) {}
 
 void EditorCamera::Resize(float width, float height) {
     float aspect = width / height;

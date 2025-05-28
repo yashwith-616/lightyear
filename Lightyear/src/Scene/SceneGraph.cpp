@@ -2,6 +2,11 @@
 
 namespace ly::scene {
 
+SceneGraph::SceneGraph() {
+    m_DirtyFlag.resize(1);
+    m_DirtyFlag.set(0);
+}
+
 uint32_t SceneGraph::AddNode(const entt::entity entity, const int parentIndex) {
     SceneNode node = SceneNode(entity, parentIndex, {});
     return AddNode(std::move(node));
@@ -14,6 +19,9 @@ void SceneGraph::MoveNode(const uint32_t nodeIndex, const int parentNodeIndex) {
     DetachChildNode(nodeIndex);
     m_Nodes[parentNodeIndex].children.push_back(nodeIndex);
     m_Nodes[nodeIndex].parent = parentNodeIndex;
+
+    m_DirtyFlag.set(nodeIndex);
+    m_DirtyFlag.set(parentNodeIndex);
 }
 
 void SceneGraph::RemoveNode(const uint32_t nodeIndex) {
@@ -45,6 +53,10 @@ uint32_t SceneGraph::AddNode(SceneNode&& sceneNode) {
     }
 
     m_Nodes[parentIndex].children.push_back(index);
+
+    m_DirtyFlag.resize(std::max(static_cast<size_t>(index + 1), m_DirtyFlag.size()));
+    m_DirtyFlag.set(index);
+
     return index;
 }
 
@@ -88,6 +100,27 @@ void SceneGraph::ClearNode(const uint32_t nodeIndex) {
     sceneNode.entity = entt::null;
     sceneNode.parent = -1;
     m_FreeSlots.emplace_back(nodeIndex);
+
+    m_DirtyFlag.reset(nodeIndex);
+}
+
+void SceneGraph::MarkDirty(uint32_t nodeIndex) {
+    LY_CORE_ASSERT(nodeIndex < m_DirtyFlag.size(),
+                   "ScenGraph::MarkDirty - Index out of bounds error");
+    m_DirtyFlag.set(nodeIndex);
+}
+
+void SceneGraph::ClearDirty(uint32_t nodeIndex) {
+    LY_CORE_ASSERT(nodeIndex < m_DirtyFlag.size(),
+                   "ScenGraph::ClearDirty - Index out of bounds error");
+    m_DirtyFlag.reset(nodeIndex);
+}
+
+bool SceneGraph::IsDirty(uint32_t nodeIndex) const {
+    LY_CORE_ASSERT(nodeIndex < m_DirtyFlag.size(),
+                   "ScenGraph::IsDirty - Index out of bounds error");
+
+    return m_DirtyFlag.test(nodeIndex);
 }
 
 bool SceneGraph::IsValidNode(const uint32_t nodeIndex) const {

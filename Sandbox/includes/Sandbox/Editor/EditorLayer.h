@@ -17,10 +17,11 @@ private:
     ly::Ref<ly::renderer::Framebuffer> m_Framebuffer{};
     ly::Ref<ly::renderer::Shader> m_Shader;
     ly::Ref<ly::renderer::Texture2D> m_Texture;
-    ly::Ref<EditorCamera> m_Camera;
+    ly::Ref<ly::scene::Scene> m_Scene{};
 
 private:
     void DrawDockspace();
     void DrawViewport();
     void DrawDemoSettings();
+    void DrawLogPanel();
 };

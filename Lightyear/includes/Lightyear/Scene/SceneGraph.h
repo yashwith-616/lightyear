@@ -15,7 +15,7 @@ struct SceneNode {
     std::vector<uint32_t> children{};
 
     SceneNode(entt::entity e, int parentIndex, std::vector<uint32_t>&& childIndices)
-        : entity(), parent(parentIndex), children(std::move(childIndices)) {}
+        : entity(e), parent(parentIndex), children(std::move(childIndices)) {}
 };
 
 /**
@@ -30,7 +30,7 @@ struct SceneNode {
  */
 class LIGHTYEAR_API SceneGraph {
 public:
-    SceneGraph() {}
+    SceneGraph();
 
     /**
      * @brief Adding node defaults to parent or root node i.e, 0
@@ -54,9 +54,30 @@ public:
      */
     void RemoveNode(const uint32_t nodeIndex);
 
+    /**
+     * @brief Mark node as dirty
+     * @param nodeIndex the index of the node
+     */
+    void MarkDirty(uint32_t nodeIndex);
+
+    /**
+     * @brief Clear the dirty flag for the node
+     * @param nodeIndex the index of the node
+     */
+    void ClearDirty(uint32_t nodeIndex);
+
+    /**
+     * @brief Check if a node is dirty
+     *
+     * @param nodeIndex the index of the node
+     * @return True, if the node is flagged dirty
+     */
+    bool IsDirty(uint32_t nodeIndex) const;
+
 private:
     std::vector<SceneNode> m_Nodes = { SceneNode(entt::null, -1, {}) };
     std::vector<uint32_t> m_FreeSlots{};
+    dynamic_bitset m_DirtyFlag{};
 
 private:
     uint32_t AddNode(SceneNode&& sceneNode);

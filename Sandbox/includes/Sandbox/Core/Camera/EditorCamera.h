@@ -2,9 +2,9 @@
 
 #include "Lightyear.h"
 
-class EditorCamera : public ly::renderer::OrthographicCamera {
+class EditorCamera : public ly::renderer::SceneCamera {
 public:
-    EditorCamera(float left, float right, float bottom, float top);
+    EditorCamera(float aspectRatio);
 
     virtual void MoveUp(float value);
     virtual void MoveForward(float value);
@@ -25,5 +25,4 @@ public:
 
 protected:
     float m_Speed{ 1000.f * 100.f };
-    float m_Zoom{ 1.f };
 };

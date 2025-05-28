@@ -19,6 +19,14 @@
 // Camera
 #include "Lightyear/Renderer/Camera/Camera.h"
 #include "Lightyear/Renderer/Camera/OrthographicCamera.h"
+#include "Lightyear/Renderer/Camera/SceneCamera.h"
+
+#pragma endregion
+
+#pragma region Scene
+#include "Lightyear/Scene/Components.h"
+#include "Lightyear/Scene/Entity.h"
+#include "Lightyear/Scene/Scene.h"
 
 #pragma endregion
 

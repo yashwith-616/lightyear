@@ -94,10 +94,10 @@ target_include_directories(Lightyear
         "${GLM_DIR}"
         "${IMGUI_DIR}"
         "${GLAD_DIR}"
+        "${ENTT_DIR}"
     PRIVATE
         "${GLFW_DIR}/include"
         "${STB_DIR}"
-        "${ENTT_DIR}"
 )
 
 target_link_libraries(Lightyear
