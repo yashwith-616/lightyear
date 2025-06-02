@@ -1,16 +1,9 @@
 #pragma once
 
-#include "EditorPanel.h"
+#include "IEditorPanel.h"
 
-class ConsolePanel : public EditorPanel {
+class ConsolePanel : public IEditorPanel {
 public:
-    ConsolePanel();
+    ~ConsolePanel();
     void OnImGuiRender() override;
-
-    void AddLogLine(const std::string& line);
-    void Clear();
-
-private:
-    std::vector<std::string> m_LogBuffer;
-    bool m_AutoScroll = true;
 };

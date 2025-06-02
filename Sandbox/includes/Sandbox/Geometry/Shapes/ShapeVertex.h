@@ -4,68 +4,28 @@
 
 // clang-format off
 
-
 // ----- Cube Vertex Position -----
-static constexpr std::array<std::array<float, 5>, 36> g_CubeVertices = { {
-    // Back face
-    {{ -0.5f, -0.5f, -0.5f, 0.0f, 0.0f }},
-    {{  0.5f,  0.5f, -0.5f, 1.0f, 1.0f }},
-    {{  0.5f, -0.5f, -0.5f, 1.0f, 0.0f }},
-    {{  0.5f,  0.5f, -0.5f, 1.0f, 1.0f }},
-    {{ -0.5f, -0.5f, -0.5f, 0.0f, 0.0f }},
-    {{ -0.5f,  0.5f, -0.5f, 0.0f, 1.0f }},
-
-    // Front face
-    {{ -0.5f, -0.5f,  0.5f, 0.0f, 0.0f }},
-    {{  0.5f, -0.5f,  0.5f, 1.0f, 0.0f }},
-    {{  0.5f,  0.5f,  0.5f, 1.0f, 1.0f }},
-    {{  0.5f,  0.5f,  0.5f, 1.0f, 1.0f }},
-    {{ -0.5f,  0.5f,  0.5f, 0.0f, 1.0f }},
-    {{ -0.5f, -0.5f,  0.5f, 0.0f, 0.0f }},
-
-    // Left face
-    {{ -0.5f,  0.5f,  0.5f, 1.0f, 0.0f }},
-    {{ -0.5f,  0.5f, -0.5f, 1.0f, 1.0f }},
-    {{ -0.5f, -0.5f, -0.5f, 0.0f, 1.0f }},
-    {{ -0.5f, -0.5f, -0.5f, 0.0f, 1.0f }},
-    {{ -0.5f, -0.5f,  0.5f, 0.0f, 0.0f }},
-    {{ -0.5f,  0.5f,  0.5f, 1.0f, 0.0f }},
-
-    // Right face
-    {{  0.5f,  0.5f,  0.5f, 1.0f, 0.0f }},
-    {{  0.5f, -0.5f, -0.5f, 0.0f, 1.0f }},
-    {{  0.5f,  0.5f, -0.5f, 1.0f, 1.0f }},
-    {{  0.5f, -0.5f, -0.5f, 0.0f, 1.0f }},
-    {{  0.5f,  0.5f,  0.5f, 1.0f, 0.0f }},
-    {{  0.5f, -0.5f,  0.5f, 0.0f, 0.0f }},
-
-    // Bottom face
-    {{ -0.5f, -0.5f, -0.5f, 0.0f, 1.0f }},
-    {{  0.5f, -0.5f, -0.5f, 1.0f, 1.0f }},
-    {{  0.5f, -0.5f,  0.5f, 1.0f, 0.0f }},
-    {{  0.5f, -0.5f,  0.5f, 1.0f, 0.0f }},
-    {{ -0.5f, -0.5f,  0.5f, 0.0f, 0.0f }},
-    {{ -0.5f, -0.5f, -0.5f, 0.0f, 1.0f }},
-
-    // Top face
-    {{ -0.5f,  0.5f, -0.5f, 0.0f, 1.0f }},
-    {{  0.5f,  0.5f,  0.5f, 1.0f, 0.0f }},
-    {{  0.5f,  0.5f, -0.5f, 1.0f, 1.0f }},
-    {{  0.5f,  0.5f,  0.5f, 1.0f, 0.0f }},
-    {{ -0.5f,  0.5f, -0.5f, 0.0f, 1.0f }},
-    {{ -0.5f,  0.5f,  0.5f, 0.0f, 0.0f }}
-}};
-
+static constexpr std::array<std::array<float, 5>, 8> g_CubeVertices = { {
+        // Positions           // UVs
+        {{-0.5f, -0.5f, -0.5f, 0.0f, 0.0f}}, // 0 - Left Bottom Back
+        {{ 0.5f, -0.5f, -0.5f, 1.0f, 0.0f}}, // 1 - Right Bottom Back
+        {{ 0.5f,  0.5f, -0.5f, 1.0f, 1.0f}}, // 2 - Right Top Back
+        {{-0.5f,  0.5f, -0.5f, 0.0f, 1.0f}}, // 3 - Left Top Back
+        {{-0.5f, -0.5f,  0.5f, 0.0f, 0.0f}}, // 4 - Left Bottom Front
+        {{ 0.5f, -0.5f,  0.5f, 1.0f, 0.0f}}, // 5 - Right Bottom Front
+        {{ 0.5f,  0.5f,  0.5f, 1.0f, 1.0f}}, // 6 - Right Top Front
+        {{-0.5f,  0.5f,  0.5f, 0.0f, 1.0f}}  // 7 - Left Top Front
+    } };
 
 
 // ----- Cube Index Position -----
 constexpr uint32_t g_CubeIndices[] = {
-    0, 1, 2, 2, 3, 0,  // back face
-    4, 5, 6, 6, 7, 4,  // front face
-    4, 5, 1, 1, 0, 4,  // bottom face
-    7, 6, 2, 2, 3, 7,  // top face
-    4, 0, 3, 3, 7, 4,  // left face
-    5, 1, 2, 2, 6, 5   // right face
+    0, 1, 2, 2, 3, 0,  // Back face
+    4, 5, 6, 6, 7, 4,  // Front face
+    4, 7, 3, 3, 0, 4,  // Left face
+    1, 5, 6, 6, 2, 1,  // Right face
+    0, 1, 5, 5, 4, 0,  // Bottom face
+    3, 2, 6, 6, 7, 3   // Top face
 };
 
 static std::array<std::array<float, 5>, 4> g_PlaneVertices{

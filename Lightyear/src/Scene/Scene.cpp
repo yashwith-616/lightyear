@@ -1,5 +1,6 @@
 #include "Lightyear/Scene/Scene.h"
 #include "Lightyear/Renderer/Abstract/Renderer.h"
+#include "Lightyear/Renderer/Camera/SceneCamera.h"
 #include "Lightyear/Scene/Components.h"
 #include "Lightyear/Scene/Entity.h"
 
@@ -112,15 +113,9 @@ void Scene::OnSimulationStart() {}
 void Scene::OnSimulationEnd() {}
 
 void Scene::OnUpdateRuntime(ly::Timestep deltaTime) {
-    if (m_SceneExecState != SceneExecState::SS_RUNNING) {
-        return;
-    }
+    LY_CORE_ASSERT(IsRunning(), "EditorUpdate is performed when scene is not paused!");
 
-    Entity cameraEntity = GetPrimaryCameraEntity();
-    LY_CORE_ASSERT(cameraEntity && cameraEntity.HasComponent<CameraComponent>(),
-                   "Scene camera entity does not exists");
-
-    const auto& cameraComp = cameraEntity.GetComponent<CameraComponent>();
+    CameraComponent cameraComp = GetPrimaryCameraEntity().GetComponent<CameraComponent>();
     renderer::Renderer::BeginScene(cameraComp.Camera);
 
     auto view = m_Registry.view<RenderComponent, MeshComponent, TransformComponent>();
@@ -132,27 +127,36 @@ void Scene::OnUpdateRuntime(ly::Timestep deltaTime) {
             continue;
         }
 
-        renderer::Renderer::Submit(
-            mesh.ShaderAsset, mesh.MeshAsset, mesh.TextureAsset, transform.GetTransform());
+        renderer::Renderer::Submit(renderer::RenderSubmission(
+            mesh.ShaderAsset, mesh.MeshAsset, mesh.TextureAsset, transform.GetTransform()));
     }
 
     renderer::Renderer::EndScene();
 }
 
-void Scene::OnUpdateSimulation(ly::Timestep deltaTime, EditorCamera& camera) {
-    if (m_SceneExecState != SceneExecState::SS_RUNNING) {
-        return;
-    }
-
+void Scene::OnUpdateSimulation(ly::Timestep deltaTime, Ref<renderer::SceneCamera> camera) {
     // Update Physics
 }
 
-/**
- * @brief Convert SceneGraph to SceneTree and pass it to the Renderer
- * @param deltaTime the time between each frame
- * @param camera the editorial camera
- */
-void Scene::OnUpdateEditor(ly::Timestep deltaTime, EditorCamera& camera) {}
+void Scene::OnUpdateEditor(ly::Timestep deltaTime, Ref<renderer::SceneCamera> camera) {
+    LY_CORE_ASSERT(IsPaused(), "EditorUpdate is performed when scene is not paused!");
+    renderer::Renderer::BeginScene(std::static_pointer_cast<renderer::Camera>(camera));
+
+    auto view = m_Registry.view<RenderComponent, MeshComponent, TransformComponent>();
+    for (auto entity : view) {
+        const auto& [render, mesh, transform] =
+            view.get<RenderComponent, MeshComponent, TransformComponent>(entity);
+
+        if (!mesh.ShaderAsset || !mesh.MeshAsset) {
+            continue;
+        }
+
+        renderer::Renderer::Submit(renderer::RenderSubmission(
+            mesh.ShaderAsset, mesh.MeshAsset, mesh.TextureAsset, transform.GetTransform()));
+    }
+
+    renderer::Renderer::EndScene();
+}
 
 void Scene::OnViewportResize(uint32_t width, uint32_t height) {
     m_ViewportHeight = height;

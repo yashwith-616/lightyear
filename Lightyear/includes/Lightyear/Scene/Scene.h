@@ -5,12 +5,15 @@
 #include "SceneGraph.h"
 #include "entt/entt.hpp"
 
+namespace ly::renderer {
+class SceneCamera;
+}
+
 namespace ly::scene {
 
 class Entity;
-class EditorCamera;
 
-enum SceneExecState { SS_PAUSED = 0, SS_RUNNING = 1, SS_MAX = 2 };
+enum SceneExecState { SS_NONE = 0, SS_PAUSED = 1, SS_RUNNING = 2, SS_SIMULATION = 3, SS_MAX = 4 };
 
 class LIGHTYEAR_API Scene {
 public:
@@ -27,9 +30,27 @@ public:
     void OnSimulationStart();
     void OnSimulationEnd();
 
+    /**
+     * @brief The following update is perfomed on the editor along with games logical layer and
+     * using the main camera that is part of the game
+     * @param deltaTime the timestep between each frame
+     */
     void OnUpdateRuntime(ly::Timestep deltaTime);
-    void OnUpdateSimulation(ly::Timestep deltaTime, EditorCamera& camera);
-    void OnUpdateEditor(ly::Timestep deltaTime, EditorCamera& camera);
+
+    /**
+     * @brief Update physics layer and render using sceneCamera
+     *
+     * @param deltaTime
+     * @param camera
+     */
+    void OnUpdateSimulation(ly::Timestep deltaTime, Ref<renderer::SceneCamera> camera);
+
+    /**
+     * @brief The following update is performed on the editor while rendering using the sceneCamera
+     * @param deltaTime the time between each frame
+     * @param camera the editorial camera
+     */
+    void OnUpdateEditor(ly::Timestep deltaTime, Ref<renderer::SceneCamera> camera);
     void OnViewportResize(uint32_t width, uint32_t height);
 
     bool IsRunning() const { return m_SceneExecState == SS_RUNNING; }

@@ -10,7 +10,14 @@
 
 namespace ly::renderer {
 
+RenderSubmission::RenderSubmission(const Ref<Shader>& shader,
+                                   const Ref<VertexArray>& vertexArray,
+                                   const Ref<Texture>& texture,
+                                   const glm::mat4& transform)
+    : RSShader(shader), RSVertexArray(vertexArray), RSTexture(texture), RSTransform(transform) {}
+
 Renderer::SceneData Renderer::s_SceneData;
+std::vector<RenderSubmission> Renderer::s_RenderQueue;
 
 void Renderer::Init() {
     RenderCommand::Init();
@@ -22,25 +29,31 @@ void Renderer::OnWindowResize(uint32_t width, uint32_t height) {}
 
 void Renderer::BeginScene(const Ref<Camera>& camera) {
     s_SceneData.ViewProjectionMatrix = camera->GetViewProjectionMatrix();
+    s_RenderQueue.clear();
 }
 
-void Renderer::EndScene() {}
+void Renderer::EndScene() {
+    Flush();
+}
 
-void Renderer::Submit(const Ref<Shader>& shader,
-                      const Ref<VertexArray>& vertexArray,
-                      const Ref<Texture>& texture,
-                      const glm::mat4& transform = glm::mat4(1.f)) {
-    // TODO: Need to abstract away openGL call here
-    Ref<OpenGLShader> openGLShader = std::dynamic_pointer_cast<OpenGLShader>(shader);
-    openGLShader->Use();
-    openGLShader->SetUniform("u_ViewProjection", s_SceneData.ViewProjectionMatrix);
-    openGLShader->SetUniform("u_Transform", transform);
+void Renderer::Submit(const RenderSubmission& submission) {
+    s_RenderQueue.push_back(submission);
+}
 
-    texture->Bind(1);
-    openGLShader->SetUniform("u_Color", 1);
+void Renderer::Flush() {
+    for (const auto& submission : s_RenderQueue) {
+        Ref<OpenGLShader> openGLShader =
+            std::dynamic_pointer_cast<OpenGLShader>(submission.RSShader);
+        openGLShader->Use();
+        openGLShader->SetUniform("u_ViewProjection", s_SceneData.ViewProjectionMatrix);
+        openGLShader->SetUniform("u_Transform", submission.RSTransform);
 
-    vertexArray->Bind();
-    RenderCommand::DrawIndexed(vertexArray);
+        submission.RSTexture->Bind(1);
+        openGLShader->SetUniform("u_Color", 1);
+
+        submission.RSVertexArray->Bind();
+        RenderCommand::DrawIndexed(submission.RSVertexArray);
+    }
 }
 
 }  // namespace ly::renderer

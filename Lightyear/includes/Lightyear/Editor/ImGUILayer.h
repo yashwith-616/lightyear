@@ -3,6 +3,8 @@
 #include "LightYear/Core/Layer.h"
 #include "Lightyear/LightyearCore.h"
 
+enum ImGuiKey : int;
+
 namespace ly {
 
 class MouseButtonPressedEvent;
@@ -39,6 +41,8 @@ protected:
     bool OnKeyReleasedEvent(KeyReleasedEvent& event);
     bool OnKeyTypedEvent(KeyTypedEvent& event);
     bool OnWindowResizeEvent(WindowResizeEvent& event);
+
+    ImGuiKey GetImGuiKeyCode(int keyCode);
 
 private:
     float m_Time{ 0.f };

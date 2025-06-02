@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Lightyear.h"
+#include "Panel/SceneViewportPanel.h"
 
 class EditorCamera;
 
@@ -19,9 +20,18 @@ private:
     ly::Ref<ly::renderer::Texture2D> m_Texture;
     ly::Ref<ly::scene::Scene> m_Scene{};
 
+    ly::Ref<EditorCamera> m_EditorCamera{};
+
+    SceneViewportPanel m_ViewportPanel{};
+
+protected:
+    virtual void InitEditorLayouts();
+
 private:
+    void PollInput(float deltaTime);
+
     void DrawDockspace();
-    void DrawViewport();
     void DrawDemoSettings();
     void DrawLogPanel();
+    void DrawTestPanel();
 };
