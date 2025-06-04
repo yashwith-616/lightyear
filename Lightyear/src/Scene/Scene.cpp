@@ -1,4 +1,6 @@
 #include "Lightyear/Scene/Scene.h"
+#include "Lightyear/Core/Application.h"
+#include "Lightyear/Core/Window.h"
 #include "Lightyear/Renderer/Abstract/Renderer.h"
 #include "Lightyear/Renderer/Camera/SceneCamera.h"
 #include "Lightyear/Scene/Components.h"
@@ -115,8 +117,10 @@ void Scene::OnSimulationEnd() {}
 void Scene::OnUpdateRuntime(ly::Timestep deltaTime) {
     LY_CORE_ASSERT(IsRunning(), "EditorUpdate is performed when scene is not paused!");
 
+    m_SceneData.Time = Application::Get().GetWindow().GetTime();
+
     CameraComponent cameraComp = GetPrimaryCameraEntity().GetComponent<CameraComponent>();
-    renderer::Renderer::BeginScene(cameraComp.Camera);
+    renderer::Renderer::BeginScene(cameraComp.Camera, m_SceneData);
 
     auto view = m_Registry.view<RenderComponent, MeshComponent, TransformComponent>();
     for (auto entity : view) {
@@ -139,8 +143,10 @@ void Scene::OnUpdateSimulation(ly::Timestep deltaTime, Ref<renderer::SceneCamera
 }
 
 void Scene::OnUpdateEditor(ly::Timestep deltaTime, Ref<renderer::SceneCamera> camera) {
+    m_SceneData.Time = Application::Get().GetWindow().GetTime();
+
     LY_CORE_ASSERT(IsPaused(), "EditorUpdate is performed when scene is not paused!");
-    renderer::Renderer::BeginScene(std::static_pointer_cast<renderer::Camera>(camera));
+    renderer::Renderer::BeginScene(std::static_pointer_cast<renderer::Camera>(camera), m_SceneData);
 
     auto view = m_Registry.view<RenderComponent, MeshComponent, TransformComponent>();
     for (auto entity : view) {

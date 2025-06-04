@@ -2,8 +2,14 @@
 
 #include <lypch.h>
 #include "Lightyear/LightyearCore.h"
+#include "Lightyear/Renderer/Primitives/UniformBuffer.h"
 #include "RendererAPI.h"
+#include "RendererUBO.h"
 #include "glm/glm.hpp"
+
+namespace ly::scene {
+struct SceneData;
+}
 
 namespace ly::renderer {
 
@@ -31,7 +37,7 @@ public:
 
     static void OnWindowResize(uint32_t width, uint32_t height);
 
-    static void BeginScene(const Ref<Camera>& camera);
+    static void BeginScene(const Ref<Camera>& camera, const scene::SceneData& sceneData);
     static void EndScene();
 
     /**
@@ -51,11 +57,12 @@ public:
     static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
 
 private:
-    struct SceneData {
-        glm::mat4 ViewProjectionMatrix;
-    };
-
-    static SceneData s_SceneData;
     static std::vector<RenderSubmission> s_RenderQueue;
+    static GlobalUniforms s_GlobalUniforms;
+
+    static UBO_Camera s_CameraUBO;
+    static UBO_Material s_MaterialUBO;
+    static UBO_Object s_ObjectUBO;
+    static UBO_Scene s_SceneUBO;
 };
 }  // namespace ly::renderer

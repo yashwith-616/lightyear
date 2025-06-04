@@ -1,26 +1,39 @@
 #version 460 core
 
-in vec3 v_WorldPos;
+in vec2 v_ScreenCoord;
 
 uniform sampler2D u_Color;
 uniform float u_GridSize = 0.1;
 uniform vec3 u_LineColor = vec3(1.0);
 uniform vec3 u_BackgroundColor = vec3(0.3);
 
+layout(std140, binding = 0) uniform Camera {
+    mat4 u_ViewProjection;
+    mat4 u_View;
+    vec3 u_CameraPosition;
+    vec3 u_CameraRotation;
+};
+
+layout(std140, binding = 1) uniform Scene {
+    float u_Time;
+};
+
+layout(std140, binding = 2) uniform Material {
+    vec4 u_BaseColor;
+    float u_Roughness;
+    float u_Metallic;
+    float u_AO;
+};
+
+layout(std140, binding = 3) uniform Object {
+    mat4 u_ModelMatrix;
+    mat4 u_NormalMatrix;
+};
+
 out vec4 FragColor;
 
 void main() {
-    vec2 pos = v_WorldPos.xy;
-
-    // Use modulus to detect grid lines
-    float lineX = abs(fract(pos.x / u_GridSize) - 0.5);
-    float lineY = abs(fract(pos.y / u_GridSize) - 0.5);
-
-    float lineWidth = 0.02; // Fraction of gridSize (tweak for sharpness)
-
-    float isLine = step(lineX, lineWidth) + step(lineY, lineWidth);
-    isLine = clamp(isLine, 0.0, 1.0);
-
-    vec3 color = mix(u_BackgroundColor, u_LineColor, isLine);
-    FragColor = vec4(color, 1.0);
+    float brightness = sin(u_Time * 2.0 * 3.14159); // [0,1] range
+    vec3 color = vec3(brightness);             // grayscale brightness
+    FragColor = vec4(u_Time, 0, 0, 1.0);
 }

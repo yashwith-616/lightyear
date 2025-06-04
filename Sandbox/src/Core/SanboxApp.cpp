@@ -1,6 +1,5 @@
 #include "Sandbox/Core/SandboxApp.h"
 #include "Sandbox/Editor/EditorLayer.h"
-#include "Sandbox/Extras/ExampleLayer.h"
 
 SandboxApp::SandboxApp() {}
 

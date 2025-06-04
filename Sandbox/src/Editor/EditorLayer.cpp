@@ -172,11 +172,17 @@ void EditorLayer::PollInput(float deltaTime) {
         m_EditorCamera->MoveForward(deltaTime * m_EditorCamera->GetSpeed());
     }
 
-    if (float val = ly::Input::GetMouseY()) {
-        m_EditorCamera->AddPitch(val);
-    }
+    if (ly::Input::IsMouseButtonPressed(ly::Mouse::Button1)) {
+        if (float val = ly::Input::GetMouseY()) {
+            float diff = val - m_PrevMouseY;
+            m_EditorCamera->AddPitch(diff * deltaTime * m_MouseSensitivity);
+            m_PrevMouseY = val;
+        }
 
-    if (float val = ly::Input::GetMouseX()) {
-        m_EditorCamera->AddYaw(val);
+        if (float val = ly::Input::GetMouseX()) {
+            float diff = val - m_PrevMouseX;
+            m_EditorCamera->AddYaw(diff * deltaTime * m_MouseSensitivity);
+            m_PrevMouseX = val;
+        }
     }
 }

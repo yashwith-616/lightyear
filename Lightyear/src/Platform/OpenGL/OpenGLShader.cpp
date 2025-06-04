@@ -34,6 +34,8 @@ OpenGLShader::OpenGLShader(const CName& name,
     } catch (const std::exception& e) {
         LY_CORE_LOG(LogType::Error, "ERROR::SHADER::FILE_NOT_SUCCESSFULLY_READ: {}", e.what());
     }
+
+    BindUniformBufferBlock();
 }
 
 OpenGLShader::OpenGLShader(const CName& name,
@@ -63,10 +65,11 @@ OpenGLShader::OpenGLShader(const CName& name,
                 glDeleteShader(shaderHandle);
             }
         }
-
     } catch (const std::exception& e) {
         LY_CORE_LOG(LogType::Error, "ERROR::SHADER::FILE_NOT_SUCCESSFULLY_READ: {}", e.what());
     }
+
+    BindUniformBufferBlock();
 }
 
 void OpenGLShader::Use() const {
@@ -122,6 +125,36 @@ GLenum OpenGLShader::GetGLShaderType(ShaderType shaderType) const {
         default:
             throw std::invalid_argument("Unsupported ShaderType");
     }
+}
+
+GLint OpenGLShader::GetUniformLocation(const CName& name) const {
+    if (m_UniformLocationCache.find(name) != m_UniformLocationCache.end()) {
+        return m_UniformLocationCache[name];
+    }
+
+    GLint location               = glGetUniformLocation(m_ShaderHandle, name.c_str());
+    m_UniformLocationCache[name] = location;
+    return location;
+}
+
+GLint OpenGLShader::GetUniformBufferBlockIndex(const CName& name) const {
+    if (m_UniformLocationCache.find(name) != m_UniformLocationCache.end()) {
+        return m_UniformLocationCache[name];
+    }
+
+    GLint blockIndex = glGetUniformBlockIndex(m_ShaderHandle, name.data());
+    LY_CORE_ASSERT(blockIndex >= 0, "Uniform buffer block is not yet initialized!");
+    m_UniformLocationCache[name] = blockIndex;
+    return blockIndex;
+}
+
+void OpenGLShader::BindUniformBufferBlock() const {
+    Use();
+    SetUniformBlock("Camera", UniformBufferBlockBinding::Camera);
+    SetUniformBlock("Scene", UniformBufferBlockBinding::Scene);
+    SetUniformBlock("Material", UniformBufferBlockBinding::Material);
+    SetUniformBlock("Object", UniformBufferBlockBinding::Object);
+    UnBind();
 }
 
 }  // namespace ly::renderer

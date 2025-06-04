@@ -1,6 +1,8 @@
 #pragma once
 
+#include <lypch.h>
 #include <glm/glm.hpp>
+#include "Lightyear/Renderer/Primitives/RenderTypes.h"
 #include "Lightyear/Renderer/Primitives/Shader.h"
 #include "glad.h"
 
@@ -28,71 +30,75 @@ public:
 
     template <typename T>
         requires(!std::is_arithmetic_v<T>)
-    void SetUniform(CParam name, const T& value) const {
+    void SetUniform(const CName& name, const T& value) const {
         static_assert(sizeof(T) == 0,
                       "Unsupported uniform type! Specialize setUniform<T> for this type");
     }
 
     // Specialization for int
     template <std::integral T>
-    inline void SetUniform(CParam name, const T value) const {
-        glUniform1i(glGetUniformLocation(m_ShaderHandle, name.data()), static_cast<int>(value));
+    inline void SetUniform(const CName& name, const T value) const {
+        glUniform1i(GetUniformLocation(name), static_cast<int>(value));
     }
 
     // Specialization for float
     template <std::floating_point T>
-    inline void SetUniform(CParam name, const T value) const {
-        glUniform1f(glGetUniformLocation(m_ShaderHandle, name.data()), static_cast<float>(value));
+    inline void SetUniform(const CName& name, const T value) const {
+        glUniform1f(GetUniformLocation(name), static_cast<float>(value));
     }
 
     // Specialization for bool
     template <std::same_as<bool> T>
-    inline void SetUniform(CParam name, const T value) const {
-        glUniform1i(glGetUniformLocation(m_ShaderHandle, name.data()), static_cast<bool>(value));
+    inline void SetUniform(const CName& name, const T value) const {
+        glUniform1i(GetUniformLocation(name), static_cast<bool>(value));
     }
 
     // Specialization for glm::vec2
     template <>
-    inline void SetUniform<glm::vec2>(CParam name, const glm::vec2& value) const {
-        glUniform2fv(glGetUniformLocation(m_ShaderHandle, name.data()), 1, &value[0]);
+    inline void SetUniform<glm::vec2>(const CName& name, const glm::vec2& value) const {
+        glUniform2fv(GetUniformLocation(name), 1, &value[0]);
     }
 
     // Specialization for glm::vec3
     template <>
-    inline void SetUniform<glm::vec3>(CParam name, const glm::vec3& value) const {
-        glUniform3fv(glGetUniformLocation(m_ShaderHandle, name.data()), 1, &value[0]);
+    inline void SetUniform<glm::vec3>(const CName& name, const glm::vec3& value) const {
+        glUniform3fv(GetUniformLocation(name), 1, &value[0]);
     }
 
     // Specialization for glm::vec4
     template <>
-    inline void SetUniform<glm::vec4>(CParam name, const glm::vec4& value) const {
-        glUniform4fv(glGetUniformLocation(m_ShaderHandle, name.data()), 1, &value[0]);
+    inline void SetUniform<glm::vec4>(const CName& name, const glm::vec4& value) const {
+        glUniform4fv(GetUniformLocation(name), 1, &value[0]);
     }
 
     // Specialization for glm::mat2
     template <>
-    inline void SetUniform<glm::mat2>(CParam name, const glm::mat2& value) const {
-        glUniformMatrix2fv(
-            glGetUniformLocation(m_ShaderHandle, name.data()), 1, GL_FALSE, &value[0][0]);
+    inline void SetUniform<glm::mat2>(const CName& name, const glm::mat2& value) const {
+        glUniformMatrix2fv(GetUniformLocation(name), 1, GL_FALSE, &value[0][0]);
     }
 
     // Specialization for glm::mat3
     template <>
-    inline void SetUniform<glm::mat3>(CParam name, const glm::mat3& value) const {
-        glUniformMatrix3fv(
-            glGetUniformLocation(m_ShaderHandle, name.data()), 1, GL_FALSE, &value[0][0]);
+    inline void SetUniform<glm::mat3>(const CName& name, const glm::mat3& value) const {
+        glUniformMatrix3fv(GetUniformLocation(name), 1, GL_FALSE, &value[0][0]);
     }
 
     // Specialization for glm::mat4
     template <>
-    inline void SetUniform<glm::mat4>(CParam name, const glm::mat4& value) const {
-        glUniformMatrix4fv(
-            glGetUniformLocation(m_ShaderHandle, name.data()), 1, GL_FALSE, &value[0][0]);
+    inline void SetUniform<glm::mat4>(const CName& name, const glm::mat4& value) const {
+        glUniformMatrix4fv(GetUniformLocation(name), 1, GL_FALSE, &value[0][0]);
+    }
+
+    inline void SetUniformBlock(const CName& name,
+                                const UniformBufferBlockBinding& bindingPoint) const {
+        glUniformBlockBinding(
+            m_ShaderHandle, GetUniformBufferBlockIndex(name), static_cast<GLuint>(bindingPoint));
     }
 
 private:
     ShaderHandle m_ShaderHandle;
     CText m_Name;
+    mutable std::unordered_map<CName, GLint> m_UniformLocationCache;
 
 private:
     /**
@@ -111,6 +117,12 @@ private:
     void CheckCompilerErrors(ShaderHandle shaderHandle, GLenum shaderType);
 
     GLenum GetGLShaderType(ShaderType shaderType) const;
+
+    GLint GetUniformLocation(const CName& name) const;
+
+    GLint GetUniformBufferBlockIndex(const CName& name) const;
+
+    void BindUniformBufferBlock() const;
 };
 
 }  // namespace ly::renderer

@@ -2,6 +2,7 @@
 
 #include <lypch.h>
 #include "Lightyear/LightyearCore.h"
+#include "SceneData.h"
 #include "SceneGraph.h"
 #include "entt/entt.hpp"
 
@@ -72,6 +73,7 @@ private:
 
     // Need to find better implementation
     std::unordered_map<CName, int> m_EntityNameMap;
+    SceneData m_SceneData;
 
 private:
     template <typename T>

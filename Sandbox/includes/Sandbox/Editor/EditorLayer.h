@@ -14,6 +14,9 @@ public:
     virtual void OnEditorRender() override;
     virtual void OnUpdate(float deltaTime) override;
 
+protected:
+    virtual void InitEditorLayouts();
+
 private:
     ly::Ref<ly::renderer::Framebuffer> m_Framebuffer{};
     ly::Ref<ly::renderer::Shader> m_Shader;
@@ -24,8 +27,10 @@ private:
 
     SceneViewportPanel m_ViewportPanel{};
 
-protected:
-    virtual void InitEditorLayouts();
+private:
+    float m_PrevMouseY{ 0.f };
+    float m_PrevMouseX{ 0.f };
+    float m_MouseSensitivity{ 0.1f };
 
 private:
     void PollInput(float deltaTime);
