@@ -20,3 +20,6 @@
 [submodule "Lightyear/extern/yaml-cpp"]
 	path = Lightyear/extern/yaml-cpp
 	url = git@github.com:jbeder/yaml-cpp.git
+[submodule "Lightyear/extern/PhysX"]
+	path = Lightyear/extern/PhysX
+	url = git@github.com:NVIDIA-Omniverse/PhysX.git

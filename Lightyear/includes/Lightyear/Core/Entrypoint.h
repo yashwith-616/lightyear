@@ -9,10 +9,10 @@ extern ly::Scope<ly::Application> CreateApplication();
 
 int main(int argc, char** argv) {
     ly::Log::Init();
-
-    ly::Scope<ly::Application> app = CreateApplication();
-    ly::Application::SetApplication(std::move(app));
-    ly::Application::Get().Run();
+    {
+        ly::Application::Create(CreateApplication());
+        ly::Application::Get().Run();
+    }
+    ly::Log::Shutdown();
 }
-
 #endif

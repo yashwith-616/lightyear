@@ -8,9 +8,13 @@ Ref<Texture2D> Texture2D::Create(const CPath& path) {
     switch (Renderer::GetAPI()) {
         case RendererAPI::API::None:
             LY_CORE_ASSERT(false, "RenderereAPI::None is currently not supported!");
+            return nullptr;
         case RendererAPI::API::OpenGL:
             return MakeRef<OpenGLTexture2D>(path);
     }
+
+    LY_CORE_ASSERT(false, "RenderereAPI is invalid not supported!");
+    return nullptr;
 }
 
 }  // namespace ly::renderer

@@ -30,7 +30,7 @@ target_link_libraries(Sandbox PRIVATE Lightyear)
 #-------------------------------------------------
 # Compile definations
 #-------------------------------------------------
-target_compile_definitions(Sandbox PRIVATE LY_PLATFORM_WINDOWS)
+target_compile_definitions(Sandbox PRIVATE LY_PLATFORM_WINDOWS LY_BUILD_STATIC LY_DEBUG)
 
 
 #-------------------------------------------------

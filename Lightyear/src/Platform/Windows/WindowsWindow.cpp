@@ -3,6 +3,7 @@
 #include "Lightyear/Events/KeyEvent.h"
 #include "Lightyear/Events/MouseEvent.h"
 #include "Lightyear/Platform/OpenGL/OpenGLContext.h"
+#include "Lightyear/Renderer/Abstract/Renderer.h"
 
 #include <GLFW/glfw3.h>
 
@@ -57,6 +58,19 @@ void WindowsWindow::Init(const WindowProps& props) {
         int success = glfwInit();
         LY_CORE_ASSERT(success, "Failed to initialize GLFW");
         s_GLFWInitialized = true;
+
+        // Set Error Callbacks
+        glfwSetErrorCallback(GLFWErrorCallback);
+    }
+
+    if (renderer::Renderer::GetAPI() == renderer::RendererAPI::API::OpenGL) {
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+#ifdef LY_DEBUG
+        glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
+#endif
     }
 
     m_Window = glfwCreateWindow(static_cast<int>(props.Width),
@@ -64,8 +78,9 @@ void WindowsWindow::Init(const WindowProps& props) {
                                 m_Data.Title.data(),
                                 nullptr,
                                 nullptr);
+    LY_CORE_ASSERT(m_Window != nullptr, "GLFW window initialization failed!");
 
-    m_Context = MakeScope<OpenGLContext>(m_Window);
+    m_Context = renderer::RendererContext::Create(reinterpret_cast<void*>(m_Window));
     m_Context->Init();
 
     glfwSetWindowUserPointer(m_Window, &m_Data);
@@ -73,6 +88,8 @@ void WindowsWindow::Init(const WindowProps& props) {
 }
 
 void WindowsWindow::ShutDown() {
+    LY_CORE_ASSERT(m_Window != nullptr, "GLFWWindow is nullptr");
+
     glfwDestroyWindow(m_Window);
     glfwTerminate();
 }
@@ -153,9 +170,6 @@ void WindowsWindow::SetupWindowCallbacks() {
         KeyTypedEvent typedEvent(keycode);
         data.EventCallback(typedEvent);
     });
-
-    // Set Error Callbacks
-    glfwSetErrorCallback(GLFWErrorCallback);
 }
 
 }  // namespace ly

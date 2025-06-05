@@ -32,7 +32,7 @@ Ref<VertexBuffer> VertexBuffer::Create(uint32_t size) {
     return nullptr;
 }
 
-Ref<VertexBuffer> VertexBuffer::Create(float* vertices, uint32_t size) {
+Ref<VertexBuffer> VertexBuffer::Create(const float* vertices, uint32_t size) {
     switch (Renderer::GetAPI()) {
         case RendererAPI::API::None:
             LY_CORE_ASSERT(false, "Renderer::API::None is currently not supported");

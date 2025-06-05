@@ -51,7 +51,7 @@ void OpenGLVertexArray::Unbind() const {
 }
 
 void OpenGLVertexArray::AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer) {
-    LY_CORE_ASSERT(vertexBuffer.GetLayout().GetElements().size(), "Vertex Buffer has no layout");
+    LY_CORE_ASSERT(vertexBuffer->GetLayout().GetElements().size(), "Vertex Buffer has no layout");
 
     Bind();
     vertexBuffer->Bind();

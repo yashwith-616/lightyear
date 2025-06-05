@@ -3,6 +3,8 @@
 #include "LightYear/Core/Layer.h"
 #include "Lightyear/LightyearCore.h"
 
+enum ImGuiKey : int;
+
 namespace ly {
 
 class MouseButtonPressedEvent;
@@ -13,16 +15,21 @@ class KeyPressedEvent;
 class KeyReleasedEvent;
 class KeyTypedEvent;
 class WindowResizeEvent;
+class EditorUpdateBeginEvent;
+class EditorUpdateEndEvent;
 
-class LIGHTYEAR_API ImGuiLayer : public Layer {
+class LIGHTYEAR_API ImGUILayer : public Layer {
 public:
-    ImGuiLayer();
-    ~ImGuiLayer();
+    ImGUILayer();
+    ~ImGUILayer();
 
     virtual void OnAttach();
     virtual void OnDetach();
-    virtual void OnUpdate(float deltaTime);
     virtual void OnEvent(Event& event);
+    virtual void OnEditorRender();
+
+    void Begin();
+    void End();
 
 protected:
     bool OnMouseButtonPressedEvent(MouseButtonPressedEvent& event);
@@ -34,6 +41,8 @@ protected:
     bool OnKeyReleasedEvent(KeyReleasedEvent& event);
     bool OnKeyTypedEvent(KeyTypedEvent& event);
     bool OnWindowResizeEvent(WindowResizeEvent& event);
+
+    ImGuiKey GetImGuiKeyCode(int keyCode);
 
 private:
     float m_Time{ 0.f };

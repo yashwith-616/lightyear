@@ -2,13 +2,15 @@
 #include "Sandbox/Geometry/Shapes/ShapeVertex.h"
 
 Geometry* Geometry::s_Geometry = nullptr;
-static ly::Ref<ly::renderer::VertexArray> Init(float* vertexData,
+static ly::Ref<ly::renderer::VertexArray> Init(const float* vertexData,
                                                uint32_t vertexSize,
                                                uint32_t* indexData,
                                                uint32_t indexSize) {
     ly::renderer::BufferElement bufferElement(
         ly::renderer::ShaderDataType::Float3, "Positions", false);
-    ly::renderer::BufferLayout bufferLayout = { bufferElement };
+    ly::renderer::BufferElement texCoordBuffer(
+        ly::renderer::ShaderDataType::Float2, "TexCoord", false);
+    ly::renderer::BufferLayout bufferLayout = { bufferElement, texCoordBuffer };
 
     auto vertexBuffer = ly::renderer::VertexBuffer::Create(vertexData, vertexSize);
     vertexBuffer->SetLayout(bufferLayout);
@@ -36,10 +38,10 @@ Geometry::Geometry() {
                               g_PlaneIndices.data(),
                               g_PlaneIndexCount);
 
-    m_CubeVertexArray = Init(const_cast<float*>(g_CubeVertices),
-                             g_CubeVertexCount,
+    m_CubeVertexArray = Init(g_CubeVertices.data()->data(),
+                             static_cast<uint32_t>(sizeof(g_CubeVertices)),
                              const_cast<uint32_t*>(g_CubeIndices),
-                             g_CubeIndexCount);
+                             static_cast<uint32_t>(g_CubeIndexCount));
 
     // Not yet intialized
     m_SphereVertexArray   = Init(nullptr, 0, nullptr, 0);

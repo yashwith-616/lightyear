@@ -33,6 +33,7 @@ file(GLOB_RECURSE HEADERS "${HDRS_DIR}/*.h")
 #-------------------------------------------------
 # Optional Parameters
 #-------------------------------------------------
+option(LY_DEBUG_ENABLED "Enable debug such as assertions and logs" ON)
 option(LY_GRAPHICS_DEBUG "Enable graphic context debugging" ON)
 option(LY_ENABLE_DEPRECATION_WARNINGS "Enable deprecations warning" ON)
 
@@ -80,26 +81,42 @@ set(STB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/extern/stb")
 set(SPDLOG_DIR "${CMAKE_CURRENT_SOURCE_DIR}/extern/spdlog")
 add_subdirectory("${SPDLOG_DIR}")
 
+# ENTT
+set(ENTT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/extern/entt/single_include")
 
 #-------------------------------------------------
 # Project Library
 #-------------------------------------------------
-add_library (Lightyear SHARED ${SOURCES} "${HEADERS}")
-target_include_directories(Lightyear PUBLIC "${HDRS_DIR}")
-target_include_directories(Lightyear PUBLIC "${GLM_DIR}")
-target_include_directories(Lightyear PRIVATE "${GLAD_DIR}")
-target_include_directories(Lightyear PRIVATE "${GLFW_DIR}/include")
-target_include_directories(Lightyear PRIVATE "${IMGUI_DIR}")
-target_include_directories(Lightyear PRIVATE "${STB_DIR}")
-target_link_libraries(Lightyear PRIVATE glad imgui glfw PUBLIC spdlog::spdlog $<$<BOOL:${MINGW}>:ws_32>)
+add_library (Lightyear STATIC ${SOURCES} "${HEADERS}")
+target_include_directories(Lightyear
+    PUBLIC
+        "${HDRS_DIR}"
+        "${GLM_DIR}"
+        "${IMGUI_DIR}"
+        "${GLAD_DIR}"
+        "${ENTT_DIR}"
+    PRIVATE
+        "${GLFW_DIR}/include"
+        "${STB_DIR}"
+)
 
+target_link_libraries(Lightyear
+    PUBLIC 
+        imgui
+        spdlog::spdlog
+        $<$<BOOL:${MINGW}>:ws_32>
+        glad
+    PRIVATE
+        glfw
+)
 
 #-------------------------------------------------
 # Compile definations
 #-------------------------------------------------
 target_compile_definitions(Lightyear 
 	PRIVATE 
-	LY_BUILD_DLL 
+	#LY_BUILD_DLL
+    LY_BUILD_STATIC
 	LY_PLATFORM_WINDOWS 
 	GLFW_INCLUDE_NONE
 	STB_IMAGE_IMPLEMENTATION
@@ -113,6 +130,9 @@ if (LY_ENABLE_DEPRECATION_WARNINGS)
 	target_compile_definitions(Lightyear PUBLIC LY_ENABLE_DEPRECATION_WARNINGS)
 endif()
 
+if (LY_DEBUG_ENABLED)
+	target_compile_definitions(Lightyear PRIVATE LY_DEBUG)
+endif()
 
 #-------------------------------------------------
 # Pre-Compiled Headers

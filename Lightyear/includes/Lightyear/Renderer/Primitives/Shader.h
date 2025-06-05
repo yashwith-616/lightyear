@@ -14,8 +14,11 @@ public:
 
     virtual CName GetName() const { return m_Name; }
 
-    static ly::Ref<Shader> Create(CName name, std::unordered_map<ShaderType, CPath> shaderFiles);
-    static ly::Ref<Shader> Create(CName name, std::unordered_map<ShaderType, CText> shaderSrcs);
+    static ly::Ref<Shader> Create(const CName& name,
+                                  const std::unordered_map<ShaderType, CPath>& shaderFiles);
+
+    static ly::Ref<Shader> Create(const CName& name,
+                                  const std::unordered_map<ShaderType, CText>& shaderSrcs);
 
 protected:
     CName m_Name{};

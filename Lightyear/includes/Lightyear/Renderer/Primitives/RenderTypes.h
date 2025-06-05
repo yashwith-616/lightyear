@@ -35,6 +35,13 @@ enum class ShaderDataType : uint8_t {
     Bool
 };
 
+enum class UniformBufferBlockBinding : uint8_t {
+    Camera   = 0,
+    Scene    = 1,
+    Material = 2,
+    Object   = 3,
+};
+
 enum class VertexAttributeType : uint8_t { None = 0, Position, Normal, TexCoord };
 
 using TextureHandle      = uint32_t;

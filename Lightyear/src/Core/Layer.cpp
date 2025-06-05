@@ -15,4 +15,6 @@ void Layer::OnEvent(Event& event) {}
 
 void Layer::OnUpdate(float deltaTime) {}
 
+void Layer::OnEditorRender() {}
+
 }  // namespace ly

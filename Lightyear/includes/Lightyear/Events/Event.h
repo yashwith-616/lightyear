@@ -25,7 +25,10 @@ enum class EventType : uint8_t {
     MouseButtonPressed,
     MouseButtonReleased,
     MouseMoved,
-    MouseScrolled
+    MouseScrolled,
+
+    EditorUpdateBegin,
+    EditorUpdateEnd
 };
 
 enum EventCategory {
@@ -34,7 +37,8 @@ enum EventCategory {
     EC_INPUT       = BIT(1),
     EC_KEYBOARD    = BIT(2),
     EC_MOUSE       = BIT(3),
-    EC_MOUSEBUTTON = BIT(4)
+    EC_MOUSEBUTTON = BIT(4),
+    EC_EDITOR      = BIT(5)
 };
 
 #define EVENT_CLASS_TYPE(type)                                                                     \
@@ -44,7 +48,7 @@ enum EventCategory {
     virtual EventType GetEventType() const override {                                              \
         return GetStaticType();                                                                    \
     }                                                                                              \
-    virtual CName GetName() const override {                                                       \
+    virtual const char* GetName() const override {                                                 \
         return #type;                                                                              \
     }
 
@@ -64,7 +68,7 @@ public:
     bool bIsHandled{ false };
 
     virtual EventType GetEventType() const = 0;
-    virtual CName GetName() const          = 0;
+    virtual const char* GetName() const    = 0;
     virtual int GetCategoryFlags() const   = 0;
     virtual CText ToString() const { return static_cast<CText>(GetName()); }
 

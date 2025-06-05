@@ -138,5 +138,12 @@ enum : KeyCode {
     RightSuper   = 347,
     Menu         = 348
 };
+
+inline bool IsModifierKey(KeyCode code) {
+    return code == Key::LeftShift || code == Key::RightShift || code == Key::LeftControl ||
+           code == Key::RightControl || code == Key::LeftAlt || code == Key::RightAlt ||
+           code == Key::LeftSuper || code == Key::RightSuper;
 }
+
+}  // namespace Key
 }  // namespace ly

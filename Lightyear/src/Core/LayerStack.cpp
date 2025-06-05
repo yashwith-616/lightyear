@@ -2,12 +2,11 @@
 
 namespace ly {
 
-LayerStack::LayerStack() {
-    m_LayerInsert = m_Layers.begin();
-}
+LayerStack::~LayerStack() {}
 
 void LayerStack::PushLayer(Scope<Layer> layer) {
-    m_LayerInsert = m_Layers.emplace(m_LayerInsert, std::move(layer));
+    m_Layers.insert(m_Layers.begin() + m_LayerInsertIndex, std::move(layer));
+    ++m_LayerInsertIndex;
 }
 
 void LayerStack::PushOverlay(Scope<Layer> overlay) {
@@ -15,22 +14,21 @@ void LayerStack::PushOverlay(Scope<Layer> overlay) {
 }
 
 void LayerStack::PopLayer(Layer* layer) {
-    auto it = std::find_if(m_Layers.begin(), m_Layers.end(), [layer](const Scope<Layer>& l) {
-        return l.get() == layer;
-    });
-    if (it != m_Layers.end()) {
+    auto it = std::find_if(m_Layers.begin(),
+                           m_Layers.begin() + m_LayerInsertIndex,
+                           [layer](auto& l) { return l.get() == layer; });
+    if (it != m_Layers.begin() + m_LayerInsertIndex) {
         m_Layers.erase(it);
-        m_LayerInsert--;
+        --m_LayerInsertIndex;
     }
 }
 
 void LayerStack::PopOverlay(Layer* overlay) {
-    auto it = std::find_if(m_Layers.begin(), m_Layers.end(), [overlay](const Scope<Layer>& l) {
-        return l.get() == overlay;
-    });
+    auto it = std::find_if(m_Layers.begin() + m_LayerInsertIndex,
+                           m_Layers.end(),
+                           [overlay](auto& l) { return l.get() == overlay; });
     if (it != m_Layers.end()) {
         m_Layers.erase(it);
-        m_LayerInsert--;
     }
 }
 

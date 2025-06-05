@@ -2,7 +2,8 @@
 
 namespace ly::renderer {
 
-OpenGLShader::OpenGLShader(CName name, std::unordered_map<ShaderType, CPath> shaderFiles)
+OpenGLShader::OpenGLShader(const CName& name,
+                           const std::unordered_map<ShaderType, CPath>& shaderFiles)
     : m_Name(name) {
     try {
         std::array<ShaderHandle, ShaderTypeCount> shaderHandles = {};
@@ -29,13 +30,14 @@ OpenGLShader::OpenGLShader(CName name, std::unordered_map<ShaderType, CPath> sha
                 glDeleteShader(shaderHandle);
             }
         }
-
+        BindUniformBufferBlock();
     } catch (const std::exception& e) {
         LY_CORE_LOG(LogType::Error, "ERROR::SHADER::FILE_NOT_SUCCESSFULLY_READ: {}", e.what());
     }
 }
 
-OpenGLShader::OpenGLShader(CName name, std::unordered_map<ShaderType, CText> shaderSrcs)
+OpenGLShader::OpenGLShader(const CName& name,
+                           const std::unordered_map<ShaderType, CText>& shaderSrcs)
     : m_Name(name) {
     try {
         std::array<ShaderHandle, ShaderTypeCount> shaderHandles = {};
@@ -61,7 +63,7 @@ OpenGLShader::OpenGLShader(CName name, std::unordered_map<ShaderType, CText> sha
                 glDeleteShader(shaderHandle);
             }
         }
-
+        BindUniformBufferBlock();
     } catch (const std::exception& e) {
         LY_CORE_LOG(LogType::Error, "ERROR::SHADER::FILE_NOT_SUCCESSFULLY_READ: {}", e.what());
     }
@@ -120,6 +122,36 @@ GLenum OpenGLShader::GetGLShaderType(ShaderType shaderType) const {
         default:
             throw std::invalid_argument("Unsupported ShaderType");
     }
+}
+
+GLint OpenGLShader::GetUniformLocation(const CName& name) const {
+    if (m_UniformLocationCache.find(name) != m_UniformLocationCache.end()) {
+        return m_UniformLocationCache[name];
+    }
+
+    GLint location               = glGetUniformLocation(m_ShaderHandle, name.c_str());
+    m_UniformLocationCache[name] = location;
+    return location;
+}
+
+GLint OpenGLShader::GetUniformBufferBlockIndex(const CName& name) const {
+    if (m_UniformLocationCache.find(name) != m_UniformLocationCache.end()) {
+        return m_UniformLocationCache[name];
+    }
+
+    GLint blockIndex = glGetUniformBlockIndex(m_ShaderHandle, name.data());
+    LY_CORE_ASSERT(blockIndex >= 0, "Uniform buffer block is not yet initialized!");
+    m_UniformLocationCache[name] = blockIndex;
+    return blockIndex;
+}
+
+void OpenGLShader::BindUniformBufferBlock() const {
+    Use();
+    SetUniformBlock("Camera", UniformBufferBlockBinding::Camera);
+    SetUniformBlock("Scene", UniformBufferBlockBinding::Scene);
+    SetUniformBlock("Material", UniformBufferBlockBinding::Material);
+    SetUniformBlock("Object", UniformBufferBlockBinding::Object);
+    UnBind();
 }
 
 }  // namespace ly::renderer

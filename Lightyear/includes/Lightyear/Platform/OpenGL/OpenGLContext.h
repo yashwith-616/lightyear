@@ -6,11 +6,12 @@
 
 struct GLFWwindow;
 
-namespace ly {
+namespace ly::renderer {
 
 class LIGHTYEAR_API OpenGLContext : public RendererContext {
 public:
     OpenGLContext(GLFWwindow* windowHandle);
+    ~OpenGLContext();
 
     virtual void Init() override;
     virtual void SwapBuffers() override;
@@ -19,4 +20,4 @@ private:
     GLFWwindow* m_WindowHandle;
 };
 
-}  // namespace ly
+}  // namespace ly::renderer
