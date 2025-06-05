@@ -70,6 +70,8 @@ void Renderer::Flush() {
 
         submission.RSVertexArray->Bind();
         RenderCommand::DrawIndexed(submission.RSVertexArray);
+
+        // s_GlobalUniforms.CameraUBO->Debug(openGLShader->GetShaderHandle(), "Scene");
     }
 }
 

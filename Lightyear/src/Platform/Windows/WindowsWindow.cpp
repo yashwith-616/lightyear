@@ -54,6 +54,15 @@ void WindowsWindow::Init(const WindowProps& props) {
     LY_CORE_LOG(
         LogType::Info, "Creating window {0} ({1}, {2})", props.Title, props.Width, props.Height);
 
+    if (!s_GLFWInitialized) {
+        int success = glfwInit();
+        LY_CORE_ASSERT(success, "Failed to initialize GLFW");
+        s_GLFWInitialized = true;
+
+        // Set Error Callbacks
+        glfwSetErrorCallback(GLFWErrorCallback);
+    }
+
     if (renderer::Renderer::GetAPI() == renderer::RendererAPI::API::OpenGL) {
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
@@ -62,15 +71,6 @@ void WindowsWindow::Init(const WindowProps& props) {
 #ifdef LY_DEBUG
         glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
 #endif
-    }
-
-    if (!s_GLFWInitialized) {
-        int success = glfwInit();
-        LY_CORE_ASSERT(success, "Failed to initialize GLFW");
-        s_GLFWInitialized = true;
-
-        // Set Error Callbacks
-        glfwSetErrorCallback(GLFWErrorCallback);
     }
 
     m_Window = glfwCreateWindow(static_cast<int>(props.Width),

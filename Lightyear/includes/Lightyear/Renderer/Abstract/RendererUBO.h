@@ -9,26 +9,23 @@ struct alignas(16) UBO_Camera {
     glm::mat4 ViewProjection{};  // 64 bytes
     glm::mat4 View{};            // 64 bytes
     glm::vec3 CameraPosition{};  // 12 bytes
+    float _pad1;                 // 4 bytes (to align to 16 bytes)
     glm::vec3 CameraRotation{};  // 12 bytes
-    float Padding1;              // 4 bytes (to align to 16 bytes)
-    float Padding2;              // 4 bytes (to align to 16 bytes)
+    float _pad2;                 // 4 bytes (to align to 16 bytes)
+};
+
+struct UBO_Scene {
+    float Time{ 1.f };  // 4
 };
 
 struct alignas(16) UBO_Material {
-    glm::vec4 BaseColor{};  // Could be used for tint (16 bytes)
-    float Roughness{};      // 4
-    float Metallic{};       // 4
-    float AO{};             // 4
-    float Padding1{};       // 4 (to align to 16)
+    glm::vec4 BaseColor{};   // Could be used for tint (16 bytes)
+    glm::vec4 Properties{};  // 4 (to align to 16)
 };
 
 struct alignas(16) UBO_Object {
     glm::mat4 ModelMatrix{};
     glm::mat4 NormalMatrix{};  // Optional: for correct lighting
-};
-
-struct alignas(16) UBO_Scene {
-    float Time{ 1.f };  // 4
 };
 
 struct LIGHTYEAR_API GlobalUniforms {
@@ -38,10 +35,10 @@ struct LIGHTYEAR_API GlobalUniforms {
     Ref<UniformBuffer> SceneUBO;
 
     void Init() {
-        CameraUBO   = UniformBuffer::Create("camera", sizeof(UBO_Camera), 0);
-        MaterialUBO = UniformBuffer::Create("material", sizeof(UBO_Material), 1);
-        ObjectUBO   = UniformBuffer::Create("object", sizeof(UBO_Object), 2);
-        SceneUBO    = UniformBuffer::Create("scene", sizeof(UBO_Scene), 3);
+        CameraUBO   = UniformBuffer::Create("Camera", sizeof(UBO_Camera), 0);
+        SceneUBO    = UniformBuffer::Create("Scene", sizeof(UBO_Scene), 1);
+        MaterialUBO = UniformBuffer::Create("Material", sizeof(UBO_Material), 2);
+        ObjectUBO   = UniformBuffer::Create("Object", sizeof(UBO_Object), 3);
     }
 
     void Bind() {

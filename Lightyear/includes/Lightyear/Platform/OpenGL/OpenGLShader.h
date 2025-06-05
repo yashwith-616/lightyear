@@ -92,8 +92,10 @@ public:
     inline void SetUniformBlock(const CName& name,
                                 const UniformBufferBlockBinding& bindingPoint) const {
         glUniformBlockBinding(
-            m_ShaderHandle, GetUniformBufferBlockIndex(name), static_cast<GLuint>(bindingPoint));
+            m_ShaderHandle, GetUniformBufferBlockIndex(name), static_cast<uint32_t>(bindingPoint));
     }
+
+    inline ShaderHandle GetShaderHandle() const { return m_ShaderHandle; }
 
 private:
     ShaderHandle m_ShaderHandle;

@@ -30,12 +30,10 @@ OpenGLShader::OpenGLShader(const CName& name,
                 glDeleteShader(shaderHandle);
             }
         }
-
+        BindUniformBufferBlock();
     } catch (const std::exception& e) {
         LY_CORE_LOG(LogType::Error, "ERROR::SHADER::FILE_NOT_SUCCESSFULLY_READ: {}", e.what());
     }
-
-    BindUniformBufferBlock();
 }
 
 OpenGLShader::OpenGLShader(const CName& name,
@@ -65,11 +63,10 @@ OpenGLShader::OpenGLShader(const CName& name,
                 glDeleteShader(shaderHandle);
             }
         }
+        BindUniformBufferBlock();
     } catch (const std::exception& e) {
         LY_CORE_LOG(LogType::Error, "ERROR::SHADER::FILE_NOT_SUCCESSFULLY_READ: {}", e.what());
     }
-
-    BindUniformBufferBlock();
 }
 
 void OpenGLShader::Use() const {

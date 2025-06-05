@@ -1,4 +1,4 @@
-#include "Lightyear/Platform/OpenGL/OpenGLContext.h"
+﻿#include "Lightyear/Platform/OpenGL/OpenGLContext.h"
 #include <GLFW/glfw3.h>
 #include <glad.h>
 
@@ -31,15 +31,19 @@ void OpenGLContext::Init() {
     const std::string_view glVendor   = reinterpret_cast<const char*>(glGetString(GL_VENDOR));
     const std::string_view glRenderer = reinterpret_cast<const char*>(glGetString(GL_RENDERER));
     const std::string_view glVersion  = reinterpret_cast<const char*>(glGetString(GL_VERSION));
+    const std::string_view glShaderVersion =
+        reinterpret_cast<const char*>(glGetString(GL_SHADING_LANGUAGE_VERSION));
 
     LY_CORE_LOG(LogType::Info,
                 "OpenGL Renderer:\n"
                 "\tVendor   : {}\n"
                 "\tRenderer : {}\n"
-                "\tVersion  : {}",
+                "\tVersion  : {}\n"
+                "\tShaderVersion: {}",
                 glVendor,
                 glRenderer,
-                glVersion);
+                glVersion,
+                glShaderVersion);
 
 #ifdef LY_DEBUG
     int flags;
@@ -51,6 +55,14 @@ void OpenGLContext::Init() {
         glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
     }
 #endif
+
+    int profile;
+    glGetIntegerv(GL_CONTEXT_PROFILE_MASK, &profile);
+
+    if (profile & GL_CONTEXT_CORE_PROFILE_BIT)
+        LY_CORE_LOG(LogType::Info, "Core profile is active");
+    else
+        LY_CORE_LOG(LogType::Info, "Compatibility profile is active");
 }
 
 void OpenGLContext::SwapBuffers() {
