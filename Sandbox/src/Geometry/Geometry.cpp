@@ -38,11 +38,10 @@ Geometry::Geometry() {
                               g_PlaneIndices.data(),
                               g_PlaneIndexCount);
 
-    m_CubeVertexArray = Init(
-        g_CubeVertices.data()->data(),
-        static_cast<uint32_t>(g_CubeVertices.size() * g_CubeVertices[0].size() * sizeof(float)),
-        const_cast<uint32_t*>(g_CubeIndices),
-        static_cast<uint32_t>(g_CubeIndexCount * sizeof(uint32_t)));
+    m_CubeVertexArray = Init(g_CubeVertices.data()->data(),
+                             static_cast<uint32_t>(sizeof(g_CubeVertices)),
+                             const_cast<uint32_t*>(g_CubeIndices),
+                             static_cast<uint32_t>(g_CubeIndexCount));
 
     // Not yet intialized
     m_SphereVertexArray   = Init(nullptr, 0, nullptr, 0);

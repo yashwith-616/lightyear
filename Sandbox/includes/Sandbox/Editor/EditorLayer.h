@@ -4,6 +4,11 @@
 #include "Panel/SceneViewportPanel.h"
 
 class EditorCamera;
+class GridRender;
+
+namespace ly::scene {
+class Entity;
+}
 
 class EditorLayer : public ly::Layer {
 public:
@@ -24,8 +29,11 @@ private:
     ly::Ref<ly::scene::Scene> m_Scene{};
 
     ly::Ref<EditorCamera> m_EditorCamera{};
+    ly::Scope<GridRender> m_GridRenderer{};
 
     SceneViewportPanel m_ViewportPanel{};
+
+    ly::scene::Entity m_CubeEntity{};
 
 private:
     float m_PrevMouseY{ 0.f };

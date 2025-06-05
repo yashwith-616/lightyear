@@ -41,6 +41,7 @@ void Renderer::BeginScene(const Ref<Camera>& camera, const scene::SceneData& sce
     s_CameraUBO.View           = camera->GetViewMatrix();
     s_CameraUBO.CameraPosition = camera->GetPosition();
     s_CameraUBO.CameraRotation = camera->GetRotation();
+    s_CameraUBO.ZoomLevel      = 1.f;
     s_GlobalUniforms.UploadCamera(s_CameraUBO);
 
     s_SceneUBO.Time = sceneData.Time;
@@ -58,6 +59,7 @@ void Renderer::Submit(const RenderSubmission& submission) {
 }
 
 void Renderer::Flush() {
+    // glDisable(GL_DEPTH_TEST);
     for (const auto& submission : s_RenderQueue) {
         s_ObjectUBO.ModelMatrix = submission.RSTransform;
         s_GlobalUniforms.UploadObject(s_ObjectUBO);
@@ -65,13 +67,14 @@ void Renderer::Flush() {
         Ref<OpenGLShader> openGLShader =
             std::dynamic_pointer_cast<OpenGLShader>(submission.RSShader);
         openGLShader->Use();
-        submission.RSTexture->Bind(1);
-        openGLShader->SetUniform("u_Color", 1);
+
+        if (submission.RSTexture != nullptr) {
+            submission.RSTexture->Bind(1);
+            openGLShader->SetUniform("u_Color", 1);
+        }
 
         submission.RSVertexArray->Bind();
         RenderCommand::DrawIndexed(submission.RSVertexArray);
-
-        // s_GlobalUniforms.CameraUBO->Debug(openGLShader->GetShaderHandle(), "Scene");
     }
 }
 

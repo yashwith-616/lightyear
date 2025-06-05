@@ -1,9 +1,12 @@
 ﻿#include "Sandbox/Editor/EditorLayer.h"
 #include "Sandbox/Core/Camera/EditorCamera.h"
 #include "Sandbox/Geometry/Geometry.h"
+#include "Sandbox/Helpers/GridRender.h"
 
 #include <imgui.h>
 #include <imgui_internal.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 namespace renderer = ly::renderer;
 
@@ -12,30 +15,11 @@ static constexpr float aspect                        = 1.77778;
 
 // Grid Shader
 const std::unordered_map<renderer::ShaderType, ly::CPath> g_GridShader = {
-    { renderer::ShaderType::Vertex, ASSET_DIR "/Shaders/Vertex/S_Grid.vert" },
-    { renderer::ShaderType::Fragment, ASSET_DIR "/Shaders/Fragment/S_Grid.frag" }
+    { renderer::ShaderType::Vertex, ASSET_DIR "/Shaders/Vertex/S_Default.vert" },
+    { renderer::ShaderType::Fragment, ASSET_DIR "/Shaders/Fragment/S_Default.frag" }
 };
 
 EditorLayer::EditorLayer() : ly::Layer("Editor") {}
-
-void EditorLayer::OnUpdate(float deltaTime) {
-    PollInput(deltaTime);
-
-    m_Framebuffer->Bind();
-    renderer::RenderCommand::SetClearColor(glm::vec4(0.f, 0.f, 0.f, 0.5f));
-    renderer::RenderCommand::Clear();
-
-    if (m_Scene->IsPaused()) {
-        m_Scene->OnUpdateEditor(
-            deltaTime, std::static_pointer_cast<ly::renderer::SceneCamera>(m_EditorCamera));
-    }
-
-    if (m_Scene->IsRunning()) {
-        m_Scene->OnUpdateRuntime(deltaTime);
-    }
-
-    m_Framebuffer->Unbind();
-}
 
 void EditorLayer::OnAttach() {
     ly::renderer::FramebufferSpecification spec;
@@ -56,19 +40,40 @@ void EditorLayer::OnAttach() {
     cameraEntity.AddComponent<ly::scene::CameraComponent>(new_cam);
     m_Scene->OnViewportResize(1280, 720);
 
-    /*ly::scene::Entity planeEntity = m_Scene->CreateEntity("Plane");
-    planeEntity.AddComponent<ly::scene::MeshComponent>(Geometry::GetPlane(), m_Shader, m_Texture);
-    planeEntity.AddComponent<ly::scene::RenderComponent>();*/
+    m_CubeEntity = m_Scene->CreateEntity("Cube");
+    m_CubeEntity.AddComponent<ly::scene::MeshComponent>(Geometry::GetCube(), m_Shader, m_Texture);
+    m_CubeEntity.AddComponent<ly::scene::RenderComponent>();
 
-    ly::scene::Entity cubeEntity = m_Scene->CreateEntity("Cube");
-    cubeEntity.AddComponent<ly::scene::MeshComponent>(Geometry::GetCube(), m_Shader, m_Texture);
-    cubeEntity.AddComponent<ly::scene::RenderComponent>();
+    ly::scene::TransformComponent cubeTransform =
+        m_CubeEntity.GetComponent<ly::scene::TransformComponent>();
+    cubeTransform.GetTransform();
 #pragma endregion
 
     InitEditorLayouts();
+    m_GridRenderer = ly::MakeScope<GridRender>();
 }
 
 void EditorLayer::OnEvent(ly::Event& event) {}
+
+void EditorLayer::OnUpdate(float deltaTime) {
+    PollInput(deltaTime);
+
+    m_Framebuffer->Bind();
+    renderer::RenderCommand::SetClearColor(glm::vec4(0.f, 0.f, 0.f, 0.5f));
+    renderer::RenderCommand::Clear();
+    m_GridRenderer->Render();
+
+    if (m_Scene->IsPaused()) {
+        m_Scene->OnUpdateEditor(
+            deltaTime, std::static_pointer_cast<ly::renderer::SceneCamera>(m_EditorCamera));
+    }
+
+    if (m_Scene->IsRunning()) {
+        m_Scene->OnUpdateRuntime(deltaTime);
+    }
+
+    m_Framebuffer->Unbind();
+}
 
 void EditorLayer::OnEditorRender() {
     DrawDockspace();
@@ -135,10 +140,29 @@ void EditorLayer::DrawLogPanel() {
 
 void EditorLayer::DrawTestPanel() {
     ImGui::SetNextWindowSize(ImVec2(500, 400), ImGuiCond_FirstUseEver);
-    ImGui::Begin("Test panel");
 
-    static char buffer[256] = "";
-    ImGui::InputText("Input", buffer, sizeof(buffer));
+    ImGui::Begin("Test Panel");
+    ly::scene::TransformComponent& cubeTransform =
+        m_CubeEntity.GetComponent<ly::scene::TransformComponent>();
+    glm::vec3& position = cubeTransform.Translation;
+    glm::vec3& rotation = cubeTransform.Rotation;
+    if (ImGui::DragFloat3("Position", glm::value_ptr(position), 0.1f)) {
+        // Optional: log or respond to changes
+        LY_CORE_LOG(ly::LogType::Info,
+                    "Cube position updated: ({}, {}, {})",
+                    position.x,
+                    position.y,
+                    position.z);
+    }
+
+    if (ImGui::DragFloat3("Rotation", glm::value_ptr(rotation), 0.1f)) {
+        // Optional: log or respond to changes
+        LY_CORE_LOG(ly::LogType::Info,
+                    "Cube rotation updated: ({}, {}, {})",
+                    rotation.x,
+                    rotation.y,
+                    rotation.z);
+    }
 
     ImGui::End();
 }

@@ -9,10 +9,9 @@ public:
     GridRender();
     ~GridRender() = default;
 
-    void OnUpdate(ly::Ref<EditorCamera> camera);
     void Render();
 
 private:
-    ly::Scope<ly::renderer::VertexArray> m_GridVAO;
-    ly::Scope<ly::renderer::Shader> m_GridShader;
+    ly::Ref<ly::renderer::VertexArray> m_GridVAO;
+    ly::Ref<ly::renderer::Shader> m_GridShader;
 };

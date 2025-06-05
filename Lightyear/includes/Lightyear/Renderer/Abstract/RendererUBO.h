@@ -11,7 +11,7 @@ struct alignas(16) UBO_Camera {
     glm::vec3 CameraPosition{};  // 12 bytes
     float _pad1;                 // 4 bytes (to align to 16 bytes)
     glm::vec3 CameraRotation{};  // 12 bytes
-    float _pad2;                 // 4 bytes (to align to 16 bytes)
+    float ZoomLevel;             // 4 bytes (to align to 16 bytes)
 };
 
 struct UBO_Scene {
