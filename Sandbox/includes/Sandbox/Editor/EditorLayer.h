@@ -2,6 +2,7 @@
 
 #include "Lightyear.h"
 #include "Panel/SceneViewportPanel.h"
+#include "Panel/SceneGraphPanel.h"
 
 class EditorCamera;
 class GridRender;
@@ -32,6 +33,8 @@ private:
     ly::Scope<GridRender> m_GridRenderer{};
 
     SceneViewportPanel m_ViewportPanel{};
+    SceneGraphPanel m_SceneGraphPanel{};
+    
 
     ly::scene::Entity m_CubeEntity{};
 
@@ -44,7 +47,6 @@ private:
     void PollInput(float deltaTime);
 
     void DrawDockspace();
-    void DrawDemoSettings();
     void DrawLogPanel();
     void DrawTestPanel();
 };

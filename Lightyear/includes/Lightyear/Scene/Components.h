@@ -8,6 +8,11 @@
 #include "glm/glm.hpp"
 #include "glm/gtx/quaternion.hpp"
 
+#include <refl.hpp>
+
+/**
+ * @brief Need a bitset component that indicates all the component that can exists
+ */
 namespace ly::scene {
 
 enum class EMobilityType { STATIC, STATIONARY, MOVABLE };
@@ -98,3 +103,17 @@ using AllComponents = ComponentGroup<TransformComponent,
                                      RenderComponent>;
 
 }  // namespace ly::scene
+
+REFL_TYPE(ly::scene::TransformComponent)
+REFL_FIELD(Translation)
+REFL_FIELD(Rotation)
+REFL_FIELD(Scale)
+REFL_END
+
+REFL_TYPE(ly::scene::IDComponent)
+REFL_FIELD(ID)
+REFL_END
+
+REFL_TYPE(ly::scene::TagComponent)
+REFL_FIELD(Tag)
+REFL_END

@@ -84,6 +84,10 @@ add_subdirectory("${SPDLOG_DIR}")
 # ENTT
 set(ENTT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/extern/entt/single_include")
 
+# REFL-CPP
+set(REFL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/extern/refl-cpp")
+add_subdirectory(${REFL_DIR})
+
 #-------------------------------------------------
 # Project Library
 #-------------------------------------------------
@@ -95,6 +99,7 @@ target_include_directories(Lightyear
         "${IMGUI_DIR}"
         "${GLAD_DIR}"
         "${ENTT_DIR}"
+        "${REFL_DIR}/include"
     PRIVATE
         "${GLFW_DIR}/include"
         "${STB_DIR}"
@@ -106,6 +111,7 @@ target_link_libraries(Lightyear
         spdlog::spdlog
         $<$<BOOL:${MINGW}>:ws_32>
         glad
+        refl-cpp
     PRIVATE
         glfw
 )
