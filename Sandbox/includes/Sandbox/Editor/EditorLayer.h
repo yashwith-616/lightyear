@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Lightyear.h"
-#include "Panel/SceneViewportPanel.h"
 #include "Panel/SceneGraphPanel.h"
 
 class EditorCamera;
@@ -32,9 +31,7 @@ private:
     ly::Ref<EditorCamera> m_EditorCamera{};
     ly::Scope<GridRender> m_GridRenderer{};
 
-    SceneViewportPanel m_ViewportPanel{};
     SceneGraphPanel m_SceneGraphPanel{};
-    
 
     ly::scene::Entity m_CubeEntity{};
 

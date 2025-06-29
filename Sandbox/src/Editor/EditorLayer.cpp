@@ -77,7 +77,6 @@ void EditorLayer::OnUpdate(float deltaTime) {
 
 void EditorLayer::OnEditorRender() {
     DrawDockspace();
-    m_ViewportPanel.OnImGuiRender();
     m_SceneGraphPanel.OnImGuiRender();
 
     ImGui::ShowDemoWindow();
@@ -86,10 +85,6 @@ void EditorLayer::OnEditorRender() {
 }
 
 void EditorLayer::InitEditorLayouts() {
-    m_ViewportPanel.SetActiveCamera(m_EditorCamera);
-    m_ViewportPanel.SetActiveScene(m_Scene);
-    m_ViewportPanel.SetFramebuffer(m_Framebuffer);
-
     m_SceneGraphPanel.SetScene(m_Scene);
 }
 

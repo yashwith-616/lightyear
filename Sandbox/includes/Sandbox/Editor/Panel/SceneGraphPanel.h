@@ -3,7 +3,7 @@
 #include <lypch.h>
 #include "IEditorPanel.h"
 #include "Lightyear.h"
-#include "Sandbox/Editor/Widgets/EditWidgetDrawer.h"
+#include "Sandbox/Editor/Widgets/EWidgetDrawer.h"
 
 class SceneGraphPanel : public IEditorPanel {
 public:
@@ -20,7 +20,7 @@ private:
     void drawComponent(const char* componentName) {
         T& component = m_SelectedEntity->GetComponent<T>();
         if (ImGui::TreeNodeEx(componentName, ImGuiTreeNodeFlags_Framed)) {
-            EditWidgetDrawer drawWidget;
+            EWidgetDrawer drawWidget;
             drawWidget(component);
             ImGui::TreePop();
         }
