@@ -5,7 +5,7 @@
 #include <glm/glm.hpp>
 #include <refl.hpp>
 
-class EWidgetDrawer {
+class WidgetDrawer {
 public:
     bool field(const char* name, bool& value) { return ImGui::Checkbox(name, &value); }
 

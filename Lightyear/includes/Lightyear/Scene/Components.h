@@ -5,9 +5,10 @@
 #include "Lightyear/Renderer/Primitives/Shader.h"
 #include "Lightyear/Renderer/Primitives/Texture.h"
 #include "Lightyear/Renderer/Primitives/VertexArray.h"
-#include "glm/glm.hpp"
-#include "glm/gtx/quaternion.hpp"
 
+#include <entt/entt.hpp>
+#include <glm/glm.hpp>
+#include <glm/gtx/quaternion.hpp>
 #include <refl.hpp>
 
 /**
@@ -93,6 +94,21 @@ struct RenderComponent {
     RenderComponent() = default;
 };
 
+struct RelationshipComponent {
+    std::size_t ChildrenCount{};
+    entt::entity Parent{ entt::null };
+    entt::entity FirstChild{ entt::null };
+    entt::entity NextSibling{ entt::null };
+    entt::entity PrevSibling{ entt::null };
+
+    RelationshipComponent() {}
+    RelationshipComponent(entt::entity parent) : Parent(parent) {}
+    RelationshipComponent(entt::entity parent, entt::entity nextSibling, entt::entity prevSibling)
+        : Parent(parent), NextSibling(nextSibling), PrevSibling(prevSibling) {}
+
+    inline void SetChild(entt::entity child) { FirstChild = child; }
+};
+
 template <typename... Component>
 struct ComponentGroup {};
 
@@ -100,7 +116,8 @@ using AllComponents = ComponentGroup<TransformComponent,
                                      CameraComponent,
                                      MobilityComponent,
                                      MeshComponent,
-                                     RenderComponent>;
+                                     RenderComponent,
+                                     RelationshipComponent>;
 
 }  // namespace ly::scene
 

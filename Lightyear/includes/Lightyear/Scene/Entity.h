@@ -8,6 +8,10 @@
 
 namespace ly::scene {
 
+/**
+ * @brief NEED TO EXTEND THIS CLASS AS GAME OBJECT.
+ * All game objects will have relationship component which needs to be custom handled.
+ */
 class Entity {
 public:
     Entity() = default;
