@@ -13,6 +13,7 @@ class SceneCamera;
 
 namespace ly::scene {
 
+// Custom Types
 enum class SceneExecState {
     SS_NONE       = 0,
     SS_PAUSED     = 1,
@@ -26,8 +27,8 @@ class Entity;
 
 class LIGHTYEAR_API Scene {
 public:
-    inline Entity CreateEntity(const CName& name);
-    inline Entity CreateEntity(const CName& name, const Entity& parent);
+    Entity CreateEntity(const CName& name);
+    Entity CreateEntity(const CName& name, const Entity& parent);
     void DestroyEntity(Entity entity);
     Entity DuplicateEntity(Entity entity);
     Entity FindEntityByName(const CName& name) const;
@@ -67,14 +68,17 @@ public:
     void OnUpdateEditor(ly::Timestep deltaTime, Ref<renderer::SceneCamera> camera);
     void OnViewportResize(uint32_t width, uint32_t height);
 
-    bool IsRunning() const { return m_SceneExecState == SceneExecState::SS_RUNNING; }
-    bool IsPaused() const { return m_SceneExecState == SceneExecState::SS_PAUSED; }
-    void SetSceneExecState(SceneExecState state) { m_SceneExecState = state; }
-
     template <typename... Components>
     auto GetAllEntitiesWith() {
         return m_Registry.view<Components...>();
     }
+
+public:
+    inline void SetSceneExecState(SceneExecState state) { m_SceneExecState = state; }
+    inline bool IsRunning() const { return m_SceneExecState == SceneExecState::SS_RUNNING; }
+    inline bool IsPaused() const { return m_SceneExecState == SceneExecState::SS_PAUSED; }
+    inline entt::registry& GetRegistry() { return m_Registry; }
+    inline const entt::registry& GetRegistry() const { return m_Registry; }
 
 protected:
     Entity CreateEntity(uuid uuid,
@@ -86,11 +90,11 @@ private:
     Ref<SceneGraph> m_SceneGraph{ nullptr };
     SceneExecState m_SceneExecState{ SceneExecState::SS_PAUSED };
 
-    uint32_t m_ViewportWidth  = 0;
-    uint32_t m_ViewportHeight = 0;
+    uint32_t m_ViewportWidth{};
+    uint32_t m_ViewportHeight{};
 
     // Need to find better implementation
-    std::unordered_map<CName, int> m_EntityNameMap;
+    std::unordered_map<CName, int> m_EntityNameMap{};
     SceneData m_SceneData;
 
 private:

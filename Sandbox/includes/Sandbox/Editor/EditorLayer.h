@@ -2,6 +2,7 @@
 
 #include "Lightyear.h"
 #include "Panel/SceneGraphPanel.h"
+#include "Sandbox/Editor/Workspace/ESceneWorkspace.h"
 
 class EditorCamera;
 class GridRender;
@@ -34,6 +35,10 @@ private:
     SceneGraphPanel m_SceneGraphPanel{};
 
     ly::scene::Entity m_CubeEntity{};
+
+    ly::Scope<ESceneWorkspace> m_SceneWorkspace{};
+
+    ly::Ref<GlobalEditorContext> m_EditorContext{};
 
 private:
     float m_PrevMouseY{ 0.f };

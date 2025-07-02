@@ -110,7 +110,9 @@ struct RelationshipComponent {
 };
 
 template <typename... Component>
-struct ComponentGroup {};
+struct ComponentGroup {
+    using Types = std::tuple<Component...>;
+};
 
 using AllComponents = ComponentGroup<TransformComponent,
                                      CameraComponent,
@@ -118,6 +120,28 @@ using AllComponents = ComponentGroup<TransformComponent,
                                      MeshComponent,
                                      RenderComponent,
                                      RelationshipComponent>;
+
+template <typename Group>
+struct ComponentGroupView;
+
+template <typename... Components>
+struct ComponentGroupView<ComponentGroup<Components...>> {
+    template <typename Registry>
+    static auto view(Registry& registry) {
+        return registry.view<Components...>();
+    }
+};
+
+template <typename Group>
+struct ComponentGroupGet;
+
+template <typename... Components>
+struct ComponentGroupGet<ComponentGroup<Components...>> {
+    template <typename Registry, typename Entity>
+    static auto get(Registry& registry, Entity entity) {
+        return registry.get<Components...>(entity);
+    }
+};
 
 }  // namespace ly::scene
 

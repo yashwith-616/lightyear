@@ -80,12 +80,16 @@ void EditorLayer::OnEditorRender() {
     m_SceneGraphPanel.OnImGuiRender();
 
     ImGui::ShowDemoWindow();
-    DrawLogPanel();
-    DrawTestPanel();
+    m_SceneWorkspace->OnImGuiRender();
 }
 
 void EditorLayer::InitEditorLayouts() {
     m_SceneGraphPanel.SetScene(m_Scene);
+
+    m_SceneWorkspace               = ly::MakeScope<ESceneWorkspace>("SceneWorkspace");
+    m_EditorContext                = ly::MakeRef<GlobalEditorContext>();
+    m_EditorContext->m_ActiveScene = m_Scene;
+    m_SceneWorkspace->OnAttach(m_EditorContext);
 }
 
 void EditorLayer::DrawDockspace() {
