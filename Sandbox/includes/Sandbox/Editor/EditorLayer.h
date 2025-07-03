@@ -20,24 +20,21 @@ public:
     virtual void OnEditorRender() override;
     virtual void OnUpdate(float deltaTime) override;
 
-protected:
-    virtual void InitEditorLayouts();
-
 private:
+    // TO BE REMOVED
+    ly::Ref<ly::scene::Scene> m_Scene{};
+
+    // TO BE REMOVED
     ly::Ref<ly::renderer::Framebuffer> m_Framebuffer{};
     ly::Ref<ly::renderer::Shader> m_Shader;
     ly::Ref<ly::renderer::Texture2D> m_Texture;
-    ly::Ref<ly::scene::Scene> m_Scene{};
-
     ly::Ref<EditorCamera> m_EditorCamera{};
     ly::Scope<GridRender> m_GridRenderer{};
 
-    SceneGraphPanel m_SceneGraphPanel{};
-
     ly::scene::Entity m_CubeEntity{};
 
+    // Will be present
     ly::Scope<ESceneWorkspace> m_SceneWorkspace{};
-
     ly::Ref<GlobalEditorContext> m_EditorContext{};
 
 private:

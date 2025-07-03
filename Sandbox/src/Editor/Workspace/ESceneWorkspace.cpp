@@ -7,29 +7,33 @@ using SceneComponent = ly::scene::ComponentGroup<ly::scene::TagComponent,
 
 void ESceneWorkspace::OnAttach(ly::Ref<GlobalEditorContext> globalContext) {
     m_GlobalContext = globalContext;
+    m_SceneGraphPanel =
+        ly::MakeScope<ESceneGraphPanelExp>(GetPanelTitle(EEditorPanel::SCENE_GRAPH));
 }
 
 void ESceneWorkspace::OnEvent(ly::Event& event) {}
 
 void ESceneWorkspace::OnUpdate(float deltaTime) {}
 
-void ESceneWorkspace::OnEditorUpdate() {}
+void ESceneWorkspace::OnEditorUpdate() {
+    m_SceneTree.reset();
+    BuildSceneTree();
+
+    m_SceneGraphPanel->SetSceneTree(m_SceneTree);
+}
 
 void ESceneWorkspace::OnImGuiRender() {
     /*if (!IsDockspaceInitialized()) {
         SetupDockspace();
     }*/
 
-    m_SceneTree.clear();
-    BuildSceneTree();
+    m_SceneGraphPanel->OnImGuiRender();
 
-    //ImGui::DockSpace(m_DockspaceID, ImVec2(0.f, 0.f), ImGuiDockNodeFlags_None);
-    DrawSceneTree();
+    // ImGui::DockSpace(m_DockspaceID, ImVec2(0.f, 0.f), ImGuiDockNodeFlags_None);
 }
 
+// TODO: Currently setup for a fixed layout
 /**
- * TODO: Currently setup for a fixed layout
- *
  * 1. Need to use EditorPreset so the layout can be changed as per requirement
  * 2. EditorLayout need to be cached based on requirement
  * 3. All the panels eligible this Workspace needs to be added to menuBar > windows
@@ -57,72 +61,32 @@ void ESceneWorkspace::SetupDockspace() {
 void ESceneWorkspace::BuildSceneTree() {
     auto& registry = GetScene().GetRegistry();
 
+    m_SceneTree = ly::MakeRef<SceneTreeNode>("root", ly::uuid(0), entt::null);
+
     for (auto [entity, tag, id, relation] :
          ly::scene::ComponentGroupView<SceneComponent>::view(registry).each()) {
         if (relation.Parent != entt::null) {
             continue;
         }
-
-        // Start DFS from this root
-        SceneTreeNode* root = BuildSceneTreeRecursive(entity, nullptr);
-        m_SceneTree.push_back(root);
+        m_SceneTree->AddChild(BuildSceneTreeRecursive(entity));
     }
 }
 
-SceneTreeNode* ESceneWorkspace::BuildSceneTreeRecursive(entt::entity entity,
-                                                        SceneTreeNode* parent) {
+ly::Ref<SceneTreeNode> ESceneWorkspace::BuildSceneTreeRecursive(entt::entity entity) {
     auto& registry           = GetScene().GetRegistry();
     auto [tag, id, relation] = ly::scene::ComponentGroupGet<SceneComponent>::get(registry, entity);
 
-    SceneTreeNode* node =
-        new SceneTreeNode(tag.Tag, id.ID, entity, parent, relation.ChildrenCount > 0);
+    ly::Ref<SceneTreeNode> head = ly::MakeRef<SceneTreeNode>(tag.Tag, id.ID, entity);
 
     entt::entity curr = relation.FirstChild;
     for (int i = 0; i < relation.ChildrenCount; ++i) {
-        SceneTreeNode* childNode = BuildSceneTreeRecursive(curr, node);
-        node->Children.push_back(childNode);
+        head->AddChild(BuildSceneTreeRecursive(curr));
 
         auto& childRelation = registry.get<ly::scene::RelationshipComponent>(curr);
         curr                = childRelation.NextSibling;
     }
 
-    return node;
-}
-
-void ESceneWorkspace::DrawSceneTree() {
-    ImGui::Begin("Scene Hierarchy");
-
-    for (SceneTreeNode* root : m_SceneTree) {
-        DrawSceneTreeNode(root);
-    }
-
-    ImGui::End();
-}
-
-void ESceneWorkspace::DrawSceneTreeNode(SceneTreeNode* node) {
-    ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow;
-
-    if (node->Children.empty()) flags |= ImGuiTreeNodeFlags_Leaf;
-
-    if (m_SelectedNode == node) flags |= ImGuiTreeNodeFlags_Selected;
-
-    bool opened = ImGui::TreeNodeEx(reinterpret_cast<void*>(static_cast<uintptr_t>(node->UUID)),
-                                    flags,
-                                    "%s",
-                                    node->Name.c_str());
-
-    // Handle selection
-    if (ImGui::IsItemClicked()) {
-        m_SelectedNode = node;
-    }
-
-    // Draw children recursively
-    if (opened) {
-        for (SceneTreeNode* child : node->Children) {
-            DrawSceneTreeNode(child);
-        }
-        ImGui::TreePop();
-    }
+    return head;
 }
 
 std::string_view ESceneWorkspace::GetPanelTitle(EEditorPanel editorPanel) {

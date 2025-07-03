@@ -9,7 +9,6 @@
 #include <entt/entt.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtx/quaternion.hpp>
-#include <refl.hpp>
 
 /**
  * @brief Need a bitset component that indicates all the component that can exists
@@ -64,6 +63,7 @@ struct TransformComponent {
     }
 };
 
+// TODO: Needs rework on Camera component as a whole
 struct CameraComponent {
     Ref<renderer::SceneCamera> Camera;
     bool bIsPrimary{ true };
@@ -109,52 +109,4 @@ struct RelationshipComponent {
     inline void SetChild(entt::entity child) { FirstChild = child; }
 };
 
-template <typename... Component>
-struct ComponentGroup {
-    using Types = std::tuple<Component...>;
-};
-
-using AllComponents = ComponentGroup<TransformComponent,
-                                     CameraComponent,
-                                     MobilityComponent,
-                                     MeshComponent,
-                                     RenderComponent,
-                                     RelationshipComponent>;
-
-template <typename Group>
-struct ComponentGroupView;
-
-template <typename... Components>
-struct ComponentGroupView<ComponentGroup<Components...>> {
-    template <typename Registry>
-    static auto view(Registry& registry) {
-        return registry.view<Components...>();
-    }
-};
-
-template <typename Group>
-struct ComponentGroupGet;
-
-template <typename... Components>
-struct ComponentGroupGet<ComponentGroup<Components...>> {
-    template <typename Registry, typename Entity>
-    static auto get(Registry& registry, Entity entity) {
-        return registry.get<Components...>(entity);
-    }
-};
-
 }  // namespace ly::scene
-
-REFL_TYPE(ly::scene::TransformComponent)
-REFL_FIELD(Translation)
-REFL_FIELD(Rotation)
-REFL_FIELD(Scale)
-REFL_END
-
-REFL_TYPE(ly::scene::IDComponent)
-REFL_FIELD(ID)
-REFL_END
-
-REFL_TYPE(ly::scene::TagComponent)
-REFL_FIELD(Tag)
-REFL_END

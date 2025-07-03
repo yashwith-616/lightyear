@@ -87,15 +87,11 @@ protected:
 
 private:
     entt::registry m_Registry{};
-    Ref<SceneGraph> m_SceneGraph{ nullptr };
     SceneExecState m_SceneExecState{ SceneExecState::SS_PAUSED };
-
     uint32_t m_ViewportWidth{};
     uint32_t m_ViewportHeight{};
-
-    // Need to find better implementation
     std::unordered_map<CName, int> m_EntityNameMap{};
-    SceneData m_SceneData;
+    SceneData m_SceneData{};
 
 private:
     template <typename T>

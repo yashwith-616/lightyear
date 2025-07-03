@@ -21,7 +21,8 @@
           "value": "C:/Program Files/LLVM/bin/clang-tidy.exe",
           "type": "FILEPATH"
         }
-      ]
+      ],
+      "intelliSenseMode": "windows-msvc-x64"
     },
     {
       "name": "x64-Release",

@@ -1,31 +1,10 @@
 #pragma once
 
 #include <imgui.h>
+
+#include <Sandbox/Editor/Comman/SceneTreeNode.h>
+#include <Sandbox/Editor/Panel/SceneGraphPanelExp.h>
 #include "Sandbox/Editor/Workspace/IEditorWorkspace.h"
-
-/**
- * @brief ImGUI uses the following struct to render the scene.
- *
- * TODO: Require a dirty flag in Entity Registry.
- * Allows to dirty an entity and reuse the remaining tree as it is.
- * By default dirty should be set to true
- */
-struct SceneTreeNode {
-    std::string Name{ "none" };
-    ly::uuid UUID{};
-    entt::entity Entity{};
-    SceneTreeNode* Parent{};
-    std::vector<SceneTreeNode*> Children{};
-
-    bool HasChildren{ false };
-
-    SceneTreeNode(std::string name,
-                  ly::uuid uid,
-                  entt::entity entity,
-                  SceneTreeNode* parent,
-                  bool hasChildren)
-        : Name(name), UUID(uid), Entity(entity), Parent(parent), HasChildren(hasChildren) {}
-};
 
 /**
  * @brief Workspace class responsible for rendering SceneTree.
@@ -48,11 +27,8 @@ protected:
     ImGuiID m_DockspaceID{};
 
     void SetupDockspace();
-    void DrawSceneTree();
-    void DrawSceneTreeNode(SceneTreeNode* node);
-
     void BuildSceneTree();
-    SceneTreeNode* BuildSceneTreeRecursive(entt::entity entity, SceneTreeNode* parent);
+    ly::Ref<SceneTreeNode> BuildSceneTreeRecursive(entt::entity entity);
 
     inline bool IsDockspaceInitialized() { return m_bIsMinimized; }
     inline std::string_view GetPanelTitle(EEditorPanel editorPanel);
@@ -62,8 +38,10 @@ protected:
     }
 
 private:
+    ly::Scope<ESceneGraphPanelExp> m_SceneGraphPanel{};
+
     bool m_bIsInitiatlized{ false };
     ly::Ref<GlobalEditorContext> m_GlobalContext{};
-    std::vector<SceneTreeNode*> m_SceneTree{};
-    SceneTreeNode* m_SelectedNode{};
+    ly::Ref<SceneTreeNode> m_SceneTree{};
+    ly::WeakRef<SceneTreeNode> m_SelectedNode{};
 };

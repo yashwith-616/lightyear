@@ -7,6 +7,10 @@
 
 class SceneGraphPanel : public IEditorPanel {
 public:
+    SceneGraphPanel(std::string_view name) : IEditorPanel(name) {}
+
+    virtual ~SceneGraphPanel() = default;
+
     virtual void OnImGuiRender() override;
 
     void SetScene(ly::Ref<ly::scene::Scene> scene) { m_Scene = scene; }

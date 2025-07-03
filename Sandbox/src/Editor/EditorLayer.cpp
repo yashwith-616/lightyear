@@ -22,16 +22,32 @@ const std::unordered_map<renderer::ShaderType, ly::CPath> g_GridShader = {
 EditorLayer::EditorLayer() : ly::Layer("Editor") {}
 
 void EditorLayer::OnAttach() {
+#pragma region Framebuffer Init
+    // TODO: Framebuffer must be moved to a separate Framebuffer pool and must be accessed by the
+    // world. The world needs to be responsible for rendering.
+
     ly::renderer::FramebufferSpecification spec;
     spec.Height   = 1280;
     spec.Width    = 720;
     m_Framebuffer = ly::renderer::Framebuffer::Create(spec);
+#pragma endregion
+
+#pragma region Shaders and Textures
+    // TODO: Texture and Shader will be made as part of the Entity.
+    // Will be removed from here in the future implementation
 
     m_Texture = ly::renderer::Texture2D::Create(ASSET_DIR "/Textures/T_Grid.png");
     m_Shader  = ly::renderer::Shader::Create("ShaderBg", g_GridShader);
+#pragma endregion
+
+#pragma region SceneCamera
+    // TODO: Move to separate functions to create a SceneCamera
+    // Camera system will be re-written using entt, current implementation
+    // will be modified significantly
 
     m_EditorCamera = ly::MakeRef<EditorCamera>(aspect);
     m_EditorCamera->SetSpeed(1.f);
+#pragma endregion
 
 #pragma region Game Scene
     m_Scene                        = ly::MakeRef<ly::scene::Scene>();
@@ -49,7 +65,13 @@ void EditorLayer::OnAttach() {
     cubeTransform.GetTransform();
 #pragma endregion
 
-    InitEditorLayouts();
+#pragma region Inti Scene and Panels
+    m_SceneWorkspace               = ly::MakeScope<ESceneWorkspace>("SceneWorkspace");
+    m_EditorContext                = ly::MakeRef<GlobalEditorContext>();
+    m_EditorContext->m_ActiveScene = m_Scene;
+    m_SceneWorkspace->OnAttach(m_EditorContext);
+#pragma endregion
+
     m_GridRenderer = ly::MakeScope<GridRender>();
 }
 
@@ -76,20 +98,11 @@ void EditorLayer::OnUpdate(float deltaTime) {
 }
 
 void EditorLayer::OnEditorRender() {
+    m_SceneWorkspace->OnEditorUpdate();
     DrawDockspace();
-    m_SceneGraphPanel.OnImGuiRender();
 
     ImGui::ShowDemoWindow();
     m_SceneWorkspace->OnImGuiRender();
-}
-
-void EditorLayer::InitEditorLayouts() {
-    m_SceneGraphPanel.SetScene(m_Scene);
-
-    m_SceneWorkspace               = ly::MakeScope<ESceneWorkspace>("SceneWorkspace");
-    m_EditorContext                = ly::MakeRef<GlobalEditorContext>();
-    m_EditorContext->m_ActiveScene = m_Scene;
-    m_SceneWorkspace->OnAttach(m_EditorContext);
 }
 
 void EditorLayer::DrawDockspace() {

@@ -1,8 +1,8 @@
 #pragma once
 
 #include <lypch.h>
-#include "Components.h"
 #include "Lightyear/LightyearCore.h"
+#include "Lightyear/Scene/Components/Components.h"
 #include "Scene.h"
 #include "entt/entt.hpp"
 

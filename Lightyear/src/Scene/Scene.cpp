@@ -3,7 +3,7 @@
 #include "Lightyear/Core/Window.h"
 #include "Lightyear/Renderer/Abstract/Renderer.h"
 #include "Lightyear/Renderer/Camera/SceneCamera.h"
-#include "Lightyear/Scene/Components.h"
+#include "Lightyear/Scene/Components/Components.h"
 #include "Lightyear/Scene/Entity.h"
 
 namespace ly::scene {
@@ -51,6 +51,7 @@ static void CopyComponentIfExists(ComponentGroup<Component...>, Entity dst, Enti
 
 #pragma endregion
 
+#pragma region Entity Management
 Entity Scene::CreateEntity(const CName& name) {
     return CreateEntity(uuid(), name);
 }
@@ -177,6 +178,8 @@ void Scene::DestroyEntity(Entity entity) {
 Entity Scene::DuplicateEntity(Entity entity) {
     LY_CORE_ASSERT(m_Registry.valid(entity), "Entity is invalid");
 
+    // Recursively need to duplicate child entities.
+
     const std::string name = entity.GetName();
     Entity newEntity       = CreateEntity(name);
     CopyComponentIfExists(AllComponents{}, newEntity, entity);
@@ -206,6 +209,11 @@ Entity Scene::GetPrimaryCameraEntity() const {
     return {};
 }
 
+#pragma endregion
+
+// TODO: Can move this entire section to new class called SceneRuntime. Doesn't fit here. Scene need
+// to manage scene_registry alone and not what happens at runtime.
+#pragma region Runtime, EditorRuntime
 void Scene::OnRuntimeStart() {}
 
 void Scene::OnRuntimeStop() {}
@@ -264,6 +272,8 @@ void Scene::OnUpdateEditor(ly::Timestep deltaTime, Ref<renderer::SceneCamera> ca
     renderer::Renderer::EndScene();
 }
 
+#pragma endregion
+
 void Scene::OnViewportResize(uint32_t width, uint32_t height) {
     m_ViewportHeight = height;
     m_ViewportWidth  = width;
@@ -290,8 +300,8 @@ Entity Scene::CreateEntity(uuid uuid,
     return entity;
 }
 
+// TODO: NEED TO UPDATE THE LOGIC OF GETTING NAMES. DO NOT LIKE THE CURRENT IMPLEMENTATION
 /**
- * @brief NEED TO UPDATE THE LOGIC OF GETTING NAMES. DO NOT LIKE THE CURRENT IMPLEMENTATION
  * Cons:
  * 1. Ability to rename has been lost. Need to update this again.
  * 2. Can attach the editorial names to the ScneNode. Makes it heavy and may cause issue when
