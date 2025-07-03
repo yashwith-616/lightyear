@@ -21,16 +21,17 @@ public:
     virtual void OnImGuiRender() override;
 
 protected:
-    enum class EEditorPanel : uint8_t { VIEWPORT = 0, SCENE_GRAPH, INSPECTOR, PLACE_ACTOR, MAX };
+    enum class EEditorPanel : uint8_t { VIEWPORT = 1, SCENE_GRAPH, INSPECTOR, PLACE_ACTOR, MAX };
 
 protected:
     ImGuiID m_DockspaceID{};
 
+    void DrawDockspace();
     void SetupDockspace();
     void BuildSceneTree();
     ly::Ref<SceneTreeNode> BuildSceneTreeRecursive(entt::entity entity);
 
-    inline bool IsDockspaceInitialized() { return m_bIsMinimized; }
+    inline bool IsDockspaceInitialized() { return m_bIsInitiatlized; }
     inline std::string_view GetPanelTitle(EEditorPanel editorPanel);
     inline const ly::scene::Scene& GetScene() {
         LY_CORE_ASSERT(m_GlobalContext && m_GlobalContext->m_ActiveScene, "Active Scene is null!");

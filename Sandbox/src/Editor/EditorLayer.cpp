@@ -10,10 +10,10 @@
 
 namespace renderer = ly::renderer;
 
-static constexpr ImGuiWindowFlags DockspaceHostFlags = ImGuiWindowFlags_None;
-static constexpr float aspect                        = 1.77778;
+// TODO: Remove
+static constexpr float aspect = 1.77778;
 
-// Grid Shader
+// TODO: Remove
 const std::unordered_map<renderer::ShaderType, ly::CPath> g_GridShader = {
     { renderer::ShaderType::Vertex, ASSET_DIR "/Shaders/Vertex/S_Default.vert" },
     { renderer::ShaderType::Fragment, ASSET_DIR "/Shaders/Fragment/S_Default.frag" }
@@ -99,88 +99,10 @@ void EditorLayer::OnUpdate(float deltaTime) {
 
 void EditorLayer::OnEditorRender() {
     m_SceneWorkspace->OnEditorUpdate();
-    DrawDockspace();
+    // DrawDockspace();
 
-    ImGui::ShowDemoWindow();
+    // ImGui::ShowDemoWindow();
     m_SceneWorkspace->OnImGuiRender();
-}
-
-void EditorLayer::DrawDockspace() {
-    ImGuiViewport* vp = ImGui::GetMainViewport();
-    if (!vp) {
-        LY_LOG(ly::LogType::Error, "Main Viewport is null!");
-        return;
-    }
-
-    ImGui::SetNextWindowPos(vp->WorkPos);
-    ImGui::SetNextWindowSize(vp->WorkSize);
-    ImGui::SetNextWindowViewport(vp->ID);
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-
-    ImGui::Begin("LyDockspaceHost", nullptr, DockspaceHostFlags);
-    ImGui::PopStyleVar(2);
-
-    ImGuiID dockspaceID = ImGui::GetID("LYDockspace");
-    ImGui::DockSpace(dockspaceID, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_PassthruCentralNode);
-
-    ImGui::End();
-}
-
-void EditorLayer::DrawLogPanel() {
-    ImGui::SetNextWindowSize(ImVec2(500, 400), ImGuiCond_FirstUseEver);
-    ImGui::Begin("Output");
-
-    if (ImGui::Button("Clear")) {
-        // clear the sink
-    }
-
-    ImGui::SameLine();
-    static bool autoscroll = true;
-    ImGui::Checkbox("Autoscroll", &autoscroll);
-
-    ImGui::Separator();
-    ImGui::BeginChild("LogScroll", ImVec2(0, 0), false, ImGuiWindowFlags_HorizontalScrollbar);
-
-    /*for (const auto& line : sink->GetLines()) {
-        ImGui::TextUnformatted(line.c_str());
-    }*/
-
-    if (autoscroll && ImGui::GetScrollY() >= ImGui::GetScrollMaxY()) {
-        ImGui::SetScrollHereY(1.f);
-    }
-
-    ImGui::EndChild();
-    ImGui::End();
-}
-
-void EditorLayer::DrawTestPanel() {
-    ImGui::SetNextWindowSize(ImVec2(500, 400), ImGuiCond_FirstUseEver);
-
-    ImGui::Begin("Test Panel");
-    ly::scene::TransformComponent& cubeTransform =
-        m_CubeEntity.GetComponent<ly::scene::TransformComponent>();
-    glm::vec3& position = cubeTransform.Translation;
-    glm::vec3& rotation = cubeTransform.Rotation;
-    if (ImGui::DragFloat3("Position", glm::value_ptr(position), 0.1f)) {
-        // Optional: log or respond to changes
-        LY_CORE_LOG(ly::LogType::Info,
-                    "Cube position updated: ({}, {}, {})",
-                    position.x,
-                    position.y,
-                    position.z);
-    }
-
-    if (ImGui::DragFloat3("Rotation", glm::value_ptr(rotation), 0.1f)) {
-        // Optional: log or respond to changes
-        LY_CORE_LOG(ly::LogType::Info,
-                    "Cube rotation updated: ({}, {}, {})",
-                    rotation.x,
-                    rotation.y,
-                    rotation.z);
-    }
-
-    ImGui::End();
 }
 
 /**

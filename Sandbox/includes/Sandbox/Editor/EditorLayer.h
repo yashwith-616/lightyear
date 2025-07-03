@@ -42,10 +42,5 @@ private:
     float m_PrevMouseX{ 0.f };
     float m_MouseSensitivity{ 0.1f };
 
-private:
     void PollInput(float deltaTime);
-
-    void DrawDockspace();
-    void DrawLogPanel();
-    void DrawTestPanel();
 };
