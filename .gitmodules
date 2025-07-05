@@ -23,3 +23,6 @@
 [submodule "Lightyear/extern/PhysX"]
 	path = Lightyear/extern/PhysX
 	url = git@github.com:NVIDIA-Omniverse/PhysX.git
+[submodule "Lightyear/extern/refl-cpp"]
+	path = Lightyear/extern/refl-cpp
+	url = https://github.com/veselink1/refl-cpp.git

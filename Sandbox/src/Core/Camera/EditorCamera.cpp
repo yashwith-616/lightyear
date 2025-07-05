@@ -58,7 +58,7 @@ void EditorCamera::SetOrthographic(float left, float right, float bottom, float 
 
 void EditorCamera::ClampPitch() {
     // Prevent camera flipping if pitch goes beyond straight up/down
-    const float limit = glm::radians(89.0f);
+    constexpr float limit = glm::radians(89.0f);
     if (m_Rotation.x > limit)
         m_Rotation.x = limit;
     else if (m_Rotation.x < -limit)

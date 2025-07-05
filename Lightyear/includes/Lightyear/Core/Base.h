@@ -38,6 +38,14 @@ constexpr std::shared_ptr<T> MakeRef(Args&&... args) {
     return std::make_shared<T>(std::forward<Args>(args)...);
 }
 
+template <typename T>
+using WeakRef = std::weak_ptr<T>;
+
+template <typename T>
+inline Ref<T> TryLock(const WeakRef<T>& weak) {
+    return weak.lock();
+}
+
 // ----------------------- Custom Strings ----------------------
 using CName   = std::string;
 using CParam  = std::string_view;
