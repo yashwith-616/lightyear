@@ -1,27 +1,30 @@
 #pragma once
 
-#include <lypch.h>
-#include "Lightyear/LightyearCore.h"
+#include "Lightyear/Core/Assertions.h"
+#include "Lightyear/pch/lypch.h"
 
 namespace ly {
 
-class dynamic_bitset {
+class DynamicBitset {
 public:
-    dynamic_bitset() = default;
-    explicit dynamic_bitset(size_t size);
+    DynamicBitset() = default;
+    explicit DynamicBitset(size_t size);
 
-    void resize(size_t size);
-    void set(size_t index, bool value = true);
-    void reset(size_t index);
-    void flip(size_t index);
-    bool test(size_t index) const;
-    size_t size() const { return m_Size; }
+    void Resize(size_t size);
+    void Set(size_t index, bool value = true);
+    void Reset(size_t index);
+    void Flip(size_t index);
+    [[nodiscard]] bool Test(size_t index) const;
+    [[nodiscard]] size_t Size() const { return m_Size; }
 
 private:
     std::vector<uint64_t> m_Bits;
     size_t m_Size = 0;
 
-    static constexpr size_t BITS_PER_BLOCK = 64;
-    size_t block_count(size_t size) { return (size + BITS_PER_BLOCK - 1) / BITS_PER_BLOCK; }
+    static constexpr size_t kBitsPerBlock = 64;
+    static constexpr size_t BlockCount(size_t size) {
+        return (size + kBitsPerBlock - 1) / kBitsPerBlock;
+    }
 };
+
 }  // namespace ly

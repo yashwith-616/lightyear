@@ -2,7 +2,6 @@
 
 #include "Lightyear/LightyearCore.h"
 #include "entt/entt.hpp"
-#include "lypch.h"
 
 namespace ly::scene {
 
@@ -77,7 +76,7 @@ public:
 private:
     std::vector<SceneNode> m_Nodes = { SceneNode(entt::null, -1, {}) };
     std::vector<uint32_t> m_FreeSlots{};
-    dynamic_bitset m_DirtyFlag{};
+    DynamicBitset m_DirtyFlag{};
 
 private:
     uint32_t AddNode(SceneNode&& sceneNode);

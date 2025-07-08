@@ -4,8 +4,6 @@
 #include "Lightyear/Core/Window.h"
 #include "Lightyear/LightyearCore.h"
 
-#include <lypch.h>
-
 namespace ly {
 
 class Event;

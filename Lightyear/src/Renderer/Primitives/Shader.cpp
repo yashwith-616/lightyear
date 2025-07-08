@@ -6,8 +6,9 @@
 
 namespace ly::renderer {
 
-ly::Ref<Shader> Shader::Create(const CName& name,
-                               const std::unordered_map<ShaderType, CPath>& shaderFiles) {
+ly::Ref<Shader> Shader::Create(
+    const std::string& name,
+    const std::unordered_map<ShaderType, std::filesystem::path>& shaderFiles) {
     switch (Renderer::GetAPI()) {
         case RendererAPI::API::None:
             LY_CORE_ASSERT(false, "RendererAPI::None is currently not supported!");
@@ -20,8 +21,8 @@ ly::Ref<Shader> Shader::Create(const CName& name,
     return nullptr;
 }
 
-static ly::Ref<Shader> Create(const CName& name,
-                              const std::unordered_map<ShaderType, CText>& shaderSrcs) {
+static ly::Ref<Shader> Create(const std::string& name,
+                              const std::unordered_map<ShaderType, std::string>& shaderSrcs) {
     switch (Renderer::GetAPI()) {
         case RendererAPI::API::None:
             LY_CORE_ASSERT(false, "RendererAPI::None is currently not supported!");
@@ -34,7 +35,7 @@ static ly::Ref<Shader> Create(const CName& name,
     return nullptr;
 }
 
-CText Shader::ReadFile(CPath shaderFilePath) {
+std::string Shader::ReadFile(std::filesystem::path shaderFilePath) {
     // Open file in binary, and point the pointer to end of file.
     std::ifstream file(shaderFilePath, std::ios::binary | std::ios::ate);
     if (!file) {

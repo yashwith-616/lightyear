@@ -31,7 +31,7 @@ void OpenGLUniformBuffer::Debug(uint32_t programID, const CName& blockName) {
 
     GLint blockSize = 0;
     glGetActiveUniformBlockiv(programID, blockIndex, GL_UNIFORM_BLOCK_DATA_SIZE, &blockSize);
-    LY_CORE_LOG(LogType::Info, "UBO '{}' block size: {} bytes", blockName, blockSize);
+    LY_CORE_LOG(LogType::Info, "UBO '{}' block Size: {} bytes", blockName, blockSize);
 
     GLint activeUniforms = 0;
     glGetActiveUniformBlockiv(

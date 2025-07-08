@@ -2,7 +2,6 @@
 
 #include "Lightyear/LightyearCore.h"
 #include "Lightyear/Renderer/Abstract/RendererContext.h"
-#include "lypch.h"
 
 struct GLFWwindow;
 

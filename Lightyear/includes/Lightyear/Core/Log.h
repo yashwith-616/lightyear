@@ -1,11 +1,8 @@
 #pragma once
 
-#include <lypch.h>
 #include "Base.h"
+#include "Lightyear/pch/lypch.h"
 #include "Macros.h"
-
-#define GLM_ENABLE_EXPERIMENTAL
-#include "glm/gtx/string_cast.hpp"
 
 #include <spdlog/fmt/ostr.h>
 #include <spdlog/spdlog.h>

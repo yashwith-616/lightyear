@@ -1,11 +1,11 @@
 #pragma once
 
-#include <lypch.h>
-#include <glm/glm.hpp>
+#include "Lightyear/pch/lypch.h"
 
 namespace ly {
 
 // ----------------------- Constants ---------------------------
+// TO BE MOVED: Windows properties
 constexpr uint32_t DEFAULT_WINDOW_HEIGHT{ 720 };
 constexpr uint32_t DEFAULT_WINDOW_WIDTH{ 1280 };
 constexpr std::string_view DEFAULT_WINDOW_TITLE{ "LightYear" };
@@ -13,11 +13,12 @@ constexpr float DEFAULT_FRAMETIME{ 1 / 60.f };
 constexpr float DEFAULT_ASPECT_RATIO{ 1.7777777778f };
 constexpr std::string_view GLSL_VERSION = "#version 460 core";
 
+// ----------------------- Custom ------------------------------
 constexpr uint8_t BIT(uint8_t x) {
     return 1 << x;
 }
 
-inline const void* TO_VOID_PTR(uint32_t value) {
+inline const void* AsVoidPtr(uint32_t value) {
     return reinterpret_cast<const void*>(static_cast<uintptr_t>(value));
 }
 
@@ -46,17 +47,11 @@ inline Ref<T> TryLock(const WeakRef<T>& weak) {
     return weak.lock();
 }
 
-// ----------------------- Custom Strings ----------------------
-using CName   = std::string;
-using CParam  = std::string_view;
-using CLabel  = std::string_view;
-using CTag    = std::string_view;
-using CId     = std::string;
-using CText   = std::string;
-using CPath   = std::filesystem::path;
-using CShader = std::string_view;
-
 // ----------------------- Callbacks ---------------------------
 using EventCallbackFn = std::function<void(class Event&)>;
+
+using CName = std::string;
+using CText = std::string;
+using CPath = std::filesystem::path;
 
 }  // namespace ly

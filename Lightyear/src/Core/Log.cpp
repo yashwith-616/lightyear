@@ -31,7 +31,7 @@ void Log::Init() {
     spdlog::set_error_handler([](const std::string& msg) {
         std::cerr << "[SPDLOG ERROR] " << msg << std::endl;
         std::ofstream fallbackLog("log/error_fallback.log", std::ios::app);
-        fallbackLog << "[SPDLOG ERROR] " << msg << std::endl;
+        fallbackLog << "[SPDLOG ERROR] " << msg << '\n';
     });
 }
 

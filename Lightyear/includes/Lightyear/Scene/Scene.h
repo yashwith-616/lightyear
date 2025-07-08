@@ -1,6 +1,5 @@
 #pragma once
 
-#include <lypch.h>
 #include "Lightyear/LightyearCore.h"
 #include "SceneData.h"
 #include "SceneGraph.h"
@@ -81,7 +80,7 @@ public:
     inline const entt::registry& GetRegistry() const { return m_Registry; }
 
 protected:
-    Entity CreateEntity(uuid uuid,
+    Entity CreateEntity(UUID UUID,
                         const CName& name                                   = std::string(),
                         std::optional<std::reference_wrapper<const Entity>> = std::nullopt);
 

@@ -12,9 +12,9 @@ public:
     void Invalidate();
     virtual void Resize(uint32_t width, uint32_t height) override;
 
-    virtual FramebufferSpecification& GetSpecification() { return m_Specification; }
-    virtual const FramebufferSpecification& GetSpecification() const { return m_Specification; };
-    virtual uint32_t GetColorAttachmentRenderID() const { return m_ColorAttachment; };
+    virtual FramebufferSpecification& GetSpecification() override{ return m_Specification; }
+    virtual const FramebufferSpecification& GetSpecification() const override { return m_Specification; };
+    virtual uint32_t GetColorAttachmentRenderID() const override { return m_ColorAttachment; };
 
     virtual void Bind() override;
     virtual void Unbind() override;

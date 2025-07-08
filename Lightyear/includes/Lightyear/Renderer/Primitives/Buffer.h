@@ -29,10 +29,13 @@ static uint32_t ShaderDataTypeSize(ShaderDataType type) {
             return 4 * 4;
         case ShaderDataType::Bool:
             return 1;
+        case ShaderDataType::None:
+            LY_CORE_ASSERT(false, "Unknown ShaderDataType!");
+            return -1;
     }
 
     LY_CORE_ASSERT(false, "Unknown ShaderDataType!");
-    return 0;
+    return -1;
 };
 
 /**
@@ -81,6 +84,9 @@ struct LIGHTYEAR_API BufferElement {
                 return 4;
             case ShaderDataType::Bool:
                 return 1;
+            case ShaderDataType::None:
+                LY_CORE_ASSERT(false, "Unknown ShaderDataType!");
+                return -1;
         }
 
         LY_CORE_ASSERT(false, "Unknown ShaderDataType!");

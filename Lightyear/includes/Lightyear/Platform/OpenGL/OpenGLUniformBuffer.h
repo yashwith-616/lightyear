@@ -13,7 +13,7 @@ public:
     virtual void Bind() const override;
     virtual void UnBind() const override;
 
-    virtual void Debug(uint32_t programID, const CName& name);
+    virtual void Debug(uint32_t programID, const CName& name) override;
 
 private:
     uint32_t m_BufferID{ 0 };

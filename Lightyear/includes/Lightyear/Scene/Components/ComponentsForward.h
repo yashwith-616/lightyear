@@ -1,6 +1,5 @@
 #pragma once
 
-#include <lypch.h>
 #include "Lightyear/Renderer/Camera/SceneCamera.h"
 #include "Lightyear/Renderer/Primitives/Shader.h"
 #include "Lightyear/Renderer/Primitives/Texture.h"
@@ -21,10 +20,10 @@ enum class EMobilityType { STATIC, STATIONARY, MOVABLE };
  * @brief Attaches an UUID to the component. All entity present in scene will have this component.
  */
 struct IDComponent {
-    uuid ID;
+    UUID ID;
 
-    IDComponent() : ID(uuid()) {}
-    IDComponent(const uuid& id) : ID(id) {}
+    IDComponent() : ID(UUID()) {}
+    IDComponent(const UUID& id) : ID(id) {}
 };
 
 /**

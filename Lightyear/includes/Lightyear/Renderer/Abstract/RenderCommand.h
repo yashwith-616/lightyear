@@ -1,6 +1,5 @@
 #pragma once
 
-#include <lypch.h>
 #include <glm/glm.hpp>
 #include "Lightyear/LightyearCore.h"
 #include "Lightyear/Renderer/Abstract/RendererAPI.h"

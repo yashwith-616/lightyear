@@ -3,9 +3,7 @@
 
 namespace ly {
 
-Layer::Layer(const CName& debugName) : m_DebugName(debugName) {}
-
-Layer::~Layer() {}
+Layer::Layer(std::string debugName) : m_DebugName(std::move(debugName)) {}
 
 void Layer::OnAttach() {}
 

@@ -59,7 +59,7 @@ void Application::OnEvent(Event& event) {
 
     for (auto it = m_LayerStack.end(); it != m_LayerStack.begin();) {
         (*--it)->OnEvent(event);
-        if (event.bIsHandled) {
+        if (event.IsHandled()) {
             break;
         }
     }

@@ -67,7 +67,7 @@ private:
      * It is used within GLFW callbacks to access and update window data, and to dispatch events.
      */
     struct WindowsData {
-        CLabel Title{ "Demo" };
+        std::string_view Title{ "Demo" };
         uint32_t Height{ 0 };
         uint32_t Width{ 0 };
         bool VSync{ true };

@@ -1,6 +1,5 @@
 #pragma once
 
-#include <lypch.h>
 #include <glm/glm.hpp>
 
 namespace ly::renderer {

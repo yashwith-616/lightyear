@@ -1,6 +1,5 @@
 #pragma once
 
-#include <lypch.h>
 #include "Lightyear/LightyearCore.h"
 #include "RenderTypes.h"
 
@@ -12,16 +11,17 @@ public:
     virtual void Use() const    = 0;
     virtual void UnBind() const = 0;
 
-    virtual CName GetName() const { return m_Name; }
+    virtual std::string GetName() const { return m_Name; }
 
-    static ly::Ref<Shader> Create(const CName& name,
-                                  const std::unordered_map<ShaderType, CPath>& shaderFiles);
+    static ly::Ref<Shader> Create(
+        const std::string& name,
+        const std::unordered_map<ShaderType, std::filesystem::path>& shaderFiles);
 
-    static ly::Ref<Shader> Create(const CName& name,
-                                  const std::unordered_map<ShaderType, CText>& shaderSrcs);
+    static ly::Ref<Shader> Create(const std::string& name,
+                                  const std::unordered_map<ShaderType, std::string>& shaderSrcs);
 
 protected:
-    CName m_Name{};
+    std::string m_Name{};
 
 protected:
     /**
@@ -29,7 +29,7 @@ protected:
      * @param shaderFilePath the shader file path
      * @return string with the file data
      */
-    virtual CText ReadFile(CPath shaderFilePath);
+    virtual std::string ReadFile(std::filesystem::path shaderFilePath);
 };
 
 }  // namespace ly::renderer

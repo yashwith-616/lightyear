@@ -33,10 +33,14 @@ endforeach()
 ##################################################
 find_program(CLANG_TIDY "clang-tidy")
 if (CLANG_TIDY)
-	message(STATUS "Found clang tidy: ${CLANG_TIDY}")
-	set(CMAKE_CXX_CLANG_TIDY "${CLANG_TIDY}")
+    message(STATUS "Found clang tidy: ${CLANG_TIDY}")
+    set(CLANG_TIDY_COMMAND
+        "${CLANG_TIDY};-config-file=${CMAKE_SOURCE_DIR}/.clang-tidy"
+    )
+    set_target_properties(Lightyear PROPERTIES CXX_CLANG_TIDY "${CLANG_TIDY_COMMAND}")
+    set_target_properties(Sandbox PROPERTIES CXX_CLANG_TIDY "${CLANG_TIDY_COMMAND}")
 else()
-	message(STATUS "clang-tidy not found, skipping clang-tidy integration")
+    message(STATUS "clang-tidy not found, skipping clang-tidy integration")
 endif()
 
 

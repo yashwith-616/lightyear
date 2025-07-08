@@ -1,6 +1,6 @@
 #pragma once
 
-#include "LightYear/Core/Layer.h"
+#include "Lightyear/Core/Layer.h"
 #include "Lightyear/LightyearCore.h"
 
 enum ImGuiKey : int;

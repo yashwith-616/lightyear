@@ -1,7 +1,7 @@
+#include "GLFW/glfw3.h"
 #include "Lightyear/Core/Application.h"
 #include "Lightyear/Core/Window.h"
 #include "Lightyear/Input/Input.h"
-#include "glfw/glfw3.h"
 
 namespace ly {
 

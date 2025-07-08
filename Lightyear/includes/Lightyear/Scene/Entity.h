@@ -1,6 +1,5 @@
 #pragma once
 
-#include <lypch.h>
 #include "Lightyear/LightyearCore.h"
 #include "Lightyear/Scene/Components/Components.h"
 #include "Scene.h"
@@ -55,7 +54,7 @@ public:
     operator entt::entity() const { return m_EntityHandle; }
     operator uint32_t() const { return static_cast<uint32_t>(m_EntityHandle); }
 
-    uuid GetUUID() { return GetComponent<IDComponent>().ID; }
+    UUID GetUUID() { return GetComponent<IDComponent>().ID; }
     const std::string& GetName() { return GetComponent<TagComponent>().Tag; }
 
     bool operator!=(const Entity& other) { return !(*this == other); }

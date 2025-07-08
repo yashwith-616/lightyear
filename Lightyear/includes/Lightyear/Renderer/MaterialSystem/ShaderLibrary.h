@@ -1,6 +1,5 @@
 #pragma once
 
-#include <lypch.h>
 #include "Lightyear/LightyearCore.h"
 #include "Lightyear/Renderer/Primitives/Shader.h"
 

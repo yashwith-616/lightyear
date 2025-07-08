@@ -1,6 +1,5 @@
 #pragma once
 
-#include <lypch.h>
 #include "Lightyear/LightyearCore.h"
 #include "RenderTypes.h"
 

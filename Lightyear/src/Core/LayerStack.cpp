@@ -2,7 +2,18 @@
 
 namespace ly {
 
-LayerStack::~LayerStack() {}
+LayerStack::LayerStack(const LayerStack&& other) noexcept
+    : m_Layers(std::move(other.m_Layers)), m_LayerInsertIndex(other.m_LayerInsertIndex) {}
+
+LayerStack& LayerStack::operator=(LayerStack&& other) noexcept {
+    if (this != &other) {
+        m_Layers = std::move(other.m_Layers);
+        m_LayerInsertIndex = other.m_LayerInsertIndex;
+
+        other.m_LayerInsertIndex = 0;
+    }
+    return *this;
+}
 
 void LayerStack::PushLayer(Scope<Layer> layer) {
     m_Layers.insert(m_Layers.begin() + m_LayerInsertIndex, std::move(layer));

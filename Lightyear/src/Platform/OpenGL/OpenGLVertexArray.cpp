@@ -28,6 +28,9 @@ static GLenum ConvertToOpenGLType(ShaderDataType type) {
             return GL_INT;
         case ShaderDataType::Bool:
             return GL_BOOL;
+        case ShaderDataType::None:
+            LY_CORE_ASSERT(false, "Unknown ShaderDataType!");
+            return GL_FALSE;
     }
 
     LY_CORE_ASSERT(false, "Unknown ShaderDataType!");
@@ -76,7 +79,7 @@ void OpenGLVertexArray::AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer) {
                                       glType,
                                       element.IsNormalized ? GL_TRUE : GL_FALSE,
                                       layout.GetStride(),
-                                      TO_VOID_PTR(element.Offset));
+                                      AsVoidPtr(element.Offset));
                 m_VertexBufferIndex++;
                 break;
             }
@@ -91,7 +94,7 @@ void OpenGLVertexArray::AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer) {
                                           glType,
                                           element.IsNormalized ? GL_TRUE : GL_FALSE,
                                           layout.GetStride(),
-                                          TO_VOID_PTR(element.Offset + sizeof(float) * count * i));
+                                          AsVoidPtr(element.Offset + sizeof(float) * count * i));
                     glVertexAttribDivisor(m_VertexBufferIndex, 1);
                     m_VertexBufferIndex++;
                 }

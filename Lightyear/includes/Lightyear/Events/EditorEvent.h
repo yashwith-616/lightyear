@@ -4,24 +4,20 @@
 
 namespace ly {
 
-class LIGHTYEAR_API EditorUpdateBeginEvent : public Event {
+class LIGHTYEAR_API EditorUpdateBeginEvent
+    : public EventBase<EditorUpdateBeginEvent, EventType::EditorUpdateBegin, EC_EDITOR> {
 public:
     EditorUpdateBeginEvent() {}
 
-    CText ToString() const override { return std::format("EditorUpdateBeginEvent"); }
-
-    EVENT_CLASS_CATEGORY(EC_EDITOR)
-    EVENT_CLASS_TYPE(EditorUpdateBegin)
+    std::string ToString() const override { return std::format("EditorUpdateBeginEvent"); }
 };
 
-class LIGHTYEAR_API EditorUpdateEndEvent : public Event {
+class LIGHTYEAR_API EditorUpdateEndEvent
+    : public EventBase<EditorUpdateEndEvent, EventType::EditorUpdateBegin, EC_EDITOR> {
 public:
     EditorUpdateEndEvent() {}
 
-    CText ToString() const override { return std::format("EditorUpdateEndEvent"); }
-
-    EVENT_CLASS_CATEGORY(EC_EDITOR)
-    EVENT_CLASS_TYPE(EditorUpdateEnd)
+    std::string ToString() const override { return std::format("EditorUpdateEndEvent"); }
 };
 
 }  // namespace ly

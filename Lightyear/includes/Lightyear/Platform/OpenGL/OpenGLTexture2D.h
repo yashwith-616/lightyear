@@ -1,6 +1,5 @@
 #pragma once
 
-#include <lypch.h>
 #include "Lightyear/Renderer/Primitives/Texture.h"
 
 namespace ly::renderer {

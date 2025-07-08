@@ -1,6 +1,5 @@
 #pragma once
 
-#include <lypch.h>
 #include "Lightyear/LightyearCore.h"
 
 namespace ly {
@@ -8,13 +7,13 @@ namespace ly {
 class Event;
 
 struct WindowProps {
-    CLabel Title;
+    std::string_view Title;
     uint32_t Width;
     uint32_t Height;
 
-    WindowProps(const CLabel& title = DEFAULT_WINDOW_TITLE,
-                uint32_t width      = DEFAULT_WINDOW_WIDTH,
-                uint32_t height     = DEFAULT_WINDOW_HEIGHT)
+    WindowProps(std::string_view title = DEFAULT_WINDOW_TITLE,
+                uint32_t width         = DEFAULT_WINDOW_WIDTH,
+                uint32_t height        = DEFAULT_WINDOW_HEIGHT)
         : Title(title), Width(width), Height(height) {}
 };
 

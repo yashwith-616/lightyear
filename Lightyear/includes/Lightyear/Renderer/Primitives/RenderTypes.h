@@ -1,6 +1,6 @@
 #pragma once
 
-#include <lypch.h>
+#include <cstdint>
 
 namespace ly::renderer {
 

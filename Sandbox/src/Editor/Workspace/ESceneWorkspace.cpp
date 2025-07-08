@@ -16,7 +16,7 @@ void ESceneWorkspace::OnEvent(ly::Event& event) {}
 void ESceneWorkspace::OnUpdate(float deltaTime) {}
 
 void ESceneWorkspace::OnEditorUpdate() {
-    m_SceneTree.reset();
+    m_SceneTree.Reset();
     BuildSceneTree();
 
     m_SceneGraphPanel->SetSceneTree(m_SceneTree);
@@ -90,7 +90,7 @@ void ESceneWorkspace::SetupDockspace() {
 void ESceneWorkspace::BuildSceneTree() {
     auto& registry = GetScene().GetRegistry();
 
-    m_SceneTree = ly::MakeRef<SceneTreeNode>("root", ly::uuid(0), entt::null);
+    m_SceneTree = ly::MakeRef<SceneTreeNode>("root", ly::UUID(0), entt::null);
 
     for (auto [entity, tag, id, relation] :
          ly::scene::ComponentGroupView<SceneComponent>::view(registry).each()) {

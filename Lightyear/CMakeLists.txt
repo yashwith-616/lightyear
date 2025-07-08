@@ -143,7 +143,7 @@ endif()
 #-------------------------------------------------
 # Pre-Compiled Headers
 #-------------------------------------------------
-target_precompile_headers(Lightyear PRIVATE "${HDRS_DIR}/lypch.h")
+target_precompile_headers(Lightyear PRIVATE "${HDRS_DIR}/Lightyear/pch/lypch.h")
 
 
 #-------------------------------------------------

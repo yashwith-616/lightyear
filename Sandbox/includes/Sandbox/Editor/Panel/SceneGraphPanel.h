@@ -1,6 +1,5 @@
 #pragma once
 
-#include <lypch.h>
 #include "IEditorPanel.h"
 #include "Lightyear.h"
 #include "Sandbox/Editor/Widgets/WidgetDrawer.h"

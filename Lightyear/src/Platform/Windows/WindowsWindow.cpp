@@ -1,4 +1,4 @@
-#include "LightYear/Platform/Windows/WindowsWindow.h"
+#include "Lightyear/Platform/Windows/WindowsWindow.h"
 #include "Lightyear/Events/ApplicationEvent.h"
 #include "Lightyear/Events/KeyEvent.h"
 #include "Lightyear/Events/MouseEvent.h"

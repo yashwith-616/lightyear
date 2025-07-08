@@ -12,7 +12,7 @@ namespace ly::scene {
 template <typename... Component>
 static void CopyComponent(entt::registry& dst,
                           entt::registry& src,
-                          const std::unordered_map<uuid, entt::entity>& enttMap) {
+                          const std::unordered_map<UUID, entt::entity>& enttMap) {
     (
         [&]() {
             auto view = src.view<Component>();
@@ -30,7 +30,7 @@ template <typename... Component>
 static void CopyComponent(ComponentGroup<Component...>,
                           entt::registry& dst,
                           entt::registry& src,
-                          const std::unordered_map<uuid, entt::entity>& enttMap) {
+                          const std::unordered_map<UUID, entt::entity>& enttMap) {
     CopyComponent<Component...>(dst, src, enttMap);
 }
 
@@ -53,11 +53,11 @@ static void CopyComponentIfExists(ComponentGroup<Component...>, Entity dst, Enti
 
 #pragma region Entity Management
 Entity Scene::CreateEntity(const CName& name) {
-    return CreateEntity(uuid(), name);
+    return CreateEntity(UUID(), name);
 }
 
 Entity Scene::CreateEntity(const CName& name, const Entity& parent) {
-    return CreateEntity(uuid(), name, std::cref(parent));
+    return CreateEntity(UUID(), name, std::cref(parent));
 }
 
 Entity Scene::CreateChildEntity(Entity parent, const CName& name) {
@@ -281,11 +281,11 @@ void Scene::OnViewportResize(uint32_t width, uint32_t height) {
     GetPrimaryCameraEntity().GetComponent<CameraComponent>().Camera->Resize(width, height);
 }
 
-Entity Scene::CreateEntity(uuid uuid,
+Entity Scene::CreateEntity(UUID UUID,
                            const CName& name,
                            std::optional<std::reference_wrapper<const Entity>> parent) {
     Entity entity{ m_Registry.create(), this };
-    entity.AddComponent<IDComponent>(uuid);
+    entity.AddComponent<IDComponent>(UUID);
     entity.AddComponent<TagComponent>(GenerateUniqueName(name));
     entity.AddComponent<MobilityComponent>(EMobilityType::STATIC);
     entity.AddComponent<TransformComponent>();

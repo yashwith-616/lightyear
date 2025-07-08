@@ -1,6 +1,5 @@
 #pragma once
 
-#include <lypch.h>
 #include "Lightyear/LightyearCore.h"
 
 namespace ly {
@@ -9,8 +8,8 @@ class Event;
 
 class LIGHTYEAR_API Layer {
 public:
-    Layer(const CName& name = "Layer");
-    virtual ~Layer();
+    Layer(std::string name = "Layer");
+    virtual ~Layer() = default;
 
     virtual void OnAttach();
     virtual void OnDetach();
@@ -18,10 +17,10 @@ public:
     virtual void OnEditorRender();
     virtual void OnEvent(Event& event);
 
-    inline const CName& GetName() const { return m_DebugName; }
+    inline const std::string& GetName() const { return m_DebugName; }
 
 protected:
-    CName m_DebugName;
+    std::string m_DebugName;
 };
 
 }  // namespace ly
