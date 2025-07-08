@@ -23,7 +23,6 @@ project (
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
-#string(APPEND CMAKE_CXX_FLAGS "-Wall")
 
 set(SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
 set(HDRS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/includes")
@@ -93,6 +92,7 @@ add_subdirectory(${REFL_DIR})
 #-------------------------------------------------
 add_library (Lightyear STATIC ${SOURCES} "${HEADERS}")
 target_include_directories(Lightyear
+    SYSTEM
     PUBLIC
         "${HDRS_DIR}"
         "${GLM_DIR}"

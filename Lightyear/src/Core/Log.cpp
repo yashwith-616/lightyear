@@ -29,7 +29,7 @@ void Log::Init() {
     s_ClientLogger->flush_on(spdlog::level::trace);
 
     spdlog::set_error_handler([](const std::string& msg) {
-        std::cerr << "[SPDLOG ERROR] " << msg << std::endl;
+        std::cerr << "[SPDLOG ERROR] " << msg << '\n';
         std::ofstream fallbackLog("log/error_fallback.log", std::ios::app);
         fallbackLog << "[SPDLOG ERROR] " << msg << '\n';
     });

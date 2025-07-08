@@ -54,7 +54,7 @@ uint32_t SceneGraph::AddNode(SceneNode&& sceneNode) {
 
     m_Nodes[parentIndex].children.push_back(index);
 
-    m_DirtyFlag.Resize(std::max(static_cast<size_t>(index + 1), m_DirtyFlag.size()));
+    m_DirtyFlag.Resize(std::max(static_cast<size_t>(index + 1), m_DirtyFlag.Size()));
     m_DirtyFlag.Set(index);
 
     return index;
@@ -105,19 +105,19 @@ void SceneGraph::ClearNode(const uint32_t nodeIndex) {
 }
 
 void SceneGraph::MarkDirty(uint32_t nodeIndex) {
-    LY_CORE_ASSERT(nodeIndex < m_DirtyFlag.size(),
+    LY_CORE_ASSERT(nodeIndex < m_DirtyFlag.Size(),
                    "ScenGraph::MarkDirty - Index out of bounds error");
     m_DirtyFlag.Set(nodeIndex);
 }
 
 void SceneGraph::ClearDirty(uint32_t nodeIndex) {
-    LY_CORE_ASSERT(nodeIndex < m_DirtyFlag.size(),
+    LY_CORE_ASSERT(nodeIndex < m_DirtyFlag.Size(),
                    "ScenGraph::ClearDirty - Index out of bounds error");
     m_DirtyFlag.Reset(nodeIndex);
 }
 
 bool SceneGraph::IsDirty(uint32_t nodeIndex) const {
-    LY_CORE_ASSERT(nodeIndex < m_DirtyFlag.size(),
+    LY_CORE_ASSERT(nodeIndex < m_DirtyFlag.Size(),
                    "ScenGraph::IsDirty - Index out of bounds error");
 
     return m_DirtyFlag.Test(nodeIndex);

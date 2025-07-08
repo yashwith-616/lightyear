@@ -16,7 +16,7 @@ void ESceneWorkspace::OnEvent(ly::Event& event) {}
 void ESceneWorkspace::OnUpdate(float deltaTime) {}
 
 void ESceneWorkspace::OnEditorUpdate() {
-    m_SceneTree.Reset();
+    m_SceneTree.reset();
     BuildSceneTree();
 
     m_SceneGraphPanel->SetSceneTree(m_SceneTree);
@@ -35,7 +35,7 @@ void ESceneWorkspace::OnImGuiRender() {
 
 void ESceneWorkspace::DrawDockspace() {
     ImGuiViewport* viewport = ImGui::GetMainViewport();
-    if (!viewport) {
+    if (viewport == nullptr) {
         LY_LOG(ly::LogType::Error, "Main Viewport is null!");
         return;
     }
@@ -46,13 +46,13 @@ void ESceneWorkspace::DrawDockspace() {
     ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
     ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
 
-    constexpr ImGuiWindowFlags window_flags =
+    constexpr ImGuiWindowFlags windowFlags =
         ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse |
         ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
         ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus |
         ImGuiWindowFlags_NoBackground;
 
-    ImGui::Begin("World Workspace", nullptr, window_flags);
+    ImGui::Begin("World Workspace", nullptr, windowFlags);
     ImGui::PopStyleVar(2);
 
     m_DockspaceID = ImGui::GetID("World Workspace");
@@ -69,14 +69,17 @@ void ESceneWorkspace::DrawDockspace() {
  * 5. Panel will have property to hide them. Panel need an enum based dirty flag
  */
 void ESceneWorkspace::SetupDockspace() {
-    if (ImGui::DockBuilderGetNode(m_DockspaceID)) {
+    if (ImGui::DockBuilderGetNode(m_DockspaceID) != nullptr) {
         ImGui::DockBuilderRemoveNode(m_DockspaceID);
     }
 
     ImGui::DockBuilderAddNode(m_DockspaceID, ImGuiDockNodeFlags_DockSpace);
     ImGui::DockBuilderSetNodeSize(m_DockspaceID, ImGui::GetMainViewport()->Size);
 
-    ImGuiID left, right, topRight, bottomRight;
+    ImGuiID left{};
+    ImGuiID right{};
+    ImGuiID topRight{};
+    ImGuiID bottomRight{};
     ImGui::DockBuilderSplitNode(m_DockspaceID, ImGuiDir::ImGuiDir_Right, 0.2, &right, &left);
     ImGui::DockBuilderSplitNode(left, ImGuiDir::ImGuiDir_Down, 0.5, &bottomRight, &topRight);
 
@@ -88,7 +91,7 @@ void ESceneWorkspace::SetupDockspace() {
 }
 
 void ESceneWorkspace::BuildSceneTree() {
-    auto& registry = GetScene().GetRegistry();
+    const auto& registry = GetScene().GetRegistry();
 
     m_SceneTree = ly::MakeRef<SceneTreeNode>("root", ly::UUID(0), entt::null);
 

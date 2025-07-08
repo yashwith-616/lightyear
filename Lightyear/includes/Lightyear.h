@@ -32,3 +32,4 @@
 
 // Input
 #include "Lightyear/Input/Input.h"
+#include "Lightyear/pch/lypch.h"

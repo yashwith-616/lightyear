@@ -12,9 +12,7 @@ namespace std {
 
 template <>
 struct hash<ly::UUID> {
-    std::size_t operator()(const ly::UUID& uuid) const {
-        return hash<uint64_t>()(uuid.Get());
-    }
+    std::size_t operator()(const ly::UUID& uuid) const { return hash<uint64_t>()(uuid.Get()); }
 };
 
 }  // namespace std

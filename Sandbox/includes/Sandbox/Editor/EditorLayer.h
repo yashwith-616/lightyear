@@ -5,7 +5,6 @@
 #include "Sandbox/Editor/Workspace/ESceneWorkspace.h"
 
 class EditorCamera;
-class GridRender;
 
 namespace ly::scene {
 class Entity;
@@ -29,8 +28,7 @@ private:
     ly::Ref<ly::renderer::Shader> m_Shader;
     ly::Ref<ly::renderer::Texture2D> m_Texture;
     ly::Ref<EditorCamera> m_EditorCamera{};
-    ly::Scope<GridRender> m_GridRenderer{};
-
+    
     ly::scene::Entity m_CubeEntity{};
 
     // Will be present

@@ -39,8 +39,8 @@ std::string Shader::ReadFile(std::filesystem::path shaderFilePath) {
     // Open file in binary, and point the pointer to end of file.
     std::ifstream file(shaderFilePath, std::ios::binary | std::ios::ate);
     if (!file) {
-        throw std::runtime_error(
-            std::format("ERROR::SHADER::FILE_NOT_SUCCESSFULLY_READ: {}", shaderFilePath.string()));
+        LY_CORE_ASSERT(
+            false, "ERROR::SHADER::FILE_NOT_SUCCESSFULLY_READ: {}", shaderFilePath.string());
     }
 
     // Get size of file by reading the current position of the file pointer(at the end)

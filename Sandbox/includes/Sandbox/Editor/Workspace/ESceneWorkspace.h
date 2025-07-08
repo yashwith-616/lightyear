@@ -32,11 +32,12 @@ protected:
     ly::Ref<SceneTreeNode> BuildSceneTreeRecursive(entt::entity entity);
 
     inline bool IsDockspaceInitialized() { return m_bIsInitiatlized; }
-    inline std::string_view GetPanelTitle(EEditorPanel editorPanel);
     inline const ly::scene::Scene& GetScene() {
         LY_CORE_ASSERT(m_GlobalContext && m_GlobalContext->m_ActiveScene, "Active Scene is null!");
         return *(m_GlobalContext->m_ActiveScene);
     }
+
+    static std::string_view GetPanelTitle(EEditorPanel editorPanel);
 
 private:
     ly::Scope<ESceneGraphPanelExp> m_SceneGraphPanel{};

@@ -3,9 +3,9 @@
 namespace ly::renderer {
 
 Ref<Material> Material::Create(Ref<Shader> shader) {
-    Material* material = new Material();
-    material->m_Shader = shader;
-    return Ref<Material>(material);
+    auto material      = MakeRef<Material>();
+    material->m_Shader = std::move(shader);
+    return material;
 }
 
 }  // namespace ly::renderer

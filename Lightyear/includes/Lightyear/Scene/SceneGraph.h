@@ -84,7 +84,7 @@ private:
     void ClearNode(const uint32_t nodeIndex);
 
     bool IsValidNode(const uint32_t nodeIndex) const;
-    bool IsValidParent(const int paretnIndex) const;
+    bool IsValidParent(const int parentIndex) const;
 };
 
 }  // namespace ly::scene

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <Sandbox/Editor/Comman/SceneTreeNode.h>
-#include <lypch.h>
 #include "IEditorPanel.h"
 #include "Lightyear.h"
 #include "Sandbox/Editor/Widgets/WidgetDrawer.h"
@@ -9,7 +8,7 @@
 class ESceneGraphPanelExp : public IEditorPanel {
 public:
     ESceneGraphPanelExp(std::string_view name) : IEditorPanel(name) {}
-    virtual ~ESceneGraphPanelExp() = default;
+    virtual ~ESceneGraphPanelExp() override = default;
 
     virtual void OnImGuiRender() override;
 

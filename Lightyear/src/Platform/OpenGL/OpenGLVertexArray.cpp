@@ -7,29 +7,24 @@ namespace ly::renderer {
 static GLenum ConvertToOpenGLType(ShaderDataType type) {
     switch (type) {
         case ShaderDataType::Float:
-            return GL_FLOAT;
         case ShaderDataType::Float2:
-            return GL_FLOAT;
         case ShaderDataType::Float3:
-            return GL_FLOAT;
         case ShaderDataType::Float4:
-            return GL_FLOAT;
         case ShaderDataType::Mat3:
-            return GL_FLOAT;
         case ShaderDataType::Mat4:
             return GL_FLOAT;
+
         case ShaderDataType::Int:
-            return GL_INT;
         case ShaderDataType::Int2:
-            return GL_INT;
         case ShaderDataType::Int3:
-            return GL_INT;
         case ShaderDataType::Int4:
             return GL_INT;
+
         case ShaderDataType::Bool:
             return GL_BOOL;
+
         case ShaderDataType::None:
-            LY_CORE_ASSERT(false, "Unknown ShaderDataType!");
+            LY_CORE_ASSERT(false, "ShaderDataType::None is not a valid type!");
             return GL_FALSE;
     }
 
@@ -54,14 +49,14 @@ void OpenGLVertexArray::Unbind() const {
 }
 
 void OpenGLVertexArray::AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer) {
-    LY_CORE_ASSERT(vertexBuffer->GetLayout().GetElements().size(), "Vertex Buffer has no layout");
+    LY_CORE_ASSERT(!vertexBuffer->GetLayout().GetElements().empty(), "Vertex Buffer has no layout");
 
     Bind();
     vertexBuffer->Bind();
 
     const auto& layout = vertexBuffer->GetLayout();
     for (const auto& element : layout.GetElements()) {
-        GLenum glType = ConvertToOpenGLType(element.Type);
+        const GLenum glType = ConvertToOpenGLType(element.Type);
 
         switch (element.Type) {
             case ShaderDataType::Float:
@@ -86,7 +81,7 @@ void OpenGLVertexArray::AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer) {
 
             case ShaderDataType::Mat3:
             case ShaderDataType::Mat4: {
-                uint8_t count = element.GetComponentCount();
+                const uint8_t count = element.GetComponentCount();
                 for (uint8_t i = 0; i < count; i++) {
                     glEnableVertexAttribArray(m_VertexBufferIndex);
                     glVertexAttribPointer(m_VertexBufferIndex,
@@ -94,7 +89,7 @@ void OpenGLVertexArray::AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer) {
                                           glType,
                                           element.IsNormalized ? GL_TRUE : GL_FALSE,
                                           layout.GetStride(),
-                                          AsVoidPtr(element.Offset + sizeof(float) * count * i));
+                                          AsVoidPtr(element.Offset + (sizeof(float) * count * i)));
                     glVertexAttribDivisor(m_VertexBufferIndex, 1);
                     m_VertexBufferIndex++;
                 }

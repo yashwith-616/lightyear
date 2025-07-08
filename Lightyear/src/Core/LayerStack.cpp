@@ -2,12 +2,12 @@
 
 namespace ly {
 
-LayerStack::LayerStack(const LayerStack&& other) noexcept
+LayerStack::LayerStack(LayerStack&& other) noexcept
     : m_Layers(std::move(other.m_Layers)), m_LayerInsertIndex(other.m_LayerInsertIndex) {}
 
 LayerStack& LayerStack::operator=(LayerStack&& other) noexcept {
     if (this != &other) {
-        m_Layers = std::move(other.m_Layers);
+        m_Layers           = std::move(other.m_Layers);
         m_LayerInsertIndex = other.m_LayerInsertIndex;
 
         other.m_LayerInsertIndex = 0;

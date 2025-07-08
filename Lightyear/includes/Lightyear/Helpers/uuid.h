@@ -23,6 +23,12 @@ public:
     explicit UUID(uint64_t UUID);
     uint64_t Get() const { return m_UUID; }
 
+    // Add equality operator
+    bool operator==(const UUID& other) const { return m_UUID == other.m_UUID; }
+
+    // Optionally add != for convenience
+    bool operator!=(const UUID& other) const { return !(*this == other); }
+
 private:
     uint64_t m_UUID;
 };

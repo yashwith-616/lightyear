@@ -14,7 +14,7 @@ namespace renderer = ly::renderer;
 static constexpr float aspect = 1.77778;
 
 // TODO: Remove
-const std::unordered_map<renderer::ShaderType, ly::CPath> g_GridShader = {
+const std::unordered_map<renderer::ShaderType, ly::CPath> GRID_SHADER = {
     { renderer::ShaderType::Vertex, ASSET_DIR "/Shaders/Vertex/S_Default.vert" },
     { renderer::ShaderType::Fragment, ASSET_DIR "/Shaders/Fragment/S_Default.frag" }
 };
@@ -37,7 +37,7 @@ void EditorLayer::OnAttach() {
     // Will be removed from here in the future implementation
 
     m_Texture = ly::renderer::Texture2D::Create(ASSET_DIR "/Textures/T_Grid.png");
-    m_Shader  = ly::renderer::Shader::Create("ShaderBg", g_GridShader);
+    m_Shader  = ly::renderer::Shader::Create("ShaderBg", GRID_SHADER);
 #pragma endregion
 
 #pragma region SceneCamera
@@ -51,9 +51,9 @@ void EditorLayer::OnAttach() {
 
 #pragma region Game Scene
     m_Scene                        = ly::MakeRef<ly::scene::Scene>();
-    auto new_cam                   = ly::MakeRef<EditorCamera>(aspect);
+    auto newCamera                 = ly::MakeRef<EditorCamera>(aspect);
     ly::scene::Entity cameraEntity = m_Scene->CreateEntity("GameCamera");
-    cameraEntity.AddComponent<ly::scene::CameraComponent>(new_cam);
+    cameraEntity.AddComponent<ly::scene::CameraComponent>(newCamera);
     m_Scene->OnViewportResize(1280, 720);
 
     m_CubeEntity = m_Scene->CreateEntity("Cube");
@@ -71,8 +71,6 @@ void EditorLayer::OnAttach() {
     m_EditorContext->m_ActiveScene = m_Scene;
     m_SceneWorkspace->OnAttach(m_EditorContext);
 #pragma endregion
-
-    m_GridRenderer = ly::MakeScope<GridRender>();
 }
 
 void EditorLayer::OnEvent(ly::Event& event) {}
@@ -83,7 +81,6 @@ void EditorLayer::OnUpdate(float deltaTime) {
     m_Framebuffer->Bind();
     renderer::RenderCommand::SetClearColor(glm::vec4(0.f, 0.f, 0.f, 0.5f));
     renderer::RenderCommand::Clear();
-    m_GridRenderer->Render();
 
     if (m_Scene->IsPaused()) {
         m_Scene->OnUpdateEditor(
@@ -135,14 +132,14 @@ void EditorLayer::PollInput(float deltaTime) {
     }
 
     if (ly::Input::IsMouseButtonPressed(ly::Mouse::Button1)) {
-        if (float val = ly::Input::GetMouseY()) {
-            float diff = val - m_PrevMouseY;
+        if (const float val = ly::Input::GetMouseY()) {
+            const float diff = val - m_PrevMouseY;
             m_EditorCamera->AddPitch(diff * deltaTime * m_MouseSensitivity);
             m_PrevMouseY = val;
         }
 
-        if (float val = ly::Input::GetMouseX()) {
-            float diff = val - m_PrevMouseX;
+        if (const float val = ly::Input::GetMouseX()) {
+            const float diff = val - m_PrevMouseX;
             m_EditorCamera->AddYaw(diff * deltaTime * m_MouseSensitivity);
             m_PrevMouseX = val;
         }
