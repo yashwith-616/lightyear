@@ -11,9 +11,9 @@ struct WindowProps {
     uint32_t Width;
     uint32_t Height;
 
-    WindowProps(std::string_view title = DEFAULT_WINDOW_TITLE,
-                uint32_t width         = DEFAULT_WINDOW_WIDTH,
-                uint32_t height        = DEFAULT_WINDOW_HEIGHT)
+    WindowProps(std::string_view title = kDefaultWindowTitle,
+                uint32_t width         = kDefaultWindowWidth,
+                uint32_t height        = kDefaultWindowHeight)
         : Title(title), Width(width), Height(height) {}
 };
 

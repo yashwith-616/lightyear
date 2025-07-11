@@ -1,7 +1,9 @@
-#include "Lightyear/Core/Log.h"
+#include "Lightyear/Common/Log.h"
 
+LY_DISABLE_WARNINGS_PUSH
 #include <spdlog/sinks/basic_file_sink.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
+LY_DISABLE_WARNINGS_POP
 
 #include <iostream>
 

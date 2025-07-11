@@ -6,10 +6,8 @@ static ly::Ref<ly::renderer::VertexArray> Init(const float* vertexData,
                                                uint32_t vertexSize,
                                                uint32_t* indexData,
                                                uint32_t indexSize) {
-    ly::renderer::BufferElement bufferElement(
-        ly::renderer::ShaderDataType::Float3, "Positions", false);
-    ly::renderer::BufferElement texCoordBuffer(
-        ly::renderer::ShaderDataType::Float2, "TexCoord", false);
+    ly::renderer::BufferElement bufferElement(ly::renderer::ShaderDataType::Float3, "Positions", false);
+    ly::renderer::BufferElement texCoordBuffer(ly::renderer::ShaderDataType::Float2, "TexCoord", false);
     ly::renderer::BufferLayout bufferLayout = { bufferElement, texCoordBuffer };
 
     auto vertexBuffer = ly::renderer::VertexBuffer::Create(vertexData, vertexSize);
@@ -33,10 +31,8 @@ static Geometry* GetGeomtry() {
 }
 
 Geometry::Geometry() {
-    m_PlaneVertexArray = Init(g_PlaneVertices.data()->data(),
-                              g_PlaneVertexCount,
-                              g_PlaneIndices.data(),
-                              g_PlaneIndexCount);
+    m_PlaneVertexArray =
+        Init(g_PlaneVertices.data()->data(), g_PlaneVertexCount, g_PlaneIndices.data(), g_PlaneIndexCount);
 
     m_CubeVertexArray = Init(g_CubeVertices.data()->data(),
                              static_cast<uint32_t>(sizeof(g_CubeVertices)),

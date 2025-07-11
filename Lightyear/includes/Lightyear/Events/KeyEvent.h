@@ -15,9 +15,8 @@ protected:
     int m_KeyCode;
 };
 
-class LIGHTYEAR_API KeyPressedEvent
-    : public EventBase<KeyPressedEvent, EventType::KeyPressed, EC_KEYBOARD | EC_INPUT>,
-      public KeyEvent {
+class LIGHTYEAR_API KeyPressedEvent : public EventBase<KeyPressedEvent, EventType::KeyPressed, EC_KEYBOARD | EC_INPUT>,
+                                      public KeyEvent {
 public:
     KeyPressedEvent(int keycode, int repeatCount) : KeyEvent(keycode), m_RepeatCount(repeatCount) {}
 
@@ -40,9 +39,8 @@ public:
     std::string ToString() const override { return std::format("KeyReleasedEvent: {}", m_KeyCode); }
 };
 
-class LIGHTYEAR_API KeyTypedEvent
-    : public EventBase<KeyTypedEvent, EventType::KeyTyped, EC_KEYBOARD | EC_INPUT>,
-      public KeyEvent {
+class LIGHTYEAR_API KeyTypedEvent : public EventBase<KeyTypedEvent, EventType::KeyTyped, EC_KEYBOARD | EC_INPUT>,
+                                    public KeyEvent {
 public:
     KeyTypedEvent(int keycode) : KeyEvent(keycode) {}
 

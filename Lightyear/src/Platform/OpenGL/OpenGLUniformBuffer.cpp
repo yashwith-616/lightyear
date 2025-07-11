@@ -34,12 +34,10 @@ void OpenGLUniformBuffer::Debug(uint32_t programID, const CName& blockName) {
     LY_CORE_LOG(LogType::Info, "UBO '{}' block Size: {} bytes", blockName, blockSize);
 
     GLint activeUniforms = 0;
-    glGetActiveUniformBlockiv(
-        programID, blockIndex, GL_UNIFORM_BLOCK_ACTIVE_UNIFORMS, &activeUniforms);
+    glGetActiveUniformBlockiv(programID, blockIndex, GL_UNIFORM_BLOCK_ACTIVE_UNIFORMS, &activeUniforms);
 
     std::vector<GLint> uniformIndices(activeUniforms);
-    glGetActiveUniformBlockiv(
-        programID, blockIndex, GL_UNIFORM_BLOCK_ACTIVE_UNIFORM_INDICES, uniformIndices.data());
+    glGetActiveUniformBlockiv(programID, blockIndex, GL_UNIFORM_BLOCK_ACTIVE_UNIFORM_INDICES, uniformIndices.data());
 
     std::vector<GLint> offsets(activeUniforms);
     glGetActiveUniformsiv(programID,

@@ -57,8 +57,7 @@ struct TransformComponent {
 
     glm::mat4 GetTransform() const {
         glm::mat4 rotation = glm::toMat4(glm::quat(Rotation));
-        return glm::translate(glm::mat4(1.0f), Translation) * rotation *
-               glm::scale(glm::mat4(1.0f), Scale);
+        return glm::translate(glm::mat4(1.0f), Translation) * rotation * glm::scale(glm::mat4(1.0f), Scale);
     }
 };
 
@@ -67,7 +66,7 @@ struct CameraComponent {
     Ref<renderer::SceneCamera> Camera;
     bool bIsPrimary{ true };
 
-    CameraComponent() : Camera(MakeRef<renderer::SceneCamera>(DEFAULT_ASPECT_RATIO)) {}
+    CameraComponent() : Camera(MakeRef<renderer::SceneCamera>(kDefaultAspectRatio)) {}
     CameraComponent(Ref<renderer::SceneCamera> camera) : Camera(camera) {}
     CameraComponent(const CameraComponent&)            = default;
     CameraComponent& operator=(const CameraComponent&) = default;
@@ -78,9 +77,7 @@ struct MeshComponent {
     Ref<renderer::Shader> ShaderAsset;
     Ref<renderer::Texture> TextureAsset;
 
-    MeshComponent(Ref<renderer::VertexArray> vertexArray,
-                  Ref<renderer::Shader> shader,
-                  Ref<renderer::Texture> texture)
+    MeshComponent(Ref<renderer::VertexArray> vertexArray, Ref<renderer::Shader> shader, Ref<renderer::Texture> texture)
         : MeshAsset(vertexArray), ShaderAsset(shader), TextureAsset(texture) {}
 
     MeshComponent(const MeshComponent&) = default;

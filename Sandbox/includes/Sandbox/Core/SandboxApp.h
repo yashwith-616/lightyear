@@ -14,6 +14,6 @@ public:
     virtual void Run() override;
 };
 
-ly::Scope<ly::Application> CreateApplication() {
+inline ly::Scope<ly::Application> CreateApplication() {
     return ly::MakeScope<SandboxApp>();
 }

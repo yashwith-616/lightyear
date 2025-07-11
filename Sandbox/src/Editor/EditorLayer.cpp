@@ -60,8 +60,7 @@ void EditorLayer::OnAttach() {
     m_CubeEntity.AddComponent<ly::scene::MeshComponent>(Geometry::GetCube(), m_Shader, m_Texture);
     m_CubeEntity.AddComponent<ly::scene::RenderComponent>();
 
-    ly::scene::TransformComponent cubeTransform =
-        m_CubeEntity.GetComponent<ly::scene::TransformComponent>();
+    ly::scene::TransformComponent cubeTransform = m_CubeEntity.GetComponent<ly::scene::TransformComponent>();
     cubeTransform.GetTransform();
 #pragma endregion
 
@@ -83,8 +82,7 @@ void EditorLayer::OnUpdate(float deltaTime) {
     renderer::RenderCommand::Clear();
 
     if (m_Scene->IsPaused()) {
-        m_Scene->OnUpdateEditor(
-            deltaTime, std::static_pointer_cast<ly::renderer::SceneCamera>(m_EditorCamera));
+        m_Scene->OnUpdateEditor(deltaTime, std::static_pointer_cast<ly::renderer::SceneCamera>(m_EditorCamera));
     }
 
     if (m_Scene->IsRunning()) {

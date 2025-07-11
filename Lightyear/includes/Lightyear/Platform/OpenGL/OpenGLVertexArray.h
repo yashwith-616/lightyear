@@ -16,9 +16,7 @@ public:
     virtual void AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer) override;
     virtual void SetIndexBuffer(const Ref<IndexBuffer>& indexBuffer) override;
 
-    virtual const std::vector<Ref<VertexBuffer>>& GetVertexBuffers() const override {
-        return m_Vertexbuffers;
-    }
+    virtual const std::vector<Ref<VertexBuffer>>& GetVertexBuffers() const override { return m_Vertexbuffers; }
 
     virtual const IndexBuffer& GetIndexBuffer() const override {
         LY_CORE_ASSERT(m_IndexBuffer, "IndexBuffer is null");

@@ -22,15 +22,8 @@ OpenGLTexture2D::OpenGLTexture2D(const CPath& path) {
     glTextureParameteri(m_TextureHandle, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTextureParameteri(m_TextureHandle, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    glTextureSubImage2D(m_TextureHandle,
-                        0,
-                        0,
-                        0,
-                        m_Width,
-                        m_Height,
-                        GetGLDataFormat(channels),
-                        GL_UNSIGNED_BYTE,
-                        rawData);
+    glTextureSubImage2D(
+        m_TextureHandle, 0, 0, 0, m_Width, m_Height, GetGLDataFormat(channels), GL_UNSIGNED_BYTE, rawData);
 
     stbi_image_free(rawData);
 }

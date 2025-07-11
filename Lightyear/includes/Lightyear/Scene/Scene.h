@@ -13,13 +13,7 @@ class SceneCamera;
 namespace ly::scene {
 
 // Custom Types
-enum class SceneExecState {
-    SS_NONE       = 0,
-    SS_PAUSED     = 1,
-    SS_RUNNING    = 2,
-    SS_SIMULATION = 3,
-    SS_MAX        = 4
-};
+enum class SceneExecState { SS_NONE = 0, SS_PAUSED = 1, SS_RUNNING = 2, SS_SIMULATION = 3, SS_MAX = 4 };
 
 // Forward Decleration
 class Entity;

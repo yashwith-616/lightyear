@@ -38,8 +38,7 @@ template <typename... Component>
 static void CopyComponentIfExists(Entity dst, Entity src) {
     (
         [&]() {
-            if (src.HasComponent<Component>())
-                dst.AddOrReplaceComponent<Component>(src.GetComponent<Component>());
+            if (src.HasComponent<Component>()) dst.AddOrReplaceComponent<Component>(src.GetComponent<Component>());
         }(),
         ...);
 }
@@ -232,15 +231,14 @@ void Scene::OnUpdateRuntime(ly::Timestep deltaTime) {
 
     auto view = m_Registry.view<RenderComponent, MeshComponent, TransformComponent>();
     for (auto entity : view) {
-        const auto& [render, mesh, transform] =
-            view.get<RenderComponent, MeshComponent, TransformComponent>(entity);
+        const auto& [render, mesh, transform] = view.get<RenderComponent, MeshComponent, TransformComponent>(entity);
 
         if (!mesh.ShaderAsset || !mesh.MeshAsset) {
             continue;
         }
 
-        renderer::Renderer::Submit(renderer::RenderSubmission(
-            mesh.ShaderAsset, mesh.MeshAsset, mesh.TextureAsset, transform.GetTransform()));
+        renderer::Renderer::Submit(
+            renderer::RenderSubmission(mesh.ShaderAsset, mesh.MeshAsset, mesh.TextureAsset, transform.GetTransform()));
     }
 
     renderer::Renderer::EndScene();
@@ -258,15 +256,14 @@ void Scene::OnUpdateEditor(ly::Timestep deltaTime, Ref<renderer::SceneCamera> ca
 
     auto view = m_Registry.view<RenderComponent, MeshComponent, TransformComponent>();
     for (auto entity : view) {
-        const auto& [render, mesh, transform] =
-            view.get<RenderComponent, MeshComponent, TransformComponent>(entity);
+        const auto& [render, mesh, transform] = view.get<RenderComponent, MeshComponent, TransformComponent>(entity);
 
         if (!mesh.ShaderAsset || !mesh.MeshAsset) {
             continue;
         }
 
-        renderer::Renderer::Submit(renderer::RenderSubmission(
-            mesh.ShaderAsset, mesh.MeshAsset, mesh.TextureAsset, transform.GetTransform()));
+        renderer::Renderer::Submit(
+            renderer::RenderSubmission(mesh.ShaderAsset, mesh.MeshAsset, mesh.TextureAsset, transform.GetTransform()));
     }
 
     renderer::Renderer::EndScene();
@@ -281,9 +278,7 @@ void Scene::OnViewportResize(uint32_t width, uint32_t height) {
     GetPrimaryCameraEntity().GetComponent<CameraComponent>().Camera->Resize(width, height);
 }
 
-Entity Scene::CreateEntity(UUID UUID,
-                           const CName& name,
-                           std::optional<std::reference_wrapper<const Entity>> parent) {
+Entity Scene::CreateEntity(UUID UUID, const CName& name, std::optional<std::reference_wrapper<const Entity>> parent) {
     Entity entity{ m_Registry.create(), this };
     entity.AddComponent<IDComponent>(UUID);
     entity.AddComponent<TagComponent>(GenerateUniqueName(name));
@@ -329,8 +324,7 @@ void Scene::OnComponentAdded<TransformComponent>(Entity entity, TransformCompone
 
 template <>
 void Scene::OnComponentAdded<CameraComponent>(Entity entity, CameraComponent& component) {
-    if (m_ViewportWidth > 0 && m_ViewportHeight > 0)
-        component.Camera->Resize(m_ViewportWidth, m_ViewportHeight);
+    if (m_ViewportWidth > 0 && m_ViewportHeight > 0) component.Camera->Resize(m_ViewportWidth, m_ViewportHeight);
 }
 
 template <>
@@ -346,8 +340,7 @@ template <>
 void Scene::OnComponentAdded<RenderComponent>(Entity entity, RenderComponent& component) {}
 
 template <>
-void Scene::OnComponentAdded<RelationshipComponent>(Entity entity,
-                                                    RelationshipComponent& component) {}
+void Scene::OnComponentAdded<RelationshipComponent>(Entity entity, RelationshipComponent& component) {}
 
 #pragma endregion
 

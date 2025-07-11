@@ -4,17 +4,14 @@
 
 namespace ly {
 
-class LIGHTYEAR_API MouseMovedEvent
-    : public EventBase<MouseMovedEvent, EventType::MouseMoved, EC_INPUT | EC_MOUSE> {
+class LIGHTYEAR_API MouseMovedEvent : public EventBase<MouseMovedEvent, EventType::MouseMoved, EC_INPUT | EC_MOUSE> {
 public:
     MouseMovedEvent(float x, float y) : m_MouseX(x), m_MouseY(y) {}
 
     inline float GetX() const { return m_MouseX; }
     inline float GetY() const { return m_MouseY; }
 
-    std::string ToString() const override {
-        return std::format("MouseMovedEvent: {}, {}", m_MouseX, m_MouseY);
-    }
+    std::string ToString() const override { return std::format("MouseMovedEvent: {}, {}", m_MouseX, m_MouseY); }
 
 private:
     float m_MouseX{ 0.f };
@@ -29,9 +26,7 @@ public:
     inline float GetXOffset() const { return m_XOffset; }
     inline float GetYOffset() const { return m_YOffset; }
 
-    std::string ToString() const override {
-        return std::format("MouseScrolledEvent: {}, {}", m_XOffset, m_YOffset);
-    }
+    std::string ToString() const override { return std::format("MouseScrolledEvent: {}, {}", m_XOffset, m_YOffset); }
 
 private:
     float m_XOffset{ 0.f };
@@ -55,21 +50,16 @@ class LIGHTYEAR_API MouseButtonPressedEvent
 public:
     MouseButtonPressedEvent(int button) : MouseButtonEvent(button) {}
 
-    std::string ToString() const override {
-        return std::format("MouseButtonPressedEvent: {}", m_Button);
-    }
+    std::string ToString() const override { return std::format("MouseButtonPressedEvent: {}", m_Button); }
 };
 
-class LIGHTYEAR_API MouseButtonReleasedEvent : public EventBase<MouseButtonReleasedEvent,
-                                                                EventType::MouseButtonReleased,
-                                                                EC_INPUT | EC_MOUSE>,
-                                               public MouseButtonEvent {
+class LIGHTYEAR_API MouseButtonReleasedEvent
+    : public EventBase<MouseButtonReleasedEvent, EventType::MouseButtonReleased, EC_INPUT | EC_MOUSE>,
+      public MouseButtonEvent {
 public:
     MouseButtonReleasedEvent(int button) : MouseButtonEvent(button) {}
 
-    std::string ToString() const override {
-        return std::format("MouseButtonReleasedEvent: {}", m_Button);
-    }
+    std::string ToString() const override { return std::format("MouseButtonReleasedEvent: {}", m_Button); }
 };
 
 }  // namespace ly

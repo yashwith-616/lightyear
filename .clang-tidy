@@ -1,65 +1,104 @@
 Checks: >
-    bugprone-*,
-    clang-analyzer-*,
-    -clang-analyzer-optin.core.EnumCastOutOfRange,
-    concurrency-*,
-    cppcoreguidelines-*,
-    -cppcoreguidelines-owning-memory,
-    -cppcoreguidelines-pro-bounds-constant-array-index,
-    -cppcoreguidelines-pro-type-const-cast,
-    -cppcoreguidelines-pro-type-member-init,
-    -cppcoreguidelines-pro-type-reinterpret-cast,
-    -cppcoreguidelines-pro-type-union-access,
-    misc-*,
-    -misc-include-cleaner,
-    -misc-no-recursion,
-    modernize-*,
-    -modernize-use-trailing-return-type,
-    performance-*,
-    portability-*,
-    readability-*,
-    -readability-function-cognitive-complexity,
-    -readability-named-parameter,
-    -readability-uppercase-literal-suffix,
+  bugprone-*,
+  clang-analyzer-*,
+  -clang-analyzer-optin.core.EnumCastOutOfRange,
+  -clang-analyzer-optin.cplusplus.UnusedMethod,
+  concurrency-*,
+  cppcoreguidelines-*,
+  -cppcoreguidelines-owning-memory,
+  -cppcoreguidelines-pro-bounds-constant-array-index,
+  -cppcoreguidelines-pro-type-const-cast,
+  -cppcoreguidelines-pro-type-member-init,
+  -cppcoreguidelines-pro-type-reinterpret-cast,
+  -cppcoreguidelines-pro-type-union-access,
+  misc-*,
+  -misc-include-cleaner,
+  -misc-no-recursion,
+  modernize-*,
+  -modernize-use-trailing-return-type,
+  performance-*,
+  portability-*,
+  readability-*,
+  -readability-function-cognitive-complexity,
+  -readability-named-parameter,
+  -readability-uppercase-literal-suffix,
 
 WarningsAsErrors: ''
 HeaderFilterRegex: '^(?!.*(extern|third_party|Lightyear/extern)).*'
 
 CheckOptions:
-  # Naming Convention Matches Your Style
+  # === Naming Convention ===
   - key: readability-identifier-naming.ClassCase
-    value: CamelCase  # e.g., CameraComponent, ShaderManager
+    value: CamelCase
+  - key: readability-identifier-naming.StructCase
+    value: CamelCase
+  - key: readability-identifier-naming.EnumCase
+    value: CamelCase
+  - key: readability-identifier-naming.EnumConstantCase
+    value: CamelCase
   - key: readability-identifier-naming.FunctionCase
-    value: CamelCase  # e.g., LoadShader(), RenderFrame()
+    value: CamelCase
   - key: readability-identifier-naming.VariableCase
-    value: camelBack  # e.g., vertexCount, shaderID
+    value: camelBack
   - key: readability-identifier-naming.ConstantCase
-    value: UPPER_CASE  # e.g., MAX_LIGHTS
-  - key: readability-identifier-naming.NamespaceCase
-    value: lower_case  # e.g., render_engine::core
-  - key: readability-identifier-naming.ConstantCase
-    value: UPPER_CASE
+    value: CamelCase
+  - key: readability-identifier-naming.GlobalConstantCase
+    value: CamelCase
+  - key: readability-identifier-naming.ClassConstantPrefix
+    value: k_
   - key: readability-identifier-naming.LocalConstantCase
     value: camelBack
-  - key: readability-identifier-naming.ClassConstantCase
-    value: camelBack
-  - key: readability-identifier-naming.GlobalConstantCase
-    value: UPPER_CASE
+  - key: readability-identifier-naming.MemberPrefix
+    value: m_
+  - key: readability-identifier-naming.StaticMemberPrefix
+    value: s_
+  - key: readability-identifier-naming.GlobalVariablePrefix
+    value: g_
+  - key: readability-identifier-naming.NamespaceCase
+    value: lower_case
 
-  # Enforce Smart Pointer Usage
-  - key: cppcoreguidelines-no-malloc
-    value: 'true'
-  - key: cppcoreguidelines-owning-memory
-    value: 'true'
-
-  # Prefer `= default` instead of empty constructors/destructors
+  # === Modernization ===
   - key: modernize-use-default-member-init
     value: 'true'
-
-  # Suggest `override` for virtual functions
   - key: modernize-use-override
     value: 'true'
+  - key: modernize-use-nullptr
+    value: 'true'
+  - key: modernize-use-auto
+    value: 'true'
+  - key: modernize-make-unique
+    value: 'true'
+  - key: modernize-make-shared
+    value: 'true'
+  - key: modernize-avoid-c-arrays
+    value: 'true'
 
-  # Detect unnecessary copies
+  # === Performance & Safety ===
+  - key: cppcoreguidelines-no-malloc
+    value: 'true'
   - key: performance-unnecessary-copy-initialization
     value: 'true'
+  - key: performance-for-range-copy
+    value: 'true'
+  - key: performance-inefficient-algorithm
+    value: 'true'
+
+InheritParentConfig: false
+SystemHeaders: false
+UseColor: true
+
+ImplementationFileExtensions:
+  - cpp
+  - cc
+  - cxx
+  - inl
+  - cxx
+
+HeaderFileExtensions:
+  - h
+  - hpp
+  - hh
+  - inl
+  - hxx
+
+FormatStyle: none

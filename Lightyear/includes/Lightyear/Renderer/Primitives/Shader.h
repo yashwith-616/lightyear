@@ -13,9 +13,8 @@ public:
 
     virtual std::string GetName() const { return m_Name; }
 
-    static ly::Ref<Shader> Create(
-        const std::string& name,
-        const std::unordered_map<ShaderType, std::filesystem::path>& shaderFiles);
+    static ly::Ref<Shader> Create(const std::string& name,
+                                  const std::unordered_map<ShaderType, std::filesystem::path>& shaderFiles);
 
     static ly::Ref<Shader> Create(const std::string& name,
                                   const std::unordered_map<ShaderType, std::string>& shaderSrcs);

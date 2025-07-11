@@ -31,10 +31,7 @@ void OrthographicCamera::RecalculateViewMatrix() {
  * @param bottom the bottom range of the camera view
  * @param top the top range of the camera view
  */
-void OrthographicCamera::RecalculateProjectionMatrix(float left,
-                                                     float right,
-                                                     float bottom,
-                                                     float top) {
+void OrthographicCamera::RecalculateProjectionMatrix(float left, float right, float bottom, float top) {
     m_ProjectionMatrix = glm::ortho(left, right, bottom, top, -1.0f, 1.0f);
 }
 

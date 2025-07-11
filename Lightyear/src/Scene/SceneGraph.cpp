@@ -67,8 +67,7 @@ uint32_t SceneGraph::AddNode(SceneNode&& sceneNode) {
 void SceneGraph::DetachChildNode(const uint32_t nodeIndex) {
     SceneNode& sceneNode = m_Nodes[nodeIndex];
 
-    LY_CORE_ASSERT(IsValidParent(sceneNode.parent) && sceneNode.parent != nodeIndex,
-                   "Invalid Parent Node!");
+    LY_CORE_ASSERT(IsValidParent(sceneNode.parent) && sceneNode.parent != nodeIndex, "Invalid Parent Node!");
 
     // Swap and remove
     auto& children = m_Nodes[sceneNode.parent].children;
@@ -105,20 +104,17 @@ void SceneGraph::ClearNode(const uint32_t nodeIndex) {
 }
 
 void SceneGraph::MarkDirty(uint32_t nodeIndex) {
-    LY_CORE_ASSERT(nodeIndex < m_DirtyFlag.Size(),
-                   "ScenGraph::MarkDirty - Index out of bounds error");
+    LY_CORE_ASSERT(nodeIndex < m_DirtyFlag.Size(), "ScenGraph::MarkDirty - Index out of bounds error");
     m_DirtyFlag.Set(nodeIndex);
 }
 
 void SceneGraph::ClearDirty(uint32_t nodeIndex) {
-    LY_CORE_ASSERT(nodeIndex < m_DirtyFlag.Size(),
-                   "ScenGraph::ClearDirty - Index out of bounds error");
+    LY_CORE_ASSERT(nodeIndex < m_DirtyFlag.Size(), "ScenGraph::ClearDirty - Index out of bounds error");
     m_DirtyFlag.Reset(nodeIndex);
 }
 
 bool SceneGraph::IsDirty(uint32_t nodeIndex) const {
-    LY_CORE_ASSERT(nodeIndex < m_DirtyFlag.Size(),
-                   "ScenGraph::IsDirty - Index out of bounds error");
+    LY_CORE_ASSERT(nodeIndex < m_DirtyFlag.Size(), "ScenGraph::IsDirty - Index out of bounds error");
 
     return m_DirtyFlag.Test(nodeIndex);
 }
@@ -128,8 +124,7 @@ bool SceneGraph::IsValidNode(const uint32_t nodeIndex) const {
 }
 
 bool SceneGraph::IsValidParent(const int parentIndex) const {
-    return m_Nodes.size() > parentIndex && parentIndex >= 0 &&
-           m_Nodes[parentIndex].entity != entt::null;
+    return m_Nodes.size() > parentIndex && parentIndex >= 0 && m_Nodes[parentIndex].entity != entt::null;
 }
 
 }  // namespace ly::scene

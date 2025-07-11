@@ -28,11 +28,10 @@ void OpenGLContext::Init() {
     LY_CORE_ASSERT(status, "Failed to initialize GLAD");
 
     // Log System Metrics
-    const std::string_view glVendor   = reinterpret_cast<const char*>(glGetString(GL_VENDOR));
-    const std::string_view glRenderer = reinterpret_cast<const char*>(glGetString(GL_RENDERER));
-    const std::string_view glVersion  = reinterpret_cast<const char*>(glGetString(GL_VERSION));
-    const std::string_view glShaderVersion =
-        reinterpret_cast<const char*>(glGetString(GL_SHADING_LANGUAGE_VERSION));
+    const std::string_view glVendor        = reinterpret_cast<const char*>(glGetString(GL_VENDOR));
+    const std::string_view glRenderer      = reinterpret_cast<const char*>(glGetString(GL_RENDERER));
+    const std::string_view glVersion       = reinterpret_cast<const char*>(glGetString(GL_VERSION));
+    const std::string_view glShaderVersion = reinterpret_cast<const char*>(glGetString(GL_SHADING_LANGUAGE_VERSION));
 
     LY_CORE_LOG(LogType::Info,
                 "OpenGL Renderer:\n"

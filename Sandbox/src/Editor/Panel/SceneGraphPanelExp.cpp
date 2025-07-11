@@ -23,10 +23,8 @@ void ESceneGraphPanelExp::DrawSceneTreeNode(ly::Ref<SceneTreeNode> node) {
         flags |= ImGuiTreeNodeFlags_Selected;
     }
 
-    bool opened = ImGui::TreeNodeEx(reinterpret_cast<void*>(static_cast<uintptr_t>(node->Id.Get())),
-                                    flags,
-                                    "%s",
-                                    node->Name.c_str());
+    bool opened = ImGui::TreeNodeEx(
+        reinterpret_cast<void*>(static_cast<uintptr_t>(node->Id.Get())), flags, "%s", node->Name.c_str());
 
     // Handle selection
     if (ImGui::IsItemClicked()) {

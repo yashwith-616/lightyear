@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Lightyear/Core/Assertions.h"
+#include "../Common/Assertions.h"
 #include "Lightyear/pch/lypch.h"
 
 namespace ly {
@@ -22,9 +22,7 @@ private:
     size_t m_Size = 0;
 
     static constexpr size_t kBitsPerBlock = 64;
-    static constexpr size_t BlockCount(size_t size) {
-        return (size + kBitsPerBlock - 1) / kBitsPerBlock;
-    }
+    static constexpr size_t BlockCount(size_t size) { return (size + kBitsPerBlock - 1) / kBitsPerBlock; }
 };
 
 }  // namespace ly

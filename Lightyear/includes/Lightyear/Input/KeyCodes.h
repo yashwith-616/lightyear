@@ -140,9 +140,8 @@ enum : KeyCode {
 };
 
 inline bool IsModifierKey(KeyCode code) {
-    return code == Key::LeftShift || code == Key::RightShift || code == Key::LeftControl ||
-           code == Key::RightControl || code == Key::LeftAlt || code == Key::RightAlt ||
-           code == Key::LeftSuper || code == Key::RightSuper;
+    return code == Key::LeftShift || code == Key::RightShift || code == Key::LeftControl || code == Key::RightControl ||
+           code == Key::LeftAlt || code == Key::RightAlt || code == Key::LeftSuper || code == Key::RightSuper;
 }
 
 }  // namespace Key

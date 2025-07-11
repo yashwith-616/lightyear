@@ -2,16 +2,14 @@
 
 namespace ly::renderer {
 
-OpenGLShader::OpenGLShader(std::string name,
-                           const std::unordered_map<ShaderType, CPath>& shaderFiles)
+OpenGLShader::OpenGLShader(std::string name, const std::unordered_map<ShaderType, CPath>& shaderFiles)
     : m_Name(std::move(name)) {
     std::array<ShaderHandle, ShaderTypeCount> shaderHandles = {};
     for (const auto& [shaderType, path] : shaderFiles) {
-        CText shaderSrc = ReadFile(path);
-        const ShaderHandle shaderHandle =
-            CompileShader(shaderSrc.data(), GetGLShaderType(shaderType));
-        const auto index     = static_cast<size_t>(shaderType);
-        shaderHandles[index] = CompileShader(shaderSrc.data(), GetGLShaderType(shaderType));
+        std::string shaderSrc           = ReadFile(path);
+        const ShaderHandle shaderHandle = CompileShader(shaderSrc.data(), GetGLShaderType(shaderType));
+        const auto index                = static_cast<size_t>(shaderType);
+        shaderHandles[index]            = CompileShader(shaderSrc.data(), GetGLShaderType(shaderType));
     }
 
     m_ShaderHandle = glCreateProgram();
@@ -32,15 +30,13 @@ OpenGLShader::OpenGLShader(std::string name,
     BindUniformBufferBlock();
 }
 
-OpenGLShader::OpenGLShader(std::string name,
-                           const std::unordered_map<ShaderType, CText>& shaderSrcs)
+OpenGLShader::OpenGLShader(std::string name, const std::unordered_map<ShaderType, std::string>& shaderSrcs)
     : m_Name(std::move(name)) {
     std::array<ShaderHandle, ShaderTypeCount> shaderHandles = {};
     for (const auto& [shaderType, shaderSrc] : shaderSrcs) {
-        const ShaderHandle shaderHandle =
-            CompileShader(shaderSrc.data(), GetGLShaderType(shaderType));
-        const auto index     = static_cast<size_t>(shaderType);
-        shaderHandles[index] = CompileShader(shaderSrc.data(), GetGLShaderType(shaderType));
+        const ShaderHandle shaderHandle = CompileShader(shaderSrc.data(), GetGLShaderType(shaderType));
+        const auto index                = static_cast<size_t>(shaderType);
+        shaderHandles[index]            = CompileShader(shaderSrc.data(), GetGLShaderType(shaderType));
     }
 
     m_ShaderHandle = glCreateProgram();

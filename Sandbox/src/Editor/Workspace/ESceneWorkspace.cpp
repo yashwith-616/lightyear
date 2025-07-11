@@ -1,14 +1,12 @@
 #include "Sandbox/Editor/Workspace/ESceneWorkspace.h"
 #include <entt/entt.hpp>
 
-using SceneComponent = ly::scene::ComponentGroup<ly::scene::TagComponent,
-                                                 ly::scene::IDComponent,
-                                                 ly::scene::RelationshipComponent>;
+using SceneComponent =
+    ly::scene::ComponentGroup<ly::scene::TagComponent, ly::scene::IDComponent, ly::scene::RelationshipComponent>;
 
 void ESceneWorkspace::OnAttach(ly::Ref<GlobalEditorContext> globalContext) {
-    m_GlobalContext = globalContext;
-    m_SceneGraphPanel =
-        ly::MakeScope<ESceneGraphPanelExp>(GetPanelTitle(EEditorPanel::SCENE_GRAPH));
+    m_GlobalContext   = globalContext;
+    m_SceneGraphPanel = ly::MakeScope<ESceneGraphPanelExp>(GetPanelTitle(EEditorPanel::SCENE_GRAPH));
 }
 
 void ESceneWorkspace::OnEvent(ly::Event& event) {}
@@ -46,11 +44,10 @@ void ESceneWorkspace::DrawDockspace() {
     ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
     ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
 
-    constexpr ImGuiWindowFlags windowFlags =
-        ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse |
-        ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
-        ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus |
-        ImGuiWindowFlags_NoBackground;
+    constexpr ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar |
+                                             ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize |
+                                             ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus |
+                                             ImGuiWindowFlags_NoNavFocus | ImGuiWindowFlags_NoBackground;
 
     ImGui::Begin("World Workspace", nullptr, windowFlags);
     ImGui::PopStyleVar(2);
@@ -95,8 +92,7 @@ void ESceneWorkspace::BuildSceneTree() {
 
     m_SceneTree = ly::MakeRef<SceneTreeNode>("root", ly::UUID(0), entt::null);
 
-    for (auto [entity, tag, id, relation] :
-         ly::scene::ComponentGroupView<SceneComponent>::view(registry).each()) {
+    for (auto [entity, tag, id, relation] : ly::scene::ComponentGroupView<SceneComponent>::view(registry).each()) {
         if (relation.Parent != entt::null) {
             continue;
         }

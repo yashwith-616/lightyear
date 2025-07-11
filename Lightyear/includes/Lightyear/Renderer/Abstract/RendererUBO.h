@@ -49,9 +49,7 @@ struct LIGHTYEAR_API GlobalUniforms {
 
     void UploadCamera(const UBO_Camera& data) { CameraUBO->SetData(&data, sizeof(UBO_Camera), 0); }
 
-    void UploadMaterial(const UBO_Material& data) {
-        MaterialUBO->SetData(&data, sizeof(UBO_Material));
-    }
+    void UploadMaterial(const UBO_Material& data) { MaterialUBO->SetData(&data, sizeof(UBO_Material)); }
 
     void UploadObject(const UBO_Object& data) { ObjectUBO->SetData(&data, sizeof(UBO_Object), 0); }
 

@@ -6,9 +6,8 @@
 
 namespace ly::renderer {
 
-ly::Ref<Shader> Shader::Create(
-    const std::string& name,
-    const std::unordered_map<ShaderType, std::filesystem::path>& shaderFiles) {
+ly::Ref<Shader> Shader::Create(const std::string& name,
+                               const std::unordered_map<ShaderType, std::filesystem::path>& shaderFiles) {
     switch (Renderer::GetAPI()) {
         case RendererAPI::API::None:
             LY_CORE_ASSERT(false, "RendererAPI::None is currently not supported!");
@@ -21,8 +20,7 @@ ly::Ref<Shader> Shader::Create(
     return nullptr;
 }
 
-static ly::Ref<Shader> Create(const std::string& name,
-                              const std::unordered_map<ShaderType, std::string>& shaderSrcs) {
+static ly::Ref<Shader> Create(const std::string& name, const std::unordered_map<ShaderType, std::string>& shaderSrcs) {
     switch (Renderer::GetAPI()) {
         case RendererAPI::API::None:
             LY_CORE_ASSERT(false, "RendererAPI::None is currently not supported!");
@@ -39,8 +37,7 @@ std::string Shader::ReadFile(std::filesystem::path shaderFilePath) {
     // Open file in binary, and point the pointer to end of file.
     std::ifstream file(shaderFilePath, std::ios::binary | std::ios::ate);
     if (!file) {
-        LY_CORE_ASSERT(
-            false, "ERROR::SHADER::FILE_NOT_SUCCESSFULLY_READ: {}", shaderFilePath.string());
+        LY_CORE_ASSERT(false, "ERROR::SHADER::FILE_NOT_SUCCESSFULLY_READ: {}", shaderFilePath.string());
     }
 
     // Get size of file by reading the current position of the file pointer(at the end)

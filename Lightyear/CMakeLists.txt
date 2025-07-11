@@ -29,12 +29,24 @@ set(HDRS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/includes")
 file(GLOB_RECURSE SOURCES "${SRC_DIR}/*.cpp")
 file(GLOB_RECURSE HEADERS "${HDRS_DIR}/*.h")
 
+
 #-------------------------------------------------
 # Optional Parameters
 #-------------------------------------------------
 option(LY_DEBUG_ENABLED "Enable debug such as assertions and logs" ON)
 option(LY_GRAPHICS_DEBUG "Enable graphic context debugging" ON)
 option(LY_ENABLE_DEPRECATION_WARNINGS "Enable deprecations warning" ON)
+
+
+#-------------------------------------------------
+# Utility definations
+#-------------------------------------------------
+function(disable_clang_tidy TARGET)
+    if(TARGET ${TARGET})
+        set_target_properties(${TARGET} PROPERTIES CXX_CLANG_TIDY "")
+    endif()
+endfunction()
+
 
 #-------------------------------------------------
 # Setup Dependencies
@@ -78,29 +90,28 @@ set(STB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/extern/stb")
 
 # SPDLOG
 set(SPDLOG_DIR "${CMAKE_CURRENT_SOURCE_DIR}/extern/spdlog")
-add_subdirectory("${SPDLOG_DIR}")
 
 # ENTT
 set(ENTT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/extern/entt/single_include")
 
 # REFL-CPP
 set(REFL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/extern/refl-cpp")
-add_subdirectory(${REFL_DIR})
 
 #-------------------------------------------------
 # Project Library
 #-------------------------------------------------
 add_library (Lightyear STATIC ${SOURCES} "${HEADERS}")
 target_include_directories(Lightyear
-    SYSTEM
     PUBLIC
         "${HDRS_DIR}"
-        "${GLM_DIR}"
+    SYSTEM PUBLIC
         "${IMGUI_DIR}"
         "${GLAD_DIR}"
+        "${GLM_DIR}"
         "${ENTT_DIR}"
+        "${SPDLOG_DIR}/include"
         "${REFL_DIR}/include"
-    PRIVATE
+    SYSTEM PRIVATE
         "${GLFW_DIR}/include"
         "${STB_DIR}"
 )
@@ -108,10 +119,8 @@ target_include_directories(Lightyear
 target_link_libraries(Lightyear
     PUBLIC 
         imgui
-        spdlog::spdlog
         $<$<BOOL:${MINGW}>:ws_32>
         glad
-        refl-cpp
     PRIVATE
         glfw
 )
@@ -126,8 +135,30 @@ target_compile_definitions(Lightyear
 	LY_PLATFORM_WINDOWS 
 	GLFW_INCLUDE_NONE
 	STB_IMAGE_IMPLEMENTATION
+    SPDLOG_HEADER_ONLY 
+    FMT_HEADER_ONLY
 )
 
+target_compile_options(Lightyear PRIVATE
+    # MSVC
+    $<$<CXX_COMPILER_ID:MSVC>:/EHsc>
+
+    # Clang on Windows (clang-cl)
+    $<$<AND:$<CXX_COMPILER_ID:Clang>>:
+        -fexceptions
+        -std=c++20
+        -Wno-c++98-compat
+        -Wno-c++98-compat-pedantic
+        -Wno-pre-c++14-compat
+        -Wno-deprecated-declarations
+        -w  # disables all warnings (optional extreme)
+    >
+)
+target_compile_options(Lightyear PRIVATE /EHsc)
+
+#-------------------------------------------------
+# Optional Compile definations
+#-------------------------------------------------
 if (LY_GRAPHICS_DEBUG)
 	target_compile_definitions(Lightyear PRIVATE LY_OPENGL_DEBUG)
 endif()
@@ -139,6 +170,7 @@ endif()
 if (LY_DEBUG_ENABLED)
 	target_compile_definitions(Lightyear PRIVATE LY_DEBUG)
 endif()
+
 
 #-------------------------------------------------
 # Pre-Compiled Headers
@@ -159,3 +191,11 @@ add_custom_command(TARGET Lightyear POST_BUILD
     COMMAND ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR} --target clangformat
     COMMENT "Running clang-format"
 )
+
+
+#-------------------------------------------------
+# Disable Clang-Tidy
+#-------------------------------------------------
+disable_clang_tidy(imgui)
+disable_clang_tidy(glfw)
+disable_clang_tidy(glad)

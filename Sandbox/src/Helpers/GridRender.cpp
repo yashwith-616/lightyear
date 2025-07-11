@@ -16,15 +16,13 @@ const std::unordered_map<ly::renderer::ShaderType, ly::CPath> g_GridShader = {
 };
 
 GridRender::GridRender() {
-    ly::renderer::BufferElement bufferElement(
-        ly::renderer::ShaderDataType::Float2, "Positions", false);
+    ly::renderer::BufferElement bufferElement(ly::renderer::ShaderDataType::Float2, "Positions", false);
     ly::renderer::BufferLayout bufferLayout = { bufferElement };
 
     auto vertexBuffer = ly::renderer::VertexBuffer::Create(quadVertices, sizeof(quadVertices));
     vertexBuffer->SetLayout(bufferLayout);
 
-    auto indexBuffer =
-        ly::renderer::IndexBuffer::Create(const_cast<uint32_t*>(quadIndices), sizeof(quadIndices));
+    auto indexBuffer = ly::renderer::IndexBuffer::Create(const_cast<uint32_t*>(quadIndices), sizeof(quadIndices));
 
     m_GridVAO = ly::renderer::VertexArray::Create();
     m_GridVAO->AddVertexBuffer(vertexBuffer);
@@ -34,6 +32,5 @@ GridRender::GridRender() {
 }
 
 void GridRender::Render() {
-    ly::renderer::Renderer::Submit(
-        ly::renderer::RenderSubmission(m_GridShader, m_GridVAO, nullptr, glm::mat4(1.f)));
+    ly::renderer::Renderer::Submit(ly::renderer::RenderSubmission(m_GridShader, m_GridVAO, nullptr, glm::mat4(1.f)));
 }

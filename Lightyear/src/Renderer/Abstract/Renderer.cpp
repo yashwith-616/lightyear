@@ -64,8 +64,7 @@ void Renderer::Flush() {
         s_ObjectUBO.ModelMatrix = submission.RSTransform;
         s_GlobalUniforms.UploadObject(s_ObjectUBO);
 
-        const Ref<OpenGLShader> openGLShader =
-            std::dynamic_pointer_cast<OpenGLShader>(submission.RSShader);
+        const Ref<OpenGLShader> openGLShader = std::dynamic_pointer_cast<OpenGLShader>(submission.RSShader);
         openGLShader->Use();
 
         if (submission.RSTexture != nullptr) {

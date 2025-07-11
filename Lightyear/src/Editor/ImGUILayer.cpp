@@ -46,7 +46,7 @@ void ImGUILayer::OnAttach() {
 
     // Setup Platform/Renderer bindings
     ImGui_ImplGlfw_InitForOpenGL(window, true);
-    ImGui_ImplOpenGL3_Init(GLSL_VERSION.data());
+    ImGui_ImplOpenGL3_Init(kGLSLVersion.data());
 }
 
 void ImGUILayer::OnDetach() {
@@ -65,21 +65,16 @@ void ImGUILayer::OnEvent(Event& event) {
         [this](MouseButtonPressedEvent& e) { return OnMouseButtonPressedEvent(e); });
     dispatcher.Dispatch<MouseButtonReleasedEvent>(
         [this](MouseButtonReleasedEvent& e) { return OnMouseButtonReleaseEvent(e); });
-    dispatcher.Dispatch<MouseScrolledEvent>(
-        [this](MouseScrolledEvent& e) { return OnMouseScrolledEvent(e); });
-    dispatcher.Dispatch<MouseMovedEvent>(
-        [this](MouseMovedEvent& e) { return OnMouseMovedEvent(e); });
+    dispatcher.Dispatch<MouseScrolledEvent>([this](MouseScrolledEvent& e) { return OnMouseScrolledEvent(e); });
+    dispatcher.Dispatch<MouseMovedEvent>([this](MouseMovedEvent& e) { return OnMouseMovedEvent(e); });
 
     // Imgui Key Events
-    dispatcher.Dispatch<KeyPressedEvent>(
-        [this](KeyPressedEvent& e) { return OnKeyPressedEvent(e); });
-    dispatcher.Dispatch<KeyReleasedEvent>(
-        [this](KeyReleasedEvent& e) { return OnKeyReleasedEvent(e); });
+    dispatcher.Dispatch<KeyPressedEvent>([this](KeyPressedEvent& e) { return OnKeyPressedEvent(e); });
+    dispatcher.Dispatch<KeyReleasedEvent>([this](KeyReleasedEvent& e) { return OnKeyReleasedEvent(e); });
     dispatcher.Dispatch<KeyTypedEvent>([this](KeyTypedEvent& e) { return OnKeyTypedEvent(e); });
 
     // Imgui Window Events
-    dispatcher.Dispatch<WindowResizeEvent>(
-        [this](WindowResizeEvent& e) { return OnWindowResizeEvent(e); });
+    dispatcher.Dispatch<WindowResizeEvent>([this](WindowResizeEvent& e) { return OnWindowResizeEvent(e); });
 }
 
 void ImGUILayer::OnEditorRender() {}
@@ -99,7 +94,7 @@ void ImGUILayer::Begin() {
 void ImGUILayer::End() {
     ImGuiIO& io      = ImGui::GetIO();
     Application& app = Application::Get();
-    io.DisplaySize = ImVec2((float)app.GetWindow().GetWidth(), (float)app.GetWindow().GetHeight());
+    io.DisplaySize   = ImVec2((float)app.GetWindow().GetWidth(), (float)app.GetWindow().GetHeight());
 
     // Rendering
     ImGui::Render();

@@ -13,8 +13,7 @@ public:
      * @param name The compiled shader name
      * @param shaderFiles The ShaderType along with the path to file
      */
-    OpenGLShader(std::string name,
-                 const std::unordered_map<ShaderType, std::filesystem::path>& shaderFiles);
+    OpenGLShader(std::string name, const std::unordered_map<ShaderType, std::filesystem::path>& shaderFiles);
 
     /**
      * @brief Create OpenGL shaders from source code
@@ -30,8 +29,7 @@ public:
     template <typename T>
         requires(!std::is_arithmetic_v<T>)
     void SetUniform(const std::string& name, const T& value) const {
-        static_assert(sizeof(T) == 0,
-                      "Unsupported uniform type! Specialize setUniform<T> for this type");
+        static_assert(sizeof(T) == 0, "Unsupported uniform type! Specialize setUniform<T> for this type");
     }
 
     // Specialization for int
@@ -88,10 +86,8 @@ public:
         glUniformMatrix4fv(GetUniformLocation(name), 1, GL_FALSE, &value[0][0]);
     }
 
-    void SetUniformBlock(const std::string& name,
-                         const UniformBufferBlockBinding& bindingPoint) const {
-        glUniformBlockBinding(
-            m_ShaderHandle, GetUniformBufferBlockIndex(name), static_cast<uint32_t>(bindingPoint));
+    void SetUniformBlock(const std::string& name, const UniformBufferBlockBinding& bindingPoint) const {
+        glUniformBlockBinding(m_ShaderHandle, GetUniformBufferBlockIndex(name), static_cast<uint32_t>(bindingPoint));
     }
 
     ShaderHandle GetShaderHandle() const { return m_ShaderHandle; }

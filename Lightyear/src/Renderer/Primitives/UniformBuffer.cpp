@@ -4,9 +4,7 @@
 
 namespace ly::renderer {
 
-ly::Ref<UniformBuffer> UniformBuffer::Create(const CName& name,
-                                             uint32_t size,
-                                             uint32_t bindingPoint) {
+ly::Ref<UniformBuffer> UniformBuffer::Create(const CName& name, uint32_t size, uint32_t bindingPoint) {
     switch (Renderer::GetAPI()) {
         case RendererAPI::API::None:
             LY_CORE_ASSERT(false, "RendererAPI::None is currently not supported!");

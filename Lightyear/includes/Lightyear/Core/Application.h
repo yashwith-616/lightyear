@@ -10,22 +10,25 @@ class Event;
 class WindowCloseEvent;
 class ImGUILayer;
 
+/**
+ * @brief Represents the core application entry point and lifecycle manager for the Lightyear Engine.
+ *
+ * @details
+ * The `Application` class serves as central hub for any lightyear Engine based program. It manages
+ * the main application loop, handles window creation, process events and maintains the layered
+ * architecture for modular functionality (Layers and Overlays)
+ *
+ * @note Designed as a **singleton** only one instance of `Application` can exist globally. Use
+ * the method ``
+ */
 class LIGHTYEAR_API Application {
 public:
     Application();
     virtual ~Application();
-
-    virtual void Init();
-    virtual void Run();
-    virtual void OnEvent(Event& event);
-
-    virtual void PushLayer(Scope<Layer> layer);
-    virtual void PushOverlay(Scope<Layer> overlay);
-
-    inline static Application& Get() {
-        LY_CORE_ASSERT(s_Application, "Application is not initiated");
-        return *s_Application;
-    }
+    Application(const Application&)            = delete;
+    Application& operator=(const Application&) = delete;
+    Application(Application&&)                 = default;
+    Application& operator=(Application&&)      = default;
 
     static void Create(Scope<Application> app) {
         LY_CORE_ASSERT(!s_Application, "Application already created!");
@@ -33,22 +36,69 @@ public:
         s_Application->Init();
     }
 
-    inline Window& GetWindow() const { return *m_Window; }
+    static Application& Get() {
+        LY_CORE_ASSERT(s_Application, "Application is not initiated");
+        return *s_Application;
+    }
+
+    /**
+     * @brief Initializes the application's core subsystems.
+     *
+     * This method is called once during application startup, immediately after the application
+     * instance has been created and before the main game loop begins.
+     * Override this to perform custom, one-time application initialization.
+     */
+    virtual void Init();
+
+    /**
+     * @brief Starts and manages the main application loop.
+     * This method enters the core application loop, which continuously handles
+     * events, updates the application state, and renders frames until the
+     * application is requested to shut down (e.g., window closed).
+     * Override this to implement a custom application loop.
+     */
+    virtual void Run();
+
+    /**
+     * @brief Handles incoming application events.
+     *
+     * This virtual method allows the application to handle events globally before they are passed
+     * down to the layer stack. Derived classes can override this to implement custom event handling
+     * logic and can potentially mark the event as handled to stop further propagation.
+     *
+     * @param event The event that occurred. Derived classes can modify this event.
+     */
+    virtual void OnEvent(Event& event);
+
+    /**
+     * Adds a layer to the application's layer stack.
+     *
+     * @param layer The layer to add. Ownership is transferred.
+     */
+    virtual void PushLayer(Scope<Layer> layer);
+
+    /**
+     * Adds an overlay to the application's layer stack.
+     *
+     * @param overlay The overlay to add. Ownership is transferred.
+     */
+    virtual void PushOverlay(Scope<Layer> overlay);
+
+    [[nodiscard]] Window& GetWindow() { return *m_Window; }
+    [[nodiscard]] const Window& GetWindow() const { return *m_Window; }
 
 protected:
     virtual bool OnWindowClose(WindowCloseEvent& event);
 
 private:
-    Scope<Window> m_Window{};
-    LayerStack m_LayerStack{};
+    Scope<Window> m_Window;
+    LayerStack m_LayerStack;
+    Scope<ImGUILayer> m_ImGUILayer;
 
     bool m_Running{ true };
-    float m_Frametime{ DEFAULT_FRAMETIME };
+    float m_Frametime{ kDefaultFrametime };
     float m_LastFrameTime{ 0.f };
 
-    ImGUILayer* m_ImGUILayer{ nullptr };
-
-private:
     static Scope<Application> s_Application;
 };
 

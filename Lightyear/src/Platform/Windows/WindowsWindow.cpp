@@ -51,8 +51,7 @@ void WindowsWindow::Init(const WindowProps& props) {
     m_Data.Width  = props.Width;
     m_Data.Height = props.Height;
 
-    LY_CORE_LOG(
-        LogType::Info, "Creating window {0} ({1}, {2})", props.Title, props.Width, props.Height);
+    LY_CORE_LOG(LogType::Info, "Creating window {0} ({1}, {2})", props.Title, props.Width, props.Height);
 
     if (!s_GLFWInitialized) {
         int success = glfwInit();
@@ -73,11 +72,8 @@ void WindowsWindow::Init(const WindowProps& props) {
 #endif
     }
 
-    m_Window = glfwCreateWindow(static_cast<int>(props.Width),
-                                static_cast<int>(props.Height),
-                                m_Data.Title.data(),
-                                nullptr,
-                                nullptr);
+    m_Window = glfwCreateWindow(
+        static_cast<int>(props.Width), static_cast<int>(props.Height), m_Data.Title.data(), nullptr, nullptr);
     LY_CORE_ASSERT(m_Window != nullptr, "GLFW window initialization failed!");
 
     m_Context = renderer::RendererContext::Create(reinterpret_cast<void*>(m_Window));
@@ -142,28 +138,27 @@ void WindowsWindow::SetupWindowCallbacks() {
     });
 
     // Set Keyboard Events
-    glfwSetKeyCallback(
-        m_Window, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
-            WindowsData& data = *static_cast<WindowsData*>(glfwGetWindowUserPointer(window));
+    glfwSetKeyCallback(m_Window, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
+        WindowsData& data = *static_cast<WindowsData*>(glfwGetWindowUserPointer(window));
 
-            switch (action) {
-                case GLFW_PRESS: {
-                    KeyPressedEvent pressedEvent(key, 0);
-                    data.EventCallback(pressedEvent);
-                    break;
-                }
-                case GLFW_RELEASE: {
-                    KeyReleasedEvent releasedEvent(key);
-                    data.EventCallback(releasedEvent);
-                    break;
-                }
-                case GLFW_REPEAT: {
-                    KeyPressedEvent repeatEvent(key, 1);
-                    data.EventCallback(repeatEvent);
-                    break;
-                }
+        switch (action) {
+            case GLFW_PRESS: {
+                KeyPressedEvent pressedEvent(key, 0);
+                data.EventCallback(pressedEvent);
+                break;
             }
-        });
+            case GLFW_RELEASE: {
+                KeyReleasedEvent releasedEvent(key);
+                data.EventCallback(releasedEvent);
+                break;
+            }
+            case GLFW_REPEAT: {
+                KeyPressedEvent repeatEvent(key, 1);
+                data.EventCallback(repeatEvent);
+                break;
+            }
+        }
+    });
 
     glfwSetCharCallback(m_Window, [](GLFWwindow* window, unsigned int keycode) {
         WindowsData& data = *static_cast<WindowsData*>(glfwGetWindowUserPointer(window));

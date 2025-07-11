@@ -9,8 +9,7 @@ void ShaderLibrary::Add(Ref<Shader> shader) {
     m_Shaders[name] = shader;
 }
 
-Ref<Shader> ShaderLibrary::LoadShader(const CName& shaderName,
-                                      const std::unordered_map<ShaderType, CPath>& filePaths) {
+Ref<Shader> ShaderLibrary::LoadShader(const CName& shaderName, const std::unordered_map<ShaderType, CPath>& filePaths) {
     auto shader = Shader::Create(shaderName, filePaths);
     Add(shader);
     return shader;

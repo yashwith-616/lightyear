@@ -1,7 +1,6 @@
 #pragma once
 
 #include "EventTypes.h"
-#include "Lightyear/LightyearCore.h"
 
 namespace ly {
 
@@ -19,12 +18,10 @@ public:
     virtual int GetCategoryFlags() const     = 0;
     virtual std::string ToString() const { return std::format("String: {}", GetName()); }
 
-    inline bool IsInCategory(EventCategory category) const noexcept {
-        return GetCategoryFlags() & category;
-    }
+    bool IsInCategory(EventCategory category) const noexcept { return GetCategoryFlags() & category; }
 
-    inline bool IsHandled() const { return m_Handled; }
-    inline void SetHandled(bool handled) noexcept { m_Handled = handled; }
+    bool IsHandled() const { return m_Handled; }
+    void SetHandled(bool isHandled) noexcept { m_Handled = isHandled; }
 
 protected:
     bool m_Handled{ false };
@@ -39,7 +36,7 @@ public:
 
     template <typename T, typename F>
     bool Dispatch(F&& func) {
-        static_assert(std::is_base_of<Event, T>::value, "T must inherit from Event");
+        static_assert(std::is_base_of_v<Event, T>, "T must inherit from Event");
 
         if (m_Event.GetEventType() == T::StaticType) {
             m_Event.m_Handled = func(static_cast<T&>(m_Event));

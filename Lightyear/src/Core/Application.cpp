@@ -1,7 +1,7 @@
 #include "Lightyear/Core/Application.h"
+#include "../../includes/Lightyear/Common/Log.h"
 #include "Lightyear/Core/Layer.h"
 #include "Lightyear/Core/LayerStack.h"
-#include "Lightyear/Core/Log.h"
 #include "Lightyear/Core/Timestep.h"
 #include "Lightyear/Editor/ImGUILayer.h"
 #include "Lightyear/Events/ApplicationEvent.h"
@@ -16,7 +16,7 @@ Scope<Application> Application::s_Application = nullptr;
 Application::Application() {
     LY_CORE_ASSERT(!s_Application, "Application already exists!");
     m_Window = Window::Create();
-    m_Window->SetEventCallback(std::bind(&Application::OnEvent, this, std::placeholders::_1));
+    m_Window->SetEventCallback([this](Event& event) { OnEvent(event); });
 }
 
 Application::~Application() {
@@ -25,17 +25,15 @@ Application::~Application() {
 
 void Application::Init() {
     renderer::Renderer::Init();
-    auto imguiLayer = MakeScope<ImGUILayer>();
-    m_ImGUILayer    = imguiLayer.get();
-    PushLayer(std::move(imguiLayer));
+    m_ImGUILayer = MakeScope<ImGUILayer>();
 }
 
 void Application::Run() {
     m_LastFrameTime = m_Window->GetTime();
 
     while (m_Running) {
-        float currentTime = m_Window->GetTime();
-        Timestep timestep(currentTime - m_LastFrameTime);
+        const float currentTime = m_Window->GetTime();
+        const Timestep timestep(currentTime - m_LastFrameTime);
         m_LastFrameTime = currentTime;
 
         for (const Scope<Layer>& layer : m_LayerStack) {
@@ -46,6 +44,7 @@ void Application::Run() {
         m_ImGUILayer->Begin();
         for (const Scope<Layer>& layer : m_LayerStack) {
             layer->OnEditorRender();
+            m_ImGUILayer->OnEditorRender();
         }
         m_ImGUILayer->End();
         m_Window->OnUpdate();
@@ -54,8 +53,7 @@ void Application::Run() {
 
 void Application::OnEvent(Event& event) {
     EventDispatcher dispatcher(event);
-    dispatcher.Dispatch<WindowCloseEvent>(
-        [this](WindowCloseEvent& event) { return OnWindowClose(event); });
+    dispatcher.Dispatch<WindowCloseEvent>([this](WindowCloseEvent& closeEvent) { return OnWindowClose(closeEvent); });
 
     for (auto it = m_LayerStack.end(); it != m_LayerStack.begin();) {
         (*--it)->OnEvent(event);
