@@ -16,6 +16,9 @@ LY_DISABLE_WARNINGS_POP
 namespace ly {
 
 ImGUILayer::~ImGUILayer() {
+    if (ImGui::GetCurrentContext() == nullptr) {
+        return;
+    }
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
@@ -89,9 +92,9 @@ void ImGUILayer::BeginFrame() {
  * @brief Prepare ImGUI for next update. Render the current update.
  */
 void ImGUILayer::EndFrame() {
-    ImGuiIO& imguiIO       = ImGui::GetIO();
-    const Application& app = Application::Get();
-    imguiIO.DisplaySize    = ImVec2(app.GetWindow().GetSize().x, app.GetWindow().GetSize().y);
+    ImGuiIO& imguiIO             = ImGui::GetIO();
+    const glm::uvec2& windowSize = Application::Get().GetWindow().GetSize();
+    imguiIO.DisplaySize          = ImVec2(static_cast<float>(windowSize.x), static_cast<float>(windowSize.y));
 
     // Rendering
     ImGui::Render();
@@ -210,7 +213,6 @@ ImGuiKey ImGUILayer::GetImGuiKeyCode(int keyCode) {
         case GLFW_KEY_BACKSLASH:
             return ImGuiKey_Backslash;
         case GLFW_KEY_WORLD_1:
-            return ImGuiKey_Oem102;
         case GLFW_KEY_WORLD_2:
             return ImGuiKey_Oem102;
         case GLFW_KEY_RIGHT_BRACKET:

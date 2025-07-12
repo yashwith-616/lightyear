@@ -7,7 +7,7 @@ namespace ly {
 class LIGHTYEAR_API EditorUpdateBeginEvent
     : public EventBase<EditorUpdateBeginEvent, EventType::EditorUpdateBegin, EC_EDITOR> {
 public:
-    EditorUpdateBeginEvent() {}
+    EditorUpdateBeginEvent() = default;
 
     std::string ToString() const override { return std::format("EditorUpdateBeginEvent"); }
 };
@@ -15,7 +15,7 @@ public:
 class LIGHTYEAR_API EditorUpdateEndEvent
     : public EventBase<EditorUpdateEndEvent, EventType::EditorUpdateBegin, EC_EDITOR> {
 public:
-    EditorUpdateEndEvent() {}
+    EditorUpdateEndEvent() = default;
 
     std::string ToString() const override { return std::format("EditorUpdateEndEvent"); }
 };

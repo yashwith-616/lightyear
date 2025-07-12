@@ -11,12 +11,12 @@ constexpr float quadVertices[] = {
 constexpr uint32_t quadIndices[] = { 0, 1, 2, 2, 3, 0 };
 
 const std::unordered_map<ly::renderer::ShaderType, ly::CPath> g_GridShader = {
-    { ly::renderer::ShaderType::Vertex, ASSET_DIR "/Shaders/Vertex/S_Grid.vert" },
-    { ly::renderer::ShaderType::Fragment, ASSET_DIR "/Shaders/Fragment/S_Grid.frag" }
+    { ly::renderer::ShaderType::VERTEX, ASSET_DIR "/Shaders/Vertex/S_Grid.vert" },
+    { ly::renderer::ShaderType::FRAGMENT, ASSET_DIR "/Shaders/Fragment/S_Grid.frag" }
 };
 
 GridRender::GridRender() {
-    ly::renderer::BufferElement bufferElement(ly::renderer::ShaderDataType::Float2, "Positions", false);
+    ly::renderer::BufferElement bufferElement(ly::renderer::ShaderDataType::FLOAT2, "Positions", false);
     ly::renderer::BufferLayout bufferLayout = { bufferElement };
 
     auto vertexBuffer = ly::renderer::VertexBuffer::Create(quadVertices, sizeof(quadVertices));

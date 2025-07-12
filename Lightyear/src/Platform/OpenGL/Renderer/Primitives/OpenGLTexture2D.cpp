@@ -1,8 +1,10 @@
-#include "Lightyear/Platform/OpenGL/OpenGLTexture2D.h"
+#include "Lightyear/Platform/OpenGL/Renderer/Primitives/OpenGLTexture2D.h"
 #include "Lightyear/Renderer/Primitives/Texture.h"
 
+LY_DISABLE_WARNINGS_PUSH
 #include <glad.h>
 #include <stb_image.h>
+LY_DISABLE_WARNINGS_POP
 
 namespace ly::renderer {
 

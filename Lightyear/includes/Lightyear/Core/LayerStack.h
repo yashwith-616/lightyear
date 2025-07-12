@@ -21,10 +21,10 @@ namespace ly {
  * always be processed and rendered on top of all regular layers. They are pushed via `PushOverlay()`
  * and reside at the higher end of the stack.
  */
-class LIGHTYEAR_API LayerStack {
+class LIGHTYEAR_API LayerStack final {
 public:
     LayerStack()                                       = default;
-    virtual ~LayerStack()                              = default;
+    ~LayerStack()                                      = default;
     LayerStack(const LayerStack&)                      = delete;
     LayerStack& operator=(const LayerStack&)           = delete;
     LayerStack(LayerStack&& other) noexcept            = default;

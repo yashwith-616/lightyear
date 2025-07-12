@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Lightyear/LightyearCore.h"
-#include "RenderTypes.h"
 
 namespace ly::renderer {
 
@@ -14,17 +13,17 @@ struct FramebufferSpecification {
 
 class LIGHTYEAR_API Framebuffer {
 public:
-    static ly::Ref<Framebuffer> Create(const FramebufferSpecification& spec);
+    static Ref<Framebuffer> Create(const FramebufferSpecification& spec);
 
     virtual ~Framebuffer()                               = default;
     virtual void Resize(uint32_t width, uint32_t height) = 0;
 
-    virtual FramebufferSpecification& GetSpecification()             = 0;
-    virtual const FramebufferSpecification& GetSpecification() const = 0;
-    virtual uint32_t GetColorAttachmentRenderID() const              = 0;
-
     virtual void Bind()   = 0;
     virtual void Unbind() = 0;
+
+    [[nodiscard]] virtual FramebufferSpecification& GetSpecification()             = 0;
+    [[nodiscard]] virtual const FramebufferSpecification& GetSpecification() const = 0;
+    [[nodiscard]] virtual uint32_t GetColorAttachmentRenderID() const              = 0;
 };
 
 }  // namespace ly::renderer

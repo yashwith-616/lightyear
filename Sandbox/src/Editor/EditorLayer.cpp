@@ -14,8 +14,8 @@ static constexpr float aspect = 1.77778;
 
 // TODO: Remove
 const std::unordered_map<renderer::ShaderType, ly::CPath> GRID_SHADER = {
-    { renderer::ShaderType::Vertex, ASSET_DIR "/Shaders/Vertex/S_Default.vert" },
-    { renderer::ShaderType::Fragment, ASSET_DIR "/Shaders/Fragment/S_Default.frag" }
+    { renderer::ShaderType::VERTEX, ASSET_DIR "/Shaders/Vertex/S_Default.vert" },
+    { renderer::ShaderType::FRAGMENT, ASSET_DIR "/Shaders/Fragment/S_Default.frag" }
 };
 
 EditorLayer::EditorLayer() : ly::Layer("Editor") {}

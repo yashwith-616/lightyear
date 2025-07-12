@@ -1,36 +1,39 @@
-﻿#include "Lightyear/Platform/OpenGL/OpenGLVertexArray.h"
-#include "Lightyear/Platform/OpenGL/OpenGLBuffer.h"
-#include "glad.h"
+﻿#include "Lightyear/Platform/OpenGL/Renderer/Primitives/OpenGLVertexArray.h"
+#include "Lightyear/Platform/OpenGL/Renderer/Primitives/OpenGLBuffer.h"
+
+LY_DISABLE_WARNINGS_PUSH
+#include <glad.h>
+LY_DISABLE_WARNINGS_POP
+
+namespace {
+using ly::renderer::ShaderDataType;
+GLenum GetOpenGLType(const ShaderDataType type) {
+    switch (type) {
+        case ShaderDataType::FLOAT:
+        case ShaderDataType::FLOAT2:
+        case ShaderDataType::FLOAT3:
+        case ShaderDataType::FLOAT4:
+        case ShaderDataType::MAT3:
+        case ShaderDataType::MAT4:
+            return GL_FLOAT;
+        case ShaderDataType::INT:
+        case ShaderDataType::INT2:
+        case ShaderDataType::INT3:
+        case ShaderDataType::INT4:
+            return GL_INT;
+        case ShaderDataType::BOOL:
+            return GL_BOOL;
+        case ShaderDataType::NONE:
+            LY_CORE_ASSERT(false, "ShaderDataType::None is not a valid type!");
+            return GL_INVALID_ENUM;
+        default:
+            LY_CORE_ASSERT(false, "Unknown ShaderDataType!");
+            return GL_INVALID_ENUM;
+    }
+}
+}  // namespace
 
 namespace ly::renderer {
-
-static GLenum ConvertToOpenGLType(ShaderDataType type) {
-    switch (type) {
-        case ShaderDataType::Float:
-        case ShaderDataType::Float2:
-        case ShaderDataType::Float3:
-        case ShaderDataType::Float4:
-        case ShaderDataType::Mat3:
-        case ShaderDataType::Mat4:
-            return GL_FLOAT;
-
-        case ShaderDataType::Int:
-        case ShaderDataType::Int2:
-        case ShaderDataType::Int3:
-        case ShaderDataType::Int4:
-            return GL_INT;
-
-        case ShaderDataType::Bool:
-            return GL_BOOL;
-
-        case ShaderDataType::None:
-            LY_CORE_ASSERT(false, "ShaderDataType::None is not a valid type!");
-            return GL_FALSE;
-    }
-
-    LY_CORE_ASSERT(false, "Unknown ShaderDataType!");
-    return 0;
-}
 
 OpenGLVertexArray::OpenGLVertexArray() {
     glCreateVertexArrays(1, &m_RenderID);
@@ -56,18 +59,18 @@ void OpenGLVertexArray::AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer) {
 
     const auto& layout = vertexBuffer->GetLayout();
     for (const auto& element : layout.GetElements()) {
-        const GLenum glType = ConvertToOpenGLType(element.Type);
+        const GLenum glType = GetOpenGLType(element.Type);
 
         switch (element.Type) {
-            case ShaderDataType::Float:
-            case ShaderDataType::Float2:
-            case ShaderDataType::Float3:
-            case ShaderDataType::Float4:
-            case ShaderDataType::Int:
-            case ShaderDataType::Int2:
-            case ShaderDataType::Int3:
-            case ShaderDataType::Int4:
-            case ShaderDataType::Bool: {
+            case ShaderDataType::FLOAT:
+            case ShaderDataType::FLOAT2:
+            case ShaderDataType::FLOAT3:
+            case ShaderDataType::FLOAT4:
+            case ShaderDataType::INT:
+            case ShaderDataType::INT2:
+            case ShaderDataType::INT3:
+            case ShaderDataType::INT4:
+            case ShaderDataType::BOOL: {
                 glEnableVertexAttribArray(m_VertexBufferIndex);
                 glVertexAttribPointer(m_VertexBufferIndex,
                                       element.GetComponentCount(),
@@ -79,8 +82,8 @@ void OpenGLVertexArray::AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer) {
                 break;
             }
 
-            case ShaderDataType::Mat3:
-            case ShaderDataType::Mat4: {
+            case ShaderDataType::MAT3:
+            case ShaderDataType::MAT4: {
                 const uint8_t count = element.GetComponentCount();
                 for (uint8_t i = 0; i < count; i++) {
                     glEnableVertexAttribArray(m_VertexBufferIndex);
@@ -95,7 +98,6 @@ void OpenGLVertexArray::AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer) {
                 }
                 break;
             }
-
             default:
                 LY_CORE_ASSERT(false, "Unknow ShaderType!");
         }

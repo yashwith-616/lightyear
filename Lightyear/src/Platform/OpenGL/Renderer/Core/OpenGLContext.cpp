@@ -1,28 +1,28 @@
-﻿#include "Lightyear/Platform/OpenGL/OpenGLContext.h"
+﻿#include "Lightyear/Platform/OpenGL/Renderer/Core/OpenGLContext.h"
 
 LY_DISABLE_WARNINGS_PUSH
 #include <GLFW/glfw3.h>
 #include <glad.h>
 LY_DISABLE_WARNINGS_POP
 
-namespace ly::renderer {
-
-static void APIENTRY GLDebugCallback(GLenum source,
-                                     GLenum type,
-                                     GLuint id,
-                                     GLenum severity,
-                                     GLsizei length,
-                                     const GLchar* message,
-                                     const void* userParam) {
-    LY_CORE_LOG(LogType::Error, "[OpenGL Debug] {}", message);
+namespace {
+// NOLINTNEXTLINE
+void APIENTRY GLDebugCallback(GLenum source,
+                              GLenum /*type*/,
+                              GLuint /*id*/,
+                              GLenum /*severity*/,
+                              GLsizei /*length*/,
+                              const GLchar* message,
+                              const void* /*userParam*/) {
+    LY_CORE_LOG(ly::LogType::Error, "[OpenGL Debug] {}", message);
 }
+
+}  // namespace
+
+namespace ly::renderer {
 
 OpenGLContext::OpenGLContext(GLFWwindow* windowHandle) : m_WindowHandle(windowHandle) {
     LY_CORE_ASSERT(windowHandle, "Window Handle is null!");
-}
-
-OpenGLContext::~OpenGLContext() {
-    LY_CORE_LOG(LogType::Info, "Render context is being destroyed!");
 }
 
 void OpenGLContext::Init() {
@@ -50,7 +50,7 @@ void OpenGLContext::Init() {
 #ifdef LY_OPENGL_DEBUG
     int flags{};
     glGetIntegerv(GL_CONTEXT_FLAGS, &flags);
-    if (flags & GL_CONTEXT_FLAG_DEBUG_BIT) {
+    if (static_cast<bool>(flags & GL_CONTEXT_FLAG_DEBUG_BIT)) {
         glEnable(GL_DEBUG_OUTPUT);
         glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
         glDebugMessageCallback(GLDebugCallback, nullptr);
@@ -58,13 +58,11 @@ void OpenGLContext::Init() {
     }
 #endif
 
-    int profile;
+    int profile{};
     glGetIntegerv(GL_CONTEXT_PROFILE_MASK, &profile);
 
-    if (profile & GL_CONTEXT_CORE_PROFILE_BIT)
-        LY_CORE_LOG(LogType::Info, "Core profile is active");
-    else
-        LY_CORE_LOG(LogType::Info, "Compatibility profile is active");
+    std::string_view glProfile = static_cast<bool>(profile & GL_CONTEXT_CORE_PROFILE_BIT) ? "Core" : "Compatibility";
+    LY_CORE_LOG(LogType::Info, "OpenGL Context: {} profile is active", glProfile);
 }
 
 void OpenGLContext::SwapBuffers() {

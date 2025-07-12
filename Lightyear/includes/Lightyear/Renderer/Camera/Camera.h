@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Lightyear/LightyearCore.h"
-#include "glm/glm.hpp"
 
 namespace ly::renderer {
 

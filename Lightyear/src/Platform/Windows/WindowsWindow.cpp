@@ -2,7 +2,7 @@
 #include "Lightyear/Events/ApplicationEvent.h"
 #include "Lightyear/Events/KeyEvent.h"
 #include "Lightyear/Events/MouseEvent.h"
-#include "Lightyear/Platform/OpenGL/OpenGLContext.h"
+#include "Lightyear/Platform/OpenGL/Renderer/Core/OpenGLContext.h"
 #include "Lightyear/Renderer/Abstract/Renderer.h"
 
 LY_DISABLE_WARNINGS_PUSH
@@ -44,6 +44,7 @@ void WindowsWindow::Init() {
 #endif
     }
 
+    // NOLINTNEXTLINE
     m_Window = glfwCreateWindow(static_cast<int>(m_Data.WindowSize.x),
                                 static_cast<int>(m_Data.WindowSize.y),
                                 m_Data.Title.data(),
@@ -76,6 +77,7 @@ float WindowsWindow::GetTime() const {
     return static_cast<float>(glfwGetTime());
 }
 
+// NOLINTBEGIN
 void WindowsWindow::SetupWindowCallbacks() {
     // Set windows callback
     glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height) {
@@ -125,7 +127,7 @@ void WindowsWindow::SetupWindowCallbacks() {
     });
 
     // Set Keyboard Events
-    glfwSetKeyCallback(m_Window, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
+    glfwSetKeyCallback(m_Window, [](GLFWwindow* window, int key, int /*scancode*/, int action, int /*mods*/) {
         const WindowsData& data = *static_cast<WindowsData*>(glfwGetWindowUserPointer(window));
 
         switch (action) {
@@ -155,5 +157,6 @@ void WindowsWindow::SetupWindowCallbacks() {
         data.EventCallback(typedEvent);
     });
 }
+// NOLINTEND
 
 }  // namespace ly

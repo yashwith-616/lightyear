@@ -7,13 +7,13 @@ namespace ly::renderer {
 class OpenGLUniformBuffer : public UniformBuffer {
 public:
     OpenGLUniformBuffer(const CName& name, uint32_t size, uint32_t bindingPoint);
-    ~OpenGLUniformBuffer();
+    ~OpenGLUniformBuffer() override;
 
-    virtual void SetData(const void* data, uint32_t size, uint32_t offset = 0) override;
-    virtual void Bind() const override;
-    virtual void UnBind() const override;
+    void SetData(const void* data, uint32_t size, uint32_t offset = 0) override;
+    void Bind() const override;
+    void UnBind() const override;
 
-    virtual void Debug(uint32_t programID, const CName& name) override;
+    void Debug(uint32_t programID, const CName& name) override;
 
 private:
     uint32_t m_BufferID{ 0 };

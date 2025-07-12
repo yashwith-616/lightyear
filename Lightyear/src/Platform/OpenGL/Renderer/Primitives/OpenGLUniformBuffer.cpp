@@ -1,5 +1,8 @@
-#include "Lightyear/Platform/OpenGL/OpenGLUniformBuffer.h"
-#include "glad.h"
+#include "Lightyear/Platform/OpenGL/Renderer/Primitives/OpenGLUniformBuffer.h"
+
+LY_DISABLE_WARNINGS_PUSH
+#include <glad.h>
+LY_DISABLE_WARNINGS_POP
 
 namespace ly::renderer {
 

@@ -97,6 +97,8 @@ protected:
     virtual bool OnWindowClose(WindowCloseEvent& event);
 
 private:
+    static Scope<Application> s_Application;
+
     Scope<Window> m_Window;
     Scope<ImGUILayer> m_ImGUILayer;
     LayerStack m_LayerStack;
@@ -104,8 +106,6 @@ private:
     bool m_Running{ true };
     float m_Frametime{ kDefaultFrametime };
     float m_LastFrameTime{ 0.f };
-
-    static Scope<Application> s_Application;
 };
 
 }  // namespace ly

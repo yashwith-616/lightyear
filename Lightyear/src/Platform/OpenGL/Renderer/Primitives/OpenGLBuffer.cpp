@@ -1,5 +1,8 @@
-#include "Lightyear/Platform/OpenGL/OpenGLBuffer.h"
+#include "Lightyear/Platform/OpenGL/Renderer/Primitives/OpenGLBuffer.h"
+
+LY_DISABLE_WARNINGS_PUSH
 #include <glad.h>
+LY_DISABLE_WARNINGS_POP
 
 /////////////////////////////////////////////////////////
 // OpenGL Vertex Buffer

@@ -1,30 +1,33 @@
-#include "Lightyear/Platform/OpenGL/OpenGLRendererAPI.h"
-#include <glad.h>
-#include "Lightyear/Platform/OpenGL/OpenGLVertexArray.h"
+#include "Lightyear/Platform/OpenGL/Renderer/Core/OpenGLRendererAPI.h"
+#include "Lightyear/Platform/OpenGL/Renderer/Primitives/OpenGLVertexArray.h"
 #include "Lightyear/Renderer/Primitives/Buffer.h"
 
-namespace ly::renderer {
+LY_DISABLE_WARNINGS_PUSH
+#include <glad.h>
+LY_DISABLE_WARNINGS_POP
 
-#pragma region OpenGL Debug
-static void OpenGLMessageCallback(unsigned source,
-                                  unsigned type,
-                                  unsigned id,
-                                  unsigned severity,
-                                  int length,
-                                  const char* message,
-                                  const void* userParam) {
+#pragma region OpenGL Debugging
+// NOLINTBEGIN
+namespace {
+void OpenGLMessageCallback(unsigned source,
+                           unsigned type,
+                           unsigned id,
+                           unsigned severity,
+                           int length,
+                           const char* message,
+                           const void* userParam) {
     switch (severity) {
         case GL_DEBUG_SEVERITY_HIGH:
-            LY_CORE_LOG(LogType::Fatal, "{0}", message);
+            LY_CORE_LOG(ly::LogType::Fatal, "{0}", message);
             return;
         case GL_DEBUG_SEVERITY_MEDIUM:
-            LY_CORE_LOG(LogType::Error, "{0}", message);
+            LY_CORE_LOG(ly::LogType::Error, "{0}", message);
             return;
         case GL_DEBUG_SEVERITY_LOW:
-            LY_CORE_LOG(LogType::Warn, "{0}", message);
+            LY_CORE_LOG(ly::LogType::Warn, "{0}", message);
             return;
         case GL_DEBUG_SEVERITY_NOTIFICATION:
-            LY_CORE_LOG(LogType::Trace, "{0}", message);
+            LY_CORE_LOG(ly::LogType::Trace, "{0}", message);
             return;
         default:
             LY_CORE_ASSERT(false, "Unknown severity level!");
@@ -37,7 +40,7 @@ static void OpenGLMessageCallback(unsigned source,
 /**
  * @brief Initialize openGL debugging callbacks and error control
  */
-static void InitDebugging() {
+void InitDebugging() {
 #ifdef LY_OPENGL_DEBUG
     glEnable(GL_DEBUG_OUTPUT);
     glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
@@ -49,16 +52,20 @@ static void InitDebugging() {
 /**
  * @brief Checks for any openGL errors after initializing the openGL state
  */
-static void CheckOpenGLErrors() {
+void CheckOpenGLErrors() {
 #ifdef LY_OPENGL_DEBUG
     GLenum error = glGetError();
     if (error != GL_NO_ERROR) {
-        LY_CORE_LOG(LogType::Error, "OpenGL error: {0}", error);
+        LY_CORE_LOG(ly::LogType::Error, "OpenGL error: {0}", error);
     }
 #endif
 }
 
+}  // namespace
+// NOLINTEND
 #pragma endregion OpenGL Debug
+
+namespace ly::renderer {
 
 void OpenGLRendererAPI::Init() {
     InitDebugging();
@@ -89,7 +96,7 @@ void OpenGLRendererAPI::Clear() {
 
 void OpenGLRendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCount) {
     vertexArray->Bind();
-    uint32_t count = indexCount ? indexCount : vertexArray->GetIndexBuffer().GetCount();
+    const uint32_t count = indexCount != 0 ? indexCount : vertexArray->GetIndexBuffer().GetCount();
     glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, nullptr);
 }
 

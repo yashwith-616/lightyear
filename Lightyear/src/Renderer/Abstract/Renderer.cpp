@@ -1,6 +1,5 @@
 #include "Lightyear/Renderer/Abstract/Renderer.h"
 #include "Lightyear/Renderer/Abstract/RenderCommand.h"
-#include "Lightyear/Renderer/Abstract/RendererAPI.h"
 #include "Lightyear/Renderer/Camera/Camera.h"
 #include "Lightyear/Renderer/Primitives/Shader.h"
 #include "Lightyear/Renderer/Primitives/Texture.h"
@@ -8,7 +7,7 @@
 
 #include "Lightyear/Scene/SceneData.h"
 
-#include "Lightyear/Platform/OpenGL/OpenGLShader.h"
+#include "Lightyear/Platform/OpenGL/Renderer/Primitives/OpenGLShader.h"
 
 namespace ly::renderer {
 

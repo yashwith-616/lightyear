@@ -1,15 +1,41 @@
-#include "Lightyear/Platform/OpenGL/OpenGLShader.h"
+#include "Lightyear/Platform/OpenGL/Renderer/Primitives/OpenGLShader.h"
+#include "Lightyear/Renderer/Primitives/RenderTypes.h"
+
+namespace {
+using ly::renderer::OpenGLShader;
+using ly::renderer::ShaderType;
+
+GLenum GetGLShaderType(ShaderType shaderType) {
+    switch (shaderType) {
+        case ShaderType::VERTEX:
+            return GL_VERTEX_SHADER;
+        case ShaderType::PIXEL:
+        case ShaderType::FRAGMENT:
+            return GL_FRAGMENT_SHADER;
+        case ShaderType::COMPUTE:
+            return GL_COMPUTE_SHADER;
+        case ShaderType::GEOMETRY:
+            return GL_GEOMETRY_SHADER;
+        case ShaderType::TESS_CONTROL:
+            return GL_TESS_CONTROL_SHADER;
+        case ShaderType::TESS_EVALUATION:
+            return GL_TESS_EVALUATION_SHADER;
+        default:
+            LY_CORE_ASSERT(false, "Invalid Shader Type!");
+            return GL_INVALID_ENUM;
+    }
+}
+}  // namespace
 
 namespace ly::renderer {
 
 OpenGLShader::OpenGLShader(std::string name, const std::unordered_map<ShaderType, CPath>& shaderFiles)
     : m_Name(std::move(name)) {
-    std::array<ShaderHandle, ShaderTypeCount> shaderHandles = {};
+    std::array<ShaderHandle, g_ShaderTypeCount> shaderHandles = {};
     for (const auto& [shaderType, path] : shaderFiles) {
-        std::string shaderSrc           = ReadFile(path);
-        const ShaderHandle shaderHandle = CompileShader(shaderSrc.data(), GetGLShaderType(shaderType));
-        const auto index                = static_cast<size_t>(shaderType);
-        shaderHandles[index]            = CompileShader(shaderSrc.data(), GetGLShaderType(shaderType));
+        std::string shaderSrc = ReadFile(path);
+        const auto index      = static_cast<size_t>(shaderType);
+        shaderHandles[index]  = CompileShader(shaderSrc.data(), GetGLShaderType(shaderType));
     }
 
     m_ShaderHandle = glCreateProgram();
@@ -32,11 +58,10 @@ OpenGLShader::OpenGLShader(std::string name, const std::unordered_map<ShaderType
 
 OpenGLShader::OpenGLShader(std::string name, const std::unordered_map<ShaderType, std::string>& shaderSrcs)
     : m_Name(std::move(name)) {
-    std::array<ShaderHandle, ShaderTypeCount> shaderHandles = {};
+    std::array<ShaderHandle, g_ShaderTypeCount> shaderHandles = {};
     for (const auto& [shaderType, shaderSrc] : shaderSrcs) {
-        const ShaderHandle shaderHandle = CompileShader(shaderSrc.data(), GetGLShaderType(shaderType));
-        const auto index                = static_cast<size_t>(shaderType);
-        shaderHandles[index]            = CompileShader(shaderSrc.data(), GetGLShaderType(shaderType));
+        const auto index     = static_cast<size_t>(shaderType);
+        shaderHandles[index] = CompileShader(shaderSrc.data(), GetGLShaderType(shaderType));
     }
 
     m_ShaderHandle = glCreateProgram();
@@ -74,7 +99,7 @@ ShaderHandle OpenGLShader::CompileShader(const char* shaderCode, GLenum shaderTy
 }
 
 GLint OpenGLShader::GetUniformLocation(const std::string& name) const {
-    if (m_UniformLocationCache.find(name) != m_UniformLocationCache.end()) {
+    if (m_UniformLocationCache.contains(name)) {
         return m_UniformLocationCache[name];
     }
 
@@ -84,7 +109,7 @@ GLint OpenGLShader::GetUniformLocation(const std::string& name) const {
 }
 
 GLint OpenGLShader::GetUniformBufferBlockIndex(const std::string& name) const {
-    if (m_UniformLocationCache.find(name) != m_UniformLocationCache.end()) {
+    if (m_UniformLocationCache.contains(name)) {
         return m_UniformLocationCache[name];
     }
 
@@ -96,31 +121,11 @@ GLint OpenGLShader::GetUniformBufferBlockIndex(const std::string& name) const {
 
 void OpenGLShader::BindUniformBufferBlock() const {
     Use();
-    SetUniformBlock("Camera", UniformBufferBlockBinding::Camera);
-    SetUniformBlock("Scene", UniformBufferBlockBinding::Scene);
-    SetUniformBlock("Material", UniformBufferBlockBinding::Material);
-    SetUniformBlock("Object", UniformBufferBlockBinding::Object);
+    SetUniformBlock("Camera", UniformBufferBlockBinding::CAMERA);
+    SetUniformBlock("Scene", UniformBufferBlockBinding::SCENE);
+    SetUniformBlock("Material", UniformBufferBlockBinding::MATERIAL);
+    SetUniformBlock("Object", UniformBufferBlockBinding::OBJECT);
     UnBind();
-}
-
-GLenum OpenGLShader::GetGLShaderType(ShaderType shaderType) {
-    switch (shaderType) {
-        case ShaderType::Vertex:
-            return GL_VERTEX_SHADER;
-        case ShaderType::Pixel:
-        case ShaderType::Fragment:
-            return GL_FRAGMENT_SHADER;
-        case ShaderType::Compute:
-            return GL_COMPUTE_SHADER;
-        case ShaderType::Geometry:
-            return GL_GEOMETRY_SHADER;
-        case ShaderType::TessControl:
-            return GL_TESS_CONTROL_SHADER;
-        case ShaderType::TessEvaluation:
-            return GL_TESS_EVALUATION_SHADER;
-        default:
-            LY_CORE_ASSERT(false, "Invalid Shader Type!");
-    }
 }
 
 void OpenGLShader::CheckCompilerErrors(ShaderHandle shaderHandle, GLenum shaderType) {
@@ -129,13 +134,17 @@ void OpenGLShader::CheckCompilerErrors(ShaderHandle shaderHandle, GLenum shaderT
 
     if (shaderType == GL_PROGRAM) {
         glGetProgramiv(shaderHandle, GL_LINK_STATUS, &success);
-        if (success) return;
+        if (success != 0) {
+            return;
+        }
 
         glGetProgramInfoLog(shaderHandle, infoLog.size(), nullptr, infoLog.data());
         LY_CORE_LOG(LogType::Error, "ERROR::PROGRAM_LINKING_ERROR ({})", infoLog.data());
     } else {
         glGetShaderiv(shaderHandle, GL_COMPILE_STATUS, &success);
-        if (success) return;
+        if (success != 0) {
+            return;
+        }
 
         glGetShaderInfoLog(shaderHandle, infoLog.size(), nullptr, infoLog.data());
         LY_CORE_LOG(LogType::Error, "ERROR::SHADER_COMPILATION_ERROR ({})", infoLog.data());

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <glm/glm.hpp>
+#include "Lightyear/Renderer/Primitives/UniformBuffer.h"
 
 namespace ly::renderer {
 

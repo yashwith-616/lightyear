@@ -31,7 +31,6 @@ enum class EventType : uint8_t {
 };
 
 enum EventCategory {
-    None           = 0,
     EC_APPLICATION = BIT(0),
     EC_INPUT       = BIT(1),
     EC_KEYBOARD    = BIT(2),

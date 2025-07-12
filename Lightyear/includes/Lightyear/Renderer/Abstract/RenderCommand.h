@@ -1,6 +1,5 @@
 #pragma once
 
-#include <glm/glm.hpp>
 #include "Lightyear/LightyearCore.h"
 #include "Lightyear/Renderer/Abstract/RendererAPI.h"
 #include "Lightyear/Renderer/Primitives/VertexArray.h"
@@ -16,13 +15,13 @@ namespace ly::renderer {
  */
 class LIGHTYEAR_API RenderCommand {
 public:
-    inline static void Init() { s_RendererAPI->Init(); }
+    static void Init() { s_RendererAPI->Init(); }
 
-    inline static void SetClearColor(const glm::vec4& color) { s_RendererAPI->SetClearColor(color); }
+    static void SetClearColor(const glm::vec4& color) { s_RendererAPI->SetClearColor(color); }
 
-    inline static void Clear() { s_RendererAPI->Clear(); }
+    static void Clear() { s_RendererAPI->Clear(); }
 
-    inline static void DrawIndexed(const Ref<VertexArray>& vertexArray) { s_RendererAPI->DrawIndexed(vertexArray); }
+    static void DrawIndexed(const Ref<VertexArray>& vertexArray) { s_RendererAPI->DrawIndexed(vertexArray); }
 
 private:
     static Scope<RendererAPI> s_RendererAPI;

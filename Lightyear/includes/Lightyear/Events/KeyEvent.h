@@ -7,7 +7,7 @@ namespace ly {
 
 class LIGHTYEAR_API KeyEvent {
 public:
-    inline int GetKeyCode() const { return m_KeyCode; }
+    int GetKeyCode() const { return m_KeyCode; }
 
 protected:
     explicit KeyEvent(int keyCode) : m_KeyCode(keyCode) {}
@@ -20,7 +20,7 @@ class LIGHTYEAR_API KeyPressedEvent : public EventBase<KeyPressedEvent, EventTyp
 public:
     KeyPressedEvent(int keycode, int repeatCount) : KeyEvent(keycode), m_RepeatCount(repeatCount) {}
 
-    inline int GetRepeatCount() const { return m_RepeatCount; }
+    int GetRepeatCount() const { return m_RepeatCount; }
 
     std::string ToString() const override {
         return std::format("KeyPressedEvent: {} ({} repeats)", m_KeyCode, m_RepeatCount);

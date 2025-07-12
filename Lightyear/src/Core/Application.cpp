@@ -63,9 +63,9 @@ void Application::OnEvent(Event& event) {
 }
 
 bool Application::OnWindowClose(WindowCloseEvent& /*event*/) {
-    m_Window->ShutDown();
-    m_ImGUILayer->OnDetach();
     m_Running = false;
+    m_ImGUILayer->OnDetach();
+    m_Window->ShutDown();
     return true;
 }
 

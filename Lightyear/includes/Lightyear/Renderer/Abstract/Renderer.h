@@ -1,10 +1,8 @@
 #pragma once
 
 #include "Lightyear/LightyearCore.h"
-#include "Lightyear/Renderer/Primitives/UniformBuffer.h"
 #include "RendererAPI.h"
 #include "RendererUBO.h"
-#include "glm/glm.hpp"
 
 namespace ly::scene {
 struct SceneData;
@@ -41,10 +39,7 @@ public:
 
     /**
      * @brief Submit the RenderSubmission to Queue to be processed later
-     * @param shader the shader
-     * @param vertexArray the vertexArray
-     * @param texture the texture
-     * @param transform the transform
+     * @param submission The render submission
      */
     static void Submit(const RenderSubmission& submission);
 

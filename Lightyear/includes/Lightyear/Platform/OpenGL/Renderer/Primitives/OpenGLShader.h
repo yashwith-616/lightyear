@@ -2,7 +2,10 @@
 
 #include "Lightyear/Renderer/Primitives/RenderTypes.h"
 #include "Lightyear/Renderer/Primitives/Shader.h"
+
+LY_DISABLE_WARNINGS_PUSH
 #include "glad.h"
+LY_DISABLE_WARNINGS_POP
 
 namespace ly::renderer {
 
@@ -18,17 +21,17 @@ public:
     /**
      * @brief Create OpenGL shaders from source code
      * @param name The compiled shader name
-     * @param shaderSrcs The ShaderType along with it's source code
+     * @param shaderSrcs The ShaderType along with its source code
      */
     OpenGLShader(std::string name, const std::unordered_map<ShaderType, std::string>& shaderSrcs);
 
-    virtual void Use() const override;
+    void Use() const override;
 
-    virtual void UnBind() const override;
+    void UnBind() const override;
 
     template <typename T>
         requires(!std::is_arithmetic_v<T>)
-    void SetUniform(const std::string& name, const T& value) const {
+    void SetUniform(const std::string& /*name*/, const T& /*value*/) const {
         static_assert(sizeof(T) == 0, "Unsupported uniform type! Specialize setUniform<T> for this type");
     }
 
@@ -94,10 +97,9 @@ public:
 
 private:
     ShaderHandle m_ShaderHandle{};
-    std::string m_Name{};
+    std::string m_Name{ "NULL" };
     mutable std::unordered_map<std::string, GLint> m_UniformLocationCache;
 
-private:
     /**
      * @brief Compile shader code
      * @param shaderCode the shader code
@@ -112,14 +114,12 @@ private:
 
     void BindUniformBufferBlock() const;
 
-    static GLenum GetGLShaderType(ShaderType shaderType);
-
     /**
      * @brief Check if there is any compiler errors while compiling shader
      * @param shaderHandle the shader handle that needs to be compiled
-     * @param type the shader type
+     * @param shaderType the shader type
      */
-    static void CheckCompilerErrors(ShaderHandle shaderHandle, GLenum shaderType);
+    void CheckCompilerErrors(ShaderHandle shaderHandle, GLenum shaderType);
 };
 
 }  // namespace ly::renderer

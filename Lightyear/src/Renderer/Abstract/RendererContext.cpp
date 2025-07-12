@@ -1,5 +1,5 @@
 #include "Lightyear/Renderer/Abstract/RendererContext.h"
-#include "Lightyear/Platform/OpenGL/OpenGLContext.h"
+#include "Lightyear/Platform/OpenGL/Renderer/Core/OpenGLContext.h"
 #include "Lightyear/Renderer/Abstract/Renderer.h"
 
 namespace ly::renderer {
