@@ -1,6 +1,9 @@
 ﻿#include "Lightyear/Platform/OpenGL/OpenGLContext.h"
+
+LY_DISABLE_WARNINGS_PUSH
 #include <GLFW/glfw3.h>
 #include <glad.h>
+LY_DISABLE_WARNINGS_POP
 
 namespace ly::renderer {
 
@@ -24,7 +27,7 @@ OpenGLContext::~OpenGLContext() {
 
 void OpenGLContext::Init() {
     glfwMakeContextCurrent(m_WindowHandle);
-    int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+    const int status = gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress));
     LY_CORE_ASSERT(status, "Failed to initialize GLAD");
 
     // Log System Metrics
@@ -44,8 +47,8 @@ void OpenGLContext::Init() {
                 glVersion,
                 glShaderVersion);
 
-#ifdef LY_DEBUG
-    int flags;
+#ifdef LY_OPENGL_DEBUG
+    int flags{};
     glGetIntegerv(GL_CONTEXT_FLAGS, &flags);
     if (flags & GL_CONTEXT_FLAG_DEBUG_BIT) {
         glEnable(GL_DEBUG_OUTPUT);

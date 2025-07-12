@@ -11,7 +11,7 @@ public:
     virtual void Init()        = 0;
     virtual void SwapBuffers() = 0;
 
-    static ly::Scope<RendererContext> Create(void* windowHandle);
+    static Scope<RendererContext> Create(void* windowHandle);
 };
 
 }  // namespace ly::renderer

@@ -7,12 +7,11 @@ namespace ly {
 class Event;
 
 struct WindowProps {
-    std::string_view Title;
-    glm::vec2<uint32_t> Size;
+    std::string_view Title{ kDefaultWindowTitle };
+    glm::uvec2 Size{ glm::uvec2(kDefaultWindowWidth, kDefaultWindowHeight) };
 
-    WindowProps(std::string_view title = kDefaultWindowTitle,
-                glm::vec2 size         = glm::vec2(kDefaultWindowWidth, kDefaultWindowHeight))
-        : Title(title), Size(size) {}
+    WindowProps() = default;
+    WindowProps(std::string_view title, glm::uvec2 size) : Title(title), Size(size) {}
 };
 
 /**
@@ -20,8 +19,12 @@ struct WindowProps {
  */
 class LIGHTYEAR_API Window {
 public:
-    Window()          = default;
-    virtual ~Window() = default;
+    Window()                         = default;
+    virtual ~Window()                = default;
+    Window(const Window&)            = delete;
+    Window& operator=(const Window&) = delete;
+    Window(Window&&)                 = default;
+    Window& operator=(Window&&)      = default;
 
     /**
      * Create a new window
@@ -31,9 +34,12 @@ public:
      */
     static Scope<Window> Create(const WindowProps& props = WindowProps());
 
-    virtual void OnUpdate()                         = 0;
-    [[nodiscard]] virtual glm::vec2<uint32_t> GetSize() const = 0;
-    [[nodiscard]] virtual float GetTime() const     = 0;
+    virtual void Init()     = 0;
+    virtual void ShutDown() = 0;
+
+    virtual void OnUpdate()                          = 0;
+    [[nodiscard]] virtual glm::uvec2 GetSize() const = 0;
+    [[nodiscard]] virtual float GetTime() const      = 0;
 
     virtual void SetEventCallback(const EventCallbackFn& callback) = 0;
     virtual void SetVSync(bool isEnabled)                          = 0;

@@ -13,7 +13,7 @@ enum class EventType : uint8_t {
     WindowLostFocus,
     WindowMoved,
 
-    ApptTick,
+    AppTick,
     AppUpdate,
     AppRender,
 

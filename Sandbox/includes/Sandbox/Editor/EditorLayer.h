@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Lightyear.h"
-#include "Panel/SceneGraphPanel.h"
 #include "Sandbox/Editor/Workspace/ESceneWorkspace.h"
 
 class EditorCamera;
@@ -14,10 +13,11 @@ class EditorLayer : public ly::Layer {
 public:
     EditorLayer();
 
-    virtual void OnAttach() override;
-    virtual void OnEvent(ly::Event& event) override;
-    virtual void OnEditorRender() override;
-    virtual void OnUpdate(float deltaTime) override;
+    void OnAttach() override;
+    void OnDetach() override {}
+    void OnEvent(ly::Event& event) override {}
+    void OnEditorRender() override;
+    void OnUpdate(float deltaTime) override;
 
 private:
     // TO BE REMOVED
@@ -35,7 +35,6 @@ private:
     ly::Scope<ESceneWorkspace> m_SceneWorkspace{};
     ly::Ref<GlobalEditorContext> m_EditorContext{};
 
-private:
     float m_PrevMouseY{ 0.f };
     float m_PrevMouseX{ 0.f };
     float m_MouseSensitivity{ 0.1f };

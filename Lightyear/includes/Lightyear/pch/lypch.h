@@ -30,7 +30,6 @@
 #include <new>
 #include <utility>
 
-
 LY_DISABLE_WARNINGS_PUSH
 #include <glm/glm.hpp>
 

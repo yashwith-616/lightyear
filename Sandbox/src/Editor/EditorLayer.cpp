@@ -1,12 +1,11 @@
 ﻿#include "Sandbox/Editor/EditorLayer.h"
 #include "Sandbox/Core/Camera/EditorCamera.h"
 #include "Sandbox/Geometry/Geometry.h"
-#include "Sandbox/Helpers/GridRender.h"
 
+LY_DISABLE_WARNINGS_PUSH
 #include <imgui.h>
 #include <imgui_internal.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp>
+LY_DISABLE_WARNINGS_POP
 
 namespace renderer = ly::renderer;
 
@@ -61,7 +60,6 @@ void EditorLayer::OnAttach() {
     m_CubeEntity.AddComponent<ly::scene::RenderComponent>();
 
     ly::scene::TransformComponent cubeTransform = m_CubeEntity.GetComponent<ly::scene::TransformComponent>();
-    cubeTransform.GetTransform();
 #pragma endregion
 
 #pragma region Inti Scene and Panels
@@ -71,8 +69,6 @@ void EditorLayer::OnAttach() {
     m_SceneWorkspace->OnAttach(m_EditorContext);
 #pragma endregion
 }
-
-void EditorLayer::OnEvent(ly::Event& event) {}
 
 void EditorLayer::OnUpdate(float deltaTime) {
     PollInput(deltaTime);
@@ -94,9 +90,6 @@ void EditorLayer::OnUpdate(float deltaTime) {
 
 void EditorLayer::OnEditorRender() {
     m_SceneWorkspace->OnEditorUpdate();
-    // DrawDockspace();
-
-    // ImGui::ShowDemoWindow();
     m_SceneWorkspace->OnImGuiRender();
 }
 

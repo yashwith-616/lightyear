@@ -8,10 +8,10 @@ public:
     using super = ly::Application;
 
     SandboxApp()          = default;
-    virtual ~SandboxApp() = default;
+    ~SandboxApp() override = default;
 
-    virtual void Init() override;
-    virtual void Run() override;
+    void Init() override;
+    void Run() override;
 };
 
 inline ly::Scope<ly::Application> CreateApplication() {

@@ -46,7 +46,7 @@ public:
      * being active in the application's context (e.g., setting up rendering resources,
      * registering callbacks, loading assets).
      */
-    virtual void OnAttach();
+    virtual void OnAttach() = 0;
 
     /**
      * @brief Called when the layer is detached from a LayerStack.
@@ -54,7 +54,7 @@ public:
      * @details Use this method for cleanup tasks when the layer is no longer active
      * (e.g., releasing resources, unregistering callbacks, saving state).
      */
-    virtual void OnDetach();
+    virtual void OnDetach() = 0;
 
     /**
      * @brief Called every frame to update the layer's state.
@@ -64,7 +64,7 @@ public:
      *
      * @param deltaTime The time elapsed since the last frame, in seconds.
      */
-    virtual void OnUpdate(float deltaTime);
+    virtual void OnUpdate(float deltaTime) = 0;
 
     /**
      * @brief Called every frame for editor-specific rendering.
@@ -73,7 +73,7 @@ public:
      * or other visuals that should only appear in an editor context and not
      * in a standalone runtime build.
      */
-    virtual void OnEditorRender();
+    virtual void OnEditorRender() = 0;
 
     /**
      * @brief Called when an event is dispatched to this layer.
@@ -83,7 +83,7 @@ public:
      *
      * @param event The event to be processed by the layer.
      */
-    virtual void OnEvent(Event& event);
+    virtual void OnEvent(Event& event) = 0;
 
     [[nodiscard]] const std::string& GetName() const { return m_Name; }
     [[nodiscard]] UUID GetID() const { return m_ID; }

@@ -1,7 +1,6 @@
 #pragma once
 
-#include "../Common/Assertions.h"
-#include "Lightyear/pch/lypch.h"
+#include "Lightyear/Common/Assertions.h"
 
 namespace ly {
 

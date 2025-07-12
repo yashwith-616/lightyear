@@ -1,11 +1,8 @@
 #include "Lightyear/Core/Application.h"
-#include "../../includes/Lightyear/Common/Log.h"
 #include "Lightyear/Core/Layer.h"
 #include "Lightyear/Core/LayerStack.h"
 #include "Lightyear/Core/Timestep.h"
-#include "Lightyear/Editor/ImGUILayer.h"
 #include "Lightyear/Events/ApplicationEvent.h"
-#include "Lightyear/Events/EditorEvent.h"
 #include "Lightyear/Events/Event.h"
 #include "Lightyear/Renderer/Abstract/Renderer.h"
 
@@ -16,6 +13,7 @@ Scope<Application> Application::s_Application = nullptr;
 Application::Application() {
     LY_CORE_ASSERT(!s_Application, "Application already exists!");
     m_Window = Window::Create();
+    m_Window->Init();
     m_Window->SetEventCallback([this](Event& event) { OnEvent(event); });
 }
 
@@ -26,6 +24,7 @@ Application::~Application() {
 void Application::Init() {
     renderer::Renderer::Init();
     m_ImGUILayer = MakeScope<ImGUILayer>();
+    m_ImGUILayer->OnAttach();
 }
 
 void Application::Run() {
@@ -41,12 +40,12 @@ void Application::Run() {
         }
 
         //---- Update Game Engine Editor
-        m_ImGUILayer->Begin();
+        m_ImGUILayer->BeginFrame();
         for (const Scope<Layer>& layer : m_LayerStack) {
             layer->OnEditorRender();
             m_ImGUILayer->OnEditorRender();
         }
-        m_ImGUILayer->End();
+        m_ImGUILayer->EndFrame();
         m_Window->OnUpdate();
     }
 }
@@ -64,6 +63,8 @@ void Application::OnEvent(Event& event) {
 }
 
 bool Application::OnWindowClose(WindowCloseEvent& /*event*/) {
+    m_Window->ShutDown();
+    m_ImGUILayer->OnDetach();
     m_Running = false;
     return true;
 }

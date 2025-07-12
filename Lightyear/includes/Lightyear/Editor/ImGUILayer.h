@@ -20,16 +20,17 @@ class EditorUpdateEndEvent;
 
 class LIGHTYEAR_API ImGUILayer : public Layer {
 public:
-    ImGUILayer();
-    ~ImGUILayer();
+    ImGUILayer() : Layer("ImGUILayer") {}
+    ~ImGUILayer() override;
 
-    virtual void OnAttach();
-    virtual void OnDetach();
-    virtual void OnEvent(Event& event);
-    virtual void OnEditorRender();
+    void OnAttach() override;
+    void OnDetach() override;
+    void OnEvent(Event& event) override;
+    void OnEditorRender() override;
+    void OnUpdate(float deltaTime) override {}
 
-    void Begin();
-    void End();
+    void BeginFrame();
+    void EndFrame();
 
 protected:
     bool OnMouseButtonPressedEvent(MouseButtonPressedEvent& event);
@@ -42,9 +43,6 @@ protected:
     bool OnKeyTypedEvent(KeyTypedEvent& event);
     bool OnWindowResizeEvent(WindowResizeEvent& event);
 
-    ImGuiKey GetImGuiKeyCode(int keyCode);
-
-private:
-    float m_Time{ 0.f };
+    static ImGuiKey GetImGuiKeyCode(int keyCode);
 };
 }  // namespace ly

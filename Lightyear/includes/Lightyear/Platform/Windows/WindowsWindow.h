@@ -2,38 +2,33 @@
 
 #include "Lightyear/Core/Window.h"
 #include "Lightyear/LightyearCore.h"
+#include "Lightyear/Renderer/Abstract/RendererContext.h"
 
 struct GLFWwindow;
 
 namespace ly {
 
-namespace renderer {
-class RendererContext;
-}  // namespace renderer
-
 class LIGHTYEAR_API WindowsWindow : public Window {
 public:
-    explicit WindowsWindow(const WindowProps& props) : m_Data({props.Title, props.Size}) {}
-     ~WindowsWindow() override = default;
+    explicit WindowsWindow(const WindowProps& props) : m_Data({ props.Title, props.Size }) {}
+    ~WindowsWindow() override = default;
 
     void OnUpdate() override;
 
     inline float GetTime() const override;
     inline void SetVSync(bool isEnabled) override;
 
-    bool IsVSync() const override {return m_Data.VSync;}
+    bool IsVSync() const override { return m_Data.VSync; }
     void SetEventCallback(const EventCallbackFn& callback) override { m_Data.EventCallback = callback; }
-    glm::vec2<uint32_t> GetSize() const override {return m_Data.WindowSize;}
+    glm::uvec2 GetSize() const override { return m_Data.WindowSize; }
     void* GetNativeWindow() const override { return static_cast<void*>(m_Window); }
 
 protected:
     /**
      * @brief Initializes GLFW window with the given properties such as context, title, width,
      * height, and other related settings.
-     *
-     * @param props The window properties used to configure the GLFW window.
      */
-    virtual void Init(const WindowProps& props);
+    void Init() override;
 
     /**
      * @brief Closes the GLFW window context and terminates GLFW. Called in the destructor.
@@ -41,7 +36,7 @@ protected:
      * Override this function to perform any additional cleanup operations.
      */
 
-    virtual void ShutDown();
+    void ShutDown() override;
 
     /**
      * @brief Sets up all GLFW window callbacks (e.g., window resize, close, key/button presses).
@@ -65,12 +60,12 @@ private:
      */
     struct WindowsData {
         std::string_view Title{ "Demo" };
-        glm::vec2<uint32_t> WindowSize{ 800, 600 };
+        glm::uvec2 WindowSize{ 800, 600 };
         bool VSync{ true };
 
         EventCallbackFn EventCallback;
 
-        WindowsData(std::string_view title, glm::vec2<uint32_t> windowSize) : Title(title), WindowSize(windowSize) {}
+        WindowsData(std::string_view title, glm::uvec2 windowSize) : Title(title), WindowSize(windowSize) {}
     };
 
     WindowsData m_Data;

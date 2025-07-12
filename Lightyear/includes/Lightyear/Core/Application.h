@@ -2,13 +2,13 @@
 
 #include "Lightyear/Core/LayerStack.h"
 #include "Lightyear/Core/Window.h"
+#include "Lightyear/Editor/ImGUILayer.h"
 #include "Lightyear/LightyearCore.h"
 
 namespace ly {
 
 class Event;
 class WindowCloseEvent;
-class ImGUILayer;
 
 /**
  * @brief Represents the core application entry point and lifecycle manager for the Lightyear Engine.
@@ -98,8 +98,8 @@ protected:
 
 private:
     Scope<Window> m_Window;
-    LayerStack m_LayerStack;
     Scope<ImGUILayer> m_ImGUILayer;
+    LayerStack m_LayerStack;
 
     bool m_Running{ true };
     float m_Frametime{ kDefaultFrametime };
