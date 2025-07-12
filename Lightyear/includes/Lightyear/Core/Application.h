@@ -14,12 +14,18 @@ class ImGUILayer;
  * @brief Represents the core application entry point and lifecycle manager for the Lightyear Engine.
  *
  * @details
- * The `Application` class serves as central hub for any lightyear Engine based program. It manages
- * the main application loop, handles window creation, process events and maintains the layered
- * architecture for modular functionality (Layers and Overlays)
+ * The `Application` class serves as central hub for any lightyear Engine based program. It manages the main application
+ * loop, handles window creation, process events and maintains the layered architecture for modular functionality
+ * (Layers and Overlays)
  *
- * @note Designed as a **singleton** only one instance of `Application` can exist globally. Use
- * the method ``
+ * @note Designed as a **singleton** only one instance of `Application` can exist globally. **Clients must implement an
+ * external factory function `CreateApplication()`** that returns a `Scope<Application>` to their derived application
+ * class. The framework's internal `main()` function will then call this factory and pass the returned instance to
+ * `Application::Create()`.
+ *
+ * @section ThreadSafety
+ * This class is not inherently thread-safe by default. All interactions with the `Application` instance should
+ * typically occur on the main thread unless explicitly stated otherwise for specific methods.
  */
 class LIGHTYEAR_API Application {
 public:

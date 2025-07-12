@@ -13,21 +13,18 @@ class RendererContext;
 
 class LIGHTYEAR_API WindowsWindow : public Window {
 public:
-    WindowsWindow(const WindowProps& props);
-    virtual ~WindowsWindow();
+    explicit WindowsWindow(const WindowProps& props) : m_Data({props.Title, props.Size}) {}
+     ~WindowsWindow() override = default;
 
-    virtual void OnUpdate() override;
+    void OnUpdate() override;
 
-    inline uint32_t GetWidth() const override { return m_Data.Width; }
-    inline uint32_t GetHeight() const override { return m_Data.Height; }
+    inline float GetTime() const override;
+    inline void SetVSync(bool isEnabled) override;
 
-    // Window Attributes
-    virtual void SetVSync(bool isEnabled) override;
-    virtual bool IsVSync() const override;
-    virtual void* GetNativeWindow() const override { return static_cast<void*>(m_Window); }
-    inline void SetEventCallback(const EventCallbackFn& callback) override { m_Data.EventCallback = callback; }
-
-    virtual float GetTime() const override;
+    bool IsVSync() const override {return m_Data.VSync;}
+    void SetEventCallback(const EventCallbackFn& callback) override { m_Data.EventCallback = callback; }
+    glm::vec2<uint32_t> GetSize() const override {return m_Data.WindowSize;}
+    void* GetNativeWindow() const override { return static_cast<void*>(m_Window); }
 
 protected:
     /**
@@ -54,6 +51,8 @@ protected:
      */
     virtual void SetupWindowCallbacks();
 
+    bool m_bIsGLFWInitialized{ false };
+
 private:
     GLFWwindow* m_Window{ nullptr };
     Scope<renderer::RendererContext> m_Context{};
@@ -66,14 +65,15 @@ private:
      */
     struct WindowsData {
         std::string_view Title{ "Demo" };
-        uint32_t Height{ 0 };
-        uint32_t Width{ 0 };
+        glm::vec2<uint32_t> WindowSize{ 800, 600 };
         bool VSync{ true };
 
         EventCallbackFn EventCallback;
+
+        WindowsData(std::string_view title, glm::vec2<uint32_t> windowSize) : Title(title), WindowSize(windowSize) {}
     };
 
-    WindowsData m_Data{};
+    WindowsData m_Data;
 };
 
 }  // namespace ly

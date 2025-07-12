@@ -39,7 +39,7 @@ option(LY_ENABLE_DEPRECATION_WARNINGS "Enable deprecations warning" ON)
 
 
 #-------------------------------------------------
-# Utility definations
+# Utility definitions
 #-------------------------------------------------
 function(disable_clang_tidy TARGET)
     if(TARGET ${TARGET})
@@ -126,7 +126,7 @@ target_link_libraries(Lightyear
 )
 
 #-------------------------------------------------
-# Compile definations
+# Compile definitions
 #-------------------------------------------------
 target_compile_definitions(Lightyear 
 	PRIVATE 
@@ -157,7 +157,7 @@ target_compile_options(Lightyear PRIVATE
 target_compile_options(Lightyear PRIVATE /EHsc)
 
 #-------------------------------------------------
-# Optional Compile definations
+# Optional Compile definitions
 #-------------------------------------------------
 if (LY_GRAPHICS_DEBUG)
 	target_compile_definitions(Lightyear PRIVATE LY_OPENGL_DEBUG)

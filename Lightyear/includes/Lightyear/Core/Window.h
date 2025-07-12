@@ -8,13 +8,11 @@ class Event;
 
 struct WindowProps {
     std::string_view Title;
-    uint32_t Width;
-    uint32_t Height;
+    glm::vec2<uint32_t> Size;
 
     WindowProps(std::string_view title = kDefaultWindowTitle,
-                uint32_t width         = kDefaultWindowWidth,
-                uint32_t height        = kDefaultWindowHeight)
-        : Title(title), Width(width), Height(height) {}
+                glm::vec2 size         = glm::vec2(kDefaultWindowWidth, kDefaultWindowHeight))
+        : Title(title), Size(size) {}
 };
 
 /**
@@ -22,20 +20,25 @@ struct WindowProps {
  */
 class LIGHTYEAR_API Window {
 public:
-    virtual ~Window() {}
+    Window()          = default;
+    virtual ~Window() = default;
 
-    virtual void OnUpdate()            = 0;
-    virtual uint32_t GetWidth() const  = 0;
-    virtual uint32_t GetHeight() const = 0;
-    virtual float GetTime() const      = 0;
+    /**
+     * Create a new window
+     *
+     * @param props The window properties
+     * @return The new Window
+     */
+    static Scope<Window> Create(const WindowProps& props = WindowProps());
 
-    // Window Attributes
+    virtual void OnUpdate()                         = 0;
+    [[nodiscard]] virtual glm::vec2<uint32_t> GetSize() const = 0;
+    [[nodiscard]] virtual float GetTime() const     = 0;
+
     virtual void SetEventCallback(const EventCallbackFn& callback) = 0;
     virtual void SetVSync(bool isEnabled)                          = 0;
-    virtual bool IsVSync() const                                   = 0;
-    virtual void* GetNativeWindow() const                          = 0;
-
-    static Scope<Window> Create(const WindowProps& props = WindowProps());
+    [[nodiscard]] virtual bool IsVSync() const                     = 0;
+    [[nodiscard]] virtual void* GetNativeWindow() const            = 0;
 };
 
 }  // namespace ly

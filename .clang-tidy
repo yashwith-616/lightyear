@@ -35,7 +35,7 @@ CheckOptions:
   - key: readability-identifier-naming.EnumCase
     value: CamelCase
   - key: readability-identifier-naming.EnumConstantCase
-    value: CamelCase
+    value: UpperSnakeCase
   - key: readability-identifier-naming.FunctionCase
     value: CamelCase
   - key: readability-identifier-naming.VariableCase
@@ -48,14 +48,25 @@ CheckOptions:
     value: k_
   - key: readability-identifier-naming.LocalConstantCase
     value: camelBack
-  - key: readability-identifier-naming.MemberPrefix
-    value: m_
   - key: readability-identifier-naming.StaticMemberPrefix
     value: s_
   - key: readability-identifier-naming.GlobalVariablePrefix
     value: g_
   - key: readability-identifier-naming.NamespaceCase
     value: lower_case
+  # --- Class variables Naming ---
+  - key: readability-identifier-naming.MemberCase
+    value: camelBack
+  - key: readability-identifier-naming.PublicMemberCase
+    value: CamelCase
+  - key: readability-identifier-naming.PrivateMemberPrefix
+    value: m_
+  - key: readability-identifier-naming.PrivateMemberCase
+    value: camelBack
+  - key: readability-identifier-naming.ProtectedMemberPrefix
+    value: m_
+  - key: readability-identifier-naming.ProtectedMemberCase
+    value: camelBack
 
   # === Modernization ===
   - key: modernize-use-default-member-init

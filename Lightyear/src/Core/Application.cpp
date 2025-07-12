@@ -63,7 +63,7 @@ void Application::OnEvent(Event& event) {
     }
 }
 
-bool Application::OnWindowClose(WindowCloseEvent& event) {
+bool Application::OnWindowClose(WindowCloseEvent& /*event*/) {
     m_Running = false;
     return true;
 }

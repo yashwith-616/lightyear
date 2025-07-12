@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Lightyear/Common/Macros.h"
+
 #include <algorithm>
 #include <array>
 #include <chrono>
@@ -28,6 +30,8 @@
 #include <new>
 #include <utility>
 
+
+LY_DISABLE_WARNINGS_PUSH
 #include <glm/glm.hpp>
 
 #define GLM_ENABLE_EXPERIMENTAL
@@ -35,3 +39,4 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtx/string_cast.hpp>
+LY_DISABLE_WARNINGS_POP
