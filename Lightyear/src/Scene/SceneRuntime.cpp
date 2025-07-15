@@ -11,23 +11,27 @@ namespace ly::scene {
 
 SceneRuntime::SceneRuntime(Scene* scene) : m_WPtrScene(scene) {}
 
+// NOLINTNEXTLINE
 void SceneRuntime::OnRuntimeStart() {
     LY_LOG(ly::LogType::Warn, "OnRuntimeStart has not been updated yet");
 }
 
+// NOLINTNEXTLINE
 void SceneRuntime::OnRuntimeStop() {
     LY_CORE_ASSERT(false, "OnRuntimeStop has not been updated yet");
 }
 
+// NOLINTNEXTLINE
 void SceneRuntime::OnSimulationStart() {
     LY_CORE_ASSERT(false, "OnSimulationStart has not been updated yet");
 }
 
+// NOLINTNEXTLINE
 void SceneRuntime::OnSimulationStop() {
     LY_CORE_ASSERT(false, "OnSimulationStop has not been updated yet");
 }
 
-void SceneRuntime::OnUpdateRuntime(Timestep deltaTime) {
+void SceneRuntime::OnUpdateRuntime(Timestep /*deltaTime*/) {
     LY_CORE_ASSERT(IsRunning(), "EditorUpdate is performed when scene is not paused!");
 
     m_SceneData.Time = Application::Get().GetWindow().GetTime();
@@ -51,12 +55,13 @@ void SceneRuntime::OnUpdateRuntime(Timestep deltaTime) {
     renderer::Renderer::EndScene();
 }
 
-void SceneRuntime::OnUpdateSimulation(Timestep deltaTime, Ref<renderer::SceneCamera> camera) {
+// NOLINTNEXTLINE
+void SceneRuntime::OnUpdateSimulation(Timestep /*deltaTime*/, Ref<renderer::SceneCamera> /*camera*/) {
     // TODO: Update physics simulation logic only
     LY_CORE_ASSERT(false, "OnUpdateSimulation has not been updated yet");
 }
 
-void SceneRuntime::OnUpdateEditor(Timestep deltaTime, const Ref<renderer::SceneCamera>& camera) {
+void SceneRuntime::OnUpdateEditor(Timestep /*deltaTime*/, const Ref<renderer::SceneCamera>& camera) {
     m_SceneData.Time = Application::Get().GetWindow().GetTime();
 
     LY_CORE_ASSERT(IsPaused(), "EditorUpdate is performed when scene is not paused!");
@@ -82,6 +87,7 @@ void SceneRuntime::OnViewportResize(glm::uvec2 size) {
     m_ViewportSize.x = size.x;
     m_ViewportSize.y = size.y;
 
+    // NOLINTNEXTLINE
     m_WPtrScene->GetPrimaryCameraEntity().GetComponent<CameraComponent>().Camera->Resize(size.x, size.y);
 }
 

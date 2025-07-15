@@ -10,7 +10,7 @@ class SceneCamera;
 
 namespace ly::scene {
 
-enum class SceneExecState { NONE = 0, PAUSED = 1, RUNNING = 2, SIMULATION = 3, MAX = 4 };
+enum class SceneExecState : uint8_t { NONE = 0, PAUSED = 1, RUNNING = 2, SIMULATION = 3, MAX = 4 };
 
 class LIGHTYEAR_API SceneRuntime {
 public:

@@ -2,6 +2,7 @@
 #include "Lightyear/Scene/Components/Components.h"
 #include "Lightyear/Scene/Entity.h"
 
+// NOLINTBEGIN
 namespace {
 template <typename... Component>
 void CopyComponent(entt::registry& dst,
@@ -32,7 +33,9 @@ template <typename... Component>
 void CopyComponentIfExists(ly::scene::Entity dst, ly::scene::Entity src) {
     (
         [&]() {
-            if (src.HasComponent<Component>()) dst.AddOrReplaceComponent<Component>(src.GetComponent<Component>());
+            if (src.HasComponent<Component>()) {
+                dst.AddOrReplaceComponent<Component>(src.GetComponent<Component>());
+            }
         }(),
         ...);
 }
@@ -42,6 +45,7 @@ void CopyComponentIfExists(ly::scene::ComponentGroup<Component...>, ly::scene::E
     CopyComponentIfExists<Component...>(dst, src);
 }
 }  // namespace
+// NOLINTEND
 
 namespace ly::scene {
 
@@ -180,9 +184,9 @@ Entity Scene::DuplicateEntity(Entity entity) {
 
 Entity Scene::FindEntityByName(const std::string& name) const {
     auto view = m_Registry.view<TagComponent>();
-    for (auto entity : view) {
-        const TagComponent& tc = view.get<TagComponent>(entity);
-        if (tc.Tag == name) {
+    for (const auto entity : view) {
+        const TagComponent& tagComponent = view.get<TagComponent>(entity);
+        if (tagComponent.Tag == name) {
             return Entity{ entity, const_cast<Scene*>(this) };
         }
     }
@@ -218,7 +222,7 @@ Entity Scene::CreateEntity(UUID UUID,
         entity.AddComponent<RelationshipComponent>(parent.value().get(), entity, entity);
     }
 
-    m_EntityNameMap[entity.GetComponent<TagComponent>().Tag] = entity;
+    m_EntityNameMap[entity.GetComponent<TagComponent>().Tag] = static_cast<uint32_t>(entity);
     return entity;
 }
 
@@ -226,7 +230,7 @@ Entity Scene::CreateEntity(UUID UUID,
 /**
  * Cons:
  * 1. Ability to rename has been lost. Need to update this again.
- * 2. Can attach the editorial names to the ScneNode. Makes it heavy and may cause issue when
+ * 2. Can attach the editorial names to the SceneNode. Makes it heavy and may cause issue when
  * converting SceneGraph to SceneTree.
  */
 std::string Scene::GenerateUniqueName(const std::string& baseName) {
@@ -238,7 +242,7 @@ std::string Scene::GenerateUniqueName(const std::string& baseName) {
 }
 
 template <typename T>
-void Scene::OnComponentAdded(Entity entity, T& component) {
+void Scene::OnComponentAdded(Entity /*entity*/, T& /*component*/) {
     LY_CORE_LOG(ly::LogType::Warn, "Scene::OnComponentAdded: Generic handler for component type");
 
     if constexpr (std::is_empty_v<T>) {

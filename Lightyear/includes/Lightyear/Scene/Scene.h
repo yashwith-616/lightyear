@@ -39,7 +39,7 @@ protected:
 
 private:
     entt::registry m_Registry;
-    std::unordered_map<std::string, int> m_EntityNameMap{};
+    std::unordered_map<std::string, uint32_t> m_EntityNameMap;
 
     std::string GenerateUniqueName(const std::string& baseName);
     template <typename T>
