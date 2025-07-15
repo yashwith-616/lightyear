@@ -15,6 +15,10 @@ class Shader;
 class VertexArray;
 class Texture;
 
+/**
+ * Fix this entire class when Rendering System is prioritized and written
+ *
+ */
 struct LIGHTYEAR_API RenderSubmission {
     Ref<Shader> RSShader{};
     Ref<VertexArray> RSVertexArray{};

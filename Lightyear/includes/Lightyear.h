@@ -27,6 +27,7 @@
 #include "Lightyear/Scene/Components/Components.h"
 #include "Lightyear/Scene/Entity.h"
 #include "Lightyear/Scene/Scene.h"
+#include "Lightyear/Scene/SceneRuntime.h"
 
 #pragma endregion
 

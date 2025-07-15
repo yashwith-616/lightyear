@@ -1,23 +1,17 @@
 #include "Lightyear/Scene/Scene.h"
-#include "Lightyear/Core/Application.h"
-#include "Lightyear/Core/Window.h"
-#include "Lightyear/Renderer/Abstract/Renderer.h"
-#include "Lightyear/Renderer/Camera/SceneCamera.h"
 #include "Lightyear/Scene/Components/Components.h"
 #include "Lightyear/Scene/Entity.h"
 
-namespace ly::scene {
-
-#pragma region Copy Component Template
+namespace {
 template <typename... Component>
-static void CopyComponent(entt::registry& dst,
-                          entt::registry& src,
-                          const std::unordered_map<UUID, entt::entity>& enttMap) {
+void CopyComponent(entt::registry& dst,
+                   entt::registry& src,
+                   const std::unordered_map<ly::UUID, entt::entity>& enttMap) {
     (
         [&]() {
             auto view = src.view<Component>();
             for (auto srcEntity : view) {
-                entt::entity dstEntity = enttMap.at(src.get<IDComponent>(srcEntity).ID);
+                entt::entity dstEntity = enttMap.at(src.get<ly::scene::IDComponent>(srcEntity).ID);
 
                 auto& srcComponent = src.get<Component>(srcEntity);
                 dst.emplace_or_replace<Component>(dstEntity, srcComponent);
@@ -27,15 +21,15 @@ static void CopyComponent(entt::registry& dst,
 }
 
 template <typename... Component>
-static void CopyComponent(ComponentGroup<Component...>,
-                          entt::registry& dst,
-                          entt::registry& src,
-                          const std::unordered_map<UUID, entt::entity>& enttMap) {
+void CopyComponent(ly::scene::ComponentGroup<Component...>,
+                   entt::registry& dst,
+                   entt::registry& src,
+                   const std::unordered_map<ly::UUID, entt::entity>& enttMap) {
     CopyComponent<Component...>(dst, src, enttMap);
 }
 
 template <typename... Component>
-static void CopyComponentIfExists(Entity dst, Entity src) {
+void CopyComponentIfExists(ly::scene::Entity dst, ly::scene::Entity src) {
     (
         [&]() {
             if (src.HasComponent<Component>()) dst.AddOrReplaceComponent<Component>(src.GetComponent<Component>());
@@ -44,23 +38,24 @@ static void CopyComponentIfExists(Entity dst, Entity src) {
 }
 
 template <typename... Component>
-static void CopyComponentIfExists(ComponentGroup<Component...>, Entity dst, Entity src) {
+void CopyComponentIfExists(ly::scene::ComponentGroup<Component...>, ly::scene::Entity dst, ly::scene::Entity src) {
     CopyComponentIfExists<Component...>(dst, src);
 }
+}  // namespace
 
-#pragma endregion
+namespace ly::scene {
 
 #pragma region Entity Management
-Entity Scene::CreateEntity(const CName& name) {
+Entity Scene::CreateEntity(const std::string& name) {
     return CreateEntity(UUID(), name);
 }
 
-Entity Scene::CreateEntity(const CName& name, const Entity& parent) {
+Entity Scene::CreateEntity(const std::string& name, const Entity& parent) {
     return CreateEntity(UUID(), name, std::cref(parent));
 }
 
-Entity Scene::CreateChildEntity(Entity parent, const CName& name) {
-    Entity entity = CreateEntity(name, parent);
+Entity Scene::CreateChildEntity(Entity parent, const std::string& name) {
+    const Entity entity = CreateEntity(name, parent);
     AddChildNode(entity, parent);
     return entity;
 }
@@ -79,8 +74,8 @@ Entity Scene::CreateChildEntity(Entity parent, const CName& name) {
  * TODO: Ordering child node is not important, can use the second element to insert instead of
  * revolving around.
  *
- * @param parent the parent node to which this child is added
- * @param name the name of the parent node
+ * @param newParent the parent node to which this child is added
+ * @param childEntity the name of the parent node
  */
 void Scene::AddChildNode(Entity childEntity, Entity newParent) {
     LY_CORE_ASSERT(m_Registry.valid(childEntity), "Child Entity is invalid");
@@ -110,7 +105,6 @@ void Scene::AddChildNode(Entity childEntity, Entity newParent) {
     fistChildRelation.PrevSibling   = childEntity;
 
     parentRelation.ChildrenCount++;
-    return;
 }
 
 /**
@@ -178,14 +172,13 @@ Entity Scene::DuplicateEntity(Entity entity) {
     LY_CORE_ASSERT(m_Registry.valid(entity), "Entity is invalid");
 
     // Recursively need to duplicate child entities.
-
     const std::string name = entity.GetName();
     Entity newEntity       = CreateEntity(name);
     CopyComponentIfExists(AllComponents{}, newEntity, entity);
     return newEntity;
 }
 
-Entity Scene::FindEntityByName(const CName& name) const {
+Entity Scene::FindEntityByName(const std::string& name) const {
     auto view = m_Registry.view<TagComponent>();
     for (auto entity : view) {
         const TagComponent& tc = view.get<TagComponent>(entity);
@@ -210,75 +203,9 @@ Entity Scene::GetPrimaryCameraEntity() const {
 
 #pragma endregion
 
-// TODO: Can move this entire section to new class called SceneRuntime. Doesn't fit here. Scene need
-// to manage scene_registry alone and not what happens at runtime.
-#pragma region Runtime, EditorRuntime
-void Scene::OnRuntimeStart() {}
-
-void Scene::OnRuntimeStop() {}
-
-void Scene::OnSimulationStart() {}
-
-void Scene::OnSimulationEnd() {}
-
-void Scene::OnUpdateRuntime(ly::Timestep deltaTime) {
-    LY_CORE_ASSERT(IsRunning(), "EditorUpdate is performed when scene is not paused!");
-
-    m_SceneData.Time = Application::Get().GetWindow().GetTime();
-
-    CameraComponent cameraComp = GetPrimaryCameraEntity().GetComponent<CameraComponent>();
-    renderer::Renderer::BeginScene(cameraComp.Camera, m_SceneData);
-
-    auto view = m_Registry.view<RenderComponent, MeshComponent, TransformComponent>();
-    for (auto entity : view) {
-        const auto& [render, mesh, transform] = view.get<RenderComponent, MeshComponent, TransformComponent>(entity);
-
-        if (!mesh.ShaderAsset || !mesh.MeshAsset) {
-            continue;
-        }
-
-        renderer::Renderer::Submit(
-            renderer::RenderSubmission(mesh.ShaderAsset, mesh.MeshAsset, mesh.TextureAsset, transform.GetTransform()));
-    }
-
-    renderer::Renderer::EndScene();
-}
-
-void Scene::OnUpdateSimulation(ly::Timestep deltaTime, Ref<renderer::SceneCamera> camera) {
-    // Update Physics
-}
-
-void Scene::OnUpdateEditor(ly::Timestep deltaTime, Ref<renderer::SceneCamera> camera) {
-    m_SceneData.Time = Application::Get().GetWindow().GetTime();
-
-    LY_CORE_ASSERT(IsPaused(), "EditorUpdate is performed when scene is not paused!");
-    renderer::Renderer::BeginScene(std::static_pointer_cast<renderer::Camera>(camera), m_SceneData);
-
-    auto view = m_Registry.view<RenderComponent, MeshComponent, TransformComponent>();
-    for (auto entity : view) {
-        const auto& [render, mesh, transform] = view.get<RenderComponent, MeshComponent, TransformComponent>(entity);
-
-        if (!mesh.ShaderAsset || !mesh.MeshAsset) {
-            continue;
-        }
-
-        renderer::Renderer::Submit(
-            renderer::RenderSubmission(mesh.ShaderAsset, mesh.MeshAsset, mesh.TextureAsset, transform.GetTransform()));
-    }
-
-    renderer::Renderer::EndScene();
-}
-
-#pragma endregion
-
-void Scene::OnViewportResize(uint32_t width, uint32_t height) {
-    m_ViewportHeight = height;
-    m_ViewportWidth  = width;
-
-    GetPrimaryCameraEntity().GetComponent<CameraComponent>().Camera->Resize(width, height);
-}
-
-Entity Scene::CreateEntity(UUID UUID, const CName& name, std::optional<std::reference_wrapper<const Entity>> parent) {
+Entity Scene::CreateEntity(UUID UUID,
+                           const std::string& name,
+                           std::optional<std::reference_wrapper<const Entity>> parent) {
     Entity entity{ m_Registry.create(), this };
     entity.AddComponent<IDComponent>(UUID);
     entity.AddComponent<TagComponent>(GenerateUniqueName(name));
@@ -302,7 +229,7 @@ Entity Scene::CreateEntity(UUID UUID, const CName& name, std::optional<std::refe
  * 2. Can attach the editorial names to the ScneNode. Makes it heavy and may cause issue when
  * converting SceneGraph to SceneTree.
  */
-CName Scene::GenerateUniqueName(const CName& baseName) {
+std::string Scene::GenerateUniqueName(const std::string& baseName) {
     auto& count = m_EntityNameMap[baseName];
     if (count++ > 0) {
         return std::format("{}{}", baseName, count);
@@ -312,36 +239,11 @@ CName Scene::GenerateUniqueName(const CName& baseName) {
 
 template <typename T>
 void Scene::OnComponentAdded(Entity entity, T& component) {
-    static_assert(sizeof(T) == 0);
+    LY_CORE_LOG(ly::LogType::Warn, "Scene::OnComponentAdded: Generic handler for component type");
+
+    if constexpr (std::is_empty_v<T>) {
+        LY_CORE_LOG(ly::LogType::Warn, "Component is an empty type");
+    }
 }
-
-#pragma region Component Template Specialization
-template <>
-void Scene::OnComponentAdded<IDComponent>(Entity entity, IDComponent& component) {}
-
-template <>
-void Scene::OnComponentAdded<TransformComponent>(Entity entity, TransformComponent& component) {}
-
-template <>
-void Scene::OnComponentAdded<CameraComponent>(Entity entity, CameraComponent& component) {
-    if (m_ViewportWidth > 0 && m_ViewportHeight > 0) component.Camera->Resize(m_ViewportWidth, m_ViewportHeight);
-}
-
-template <>
-void Scene::OnComponentAdded<TagComponent>(Entity entity, TagComponent& component) {}
-
-template <>
-void Scene::OnComponentAdded<MobilityComponent>(Entity entity, MobilityComponent& component) {}
-
-template <>
-void Scene::OnComponentAdded<MeshComponent>(Entity entity, MeshComponent& component) {}
-
-template <>
-void Scene::OnComponentAdded<RenderComponent>(Entity entity, RenderComponent& component) {}
-
-template <>
-void Scene::OnComponentAdded<RelationshipComponent>(Entity entity, RelationshipComponent& component) {}
-
-#pragma endregion
 
 }  // namespace ly::scene

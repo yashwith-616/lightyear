@@ -49,17 +49,17 @@ void EditorLayer::OnAttach() {
 #pragma endregion
 
 #pragma region Game Scene
-    m_Scene                        = ly::MakeRef<ly::scene::Scene>();
+    m_Scene        = ly::MakeRef<ly::scene::Scene>();
+    m_SceneRuntime = ly::MakeScope<ly::scene::SceneRuntime>(m_Scene.get());
+
     auto newCamera                 = ly::MakeRef<EditorCamera>(aspect);
     ly::scene::Entity cameraEntity = m_Scene->CreateEntity("GameCamera");
     cameraEntity.AddComponent<ly::scene::CameraComponent>(newCamera);
-    m_Scene->OnViewportResize(1280, 720);
+    m_SceneRuntime->OnViewportResize(glm::uvec2(1280, 720));
 
     m_CubeEntity = m_Scene->CreateEntity("Cube");
     m_CubeEntity.AddComponent<ly::scene::MeshComponent>(Geometry::GetCube(), m_Shader, m_Texture);
     m_CubeEntity.AddComponent<ly::scene::RenderComponent>();
-
-    ly::scene::TransformComponent cubeTransform = m_CubeEntity.GetComponent<ly::scene::TransformComponent>();
 #pragma endregion
 
 #pragma region Inti Scene and Panels
@@ -77,12 +77,12 @@ void EditorLayer::OnUpdate(float deltaTime) {
     renderer::RenderCommand::SetClearColor(glm::vec4(0.f, 0.f, 0.f, 0.5f));
     renderer::RenderCommand::Clear();
 
-    if (m_Scene->IsPaused()) {
-        m_Scene->OnUpdateEditor(deltaTime, std::static_pointer_cast<ly::renderer::SceneCamera>(m_EditorCamera));
+    if (m_SceneRuntime->IsPaused()) {
+        m_SceneRuntime->OnUpdateEditor(deltaTime, std::static_pointer_cast<ly::renderer::SceneCamera>(m_EditorCamera));
     }
 
-    if (m_Scene->IsRunning()) {
-        m_Scene->OnUpdateRuntime(deltaTime);
+    if (m_SceneRuntime->IsRunning()) {
+        m_SceneRuntime->OnUpdateRuntime(deltaTime);
     }
 
     m_Framebuffer->Unbind();

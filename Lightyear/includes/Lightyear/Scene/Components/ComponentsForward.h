@@ -5,9 +5,9 @@
 #include "Lightyear/Renderer/Primitives/Texture.h"
 #include "Lightyear/Renderer/Primitives/VertexArray.h"
 
+LY_DISABLE_WARNINGS_PUSH
 #include <entt/entt.hpp>
-#include <glm/glm.hpp>
-#include <glm/gtx/quaternion.hpp>
+LY_DISABLE_WARNINGS_POP
 
 /**
  * @brief Need a bitset component that indicates all the component that can exists
@@ -17,7 +17,7 @@ namespace ly::scene {
 enum class EMobilityType { STATIC, STATIONARY, MOVABLE };
 
 /**
- * @brief Attaches an UUID to the component. All entity present in scene will have this component.
+ * @brief Attaches a UUID to the component. All entity present in scene will have this component.
  */
 struct IDComponent {
     UUID ID;
@@ -30,10 +30,10 @@ struct IDComponent {
  * @brief Used for naming a component. All entity present in the scene will have this component
  */
 struct TagComponent {
-    CName Tag{ "Default" };
+    std::string Tag{ "NULL" };
 
     TagComponent() = default;
-    TagComponent(const CName& tag) : Tag(tag) {}
+    TagComponent(const std::string& tag) : Tag(tag) {}
 };
 
 /**
@@ -102,7 +102,7 @@ struct RelationshipComponent {
     RelationshipComponent(entt::entity parent, entt::entity nextSibling, entt::entity prevSibling)
         : Parent(parent), NextSibling(nextSibling), PrevSibling(prevSibling) {}
 
-    inline void SetChild(entt::entity child) { FirstChild = child; }
+    void SetChild(entt::entity child) { FirstChild = child; }
 };
 
 }  // namespace ly::scene

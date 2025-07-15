@@ -2,8 +2,7 @@
 
 #include "Lightyear/LightyearCore.h"
 #include "Lightyear/Scene/Components/Components.h"
-#include "Scene.h"
-#include "entt/entt.hpp"
+#include "Lightyear/Scene/Scene.h"
 
 namespace ly::scene {
 
@@ -15,7 +14,11 @@ class Entity {
 public:
     Entity() = default;
     Entity(entt::entity handle, Scene* scene);
-    Entity(const Entity& other) = default;
+    Entity(const Entity& other)            = default;
+    Entity(Entity&& other)                 = default;
+    Entity& operator=(const Entity& other) = default;
+
+    ~Entity() = default;
 
     template <typename T, typename... Args>
     T& AddComponent(Args&&... args) {
@@ -39,7 +42,7 @@ public:
     }
 
     template <typename T>
-    bool HasComponent() {
+    [[nodiscard]] bool HasComponent() const {
         return m_Scene->m_Registry.all_of<T>(m_EntityHandle);
     }
 
@@ -56,8 +59,10 @@ public:
     UUID GetUUID() { return GetComponent<IDComponent>().ID; }
     const std::string& GetName() { return GetComponent<TagComponent>().Tag; }
 
-    bool operator!=(const Entity& other) { return !(*this == other); }
-    bool operator==(const Entity& other) { return m_EntityHandle == other.m_EntityHandle && m_Scene == other.m_Scene; }
+    bool operator!=(const Entity& other) const { return !(*this == other); }
+    bool operator==(const Entity& other) const {
+        return m_EntityHandle == other.m_EntityHandle && m_Scene == other.m_Scene;
+    }
 
 private:
     entt::entity m_EntityHandle{ entt::null };

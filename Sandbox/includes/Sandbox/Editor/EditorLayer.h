@@ -22,6 +22,7 @@ public:
 private:
     // TO BE REMOVED
     ly::Ref<ly::scene::Scene> m_Scene{};
+    ly::Scope<ly::scene::SceneRuntime> m_SceneRuntime{};
 
     // TO BE REMOVED
     ly::Ref<ly::renderer::Framebuffer> m_Framebuffer{};
