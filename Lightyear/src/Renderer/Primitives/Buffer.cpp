@@ -22,20 +22,20 @@ void BufferLayout::CalculateOffsetsAndStride() {
 #pragma endregion
 
 #pragma region VertexBuffer
-Ref<VertexBuffer> VertexBuffer::Create(uint32_t size) {
+Ref<VertexBuffer> VertexBuffer::Create(uint32_t sizeInBytes) {
     switch (Renderer::GetAPI()) {
         case RendererAPI::API::OpenGL:
-            return MakeRef<OpenGLVertexBuffer>(size);
+            return MakeRef<OpenGLVertexBuffer>(sizeInBytes);
         default:
             LY_CORE_ASSERT(false, "Invalid API Type is currently not supported!");
             return nullptr;
     }
 }
 
-Ref<VertexBuffer> VertexBuffer::Create(const float* vertices, uint32_t size) {
+Ref<VertexBuffer> VertexBuffer::Create(std::span<const float> vertices) {
     switch (Renderer::GetAPI()) {
         case RendererAPI::API::OpenGL:
-            return MakeRef<OpenGLVertexBuffer>(vertices, size);
+            return MakeRef<OpenGLVertexBuffer>(vertices);
         default:
             LY_CORE_ASSERT(false, "Invalid API Type is currently not supported!");
             return nullptr;
@@ -44,10 +44,10 @@ Ref<VertexBuffer> VertexBuffer::Create(const float* vertices, uint32_t size) {
 #pragma endregion
 
 #pragma region IndexBuffer
-Ref<IndexBuffer> IndexBuffer::Create(uint32_t* indices, uint32_t size) {
+Ref<IndexBuffer> IndexBuffer::Create(std::span<const uint32_t> indices) {
     switch (Renderer::GetAPI()) {
         case RendererAPI::API::OpenGL:
-            return MakeRef<OpenGLIndexBuffer>(indices, size);
+            return MakeRef<OpenGLIndexBuffer>(indices);
         default:
             LY_CORE_ASSERT(false, "Invalid API Type is currently not supported!");
             return nullptr;

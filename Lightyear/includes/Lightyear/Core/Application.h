@@ -100,7 +100,6 @@ private:
     static Scope<Application> s_Application;
 
     Scope<Window> m_Window;
-    Scope<ImGUILayer> m_ImGUILayer;
     LayerStack m_LayerStack;
 
     bool m_Running{ true };

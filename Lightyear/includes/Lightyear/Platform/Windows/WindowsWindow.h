@@ -59,13 +59,13 @@ private:
      * It is used within GLFW callbacks to access and update window data, and to dispatch events.
      */
     struct WindowsData {
-        std::string_view Title{ "Demo" };
+        std::string Title{ "Demo" };
         glm::uvec2 WindowSize{ 800, 600 };
         bool VSync{ true };
 
         EventCallbackFn EventCallback;
 
-        WindowsData(std::string_view title, glm::uvec2 windowSize) : Title(title), WindowSize(windowSize) {}
+        WindowsData(std::string title, glm::uvec2 windowSize) : Title(std::move(title)), WindowSize(windowSize) {}
     };
 
     WindowsData m_Data;

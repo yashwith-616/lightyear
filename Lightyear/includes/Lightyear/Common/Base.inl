@@ -32,7 +32,10 @@ Ref<T> TryLock(const WeakRef<T>& weak) {
     return weak.lock();
 }
 
-// ----------------------- Conversion -----------------------
-
+// ----------------------- Casting -----------------------
+template<typename T, typename U>
+constexpr T narrow_cast(U value) {
+    return static_cast<T>(value);
+}
 
 } // namespace ly

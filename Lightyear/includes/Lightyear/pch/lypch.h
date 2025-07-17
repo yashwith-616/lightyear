@@ -12,6 +12,7 @@
 #include <fstream>
 #include <functional>
 #include <queue>
+#include <span>
 #include <stack>
 #include <string>
 #include <string_view>

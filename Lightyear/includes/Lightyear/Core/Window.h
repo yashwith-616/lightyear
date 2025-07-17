@@ -7,11 +7,11 @@ namespace ly {
 class Event;
 
 struct WindowProps {
-    std::string_view Title{ kDefaultWindowTitle };
+    std::string Title{ kDefaultWindowTitle };
     glm::uvec2 Size{ glm::uvec2(kDefaultWindowWidth, kDefaultWindowHeight) };
 
     WindowProps() = default;
-    WindowProps(std::string_view title, glm::uvec2 size) : Title(title), Size(size) {}
+    WindowProps(std::string title, glm::uvec2 size) : Title(std::move(title)), Size(size) {}
 };
 
 /**

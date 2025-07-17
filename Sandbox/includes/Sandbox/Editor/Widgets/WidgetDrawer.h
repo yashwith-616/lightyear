@@ -54,8 +54,7 @@ private:
     bool field(const char*, T&) {
         return false;
     }
-
-private:
+    
     bool InputText(const char* label, std::string* str, ImGuiInputTextFlags flags = 0) {
         static char temp_buffer[1024];
         strncpy(temp_buffer, str->c_str(), sizeof(temp_buffer) - 1);

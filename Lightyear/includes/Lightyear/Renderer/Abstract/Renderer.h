@@ -36,7 +36,7 @@ public:
     static void Init();
     static void Shutdown();
 
-    static void OnWindowResize(uint32_t width, uint32_t height);
+    static void OnWindowResize(glm::uvec2 size);
 
     static void BeginScene(const Ref<Camera>& camera, const scene::SceneData& sceneData);
     static void EndScene();

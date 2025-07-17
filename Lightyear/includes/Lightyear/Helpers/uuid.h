@@ -1,7 +1,11 @@
 #pragma once
 
+#include "Lightyear/Common/Macros.h"
+
+LY_DISABLE_WARNINGS_PUSH
 #include <random>
 #include <xhash>
+LY_DISABLE_WARNINGS_POP
 
 namespace ly {
 
@@ -21,7 +25,7 @@ class UUID {
 public:
     UUID();
     explicit UUID(uint64_t UUID);
-    uint64_t Get() const { return m_UUID; }
+    [[nodiscard]] uint64_t Get() const { return m_UUID; }
 
     // Add equality operator
     bool operator==(const UUID& other) const { return m_UUID == other.m_UUID; }
@@ -33,7 +37,7 @@ private:
     uint64_t m_UUID;
 };
 
-static inline UUIDGenerator& GetUUIDGenerator() {
+static UUIDGenerator& GetUUIDGenerator() {
     static UUIDGenerator generator;
     return generator;
 }

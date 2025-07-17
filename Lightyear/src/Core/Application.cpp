@@ -23,8 +23,6 @@ Application::~Application() {
 
 void Application::Init() {
     renderer::Renderer::Init();
-    m_ImGUILayer = MakeScope<ImGUILayer>();
-    m_ImGUILayer->OnAttach();
 }
 
 void Application::Run() {
@@ -40,12 +38,11 @@ void Application::Run() {
         }
 
         //---- Update Game Engine Editor
-        m_ImGUILayer->BeginFrame();
+        ImGUILayer::EndFrame();
         for (const Scope<Layer>& layer : m_LayerStack) {
             layer->OnEditorRender();
-            m_ImGUILayer->OnEditorRender();
         }
-        m_ImGUILayer->EndFrame();
+        ImGUILayer::EndFrame();
         m_Window->OnUpdate();
     }
 }
@@ -64,8 +61,6 @@ void Application::OnEvent(Event& event) {
 
 bool Application::OnWindowClose(WindowCloseEvent& /*event*/) {
     m_Running = false;
-    m_ImGUILayer->OnDetach();
-    m_Window->ShutDown();
     return true;
 }
 

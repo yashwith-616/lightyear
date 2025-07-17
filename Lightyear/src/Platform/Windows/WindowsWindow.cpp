@@ -35,8 +35,8 @@ void WindowsWindow::Init() {
     }
 
     if (renderer::Renderer::GetAPI() == renderer::RendererAPI::API::OpenGL) {
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, OPENGL_MAJOR_VERSION);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, OPENGL_MINOR_VERSION);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 #ifdef LY_OPENGL_DEBUG
@@ -47,7 +47,7 @@ void WindowsWindow::Init() {
     // NOLINTNEXTLINE
     m_Window = glfwCreateWindow(static_cast<int>(m_Data.WindowSize.x),
                                 static_cast<int>(m_Data.WindowSize.y),
-                                m_Data.Title.data(),
+                                m_Data.Title.c_str(),
                                 nullptr,
                                 nullptr);
     LY_CORE_ASSERT(m_Window != nullptr, "GLFW window initialization failed!");

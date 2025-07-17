@@ -3,7 +3,7 @@
 EditorCamera::EditorCamera(float aspectRatio) : SceneCamera(aspectRatio) {}
 
 void EditorCamera::Resize(float width, float height) {
-    float aspect = width / height;
+    const float aspect = width / height;
     RecalculateProjectionMatrix(-aspect * m_Zoom, aspect * m_Zoom, -m_Zoom, m_Zoom);
     RecalculateViewMatrix();
 }
@@ -59,10 +59,11 @@ void EditorCamera::SetOrthographic(float left, float right, float bottom, float 
 void EditorCamera::ClampPitch() {
     // Prevent camera flipping if pitch goes beyond straight up/down
     constexpr float limit = glm::radians(89.0f);
-    if (m_Rotation.x > limit)
+    if (m_Rotation.x > limit) {
         m_Rotation.x = limit;
-    else if (m_Rotation.x < -limit)
+    } else if (m_Rotation.x < -limit) {
         m_Rotation.x = -limit;
+    }
 }
 
 void EditorCamera::DebugCamera() {

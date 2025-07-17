@@ -71,28 +71,31 @@ void OpenGLVertexArray::AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer) {
             case ShaderDataType::INT3:
             case ShaderDataType::INT4:
             case ShaderDataType::BOOL: {
+                const auto strideSize        = narrow_cast<GLsizei>(layout.GetStride());
+                const auto componentCount    = narrow_cast<GLint>(element.GetComponentCount());
+                const GLboolean isNormalized = element.IsNormalized ? GL_TRUE : GL_FALSE;
+
                 glEnableVertexAttribArray(m_VertexBufferIndex);
-                glVertexAttribPointer(m_VertexBufferIndex,
-                                      element.GetComponentCount(),
-                                      glType,
-                                      element.IsNormalized ? GL_TRUE : GL_FALSE,
-                                      layout.GetStride(),
-                                      AsVoidPtr(element.Offset));
+                glVertexAttribPointer(
+                    m_VertexBufferIndex, componentCount, glType, isNormalized, strideSize, AsVoidPtr(element.Offset));
                 m_VertexBufferIndex++;
                 break;
             }
 
             case ShaderDataType::MAT3:
             case ShaderDataType::MAT4: {
-                const uint8_t count = element.GetComponentCount();
-                for (uint8_t i = 0; i < count; i++) {
+                const auto strideSize        = narrow_cast<GLsizei>(layout.GetStride());
+                const auto componentCount    = narrow_cast<GLint>(element.GetComponentCount());
+                const GLboolean isNormalized = element.IsNormalized ? GL_TRUE : GL_FALSE;
+
+                for (int i = 0; i < componentCount; i++) {
                     glEnableVertexAttribArray(m_VertexBufferIndex);
                     glVertexAttribPointer(m_VertexBufferIndex,
-                                          count,
+                                          componentCount,
                                           glType,
-                                          element.IsNormalized ? GL_TRUE : GL_FALSE,
-                                          layout.GetStride(),
-                                          AsVoidPtr(element.Offset + (sizeof(float) * count * i)));
+                                          isNormalized,
+                                          strideSize,
+                                          AsVoidPtr(element.Offset + (sizeof(float) * componentCount * i)));
                     glVertexAttribDivisor(m_VertexBufferIndex, 1);
                     m_VertexBufferIndex++;
                 }

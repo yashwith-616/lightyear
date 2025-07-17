@@ -37,7 +37,7 @@ std::string Shader::ReadFile(const std::filesystem::path& shaderFilePath) {
     // Move the file pointer to the beginning and create a string with exact size
     file.seekg(0, std::ios::beg);
     std::string content(size, '\0');
-    file.read(&content[0], size);
+    file.read(content.data(), size);
     return content;
 }
 

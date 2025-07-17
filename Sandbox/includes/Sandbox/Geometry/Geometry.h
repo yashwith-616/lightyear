@@ -4,11 +4,11 @@
 
 class Geometry {
 public:
-    ly::Ref<ly::renderer::VertexArray> m_CubeVertexArray;
-    ly::Ref<ly::renderer::VertexArray> m_SphereVertexArray;
-    ly::Ref<ly::renderer::VertexArray> m_CylinderVertexArray;
-    ly::Ref<ly::renderer::VertexArray> m_TeapotVertexArray;
-    ly::Ref<ly::renderer::VertexArray> m_PlaneVertexArray;
+    ly::Ref<ly::renderer::VertexArray> CubeVertexArray;
+    ly::Ref<ly::renderer::VertexArray> SphereVertexArray;
+    ly::Ref<ly::renderer::VertexArray> CylinderVertexArray;
+    ly::Ref<ly::renderer::VertexArray> TeapotVertexArray;
+    ly::Ref<ly::renderer::VertexArray> PlaneVertexArray;
 
     Geometry();
 

@@ -6,8 +6,8 @@ LY_DISABLE_WARNINGS_POP
 
 namespace ly::renderer {
 
-OpenGLUniformBuffer::OpenGLUniformBuffer(const CName& name, uint32_t size, uint32_t bindingPoint)
-    : m_BindingPoint(bindingPoint) {
+OpenGLUniformBuffer::OpenGLUniformBuffer(std::string name, uint32_t size, uint32_t bindingPoint)
+    : UniformBuffer(std::move(name)), m_BindingPoint(bindingPoint) {
     glCreateBuffers(1, &m_BufferID);
     glNamedBufferData(m_BufferID, size, nullptr, GL_DYNAMIC_DRAW);  // TODO: investigate usage hint
     glBindBufferBase(GL_UNIFORM_BUFFER, bindingPoint, m_BufferID);
@@ -25,8 +25,8 @@ void OpenGLUniformBuffer::UnBind() const {
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
-void OpenGLUniformBuffer::Debug(uint32_t programID, const CName& blockName) {
-    GLuint blockIndex = glGetUniformBlockIndex(programID, blockName.c_str());
+void OpenGLUniformBuffer::Debug(uint32_t programID, const std::string& blockName) {
+    const GLuint blockIndex = glGetUniformBlockIndex(programID, blockName.c_str());
     if (blockIndex == GL_INVALID_INDEX) {
         LY_CORE_LOG(LogType::Error, "UBO block '{}' not found in shader program", blockName);
         return;
@@ -63,22 +63,25 @@ void OpenGLUniformBuffer::Debug(uint32_t programID, const CName& blockName) {
                           GL_UNIFORM_SIZE,
                           sizes.data());
 
-    std::vector<char> nameBuffer(256);
+    constexpr uint32_t bufferSize = 256;
+    std::vector<char> nameBuffer(bufferSize);
     std::vector<uint8_t> bufferData(blockSize);
 
     glBindBuffer(GL_UNIFORM_BUFFER, m_BufferID);
     glGetBufferSubData(GL_UNIFORM_BUFFER, 0, blockSize, bufferData.data());
 
     LY_CORE_LOG(LogType::Info, "UBO '{}' has {} active uniforms:", blockName, activeUniforms);
+
     for (GLint i = 0; i < activeUniforms; ++i) {
-        GLsizei nameLen = 0;
-        GLenum enumVal  = types[i];
+        GLsizei nameLength = 0;
+        GLenum uniformType = types[i];
+
         glGetActiveUniform(programID,
                            uniformIndices[i],
                            static_cast<GLsizei>(nameBuffer.size()),
-                           &nameLen,
+                           &nameLength,
                            &sizes[i],
-                           &enumVal,
+                           &uniformType,
                            nameBuffer.data());
 
         const char* name = nameBuffer.data();
@@ -87,13 +90,17 @@ void OpenGLUniformBuffer::Debug(uint32_t programID, const CName& blockName) {
 
         LY_CORE_LOG(LogType::Info, "  Name: {}, Offset: {}, Type: 0x{:X}", name, offset, type);
 
-        // Dump value bytes (up to 16 bytes for preview)
+        constexpr int maxPreviewBytes = 16;
+
+        // Dump value bytes (up to kMaxPreviewBytes)
         std::string hexDump;
-        for (int j = 0; j < std::min(16, blockSize - offset); ++j) {
-            char byteStr[4];
-            sprintf(byteStr, "%02X ", bufferData[offset + j]);
-            hexDump += byteStr;
+        const int availableBytes = blockSize - offset;
+        const int bytesToDump    = std::min(maxPreviewBytes, availableBytes);
+
+        for (int j = 0; j < bytesToDump; ++j) {
+            std::format_to(std::back_inserter(hexDump), "{:02X} ", static_cast<uint8_t>(bufferData[offset + j]));
         }
+
         LY_CORE_LOG(LogType::Info, "    Raw bytes: {}", hexDump);
     }
 }

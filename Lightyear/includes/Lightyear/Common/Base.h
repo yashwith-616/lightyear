@@ -2,6 +2,9 @@
 
 #include "Lightyear/pch/lypch.h"
 
+constexpr int OPENGL_MAJOR_VERSION{ 4 };
+constexpr int OPENGL_MINOR_VERSION{ 6 };
+
 namespace ly {
 
 // ----------------------- Constants ---------------------------
@@ -25,8 +28,6 @@ inline const void* AsVoidPtr(const uint32_t value) {
 // ----------------------- Callbacks ---------------------------
 using EventCallbackFn = std::function<void(class Event&)>;
 
-using CName = std::string;
-using CText = std::string;
 using CPath = std::filesystem::path;
 
 }  // namespace ly

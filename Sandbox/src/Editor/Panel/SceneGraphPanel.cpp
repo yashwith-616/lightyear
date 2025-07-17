@@ -11,12 +11,13 @@ void SceneGraphPanel::OnImGuiRender() {
 
     auto windowSize = ImGui::GetContentRegionAvail();
 
-    ImGui::BeginChild("Entities", { windowSize.x * 0.3f, windowSize.y });
+    constexpr float entitiesVerticalSplitRatio = 0.3f;
+    ImGui::BeginChild("Entities", { windowSize.x * entitiesVerticalSplitRatio, windowSize.y });
     auto view = m_Scene->GetAllEntitiesWith<ly::scene::TagComponent>();
 
     for (auto entity : view) {
-        const auto& tag = view.get<ly::scene::TagComponent>(entity);
-        bool isSelected = m_SelectedEntity && *m_SelectedEntity == entity;
+        const auto& tag       = view.get<ly::scene::TagComponent>(entity);
+        const bool isSelected = m_SelectedEntity && *m_SelectedEntity == entity;
         if (ImGui::Selectable(tag.Tag.c_str(), isSelected)) {
             m_SelectedEntity = ly::MakeRef<ly::scene::Entity>(entity, m_Scene.get());
         }
@@ -26,11 +27,12 @@ void SceneGraphPanel::OnImGuiRender() {
 
     ImGui::SameLine();
 
-    ImGui::BeginChild("Entity", { windowSize.x * 0.7f, windowSize.y });
+    constexpr float componentsVerticalSplitRatio = 0.7f;
+    ImGui::BeginChild("Entity", { windowSize.x * componentsVerticalSplitRatio, windowSize.y });
     if (m_SelectedEntity) {
-        drawComponent<ly::scene::TagComponent>("Tag");
-        drawComponent<ly::scene::IDComponent>("Id");
-        drawComponent<ly::scene::TransformComponent>("Transform");
+        DrawComponent<ly::scene::TagComponent>("Tag");
+        DrawComponent<ly::scene::IDComponent>("Id");
+        DrawComponent<ly::scene::TransformComponent>("Transform");
     }
     ImGui::EndChild();
 

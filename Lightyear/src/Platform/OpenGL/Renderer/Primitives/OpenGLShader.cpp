@@ -2,7 +2,6 @@
 #include "Lightyear/Renderer/Primitives/RenderTypes.h"
 
 namespace {
-using ly::renderer::OpenGLShader;
 using ly::renderer::ShaderType;
 
 GLenum GetGLShaderType(ShaderType shaderType) {
@@ -30,7 +29,7 @@ GLenum GetGLShaderType(ShaderType shaderType) {
 namespace ly::renderer {
 
 OpenGLShader::OpenGLShader(std::string name, const std::unordered_map<ShaderType, CPath>& shaderFiles)
-    : m_Name(std::move(name)) {
+    : m_ShaderHandle(glCreateProgram()), m_Name(std::move(name)) {
     std::array<ShaderHandle, g_ShaderTypeCount> shaderHandles = {};
     for (const auto& [shaderType, path] : shaderFiles) {
         std::string shaderSrc = ReadFile(path);
@@ -38,7 +37,6 @@ OpenGLShader::OpenGLShader(std::string name, const std::unordered_map<ShaderType
         shaderHandles[index]  = CompileShader(shaderSrc.data(), GetGLShaderType(shaderType));
     }
 
-    m_ShaderHandle = glCreateProgram();
     for (const ShaderHandle shaderHandle : shaderHandles) {
         if (shaderHandle != 0) {
             glAttachShader(m_ShaderHandle, shaderHandle);
@@ -57,14 +55,13 @@ OpenGLShader::OpenGLShader(std::string name, const std::unordered_map<ShaderType
 }
 
 OpenGLShader::OpenGLShader(std::string name, const std::unordered_map<ShaderType, std::string>& shaderSrcs)
-    : m_Name(std::move(name)) {
+    : m_ShaderHandle(glCreateProgram()), m_Name(std::move(name)) {
     std::array<ShaderHandle, g_ShaderTypeCount> shaderHandles = {};
     for (const auto& [shaderType, shaderSrc] : shaderSrcs) {
         const auto index     = static_cast<size_t>(shaderType);
         shaderHandles[index] = CompileShader(shaderSrc.data(), GetGLShaderType(shaderType));
     }
 
-    m_ShaderHandle = glCreateProgram();
     for (const ShaderHandle shaderHandle : shaderHandles) {
         if (shaderHandle != 0) {
             glAttachShader(m_ShaderHandle, shaderHandle);
@@ -120,17 +117,18 @@ GLint OpenGLShader::GetUniformBufferBlockIndex(const std::string& name) const {
 }
 
 void OpenGLShader::BindUniformBufferBlock() const {
-    Use();
+    OpenGLShader::Use();
     SetUniformBlock("Camera", UniformBufferBlockBinding::CAMERA);
     SetUniformBlock("Scene", UniformBufferBlockBinding::SCENE);
     SetUniformBlock("Material", UniformBufferBlockBinding::MATERIAL);
     SetUniformBlock("Object", UniformBufferBlockBinding::OBJECT);
-    UnBind();
+    OpenGLShader::UnBind();
 }
 
 void OpenGLShader::CheckCompilerErrors(ShaderHandle shaderHandle, GLenum shaderType) {
-    GLint success = 0;
-    std::array<GLchar, 1024> infoLog{};
+    constexpr int bufferSize = 1024;
+    GLint success            = 0;
+    std::array<GLchar, bufferSize> infoLog{};
 
     if (shaderType == GL_PROGRAM) {
         glGetProgramiv(shaderHandle, GL_LINK_STATUS, &success);

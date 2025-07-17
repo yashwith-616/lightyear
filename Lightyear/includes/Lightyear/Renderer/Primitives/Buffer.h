@@ -71,10 +71,12 @@ public:
     [[nodiscard]] uint32_t GetStride() const { return m_Stride; }
     [[nodiscard]] const std::vector<BufferElement>& GetElements() const { return m_Elements; }
 
+    // NOLINTBEGIN(*-identifier-naming)
     [[nodiscard]] std::vector<BufferElement>::iterator begin() { return m_Elements.begin(); }
     [[nodiscard]] std::vector<BufferElement>::iterator end() { return m_Elements.end(); }
     [[nodiscard]] std::vector<BufferElement>::const_iterator begin() const { return m_Elements.begin(); }
     [[nodiscard]] std::vector<BufferElement>::const_iterator end() const { return m_Elements.end(); }
+    // NOLINTEND(*-identifier-naming)
 
 protected:
     void CalculateOffsetsAndStride();
@@ -91,8 +93,8 @@ class LIGHTYEAR_API VertexBuffer {
 public:
     virtual ~VertexBuffer() = default;
 
-    static Ref<VertexBuffer> Create(uint32_t size);
-    static Ref<VertexBuffer> Create(const float* vertices, uint32_t size);
+    static Ref<VertexBuffer> Create(uint32_t sizeInBytes);
+    static Ref<VertexBuffer> Create(std::span<const float> vertices);
 
     virtual void Bind() const   = 0;
     virtual void UnBind() const = 0;
@@ -110,7 +112,7 @@ class LIGHTYEAR_API IndexBuffer {
 public:
     virtual ~IndexBuffer() = default;
 
-    static Ref<IndexBuffer> Create(uint32_t* indices, uint32_t size);
+    static Ref<IndexBuffer> Create(std::span<const uint32_t> indices);
 
     virtual void Bind() const   = 0;
     virtual void UnBind() const = 0;

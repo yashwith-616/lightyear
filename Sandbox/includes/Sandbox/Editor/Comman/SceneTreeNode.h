@@ -21,8 +21,8 @@ public:
     ly::WeakRef<SceneTreeNode> Parent{};
     std::vector<ly::Ref<SceneTreeNode>> Children{};
 
-    SceneTreeNode(const std::string& name, ly::UUID uid, entt::entity entity)
-        : Name(name), Id(uid), Entity(entity) {}
+    SceneTreeNode(std::string name, ly::UUID uid, entt::entity entity)
+        : Name(std::move(name)), Id(uid), Entity(entity) {}
 
     void AddChild(ly::Ref<SceneTreeNode> child) {
         child->Parent = shared_from_this();
@@ -30,10 +30,10 @@ public:
     }
 
     void RemoveChild(const ly::UUID& id) {
-        auto it = std::remove_if(
-            Children.begin(), Children.end(), [&](const ly::Ref<SceneTreeNode>& child) {
+        const auto it =
+            std::ranges::remove_if(Children, [&](const ly::Ref<SceneTreeNode>& child) {
                 return child->Id == id;
-            });
+            }).begin();
         Children.erase(it, Children.end());
     }
 };

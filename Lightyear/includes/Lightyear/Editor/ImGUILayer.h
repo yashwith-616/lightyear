@@ -29,8 +29,8 @@ public:
     void OnEditorRender() override;
     void OnUpdate(float deltaTime) override {}
 
-    void BeginFrame();
-    void EndFrame();
+    static void BeginFrame();
+    static void EndFrame();
 
 protected:
     bool OnMouseButtonPressedEvent(MouseButtonPressedEvent& event);

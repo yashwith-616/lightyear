@@ -78,8 +78,9 @@ void OpenGLRendererAPI::Init() {
     CheckOpenGLErrors();
 }
 
+// NOLINTNEXTLINE
 void OpenGLRendererAPI::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
-    glViewport(x, y, width, height);
+    glViewport(x, y, width, height);  // NOLINT
 }
 
 void OpenGLRendererAPI::SetClearColor(const glm::vec4& color) {
@@ -97,12 +98,12 @@ void OpenGLRendererAPI::Clear() {
 void OpenGLRendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCount) {
     vertexArray->Bind();
     const uint32_t count = indexCount != 0 ? indexCount : vertexArray->GetIndexBuffer().GetCount();
-    glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, nullptr);
+    glDrawElements(GL_TRIANGLES, narrow_cast<GLsizei>(count), GL_UNSIGNED_INT, nullptr);
 }
 
 void OpenGLRendererAPI::DrawLines(const VertexArray& vertexArray, uint32_t vertexCount) {
     vertexArray.Bind();
-    glDrawArrays(GL_LINES, 0, vertexCount);
+    glDrawArrays(GL_LINES, 0, narrow_cast<GLsizei>(vertexCount));
 }
 
 void OpenGLRendererAPI::SetLineWidth(float width) {

@@ -243,7 +243,7 @@ std::string Scene::GenerateUniqueName(const std::string& baseName) {
 
 template <typename T>
 void Scene::OnComponentAdded(Entity /*entity*/, T& /*component*/) {
-    LY_CORE_LOG(ly::LogType::Warn, "Scene::OnComponentAdded: Generic handler for component type");
+    LY_CORE_LOG(ly::LogType::Warn, "Scene::OnComponentAdded: Generic handler for component type {}", typeid(T).name());
 
     if constexpr (std::is_empty_v<T>) {
         LY_CORE_LOG(ly::LogType::Warn, "Component is an empty type");

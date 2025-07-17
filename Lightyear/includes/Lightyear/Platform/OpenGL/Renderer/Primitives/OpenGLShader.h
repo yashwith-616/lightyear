@@ -106,7 +106,7 @@ private:
      * @param shaderType the shader type
      * @return The shader handle
      */
-    ShaderHandle CompileShader(const char* shaderCode, GLenum shaderType);
+    static ShaderHandle CompileShader(const char* shaderCode, GLenum shaderType);
 
     GLint GetUniformLocation(const std::string& name) const;
 
@@ -119,7 +119,7 @@ private:
      * @param shaderHandle the shader handle that needs to be compiled
      * @param shaderType the shader type
      */
-    void CheckCompilerErrors(ShaderHandle shaderHandle, GLenum shaderType);
+    static void CheckCompilerErrors(ShaderHandle shaderHandle, GLenum shaderType);
 };
 
 }  // namespace ly::renderer

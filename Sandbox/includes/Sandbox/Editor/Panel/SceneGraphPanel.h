@@ -6,21 +6,20 @@
 
 class SceneGraphPanel : public IEditorPanel {
 public:
-    SceneGraphPanel(std::string_view name) : IEditorPanel(name) {}
+    SceneGraphPanel(std::string name) : IEditorPanel(std::move(name)) {}
 
-    virtual ~SceneGraphPanel() = default;
+     ~SceneGraphPanel() override = default;
 
-    virtual void OnImGuiRender() override;
+    void OnImGuiRender() override;
 
-    void SetScene(ly::Ref<ly::scene::Scene> scene) { m_Scene = scene; }
+    void SetScene(const ly::Ref<ly::scene::Scene> &scene) { m_Scene = scene; }
 
 private:
     ly::Ref<ly::scene::Scene> m_Scene{};
     ly::Ref<ly::scene::Entity> m_SelectedEntity{};
 
-private:
     template <typename T>
-    void drawComponent(const char* componentName) {
+    void DrawComponent(const char* componentName) const {
         T& component = m_SelectedEntity->GetComponent<T>();
         if (ImGui::TreeNodeEx(componentName, ImGuiTreeNodeFlags_Framed)) {
             WidgetDrawer drawWidget;

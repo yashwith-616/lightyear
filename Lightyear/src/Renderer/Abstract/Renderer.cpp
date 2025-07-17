@@ -33,7 +33,7 @@ void Renderer::Init() {
 
 void Renderer::Shutdown() {}
 
-void Renderer::OnWindowResize(uint32_t width, uint32_t height) {}
+void Renderer::OnWindowResize(glm::uvec2 size) {}
 
 void Renderer::BeginScene(const Ref<Camera>& camera, const scene::SceneData& sceneData) {
     s_CameraUBO.ViewProjection = camera->GetViewProjectionMatrix();

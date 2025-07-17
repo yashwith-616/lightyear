@@ -1,6 +1,7 @@
 ﻿#include "Sandbox/Editor/EditorLayer.h"
 #include "Sandbox/Core/Camera/EditorCamera.h"
 #include "Sandbox/Geometry/Geometry.h"
+#include "Sandbox/Helpers/GridRender.h"
 
 LY_DISABLE_WARNINGS_PUSH
 #include <imgui.h>
@@ -9,34 +10,25 @@ LY_DISABLE_WARNINGS_POP
 
 namespace renderer = ly::renderer;
 
-// TODO: Remove
-static constexpr float aspect = 1.77778;
-
-// TODO: Remove
-const std::unordered_map<renderer::ShaderType, ly::CPath> GRID_SHADER = {
-    { renderer::ShaderType::VERTEX, ASSET_DIR "/Shaders/Vertex/S_Default.vert" },
-    { renderer::ShaderType::FRAGMENT, ASSET_DIR "/Shaders/Fragment/S_Default.frag" }
-};
-
-EditorLayer::EditorLayer() : ly::Layer("Editor") {}
+EditorLayer::EditorLayer() : Layer("Editor") {}
 
 void EditorLayer::OnAttach() {
 #pragma region Framebuffer Init
     // TODO: Framebuffer must be moved to a separate Framebuffer pool and must be accessed by the
     // world. The world needs to be responsible for rendering.
 
-    ly::renderer::FramebufferSpecification spec;
-    spec.Height   = 1280;
-    spec.Width    = 720;
-    m_Framebuffer = ly::renderer::Framebuffer::Create(spec);
+    renderer::FramebufferSpecification spec;
+    spec.Height   = ly::kDefaultWindowHeight;
+    spec.Width    = ly::kDefaultWindowWidth;
+    m_Framebuffer = renderer::Framebuffer::Create(spec);
 #pragma endregion
 
 #pragma region Shaders and Textures
     // TODO: Texture and Shader will be made as part of the Entity.
     // Will be removed from here in the future implementation
 
-    m_Texture = ly::renderer::Texture2D::Create(ASSET_DIR "/Textures/T_Grid.png");
-    m_Shader  = ly::renderer::Shader::Create("ShaderBg", GRID_SHADER);
+    m_Texture = renderer::Texture2D::Create(ASSET_DIR "/Textures/T_Grid.png");
+    m_Shader  = renderer::Shader::Create("ShaderBg", g_GridShader);
 #pragma endregion
 
 #pragma region SceneCamera
@@ -44,7 +36,7 @@ void EditorLayer::OnAttach() {
     // Camera system will be re-written using entt, current implementation
     // will be modified significantly
 
-    m_EditorCamera = ly::MakeRef<EditorCamera>(aspect);
+    m_EditorCamera = ly::MakeRef<EditorCamera>(ly::kDefaultAspectRatio);
     m_EditorCamera->SetSpeed(1.f);
 #pragma endregion
 
@@ -52,10 +44,10 @@ void EditorLayer::OnAttach() {
     m_Scene        = ly::MakeRef<ly::scene::Scene>();
     m_SceneRuntime = ly::MakeScope<ly::scene::SceneRuntime>(m_Scene.get());
 
-    auto newCamera                 = ly::MakeRef<EditorCamera>(aspect);
+    auto newCamera                 = ly::MakeRef<EditorCamera>(ly::kDefaultAspectRatio);
     ly::scene::Entity cameraEntity = m_Scene->CreateEntity("GameCamera");
     cameraEntity.AddComponent<ly::scene::CameraComponent>(newCamera);
-    m_SceneRuntime->OnViewportResize(glm::uvec2(1280, 720));
+    m_SceneRuntime->OnViewportResize(glm::uvec2(spec.Width, spec.Height));
 
     m_CubeEntity = m_Scene->CreateEntity("Cube");
     m_CubeEntity.AddComponent<ly::scene::MeshComponent>(Geometry::GetCube(), m_Shader, m_Texture);
@@ -73,8 +65,9 @@ void EditorLayer::OnAttach() {
 void EditorLayer::OnUpdate(float deltaTime) {
     PollInput(deltaTime);
 
+    constexpr glm::vec4 clearColor(0.0f, 0.0f, 0.0f, 0.5f);
+
     m_Framebuffer->Bind();
-    renderer::RenderCommand::SetClearColor(glm::vec4(0.f, 0.f, 0.f, 0.5f));
     renderer::RenderCommand::Clear();
 
     if (m_SceneRuntime->IsPaused()) {
@@ -123,13 +116,13 @@ void EditorLayer::PollInput(float deltaTime) {
     }
 
     if (ly::Input::IsMouseButtonPressed(ly::Mouse::Button1)) {
-        if (const float val = ly::Input::GetMouseY()) {
+        if (const float val = ly::Input::GetMouseY(); val > 0) {
             const float diff = val - m_PrevMouseY;
             m_EditorCamera->AddPitch(diff * deltaTime * m_MouseSensitivity);
             m_PrevMouseY = val;
         }
 
-        if (const float val = ly::Input::GetMouseX()) {
+        if (const float val = ly::Input::GetMouseX(); val > 0) {
             const float diff = val - m_PrevMouseX;
             m_EditorCamera->AddYaw(diff * deltaTime * m_MouseSensitivity);
             m_PrevMouseX = val;
