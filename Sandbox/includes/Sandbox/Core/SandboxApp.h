@@ -7,13 +7,13 @@ class SandboxApp : public ly::Application {
 public:
     using super = ly::Application;
 
-    SandboxApp();
-    virtual ~SandboxApp() = default;
+    SandboxApp()          = default;
+    ~SandboxApp() override = default;
 
-    virtual void Init() override;
-    virtual void Run() override;
+    void Init() override;
+    void Run() override;
 };
 
-ly::Scope<ly::Application> CreateApplication() {
+inline ly::Scope<ly::Application> CreateApplication() {
     return ly::MakeScope<SandboxApp>();
 }

@@ -1,7 +1,6 @@
 #pragma once
 
-#include <lypch.h>
-#include <glm/glm.hpp>
+#include "Lightyear/Renderer/Primitives/UniformBuffer.h"
 
 namespace ly::renderer {
 
@@ -48,15 +47,13 @@ struct LIGHTYEAR_API GlobalUniforms {
         SceneUBO->Bind();
     }
 
-    void UploadCamera(const UBO_Camera& data) { CameraUBO->SetData(&data, sizeof(UBO_Camera), 0); }
+    void UploadCamera(const UBO_Camera& data) const { CameraUBO->SetData(&data, sizeof(UBO_Camera), 0); }
 
-    void UploadMaterial(const UBO_Material& data) {
-        MaterialUBO->SetData(&data, sizeof(UBO_Material));
-    }
+    void UploadMaterial(const UBO_Material& data) const { MaterialUBO->SetData(&data, sizeof(UBO_Material)); }
 
-    void UploadObject(const UBO_Object& data) { ObjectUBO->SetData(&data, sizeof(UBO_Object), 0); }
+    void UploadObject(const UBO_Object& data) const { ObjectUBO->SetData(&data, sizeof(UBO_Object), 0); }
 
-    void UploadScene(const UBO_Scene& data) { SceneUBO->SetData(&data, sizeof(UBO_Scene), 0); }
+    void UploadScene(const UBO_Scene& data) const { SceneUBO->SetData(&data, sizeof(UBO_Scene), 0); }
 };
 
 }  // namespace ly::renderer

@@ -1,61 +1,8 @@
 #pragma once
 
-#include <lypch.h>
-#include "LightYear/LightyearCore.h"
+#include "EventTypes.h"
 
 namespace ly {
-
-enum class EventType : uint8_t {
-    None = 0,
-
-    WindowClose,
-    WindowResize,
-    WindowFocus,
-    WindowLostFocus,
-    WindowMoved,
-
-    ApptTick,
-    AppUpdate,
-    AppRender,
-
-    KeyPressed,
-    KeyReleased,
-    KeyTyped,
-
-    MouseButtonPressed,
-    MouseButtonReleased,
-    MouseMoved,
-    MouseScrolled,
-
-    EditorUpdateBegin,
-    EditorUpdateEnd
-};
-
-enum EventCategory {
-    None           = 0,
-    EC_APPLICATION = BIT(0),
-    EC_INPUT       = BIT(1),
-    EC_KEYBOARD    = BIT(2),
-    EC_MOUSE       = BIT(3),
-    EC_MOUSEBUTTON = BIT(4),
-    EC_EDITOR      = BIT(5)
-};
-
-#define EVENT_CLASS_TYPE(type)                                                                     \
-    static EventType GetStaticType() {                                                             \
-        return EventType::##type;                                                                  \
-    }                                                                                              \
-    virtual EventType GetEventType() const override {                                              \
-        return GetStaticType();                                                                    \
-    }                                                                                              \
-    virtual const char* GetName() const override {                                                 \
-        return #type;                                                                              \
-    }
-
-#define EVENT_CLASS_CATEGORY(category)                                                             \
-    virtual int GetCategoryFlags() const override {                                                \
-        return category;                                                                           \
-    }
 
 /**
  * @brief The lightyear Event class
@@ -65,16 +12,16 @@ class LIGHTYEAR_API Event {
 
 public:
     virtual ~Event() = default;
-    bool bIsHandled{ false };
 
-    virtual EventType GetEventType() const = 0;
-    virtual const char* GetName() const    = 0;
-    virtual int GetCategoryFlags() const   = 0;
-    virtual CText ToString() const { return static_cast<CText>(GetName()); }
+    virtual EventType GetEventType() const   = 0;
+    virtual std::string_view GetName() const = 0;
+    virtual int GetCategoryFlags() const     = 0;
+    virtual std::string ToString() const { return std::format("String: {}", GetName()); }
 
-    inline bool IsInCategory(EventCategory category) const noexcept {
-        return GetCategoryFlags() & category;
-    }
+    bool IsInCategory(EventCategory category) const noexcept { return GetCategoryFlags() & category; }
+
+    bool IsHandled() const { return m_Handled; }
+    void SetHandled(bool isHandled) noexcept { m_Handled = isHandled; }
 
 protected:
     bool m_Handled{ false };
@@ -89,9 +36,9 @@ public:
 
     template <typename T, typename F>
     bool Dispatch(F&& func) {
-        static_assert(std::is_base_of<Event, T>::value, "T must inherit from Event");
+        static_assert(std::is_base_of_v<Event, T>, "T must inherit from Event");
 
-        if (m_Event.GetEventType() == T::GetStaticType()) {
+        if (m_Event.GetEventType() == T::StaticType) {
             m_Event.m_Handled = func(static_cast<T&>(m_Event));
             return true;
         }
@@ -100,6 +47,26 @@ public:
 
 private:
     Event& m_Event;
+};
+
+/**
+ * @brief Event Base class to be used in CRTP template. This allows to avoid boilerplate
+ * implementation of some common types
+ *
+ * @tparam Derived the Derived class name
+ * @tparam Type the EventType
+ * @tparam CategoryFlags the category the event falls under
+ */
+template <typename Derived, EventType Type, int CategoryFlags>
+class EventBase : public Event {
+public:
+    static constexpr EventType StaticType = Type;
+
+    EventType GetEventType() const override { return StaticType; }
+
+    std::string_view GetName() const override { return typeid(Derived).name(); }
+
+    int GetCategoryFlags() const override { return CategoryFlags; }
 };
 
 }  // namespace ly

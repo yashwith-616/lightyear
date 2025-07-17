@@ -1,5 +1,4 @@
 #include "Lightyear/Scene/Entity.h"
-#include "Lightyear/Scene/Scene.h"
 
 namespace ly::scene {
 

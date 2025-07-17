@@ -1,14 +1,13 @@
 #pragma once
 
-#include <lypch.h>
 #include "Lightyear/Renderer/Camera/SceneCamera.h"
 #include "Lightyear/Renderer/Primitives/Shader.h"
 #include "Lightyear/Renderer/Primitives/Texture.h"
 #include "Lightyear/Renderer/Primitives/VertexArray.h"
 
+LY_DISABLE_WARNINGS_PUSH
 #include <entt/entt.hpp>
-#include <glm/glm.hpp>
-#include <glm/gtx/quaternion.hpp>
+LY_DISABLE_WARNINGS_POP
 
 /**
  * @brief Need a bitset component that indicates all the component that can exists
@@ -18,23 +17,23 @@ namespace ly::scene {
 enum class EMobilityType { STATIC, STATIONARY, MOVABLE };
 
 /**
- * @brief Attaches an UUID to the component. All entity present in scene will have this component.
+ * @brief Attaches a UUID to the component. All entity present in scene will have this component.
  */
 struct IDComponent {
-    uuid ID;
+    UUID ID;
 
-    IDComponent() : ID(uuid()) {}
-    IDComponent(const uuid& id) : ID(id) {}
+    IDComponent() : ID(UUID()) {}
+    IDComponent(const UUID& id) : ID(id) {}
 };
 
 /**
  * @brief Used for naming a component. All entity present in the scene will have this component
  */
 struct TagComponent {
-    CName Tag{ "Default" };
+    std::string Tag{ "NULL" };
 
     TagComponent() = default;
-    TagComponent(const CName& tag) : Tag(tag) {}
+    TagComponent(const std::string& tag) : Tag(tag) {}
 };
 
 /**
@@ -58,8 +57,7 @@ struct TransformComponent {
 
     glm::mat4 GetTransform() const {
         glm::mat4 rotation = glm::toMat4(glm::quat(Rotation));
-        return glm::translate(glm::mat4(1.0f), Translation) * rotation *
-               glm::scale(glm::mat4(1.0f), Scale);
+        return glm::translate(glm::mat4(1.0f), Translation) * rotation * glm::scale(glm::mat4(1.0f), Scale);
     }
 };
 
@@ -68,7 +66,7 @@ struct CameraComponent {
     Ref<renderer::SceneCamera> Camera;
     bool bIsPrimary{ true };
 
-    CameraComponent() : Camera(MakeRef<renderer::SceneCamera>(DEFAULT_ASPECT_RATIO)) {}
+    CameraComponent() : Camera(MakeRef<renderer::SceneCamera>(kDefaultAspectRatio)) {}
     CameraComponent(Ref<renderer::SceneCamera> camera) : Camera(camera) {}
     CameraComponent(const CameraComponent&)            = default;
     CameraComponent& operator=(const CameraComponent&) = default;
@@ -79,9 +77,7 @@ struct MeshComponent {
     Ref<renderer::Shader> ShaderAsset;
     Ref<renderer::Texture> TextureAsset;
 
-    MeshComponent(Ref<renderer::VertexArray> vertexArray,
-                  Ref<renderer::Shader> shader,
-                  Ref<renderer::Texture> texture)
+    MeshComponent(Ref<renderer::VertexArray> vertexArray, Ref<renderer::Shader> shader, Ref<renderer::Texture> texture)
         : MeshAsset(vertexArray), ShaderAsset(shader), TextureAsset(texture) {}
 
     MeshComponent(const MeshComponent&) = default;
@@ -106,7 +102,7 @@ struct RelationshipComponent {
     RelationshipComponent(entt::entity parent, entt::entity nextSibling, entt::entity prevSibling)
         : Parent(parent), NextSibling(nextSibling), PrevSibling(prevSibling) {}
 
-    inline void SetChild(entt::entity child) { FirstChild = child; }
+    void SetChild(entt::entity child) { FirstChild = child; }
 };
 
 }  // namespace ly::scene

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Lightyear/LightyearCore.h"
-#include "glm/glm.hpp"
 
 namespace ly::renderer {
 
@@ -11,7 +10,7 @@ class VertexArray;
  * @brief This API is abstraction over DirectX, OpenGL, Vulkan
  * and other specifications. Will not be used by client directly
  *
- * It consits of a static enum API which will be configured by the
+ * It consists of a static enum API which will be configured by the
  * renderer before the application starts or used.
  *
  * This class will receive direct calls from RenderCommand and will
@@ -21,7 +20,6 @@ class LIGHTYEAR_API RendererAPI {
 public:
     enum class API { None = 0, OpenGL };
 
-public:
     virtual ~RendererAPI() = default;
 
     virtual void Init()                                                               = 0;

@@ -10,10 +10,7 @@ public:
 
 protected:
     virtual void RecalculateViewMatrix() override;
-    virtual void RecalculateProjectionMatrix(float left,
-                                             float right,
-                                             float bottom,
-                                             float top) override;
+    virtual void RecalculateProjectionMatrix(float left, float right, float bottom, float top) override;
 };
 
 }  // namespace ly::renderer

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Lightyear/LightyearCore.h"
-#include "Lightyear/Renderer/Primitives/RenderTypes.h"
 
 namespace ly::renderer {
 

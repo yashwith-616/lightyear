@@ -1,6 +1,5 @@
 #pragma once
 
-#include <lypch.h>
 #include "Lightyear/LightyearCore.h"
 
 namespace ly {
@@ -8,14 +7,11 @@ namespace ly {
 class Event;
 
 struct WindowProps {
-    CLabel Title;
-    uint32_t Width;
-    uint32_t Height;
+    std::string Title{ kDefaultWindowTitle };
+    glm::uvec2 Size{ glm::uvec2(kDefaultWindowWidth, kDefaultWindowHeight) };
 
-    WindowProps(const CLabel& title = DEFAULT_WINDOW_TITLE,
-                uint32_t width      = DEFAULT_WINDOW_WIDTH,
-                uint32_t height     = DEFAULT_WINDOW_HEIGHT)
-        : Title(title), Width(width), Height(height) {}
+    WindowProps() = default;
+    WindowProps(std::string title, glm::uvec2 size) : Title(std::move(title)), Size(size) {}
 };
 
 /**
@@ -23,20 +19,32 @@ struct WindowProps {
  */
 class LIGHTYEAR_API Window {
 public:
-    virtual ~Window() {}
+    Window()                         = default;
+    virtual ~Window()                = default;
+    Window(const Window&)            = delete;
+    Window& operator=(const Window&) = delete;
+    Window(Window&&)                 = default;
+    Window& operator=(Window&&)      = default;
 
-    virtual void OnUpdate()            = 0;
-    virtual uint32_t GetWidth() const  = 0;
-    virtual uint32_t GetHeight() const = 0;
-    virtual float GetTime() const      = 0;
+    /**
+     * Create a new window
+     *
+     * @param props The window properties
+     * @return The new Window
+     */
+    static Scope<Window> Create(const WindowProps& props = WindowProps());
 
-    // Window Attributes
+    virtual void Init()     = 0;
+    virtual void ShutDown() = 0;
+
+    virtual void OnUpdate()                          = 0;
+    [[nodiscard]] virtual glm::uvec2 GetSize() const = 0;
+    [[nodiscard]] virtual float GetTime() const      = 0;
+
     virtual void SetEventCallback(const EventCallbackFn& callback) = 0;
     virtual void SetVSync(bool isEnabled)                          = 0;
-    virtual bool IsVSync() const                                   = 0;
-    virtual void* GetNativeWindow() const                          = 0;
-
-    static Scope<Window> Create(const WindowProps& props = WindowProps());
+    [[nodiscard]] virtual bool IsVSync() const                     = 0;
+    [[nodiscard]] virtual void* GetNativeWindow() const            = 0;
 };
 
 }  // namespace ly

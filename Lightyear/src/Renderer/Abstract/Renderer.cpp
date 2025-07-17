@@ -1,6 +1,5 @@
 #include "Lightyear/Renderer/Abstract/Renderer.h"
 #include "Lightyear/Renderer/Abstract/RenderCommand.h"
-#include "Lightyear/Renderer/Abstract/RendererAPI.h"
 #include "Lightyear/Renderer/Camera/Camera.h"
 #include "Lightyear/Renderer/Primitives/Shader.h"
 #include "Lightyear/Renderer/Primitives/Texture.h"
@@ -8,7 +7,7 @@
 
 #include "Lightyear/Scene/SceneData.h"
 
-#include "Lightyear/Platform/OpenGL/OpenGLShader.h"
+#include "Lightyear/Platform/OpenGL/Renderer/Primitives/OpenGLShader.h"
 
 namespace ly::renderer {
 
@@ -34,7 +33,7 @@ void Renderer::Init() {
 
 void Renderer::Shutdown() {}
 
-void Renderer::OnWindowResize(uint32_t width, uint32_t height) {}
+void Renderer::OnWindowResize(glm::uvec2 size) {}
 
 void Renderer::BeginScene(const Ref<Camera>& camera, const scene::SceneData& sceneData) {
     s_CameraUBO.ViewProjection = camera->GetViewProjectionMatrix();
@@ -64,8 +63,7 @@ void Renderer::Flush() {
         s_ObjectUBO.ModelMatrix = submission.RSTransform;
         s_GlobalUniforms.UploadObject(s_ObjectUBO);
 
-        Ref<OpenGLShader> openGLShader =
-            std::dynamic_pointer_cast<OpenGLShader>(submission.RSShader);
+        const Ref<OpenGLShader> openGLShader = std::dynamic_pointer_cast<OpenGLShader>(submission.RSShader);
         openGLShader->Use();
 
         if (submission.RSTexture != nullptr) {

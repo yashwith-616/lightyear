@@ -1,6 +1,5 @@
 #pragma once
 
-#include <lypch.h>
 #include "Lightyear/LightyearCore.h"
 #include "Lightyear/Renderer/Primitives/Shader.h"
 
@@ -10,18 +9,16 @@ class LIGHTYEAR_API ShaderLibrary {
 public:
     virtual ~ShaderLibrary() = default;
 
-    virtual void Add(Ref<Shader> shader);
-    virtual Ref<Shader> LoadShader(const CName& shaderName,
-                                   const std::unordered_map<ShaderType, CPath>& filePaths);
+    virtual void Add(const Ref<Shader>& shader);
+    virtual Ref<Shader> LoadShader(const std::string& shaderName,
+                                   const std::unordered_map<ShaderType, std::filesystem::path>& filePaths);
 
-    virtual Ref<Shader> Get(const CName& shaderName) const;
+    virtual Ref<Shader> Get(const std::string& shaderName) const;
 
-    bool IsPresent(const CName& shaderName) const {
-        return m_Shaders.find(shaderName) != m_Shaders.end();
-    }
+    bool IsPresent(const std::string& shaderName) const { return m_Shaders.contains(shaderName); }
 
 private:
-    std::unordered_map<CName, Ref<Shader>> m_Shaders;
+    std::unordered_map<std::string, Ref<Shader>> m_Shaders;
 };
 
 }  // namespace ly::renderer

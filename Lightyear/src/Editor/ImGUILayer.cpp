@@ -1,58 +1,53 @@
 #include "Lightyear/Editor/ImGUILayer.h"
 #include "Lightyear/Core/Application.h"
 #include "Lightyear/Events/ApplicationEvent.h"
-#include "Lightyear/Events/EditorEvent.h"
 #include "Lightyear/Events/KeyEvent.h"
 #include "Lightyear/Events/MouseEvent.h"
 #include "Lightyear/Platform/Windows/WindowsWindow.h"
 
-#include <lypch.h>
-
+LY_DISABLE_WARNINGS_PUSH
 #include <GLFW/glfw3.h>
 #include <backends/imgui_impl_glfw.h>
 #include <backends/imgui_impl_opengl3.h>
 #include <imgui.h>
 #include <imgui_internal.h>
+LY_DISABLE_WARNINGS_POP
 
 namespace ly {
 
-ImGUILayer::ImGUILayer() : Layer("ImGUILayer") {}
-
 ImGUILayer::~ImGUILayer() {
+    if (ImGui::GetCurrentContext() == nullptr) {
+        return;
+    }
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
 }
 
 void ImGUILayer::OnAttach() {
-    LY_CORE_LOG(LogType::Info, "Initialized ImGUI");
-
-    // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO();
-    (void)io;
+    ImGuiIO& imguiIO = ImGui::GetIO();
+    (void)imguiIO;
 
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-    io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+    imguiIO.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+    imguiIO.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+    imguiIO.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
     ImGui::StyleColorsDark();
     ImGuiStyle& style = ImGui::GetStyle();
-    if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+    if (static_cast<bool>(imguiIO.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)) {
         style.WindowRounding              = 0.0f;
         style.Colors[ImGuiCol_WindowBg].w = 1.0f;
     }
+    auto* window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
 
-    GLFWwindow* window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
-
-    // Setup Platform/Renderer bindings
     ImGui_ImplGlfw_InitForOpenGL(window, true);
-    ImGui_ImplOpenGL3_Init(GLSL_VERSION.data());
+    ImGui_ImplOpenGL3_Init(kGLSLVersion.data());  // NOLINT
 }
 
 void ImGUILayer::OnDetach() {
-    LY_CORE_LOG(LogType::Trace, "Destroying IMGUI Editor Layer!");
+    LY_CORE_LOG(LogType::Trace, "Shutdown IMGUI Editor Layer!");
 
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
@@ -64,24 +59,22 @@ void ImGUILayer::OnEvent(Event& event) {
 
     // Imgui Mouse Events
     dispatcher.Dispatch<MouseButtonPressedEvent>(
-        [this](MouseButtonPressedEvent& e) { return OnMouseButtonPressedEvent(e); });
+        [this](MouseButtonPressedEvent& pressEvent) { return OnMouseButtonPressedEvent(pressEvent); });
     dispatcher.Dispatch<MouseButtonReleasedEvent>(
-        [this](MouseButtonReleasedEvent& e) { return OnMouseButtonReleaseEvent(e); });
+        [this](MouseButtonReleasedEvent& releaseEvent) { return OnMouseButtonReleaseEvent(releaseEvent); });
     dispatcher.Dispatch<MouseScrolledEvent>(
-        [this](MouseScrolledEvent& e) { return OnMouseScrolledEvent(e); });
-    dispatcher.Dispatch<MouseMovedEvent>(
-        [this](MouseMovedEvent& e) { return OnMouseMovedEvent(e); });
+        [this](MouseScrolledEvent& scrollEvent) { return OnMouseScrolledEvent(scrollEvent); });
+    dispatcher.Dispatch<MouseMovedEvent>([this](MouseMovedEvent& moveEvent) { return OnMouseMovedEvent(moveEvent); });
 
     // Imgui Key Events
-    dispatcher.Dispatch<KeyPressedEvent>(
-        [this](KeyPressedEvent& e) { return OnKeyPressedEvent(e); });
+    dispatcher.Dispatch<KeyPressedEvent>([this](KeyPressedEvent& pressEvent) { return OnKeyPressedEvent(pressEvent); });
     dispatcher.Dispatch<KeyReleasedEvent>(
-        [this](KeyReleasedEvent& e) { return OnKeyReleasedEvent(e); });
-    dispatcher.Dispatch<KeyTypedEvent>([this](KeyTypedEvent& e) { return OnKeyTypedEvent(e); });
+        [this](KeyReleasedEvent& releaseEvent) { return OnKeyReleasedEvent(releaseEvent); });
+    dispatcher.Dispatch<KeyTypedEvent>([this](KeyTypedEvent& typedEvent) { return OnKeyTypedEvent(typedEvent); });
 
     // Imgui Window Events
     dispatcher.Dispatch<WindowResizeEvent>(
-        [this](WindowResizeEvent& e) { return OnWindowResizeEvent(e); });
+        [this](WindowResizeEvent& resizeEvent) { return OnWindowResizeEvent(resizeEvent); });
 }
 
 void ImGUILayer::OnEditorRender() {}
@@ -89,7 +82,7 @@ void ImGUILayer::OnEditorRender() {}
 /**
  * @brief Initialize ImGUI backends such as Window manager and the RHI
  */
-void ImGUILayer::Begin() {
+void ImGUILayer::BeginFrame() {
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
@@ -98,23 +91,24 @@ void ImGUILayer::Begin() {
 /**
  * @brief Prepare ImGUI for next update. Render the current update.
  */
-void ImGUILayer::End() {
-    ImGuiIO& io      = ImGui::GetIO();
-    Application& app = Application::Get();
-    io.DisplaySize = ImVec2((float)app.GetWindow().GetWidth(), (float)app.GetWindow().GetHeight());
+void ImGUILayer::EndFrame() {
+    ImGuiIO& imguiIO             = ImGui::GetIO();
+    const glm::uvec2& windowSize = Application::Get().GetWindow().GetSize();
+    imguiIO.DisplaySize          = ImVec2(static_cast<float>(windowSize.x), static_cast<float>(windowSize.y));
 
     // Rendering
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-    if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
-        GLFWwindow* backup_current_context = glfwGetCurrentContext();
+    if (static_cast<bool>(imguiIO.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)) {
+        GLFWwindow* backUpCurrentContext = glfwGetCurrentContext();
         ImGui::UpdatePlatformWindows();
         ImGui::RenderPlatformWindowsDefault();
-        glfwMakeContextCurrent(backup_current_context);
+        glfwMakeContextCurrent(backUpCurrentContext);
     }
 }
 
+// NOLINTBEGIN
 #pragma region ImGui Callbacks
 
 bool ImGUILayer::OnMouseButtonPressedEvent(MouseButtonPressedEvent& event) {
@@ -166,9 +160,10 @@ bool ImGUILayer::OnWindowResizeEvent(WindowResizeEvent& event) {
 }
 
 #pragma endregion
+// NOLINTEND
 
-ImGuiKey ImGUILayer::GetImGuiKeyCode(int keycode) {
-    switch (keycode) {
+ImGuiKey ImGUILayer::GetImGuiKeyCode(int keyCode) {
+    switch (keyCode) {
         case GLFW_KEY_TAB:
             return ImGuiKey_Tab;
         case GLFW_KEY_LEFT:
@@ -218,7 +213,6 @@ ImGuiKey ImGUILayer::GetImGuiKeyCode(int keycode) {
         case GLFW_KEY_BACKSLASH:
             return ImGuiKey_Backslash;
         case GLFW_KEY_WORLD_1:
-            return ImGuiKey_Oem102;
         case GLFW_KEY_WORLD_2:
             return ImGuiKey_Oem102;
         case GLFW_KEY_RIGHT_BRACKET:

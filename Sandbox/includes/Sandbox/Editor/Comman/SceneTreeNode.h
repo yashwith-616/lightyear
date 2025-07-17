@@ -1,7 +1,6 @@
 #pragma once
 
 #include <Lightyear.h>
-#include <lypch.h>
 
 /**
  * @brief ImGUI uses the following struct to render the scene tree.
@@ -16,25 +15,25 @@
 class SceneTreeNode : public std::enable_shared_from_this<SceneTreeNode> {
 public:
     std::string Name{ "none" };
-    ly::uuid Id{};
+    ly::UUID Id{};
     entt::entity Entity{};
 
     ly::WeakRef<SceneTreeNode> Parent{};
     std::vector<ly::Ref<SceneTreeNode>> Children{};
 
-    SceneTreeNode(const std::string& name, ly::uuid uid, entt::entity entity)
-        : Name(name), Id(uid), Entity(entity) {}
+    SceneTreeNode(std::string name, ly::UUID uid, entt::entity entity)
+        : Name(std::move(name)), Id(uid), Entity(entity) {}
 
     void AddChild(ly::Ref<SceneTreeNode> child) {
         child->Parent = shared_from_this();
         Children.push_back(std::move(child));
     }
 
-    void RemoveChild(const ly::uuid& id) {
-        auto it = std::remove_if(
-            Children.begin(), Children.end(), [&](const ly::Ref<SceneTreeNode>& child) {
+    void RemoveChild(const ly::UUID& id) {
+        const auto it =
+            std::ranges::remove_if(Children, [&](const ly::Ref<SceneTreeNode>& child) {
                 return child->Id == id;
-            });
+            }).begin();
         Children.erase(it, Children.end());
     }
 };

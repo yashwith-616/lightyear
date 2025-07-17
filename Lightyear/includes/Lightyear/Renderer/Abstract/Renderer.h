@@ -1,11 +1,8 @@
 #pragma once
 
-#include <lypch.h>
 #include "Lightyear/LightyearCore.h"
-#include "Lightyear/Renderer/Primitives/UniformBuffer.h"
 #include "RendererAPI.h"
 #include "RendererUBO.h"
-#include "glm/glm.hpp"
 
 namespace ly::scene {
 struct SceneData;
@@ -18,6 +15,10 @@ class Shader;
 class VertexArray;
 class Texture;
 
+/**
+ * Fix this entire class when Rendering System is prioritized and written
+ *
+ */
 struct LIGHTYEAR_API RenderSubmission {
     Ref<Shader> RSShader{};
     Ref<VertexArray> RSVertexArray{};
@@ -35,17 +36,14 @@ public:
     static void Init();
     static void Shutdown();
 
-    static void OnWindowResize(uint32_t width, uint32_t height);
+    static void OnWindowResize(glm::uvec2 size);
 
     static void BeginScene(const Ref<Camera>& camera, const scene::SceneData& sceneData);
     static void EndScene();
 
     /**
      * @brief Submit the RenderSubmission to Queue to be processed later
-     * @param shader the shader
-     * @param vertexArray the vertexArray
-     * @param texture the texture
-     * @param transform the transform
+     * @param submission The render submission
      */
     static void Submit(const RenderSubmission& submission);
 

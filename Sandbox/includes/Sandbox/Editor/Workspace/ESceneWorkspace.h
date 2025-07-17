@@ -1,7 +1,5 @@
 #pragma once
 
-#include <imgui.h>
-
 #include <Sandbox/Editor/Comman/SceneTreeNode.h>
 #include <Sandbox/Editor/Panel/SceneGraphPanelExp.h>
 #include "Sandbox/Editor/Workspace/IEditorWorkspace.h"
@@ -11,37 +9,36 @@
  */
 class ESceneWorkspace : IEditorWorkspace {
 public:
-    ESceneWorkspace(std::string_view name) : IEditorWorkspace(name) {}
-    ~ESceneWorkspace() = default;
+    explicit ESceneWorkspace(std::string name) : IEditorWorkspace(std::move(name)) {}
 
-    virtual void OnAttach(ly::Ref<GlobalEditorContext> globalContext) override;
-    virtual void OnEvent(ly::Event& event) override;
-    virtual void OnUpdate(float deltaTime) override;
-    virtual void OnEditorUpdate() override;
-    virtual void OnImGuiRender() override;
+    void OnAttach(ly::Ref<GlobalEditorContext> globalContext) override;
+    void OnEvent(ly::Event& event) override;
+    void OnUpdate(float deltaTime) override;
+    void OnEditorUpdate() override;
+    void OnImGuiRender() override;
 
 protected:
     enum class EEditorPanel : uint8_t { VIEWPORT = 1, SCENE_GRAPH, INSPECTOR, PLACE_ACTOR, MAX };
 
-protected:
     ImGuiID m_DockspaceID{};
 
     void DrawDockspace();
-    void SetupDockspace();
+    void SetupDockspace()const;
     void BuildSceneTree();
     ly::Ref<SceneTreeNode> BuildSceneTreeRecursive(entt::entity entity);
 
-    inline bool IsDockspaceInitialized() { return m_bIsInitiatlized; }
-    inline std::string_view GetPanelTitle(EEditorPanel editorPanel);
-    inline const ly::scene::Scene& GetScene() {
+    [[nodiscard]] bool IsDockspaceInitialized() const { return m_bIsInitialized; }
+    const ly::scene::Scene& GetScene() const {
         LY_CORE_ASSERT(m_GlobalContext && m_GlobalContext->m_ActiveScene, "Active Scene is null!");
         return *(m_GlobalContext->m_ActiveScene);
     }
 
+    static std::string GetPanelTitle(EEditorPanel editorPanel);
+
 private:
     ly::Scope<ESceneGraphPanelExp> m_SceneGraphPanel{};
 
-    bool m_bIsInitiatlized{ false };
+    bool m_bIsInitialized{ false };
     ly::Ref<GlobalEditorContext> m_GlobalContext{};
     ly::Ref<SceneTreeNode> m_SceneTree{};
     ly::WeakRef<SceneTreeNode> m_SelectedNode{};

@@ -1,9 +1,10 @@
 #include "Lightyear/Renderer/Primitives/Buffer.h"
-#include "Lightyear/Platform/OpenGL/OpenGLBuffer.h"
+#include "Lightyear/Platform/OpenGL/Renderer/Primitives/OpenGLBuffer.h"
 #include "Lightyear/Renderer/Abstract/Renderer.h"
 
 namespace ly::renderer {
 
+#pragma region BufferLayout
 BufferLayout::BufferLayout(std::initializer_list<BufferElement> elements) : m_Elements(elements) {
     CalculateOffsetsAndStride();
 }
@@ -18,44 +19,40 @@ void BufferLayout::CalculateOffsetsAndStride() {
         m_Stride += element.Size;
     }
 }
+#pragma endregion
 
-Ref<VertexBuffer> VertexBuffer::Create(uint32_t size) {
+#pragma region VertexBuffer
+Ref<VertexBuffer> VertexBuffer::Create(uint32_t sizeInBytes) {
     switch (Renderer::GetAPI()) {
-        case RendererAPI::API::None:
-            LY_CORE_ASSERT(false, "Renderer::API::None is currently not supported");
-            return nullptr;
         case RendererAPI::API::OpenGL:
-            return MakeRef<OpenGLVertexBuffer>(size);
+            return MakeRef<OpenGLVertexBuffer>(sizeInBytes);
+        default:
+            LY_CORE_ASSERT(false, "Invalid API Type is currently not supported!");
+            return nullptr;
     }
-
-    LY_CORE_ASSERT(false, "Unknown Renderer API!");
-    return nullptr;
 }
 
-Ref<VertexBuffer> VertexBuffer::Create(const float* vertices, uint32_t size) {
+Ref<VertexBuffer> VertexBuffer::Create(std::span<const float> vertices) {
     switch (Renderer::GetAPI()) {
-        case RendererAPI::API::None:
-            LY_CORE_ASSERT(false, "Renderer::API::None is currently not supported");
-            return nullptr;
         case RendererAPI::API::OpenGL:
-            return MakeRef<OpenGLVertexBuffer>(vertices, size);
+            return MakeRef<OpenGLVertexBuffer>(vertices);
+        default:
+            LY_CORE_ASSERT(false, "Invalid API Type is currently not supported!");
+            return nullptr;
     }
-
-    LY_CORE_ASSERT(false, "Unknown Renderer API!");
-    return nullptr;
 }
+#pragma endregion
 
-Ref<IndexBuffer> IndexBuffer::Create(uint32_t* indices, uint32_t size) {
+#pragma region IndexBuffer
+Ref<IndexBuffer> IndexBuffer::Create(std::span<const uint32_t> indices) {
     switch (Renderer::GetAPI()) {
-        case RendererAPI::API::None:
-            LY_CORE_ASSERT(false, "Renderer::API::None is currently not supported");
-            return nullptr;
         case RendererAPI::API::OpenGL:
-            return MakeRef<OpenGLIndexBuffer>(indices, size);
+            return MakeRef<OpenGLIndexBuffer>(indices);
+        default:
+            LY_CORE_ASSERT(false, "Invalid API Type is currently not supported!");
+            return nullptr;
     }
-
-    LY_CORE_ASSERT(false, "Unknown Renderer API!");
-    return nullptr;
 }
+#pragma endregion
 
 }  // namespace ly::renderer

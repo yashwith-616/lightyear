@@ -6,18 +6,19 @@ project(
 	LANGUAGES C CXX
 )
 
+
 #-------------------------------------------------
 # CMAKE Language Config
 #-------------------------------------------------
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
-add_compile_options(/EHsc-Wall)
 
 set(SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
 set(HDRS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/includes")
 file(GLOB_RECURSE SOURCES "${SRC_DIR}/*.cpp")
 file(GLOB_RECURSE HEADERS "${HDRS_DIR}/*.h")
+
 
 #-------------------------------------------------
 # Project Executable
@@ -28,12 +29,45 @@ target_link_libraries(Sandbox PRIVATE Lightyear)
 
 
 #-------------------------------------------------
+# Utility definations
+#-------------------------------------------------
+function(disable_clang_tidy TARGET)
+    if(TARGET ${TARGET})
+        set_target_properties(${TARGET} PROPERTIES CXX_CLANG_TIDY "")
+    endif()
+endfunction()
+
+
+#-------------------------------------------------
 # Compile definations
 #-------------------------------------------------
 target_compile_definitions(Sandbox PRIVATE LY_PLATFORM_WINDOWS LY_BUILD_STATIC LY_DEBUG)
+target_compile_options(Sandbox PRIVATE
+    # MSVC
+    $<$<CXX_COMPILER_ID:MSVC>:/EHsc>
+
+    # Clang on Windows (clang-cl)
+    $<$<AND:$<CXX_COMPILER_ID:Clang>>:
+        -fexceptions
+        -std=c++20
+        -Wno-c++98-compat
+        -Wno-c++98-compat-pedantic
+        -Wno-pre-c++14-compat
+        -Wno-deprecated-declarations
+        -w  # disables all warnings (optional extreme)
+    >
+)
+
+target_compile_options(Sandbox PRIVATE /EHsc)
 
 
 #-------------------------------------------------
 # Add definations
 #-------------------------------------------------
 add_definitions(-DASSET_DIR="${CMAKE_CURRENT_SOURCE_DIR}/assets")
+
+
+#-------------------------------------------------
+# Disable Clang-Tidy
+#-------------------------------------------------
+disable_clang_tidy(Lightyear)

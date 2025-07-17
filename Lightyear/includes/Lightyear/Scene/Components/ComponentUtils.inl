@@ -5,7 +5,7 @@
 namespace ly::scene {
 
 /**
- * @brief Group components together, Allowes to pass components in
+ * @brief Group components together, Allows to pass components in
  * @tparam ...Component List of components
  */
 template <typename... Component>
@@ -17,7 +17,7 @@ template <typename Group>
 struct ComponentGroupView;
 
 /**
- * @brief Perform an view operation on entt::view
+ * @brief Perform a view operation on entt::view
  *
  * @tparam ...Components The list of components
  */
@@ -25,7 +25,7 @@ template <typename... Components>
 struct ComponentGroupView<ComponentGroup<Components...>> {
     template <typename Registry>
     static auto view(Registry& registry) {
-        return registry.view<Components...>();
+        return registry.template view<Components...>();
     }
 };
 
@@ -41,7 +41,7 @@ template <typename... Components>
 struct ComponentGroupGet<ComponentGroup<Components...>> {
     template <typename Registry, typename Entity>
     static auto get(Registry& registry, Entity entity) {
-        return registry.get<Components...>(entity);
+        return registry.template get<Components...>(entity);
     }
 };
 

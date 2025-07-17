@@ -1,25 +1,24 @@
 #pragma once
 
 #include <array>
+#include <span>
 
 // clang-format off
 
-// ----- Cube Vertex Position -----
-static constexpr std::array<std::array<float, 5>, 8> g_CubeVertices = { {
-        // Positions           // UVs
-        {{-0.5f, -0.5f, -0.5f, 0.0f, 0.0f}}, // 0 - Left Bottom Back
-        {{ 0.5f, -0.5f, -0.5f, 1.0f, 0.0f}}, // 1 - Right Bottom Back
-        {{ 0.5f,  0.5f, -0.5f, 1.0f, 1.0f}}, // 2 - Right Top Back
-        {{-0.5f,  0.5f, -0.5f, 0.0f, 1.0f}}, // 3 - Left Top Back
-        {{-0.5f, -0.5f,  0.5f, 0.0f, 0.0f}}, // 4 - Left Bottom Front
-        {{ 0.5f, -0.5f,  0.5f, 1.0f, 0.0f}}, // 5 - Right Bottom Front
-        {{ 0.5f,  0.5f,  0.5f, 1.0f, 1.0f}}, // 6 - Right Top Front
-        {{-0.5f,  0.5f,  0.5f, 0.0f, 1.0f}}  // 7 - Left Top Front
-    } };
+// NOLINTNEXTLINE
+static constexpr float g_CubeVertices[8][5] = {
+    {-0.5f, -0.5f, -0.5f, 0.0f, 0.0f},
+    { 0.5f, -0.5f, -0.5f, 1.0f, 0.0f},
+    { 0.5f,  0.5f, -0.5f, 1.0f, 1.0f},
+    {-0.5f,  0.5f, -0.5f, 0.0f, 1.0f},
+    {-0.5f, -0.5f,  0.5f, 0.0f, 0.0f},
+    { 0.5f, -0.5f,  0.5f, 1.0f, 0.0f},
+    { 0.5f,  0.5f,  0.5f, 1.0f, 1.0f},
+    {-0.5f,  0.5f,  0.5f, 0.0f, 1.0f}
+};
 
-
-// ----- Cube Index Position -----
-constexpr uint32_t g_CubeIndices[] = {
+// NOLINTNEXTLINE
+static constexpr uint32_t g_CubeIndices[] = {
     0, 1, 2, 2, 3, 0,  // Back face
     4, 5, 6, 6, 7, 4,  // Front face
     4, 7, 3, 3, 0, 4,  // Left face
@@ -28,20 +27,31 @@ constexpr uint32_t g_CubeIndices[] = {
     3, 2, 6, 6, 7, 3   // Top face
 };
 
-static std::array<std::array<float, 5>, 4> g_PlaneVertices{
+// NOLINTNEXTLINE
+static constexpr float g_PlaneVertices[4][5] = {
     // { x,     y,     z,     u,     v }
-    std::array<float, 5>{ -0.5f, -0.5f, 0.0f, 0.0f, 0.0f },  // Bottom-left
-    std::array<float, 5>{ 0.5f, -0.5f, 0.0f, 1.0f, 0.0f },   // Bottom-right
-    std::array<float, 5>{ 0.5f, 0.5f, 0.0f, 1.0f, 1.0f },    // Top-right
-    std::array<float, 5>{ -0.5f, 0.5f, 0.0f, 0.0f, 1.0f }    // Top-left
+    { -0.5f, -0.5f, 0.0f, 0.0f, 0.0f },  // Bottom-left
+    {  0.5f, -0.5f, 0.0f, 1.0f, 0.0f },  // Bottom-right
+    {  0.5f,  0.5f, 0.0f, 1.0f, 1.0f },  // Top-right
+    { -0.5f,  0.5f, 0.0f, 0.0f, 1.0f }   // Top-left
 };
 
-static std::array<uint32_t, 6> g_PlaneIndices{ 0, 1, 2, 2, 3, 0 };
+// NOLINTNEXTLINE
+static constexpr uint32_t g_PlaneIndices[] = {
+    0, 1, 2, 2, 3, 0
+};
 
-constexpr size_t g_CubeVertexCount = sizeof(g_CubeVertices);
-constexpr size_t g_CubeIndexCount  = sizeof(g_CubeIndices);
 
-constexpr size_t g_PlaneVertexCount = g_PlaneVertices.size() * sizeof(g_PlaneVertices[0]);
-constexpr size_t g_PlaneIndexCount  = g_PlaneIndices.size() * sizeof(uint32_t);
+constexpr auto g_CubeVerticesSpan = std::span{
+    &g_CubeVertices[0][0],
+    std::size(g_CubeVertices) * std::size(g_CubeVertices[0])
+};
+constexpr auto g_CubeIndicesSpan  = std::span{g_CubeIndices};
+
+constexpr auto g_PlaneVerticesSpan = std::span{
+    &g_PlaneVertices[0][0],
+    std::size(g_PlaneVertices) * std::size(g_PlaneVertices[0])
+};
+constexpr auto g_PlaneIndicesSpan  = std::span{g_PlaneIndices};
 
 // clang-format on

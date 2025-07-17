@@ -1,13 +1,12 @@
 #pragma once
 
 #include <Lightyear.h>
-#include <string_view>
 #include "Sandbox/Editor/Comman/GlobalEditorContext.h"
 #include "Sandbox/Editor/Panel/IEditorPanel.h"
 
 class IEditorWorkspace {
 public:
-    IEditorWorkspace(std::string_view name) { m_Name = std::string(name); }
+    IEditorWorkspace(std::string name) : m_Name(std::move(name)) {}
 
     virtual void OnAttach(ly::Ref<GlobalEditorContext> globalContext) = 0;
     virtual void OnEvent(ly::Event& event)                            = 0;
@@ -16,7 +15,7 @@ public:
     virtual void OnImGuiRender()                                      = 0;
 
 protected:
-    std::string m_Name{ "none" };
+    std::string m_Name{ "NONE" };
     std::vector<IEditorPanel> m_EditorPanels{};
     ly::Ref<GlobalEditorContext> m_GlobalEditorContext;
 
