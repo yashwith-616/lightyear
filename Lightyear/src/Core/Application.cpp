@@ -38,7 +38,7 @@ void Application::Run() {
         }
 
         //---- Update Game Engine Editor
-        ImGUILayer::EndFrame();
+        ImGUILayer::BeginFrame();
         for (const Scope<Layer>& layer : m_LayerStack) {
             layer->OnEditorRender();
         }
