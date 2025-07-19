@@ -1,7 +1,10 @@
-#include "GLFW/glfw3.h"
 #include "Lightyear/Core/Application.h"
 #include "Lightyear/Core/Window.h"
 #include "Lightyear/Input/Input.h"
+
+LY_DISABLE_WARNINGS_PUSH
+#include "GLFW/glfw3.h"
+LY_DISABLE_WARNINGS_POP
 
 namespace ly {
 

@@ -9,9 +9,8 @@ public:
     OpenGLUniformBuffer(std::string name, uint32_t size, uint32_t bindingPoint);
     ~OpenGLUniformBuffer() override;
 
-    OpenGLUniformBuffer(const OpenGLUniformBuffer&)            = delete;
-    OpenGLUniformBuffer& operator=(const OpenGLUniformBuffer&) = delete;
-
+    OpenGLUniformBuffer(const OpenGLUniformBuffer&)                = delete;
+    OpenGLUniformBuffer& operator=(const OpenGLUniformBuffer&)     = delete;
     OpenGLUniformBuffer(OpenGLUniformBuffer&&) noexcept            = default;
     OpenGLUniformBuffer& operator=(OpenGLUniformBuffer&&) noexcept = default;
 
