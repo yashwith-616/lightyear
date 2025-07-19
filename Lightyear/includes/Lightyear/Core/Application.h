@@ -106,7 +106,7 @@ private:
     Scope<Window> m_Window;
     LayerStack m_LayerStack;
 
-    bool m_Running{ true };
+    bool m_IsRunning{ true };
     float m_Frametime{ kDefaultFrametime };
     float m_LastFrameTime{ 0.f };
 };

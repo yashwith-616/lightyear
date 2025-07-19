@@ -41,7 +41,7 @@ void Application::Init() {
 void Application::Run() {
     m_LastFrameTime = m_Window->GetTime();
 
-    while (m_Running) {
+    while (m_IsRunning) {
         const float currentTime = m_Window->GetTime();
         const Timestep timestep(currentTime - m_LastFrameTime);
         m_LastFrameTime = currentTime;
@@ -73,7 +73,7 @@ void Application::OnEvent(Event& event) {
 }
 
 bool Application::OnWindowClose(WindowCloseEvent& /*event*/) {
-    m_Running = false;
+    m_IsRunning = false;
     return true;
 }
 
