@@ -35,14 +35,16 @@ public:
     void PopLayer(Layer* layer);
     void PopOverlay(Layer* overlay);
 
+    // NOLINTBEGIN
     [[nodiscard]] std::vector<Scope<Layer>>::iterator begin() { return m_Layers.begin(); }
     [[nodiscard]] std::vector<Scope<Layer>>::iterator end() { return m_Layers.end(); }
     [[nodiscard]] std::vector<Scope<Layer>>::const_iterator begin() const { return m_Layers.begin(); }
     [[nodiscard]] std::vector<Scope<Layer>>::const_iterator end() const { return m_Layers.end(); }
+    // NOLINTEND
 
 private:
     std::vector<Scope<Layer>> m_Layers;
-    long long m_LayerInsertIndex{ 0 };
+    int m_LayerInsertIndex{ 0 };
 };
 
 }  // namespace ly
