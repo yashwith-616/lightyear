@@ -16,9 +16,9 @@ public:
     void Bind() override;
     void Unbind() override;
 
-    FramebufferSpecification& GetSpecification() override { return m_Specification; }
-    const FramebufferSpecification& GetSpecification() const override { return m_Specification; };
-    uint32_t GetColorAttachmentRenderID() const override { return m_ColorAttachment; };
+    [[nodiscard]] FramebufferSpecification& GetSpecification() override { return m_Specification; }
+    [[nodiscard]] const FramebufferSpecification& GetSpecification() const override { return m_Specification; };
+    [[nodiscard]] uint32_t GetColorAttachmentRenderID() const override { return m_ColorAttachment; };
 
 private:
     TextureHandle m_RenderID{ 0 };

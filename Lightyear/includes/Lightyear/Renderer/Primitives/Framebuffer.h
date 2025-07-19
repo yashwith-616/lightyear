@@ -5,8 +5,8 @@
 namespace ly::renderer {
 
 struct FramebufferSpecification {
-    uint32_t Width{ kDefaultWindowWidth };
-    uint32_t Height{ kDefaultWindowHeight };
+    uint32_t Width{ kDefaultWindowSize.x };
+    uint32_t Height{ kDefaultWindowSize.y };
     uint32_t Samples{ 1 };
     bool SwapChainTarget{ false };
 };

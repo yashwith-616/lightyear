@@ -23,14 +23,21 @@ public:
     ImGUILayer() : Layer("ImGUILayer") {}
     ~ImGUILayer() override;
 
+    /**
+     * @brief Initialize ImGUI backends such as Window manager and the RHI
+     */
+    static void BeginFrame();
+
+    /**
+     * @brief Prepare ImGUI for next update. Render the current update.
+     */
+    static void EndFrame();
+
     void OnAttach() override;
     void OnDetach() override;
     void OnEvent(Event& event) override;
     void OnEditorRender() override;
     void OnUpdate(float deltaTime) override {}
-
-    static void BeginFrame();
-    static void EndFrame();
 
 protected:
     bool OnMouseButtonPressedEvent(MouseButtonPressedEvent& event);

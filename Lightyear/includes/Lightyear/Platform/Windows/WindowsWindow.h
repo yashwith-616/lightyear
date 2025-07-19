@@ -15,15 +15,17 @@ public:
 
     void OnUpdate() override;
 
-    inline float GetTime() const override;
-    inline void SetVSync(bool isEnabled) override;
-
-    bool IsVSync() const override { return m_Data.VSync; }
+    void SetVSync(bool enable) override;
     void SetEventCallback(const EventCallbackFn& callback) override { m_Data.EventCallback = callback; }
-    glm::uvec2 GetSize() const override { return m_Data.WindowSize; }
-    void* GetNativeWindow() const override { return static_cast<void*>(m_Window); }
+
+    [[nodiscard]] float GetTime() const override;
+    [[nodiscard]] bool IsVSync() const override { return m_Data.IsVSyncEnabled; }
+    [[nodiscard]] glm::uvec2 GetSize() const override { return m_Data.WindowSize; }
+    [[nodiscard]] void* GetNativeWindow() const override { return m_Window; }
 
 protected:
+    bool m_IsGLFWInitialized{ false };
+
     /**
      * @brief Initializes GLFW window with the given properties such as context, title, width,
      * height, and other related settings.
@@ -46,12 +48,7 @@ protected:
      */
     virtual void SetupWindowCallbacks();
 
-    bool m_bIsGLFWInitialized{ false };
-
 private:
-    GLFWwindow* m_Window{ nullptr };
-    Scope<renderer::RendererContext> m_Context{};
-
     /**
      * @brief Holds data related to a GLFW window.
      *
@@ -59,16 +56,20 @@ private:
      * It is used within GLFW callbacks to access and update window data, and to dispatch events.
      */
     struct WindowsData {
-        std::string Title{ "Demo" };
-        glm::uvec2 WindowSize{ 800, 600 };
-        bool VSync{ true };
+        std::string Title{ kNOTSET };
+        glm::uvec2 WindowSize{ kDefaultWindowSize };
+        bool IsVSyncEnabled{ true };
 
         EventCallbackFn EventCallback;
 
         WindowsData(std::string title, glm::uvec2 windowSize) : Title(std::move(title)), WindowSize(windowSize) {}
     };
 
+    GLFWwindow* m_Window{ nullptr };
+    Scope<renderer::RendererContext> m_Context{};
     WindowsData m_Data;
+
+    static void SetupGLFWWindowHints();
 };
 
 }  // namespace ly

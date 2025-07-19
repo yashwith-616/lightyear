@@ -1,4 +1,4 @@
-#include "Lightyear/Helpers/dynamic_bitset.h"
+#include "Lightyear/Helpers/DynamicBitset.h"
 
 namespace ly {
 

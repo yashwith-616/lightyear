@@ -2,7 +2,7 @@
 
 #include "Lightyear/Common/Log.h"
 
-#ifdef _MSC_VER  // Microsoft compiler
+#ifdef _MSC_VER
     #define LY_DEBUGBREAK() __debugbreak()
 #else
     #define LY_DEBUGBREAK() std::abort()

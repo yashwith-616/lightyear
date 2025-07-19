@@ -27,32 +27,24 @@ void WindowsWindow::OnUpdate() {
 }
 
 void WindowsWindow::Init() {
-    if (!m_bIsGLFWInitialized) {
+    if (!m_IsGLFWInitialized) {
         const int success = glfwInit();
         LY_CORE_ASSERT(success, "Failed to initialize GLFW");
-        m_bIsGLFWInitialized = true;
+        m_IsGLFWInitialized = true;
         glfwSetErrorCallback(GLFWErrorCallback);
     }
 
-    if (renderer::Renderer::GetAPI() == renderer::RendererAPI::API::OpenGL) {
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, OPENGL_MAJOR_VERSION);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, OPENGL_MINOR_VERSION);
-        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-#ifdef LY_OPENGL_DEBUG
-        glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
-#endif
-    }
+    SetupGLFWWindowHints();
 
     // NOLINTNEXTLINE
-    m_Window = glfwCreateWindow(static_cast<int>(m_Data.WindowSize.x),
-                                static_cast<int>(m_Data.WindowSize.y),
+    m_Window = glfwCreateWindow(narrow_cast<int>(m_Data.WindowSize.x),
+                                narrow_cast<int>(m_Data.WindowSize.y),
                                 m_Data.Title.c_str(),
                                 nullptr,
                                 nullptr);
     LY_CORE_ASSERT(m_Window != nullptr, "GLFW window initialization failed!");
 
-    m_Context = renderer::RendererContext::Create(reinterpret_cast<void*>(m_Window));
+    m_Context = renderer::RendererContext::Create(m_Window);
     m_Context->Init();
 
     glfwSetWindowUserPointer(m_Window, &m_Data);
@@ -68,13 +60,38 @@ void WindowsWindow::ShutDown() {
     glfwTerminate();
 }
 
-void WindowsWindow::SetVSync(bool isEnabled) {
-    glfwSwapInterval(isEnabled ? GLFW_TRUE : GLFW_FALSE);
-    m_Data.VSync = isEnabled;
+void WindowsWindow::SetVSync(bool enable) {
+    glfwSwapInterval(enable ? GLFW_TRUE : GLFW_FALSE);
+    m_Data.IsVSyncEnabled = enable;
 }
 
 float WindowsWindow::GetTime() const {
     return static_cast<float>(glfwGetTime());
+}
+
+/**
+ * Window Hint Configuration for GLFW:
+ * GLFW window hints (glfwWindowHint) must be set *before* calling glfwCreateWindow. This function applies the
+ * necessary hints to ensure the created GLFW window is compatible with the selected rendering API backend.
+ */
+void WindowsWindow::SetupGLFWWindowHints() {
+    using API = renderer::RendererAPI::API;
+
+    switch (renderer::Renderer::GetAPI()) {
+        case API::OpenGL:
+            [[likely]] {
+                glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, OPENGL_MAJOR_VERSION);
+                glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, OPENGL_MINOR_VERSION);
+                glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+#ifdef LY_OPENGL_DEBUG
+                glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
+#endif
+                return;
+            }
+        default:
+            [[unlikely]] LY_CORE_ASSERT(false, "Unknown renderer API");
+    }
 }
 
 // NOLINTBEGIN

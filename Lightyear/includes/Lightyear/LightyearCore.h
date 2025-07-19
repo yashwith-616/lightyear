@@ -8,5 +8,5 @@
 #include "Common/Macros.h"
 #include "Core/Timestep.h"
 
-#include "Helpers/dynamic_bitset.h"
-#include "Helpers/uuid.h"
+#include "Helpers/DynamicBitset.h"
+#include "Helpers/UUID.h"

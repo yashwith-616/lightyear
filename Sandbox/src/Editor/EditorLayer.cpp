@@ -18,8 +18,8 @@ void EditorLayer::OnAttach() {
     // world. The world needs to be responsible for rendering.
 
     renderer::FramebufferSpecification spec;
-    spec.Height   = ly::kDefaultWindowHeight;
-    spec.Width    = ly::kDefaultWindowWidth;
+    spec.Width    = ly::kDefaultWindowSize.x;
+    spec.Height   = ly::kDefaultWindowSize.y;
     m_Framebuffer = renderer::Framebuffer::Create(spec);
 #pragma endregion
 

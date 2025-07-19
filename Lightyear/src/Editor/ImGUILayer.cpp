@@ -24,6 +24,29 @@ ImGUILayer::~ImGUILayer() {
     ImGui::DestroyContext();
 }
 
+void ImGUILayer::BeginFrame() {
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
+}
+
+void ImGUILayer::EndFrame() {
+    ImGuiIO& imguiIO             = ImGui::GetIO();
+    const glm::uvec2& windowSize = Application::Get().GetWindow().GetSize();
+    imguiIO.DisplaySize          = ImVec2(static_cast<float>(windowSize.x), static_cast<float>(windowSize.y));
+
+    // Rendering
+    ImGui::Render();
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+    if (static_cast<bool>(imguiIO.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)) {
+        GLFWwindow* backUpCurrentContext = glfwGetCurrentContext();
+        ImGui::UpdatePlatformWindows();
+        ImGui::RenderPlatformWindowsDefault();
+        glfwMakeContextCurrent(backUpCurrentContext);
+    }
+}
+
 void ImGUILayer::OnAttach() {
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -36,7 +59,7 @@ void ImGUILayer::OnAttach() {
 
     ImGui::StyleColorsDark();
     ImGuiStyle& style = ImGui::GetStyle();
-    if (static_cast<bool>(imguiIO.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)) {
+    if (imguiIO.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
         style.WindowRounding              = 0.0f;
         style.Colors[ImGuiCol_WindowBg].w = 1.0f;
     }
@@ -78,35 +101,6 @@ void ImGUILayer::OnEvent(Event& event) {
 }
 
 void ImGUILayer::OnEditorRender() {}
-
-/**
- * @brief Initialize ImGUI backends such as Window manager and the RHI
- */
-void ImGUILayer::BeginFrame() {
-    ImGui_ImplOpenGL3_NewFrame();
-    ImGui_ImplGlfw_NewFrame();
-    ImGui::NewFrame();
-}
-
-/**
- * @brief Prepare ImGUI for next update. Render the current update.
- */
-void ImGUILayer::EndFrame() {
-    ImGuiIO& imguiIO             = ImGui::GetIO();
-    const glm::uvec2& windowSize = Application::Get().GetWindow().GetSize();
-    imguiIO.DisplaySize          = ImVec2(static_cast<float>(windowSize.x), static_cast<float>(windowSize.y));
-
-    // Rendering
-    ImGui::Render();
-    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-    if (static_cast<bool>(imguiIO.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)) {
-        GLFWwindow* backUpCurrentContext = glfwGetCurrentContext();
-        ImGui::UpdatePlatformWindows();
-        ImGui::RenderPlatformWindowsDefault();
-        glfwMakeContextCurrent(backUpCurrentContext);
-    }
-}
 
 // NOLINTBEGIN
 #pragma region ImGui Callbacks

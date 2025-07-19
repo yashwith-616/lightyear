@@ -1,6 +1,6 @@
 #pragma once
 
-#include <glm/glm.hpp>
+#include <lypch.h>
 
 /**
  * @brief Minimum and maximum coordinates on each axis.

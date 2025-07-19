@@ -2,7 +2,6 @@
 
 #include "Lightyear/Core/LayerStack.h"
 #include "Lightyear/Core/Window.h"
-#include "Lightyear/Editor/ImGUILayer.h"
 #include "Lightyear/LightyearCore.h"
 
 namespace ly {
@@ -29,23 +28,26 @@ class WindowCloseEvent;
  */
 class LIGHTYEAR_API Application {
 public:
-    Application();
     virtual ~Application();
+
     Application(const Application&)            = delete;
     Application& operator=(const Application&) = delete;
-    Application(Application&&)                 = default;
-    Application& operator=(Application&&)      = default;
+    Application(Application&&)                 = delete;
+    Application& operator=(Application&&)      = delete;
 
-    static void Create(Scope<Application> app) {
-        LY_CORE_ASSERT(!s_Application, "Application already created!");
-        s_Application = std::move(app);
-        s_Application->Init();
-    }
+    /**
+     * The following factory method is used for initializing the Application
+     *
+     * @param app the application ownership
+     */
+    static void Create(Scope<Application> app);
 
-    static Application& Get() {
-        LY_CORE_ASSERT(s_Application, "Application is not initiated");
-        return *s_Application;
-    }
+    /**
+     * Get Reference to Application that has been initialized
+     *
+     * @return the singleton Application
+     */
+    static Application& Get();
 
     /**
      * @brief Initializes the application's core subsystems.
@@ -94,15 +96,17 @@ public:
     [[nodiscard]] const Window& GetWindow() const { return *m_Window; }
 
 protected:
+    Application();
+
     virtual bool OnWindowClose(WindowCloseEvent& event);
 
 private:
-    static Scope<Application> s_Application;
+    static Scope<Application> s_Instance;
 
     Scope<Window> m_Window;
     LayerStack m_LayerStack;
 
-    bool m_Running{ true };
+    bool m_IsRunning{ true };
     float m_Frametime{ kDefaultFrametime };
     float m_LastFrameTime{ 0.f };
 };

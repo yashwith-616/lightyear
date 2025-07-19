@@ -2,16 +2,28 @@
 #include "Lightyear/Core/Layer.h"
 #include "Lightyear/Core/LayerStack.h"
 #include "Lightyear/Core/Timestep.h"
+#include "Lightyear/Editor/ImGUILayer.h"
 #include "Lightyear/Events/ApplicationEvent.h"
 #include "Lightyear/Events/Event.h"
 #include "Lightyear/Renderer/Abstract/Renderer.h"
 
 namespace ly {
 
-Scope<Application> Application::s_Application = nullptr;
+Scope<Application> Application::s_Instance = nullptr;
+
+void Application::Create(Scope<Application> app) {
+    LY_CORE_ASSERT(!s_Instance, "Application already created!");
+    s_Instance = std::move(app);
+    s_Instance->Init();
+}
+
+Application& Application::Get() {
+    LY_CORE_ASSERT(s_Instance, "Application is not initiated");
+    return *s_Instance;
+}
 
 Application::Application() {
-    LY_CORE_ASSERT(!s_Application, "Application already exists!");
+    LY_CORE_ASSERT(!s_Instance, "Application already exists!");
     m_Window = Window::Create();
     m_Window->Init();
     m_Window->SetEventCallback([this](Event& event) { OnEvent(event); });
@@ -22,13 +34,14 @@ Application::~Application() {
 }
 
 void Application::Init() {
+    Application::PushLayer(MakeScope<ImGUILayer>());
     renderer::Renderer::Init();
 }
 
 void Application::Run() {
     m_LastFrameTime = m_Window->GetTime();
 
-    while (m_Running) {
+    while (m_IsRunning) {
         const float currentTime = m_Window->GetTime();
         const Timestep timestep(currentTime - m_LastFrameTime);
         m_LastFrameTime = currentTime;
@@ -60,7 +73,7 @@ void Application::OnEvent(Event& event) {
 }
 
 bool Application::OnWindowClose(WindowCloseEvent& /*event*/) {
-    m_Running = false;
+    m_IsRunning = false;
     return true;
 }
 

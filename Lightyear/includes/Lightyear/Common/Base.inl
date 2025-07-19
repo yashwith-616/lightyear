@@ -6,33 +6,71 @@ namespace ly {
 
 // ----------------------- Custom Memory -----------------------
 
+/**
+ * Wrapper around unique_pointer
+ * @tparam T the type
+ */
 template <typename T>
 using Scope = std::unique_ptr<T>;
 
+/**
+ * Wrapper around make_unique
+ * @tparam T the Type
+ * @tparam Args the constructor arguments
+ * @param args the constructor arguments
+ * @return unique pointer
+ */
 template <typename T, typename... Args>
 constexpr std::unique_ptr<T> MakeScope(Args&&... args) {
     return std::make_unique<T>(std::forward<Args>(args)...);
 }
 
-
+/**
+ * Wrapper around shared_pointer
+ * @tparam T the type
+ */
 template <typename T>
 using Ref = std::shared_ptr<T>;
 
+/**
+ * Wrapper around make_shared.
+ * @tparam T the type
+ * @tparam Args the constructor arguments
+ * @param args the constructor arguments
+ * @return shared pointer
+ */
 template <typename T, typename... Args>
 constexpr std::shared_ptr<T> MakeRef(Args&&... args) {
     return std::make_shared<T>(std::forward<Args>(args)...);
 }
 
-
+/**
+ * Wrapper around the weak pointers
+ * @tparam T the type
+ */
 template <typename T>
 using WeakRef = std::weak_ptr<T>;
 
+/**
+ * Acquire lock on a weak pointer. Converts weak pointer to shared
+ * @tparam T the type
+ */
 template <typename T>
 Ref<T> TryLock(const WeakRef<T>& weak) {
     return weak.lock();
 }
 
 // ----------------------- Casting -----------------------
+
+/**
+ * The following cast is used as an identifier across the codebase to identify all narrow casts. Allows to easily
+ * search for narrowing operations.
+ *
+ * @tparam T cast from type
+ * @tparam U cast to type
+ * @param value the value to be cast
+ * @return value after cast
+ */
 template<typename T, typename U>
 constexpr T narrow_cast(U value) {
     return static_cast<T>(value);
