@@ -2,16 +2,28 @@
 #include "Lightyear/Core/Layer.h"
 #include "Lightyear/Core/LayerStack.h"
 #include "Lightyear/Core/Timestep.h"
+#include "Lightyear/Editor/ImGUILayer.h"
 #include "Lightyear/Events/ApplicationEvent.h"
 #include "Lightyear/Events/Event.h"
 #include "Lightyear/Renderer/Abstract/Renderer.h"
 
 namespace ly {
 
-Scope<Application> Application::s_Application = nullptr;
+Scope<Application> Application::s_Instance = nullptr;
+
+void Application::Create(Scope<Application> app) {
+    LY_CORE_ASSERT(!s_Instance, "Application already created!");
+    s_Instance = std::move(app);
+    s_Instance->Init();
+}
+
+Application& Application::Get() {
+    LY_CORE_ASSERT(s_Instance, "Application is not initiated");
+    return *s_Instance;
+}
 
 Application::Application() {
-    LY_CORE_ASSERT(!s_Application, "Application already exists!");
+    LY_CORE_ASSERT(!s_Instance, "Application already exists!");
     m_Window = Window::Create();
     m_Window->Init();
     m_Window->SetEventCallback([this](Event& event) { OnEvent(event); });
@@ -22,6 +34,7 @@ Application::~Application() {
 }
 
 void Application::Init() {
+    Application::PushLayer(MakeScope<ImGUILayer>());
     renderer::Renderer::Init();
 }
 

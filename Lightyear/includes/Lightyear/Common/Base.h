@@ -9,12 +9,12 @@ namespace ly {
 
 // ----------------------- Constants ---------------------------
 // TO BE MOVED: Windows properties
-constexpr uint32_t kDefaultWindowHeight{ 720 };
-constexpr uint32_t kDefaultWindowWidth{ 1280 };
-constexpr std::string_view kDefaultWindowTitle{ "LightYear" };
+constexpr glm::uvec2 kDefaultWindowSize{ 1280, 720 };
 constexpr float kDefaultFrametime{ 1 / 60.f };
 constexpr float kDefaultAspectRatio{ 1.7777777778f };
+constexpr std::string_view kDefaultWindowTitle{ "LightYear" };
 constexpr std::string_view kGLSLVersion = "#version 460 core";
+constexpr std::string_view kNOTSET{ "NOT_SET" };
 
 // ----------------------- Custom ------------------------------
 constexpr uint8_t BIT(const uint8_t x) {
