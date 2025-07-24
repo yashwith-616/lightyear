@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Lightyear/Core/Application.h"
-#include "Lightyear/LightYearCore.h"
+#include "Lightyear/LightyearCore.h"
 
 #ifdef LY_PLATFORM_WINDOWS
 

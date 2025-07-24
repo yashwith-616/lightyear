@@ -56,9 +56,12 @@ target_compile_options(Sandbox PRIVATE
         -Wno-deprecated-declarations
         -w  # disables all warnings (optional extreme)
     >
-)
 
-target_compile_options(Sandbox PRIVATE /EHsc)
+    # GNU Compiler
+    $<$<CXX_COMPILER_ID:GNU>:
+        -w  # disables all warnings
+    >
+)
 
 
 #-------------------------------------------------

@@ -16,7 +16,8 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-option(LY_TIDY "Perform clang tidy analysis on lightyear on build" ON)
+option(LY_TIDY "Perform clang tidy analysis on lightyear on build" OFF)
+option(LY_FORMAT "Perform clang format on lightyear on build" OFF)
 
 ##################################################
 # Structure them per configuration (Debug/Release)
@@ -50,14 +51,17 @@ endif ()
 ##################################################
 # Clang Format Setup
 ##################################################
-find_program(CLANG_FORMAT "clang-format")
-if (CLANG_FORMAT)
-    message(STATUS "Found clang-format: ${CLANG_FORMAT}")
-    set(CLANGFORMAT_EXECUTABLE ${CLANG_FORMAT})
-    list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
-    include(ClangFormat)
-    target_clangformat_setup(Lightyear)
-    target_clangformat_setup(Sandbox)
-else ()
-    message(STATUS "clang-format not found, skipping clang-format target creation")
-endif ()
+if (LY_FORMAT)
+	find_program(CLANG_FORMAT "clang-format")
+	if (CLANG_FORMAT)
+    		message(STATUS "Found clang-format: ${CLANG_FORMAT}")
+    		set(CLANGFORMAT_EXECUTABLE ${CLANG_FORMAT})
+    		list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
+    		include(ClangFormat)
+    		target_clangformat_setup(Lightyear)
+    		target_clangformat_setup(Sandbox)
+	else ()
+    		message(STATUS "clang-format not found, skipping clang-format target creation")
+	endif ()
+endif()
+

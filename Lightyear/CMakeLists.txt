@@ -153,8 +153,12 @@ target_compile_options(Lightyear PRIVATE
         -Wno-deprecated-declarations
         -w  # disables all warnings (optional extreme)
     >
+
+    # GCC Compiler
+    $<$<CXX_COMPILER_ID:GNU>:
+        -w  # disables all warnings
+    >
 )
-target_compile_options(Lightyear PRIVATE /EHsc)
 
 #-------------------------------------------------
 # Optional Compile definitions
@@ -187,10 +191,12 @@ add_custom_command(TARGET Lightyear POST_BUILD
     $<TARGET_FILE_DIR:Sandbox>
 )
 
+if (LY_TIDY)
 add_custom_command(TARGET Lightyear POST_BUILD
     COMMAND ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR} --target clangformat
     COMMENT "Running clang-format"
 )
+endif(LY_TIDY)
 
 
 #-------------------------------------------------
