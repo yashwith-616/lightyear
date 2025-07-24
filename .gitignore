@@ -3,9 +3,9 @@ build
 out
 .idea
 
-*.hdr
-*.exr
-*.psd
-*.zip
-*.7z
-*.png
+*.hdr*
+*.exr*
+*.psd*
+*.zip*
+*.7z*
+*.png*

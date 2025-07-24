@@ -35,58 +35,22 @@ public:
         static_assert(sizeof(T) == 0, "Unsupported uniform type! Specialize setUniform<T> for this type");
     }
 
-    // Specialization for int
+    // Overload for integer (int, long, etc.)
     template <std::integral T>
     void SetUniform(const std::string& name, const T value) const {
         glUniform1i(GetUniformLocation(name), static_cast<int>(value));
     }
 
-    // Specialization for float
+    // Overload for floating types (float, double, etc.)
     template <std::floating_point T>
     void SetUniform(const std::string& name, const T value) const {
         glUniform1f(GetUniformLocation(name), static_cast<float>(value));
     }
 
-    // Specialization for bool
+    // Overload for boolean type
     template <std::same_as<bool> T>
     void SetUniform(const std::string& name, const T value) const {
         glUniform1i(GetUniformLocation(name), static_cast<bool>(value));
-    }
-
-    // Specialization for glm::vec2
-    template <>
-    void SetUniform<glm::vec2>(const std::string& name, const glm::vec2& value) const {
-        glUniform2fv(GetUniformLocation(name), 1, &value[0]);
-    }
-
-    // Specialization for glm::vec3
-    template <>
-    void SetUniform<glm::vec3>(const std::string& name, const glm::vec3& value) const {
-        glUniform3fv(GetUniformLocation(name), 1, &value[0]);
-    }
-
-    // Specialization for glm::vec4
-    template <>
-    void SetUniform<glm::vec4>(const std::string& name, const glm::vec4& value) const {
-        glUniform4fv(GetUniformLocation(name), 1, &value[0]);
-    }
-
-    // Specialization for glm::mat2
-    template <>
-    void SetUniform<glm::mat2>(const std::string& name, const glm::mat2& value) const {
-        glUniformMatrix2fv(GetUniformLocation(name), 1, GL_FALSE, &value[0][0]);
-    }
-
-    // Specialization for glm::mat3
-    template <>
-    void SetUniform<glm::mat3>(const std::string& name, const glm::mat3& value) const {
-        glUniformMatrix3fv(GetUniformLocation(name), 1, GL_FALSE, &value[0][0]);
-    }
-
-    // Specialization for glm::mat4
-    template <>
-    void SetUniform<glm::mat4>(const std::string& name, const glm::mat4& value) const {
-        glUniformMatrix4fv(GetUniformLocation(name), 1, GL_FALSE, &value[0][0]);
     }
 
     void SetUniformBlock(const std::string& name, const UniformBufferBlockBinding& bindingPoint) const {
@@ -121,5 +85,45 @@ private:
      */
     static void CheckCompilerErrors(ShaderHandle shaderHandle, GLenum shaderType);
 };
+
+#pragma region Template Specialization
+
+// Specialization for glm::vec2
+template <>
+inline void OpenGLShader::SetUniform<glm::vec2>(const std::string& name, const glm::vec2& value) const {
+    glUniform2fv(GetUniformLocation(name), 1, &value[0]);
+}
+
+// Specialization for glm::vec3
+template <>
+inline void OpenGLShader::SetUniform<glm::vec3>(const std::string& name, const glm::vec3& value) const {
+    glUniform3fv(GetUniformLocation(name), 1, &value[0]);
+}
+
+// Specialization for glm::vec4
+template <>
+inline void OpenGLShader::SetUniform<glm::vec4>(const std::string& name, const glm::vec4& value) const {
+    glUniform4fv(GetUniformLocation(name), 1, &value[0]);
+}
+
+// Specialization for glm::mat2
+template <>
+inline void OpenGLShader::SetUniform<glm::mat2>(const std::string& name, const glm::mat2& value) const {
+    glUniformMatrix2fv(GetUniformLocation(name), 1, GL_FALSE, &value[0][0]);
+}
+
+// Specialization for glm::mat3
+template <>
+inline void OpenGLShader::SetUniform<glm::mat3>(const std::string& name, const glm::mat3& value) const {
+    glUniformMatrix3fv(GetUniformLocation(name), 1, GL_FALSE, &value[0][0]);
+}
+
+// Specialization for glm::mat4
+template <>
+inline void OpenGLShader::SetUniform<glm::mat4>(const std::string& name, const glm::mat4& value) const {
+    glUniformMatrix4fv(GetUniformLocation(name), 1, GL_FALSE, &value[0][0]);
+}
+
+#pragma endregion
 
 }  // namespace ly::renderer

@@ -4,7 +4,13 @@
 
 LY_DISABLE_WARNINGS_PUSH
 #include <random>
-#include <xhash>
+
+#ifdef _MSC_VER
+    #include <xhash>
+#else
+    #include <unordered_map>
+#endif
+
 LY_DISABLE_WARNINGS_POP
 
 namespace ly {
