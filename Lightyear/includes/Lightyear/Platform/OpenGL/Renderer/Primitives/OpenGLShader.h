@@ -37,19 +37,19 @@ public:
 
     // Overload for integer (int, long, etc.)
     template <std::integral T>
-    void OpenGLShader::SetUniform(const std::string& name, const T value) const {
+    void SetUniform(const std::string& name, const T value) const {
         glUniform1i(GetUniformLocation(name), static_cast<int>(value));
     }
 
     // Overload for floating types (float, double, etc.)
     template <std::floating_point T>
-    void OpenGLShader::SetUniform(const std::string& name, const T value) const {
+    void SetUniform(const std::string& name, const T value) const {
         glUniform1f(GetUniformLocation(name), static_cast<float>(value));
     }
 
     // Overload for boolean type
     template <std::same_as<bool> T>
-    void OpenGLShader::SetUniform(const std::string& name, const T value) const {
+    void SetUniform(const std::string& name, const T value) const {
         glUniform1i(GetUniformLocation(name), static_cast<bool>(value));
     }
 
