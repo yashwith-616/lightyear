@@ -191,12 +191,10 @@ add_custom_command(TARGET Lightyear POST_BUILD
     $<TARGET_FILE_DIR:Sandbox>
 )
 
-if (LY_TIDY)
 add_custom_command(TARGET Lightyear POST_BUILD
-    COMMAND ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR} --target clangformat
-    COMMENT "Running clang-format"
+	COMMAND ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR} --target clangformat
+	COMMENT "Running clang-format"
 )
-endif(LY_TIDY)
 
 
 #-------------------------------------------------
