@@ -29,6 +29,8 @@ HeaderFilterRegex: '^(?!.*(extern|third_party|Lightyear/extern)).*'
 
 CheckOptions:
   # === Naming Convention ===
+  - key: readability-identifier-naming.VariableIgnoredRegexp
+    value: '^(Cache_|cache_).*'
   - key: readability-identifier-naming.ClassCase
     value: CamelCase
   - key: readability-identifier-naming.StructCase

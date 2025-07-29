@@ -1,4 +1,6 @@
 #include "Lightyear/Scene/Scene.h"
+
+#include "Lightyear/Scene/Components/Camera/CameraTag.h"
 #include "Lightyear/Scene/Components/Components.h"
 #include "Lightyear/Scene/Entity.h"
 
@@ -194,13 +196,14 @@ Entity Scene::FindEntityByName(const std::string& name) const {
     return {};
 }
 
+/**
+ * Primary camera is game camera in runtime. Else, it is the editor camera present in the scene.
+ * @return The camera entity
+ */
 Entity Scene::GetPrimaryCameraEntity() const {
-    auto view = m_Registry.view<CameraComponent>();
+    auto view = m_Registry.view<MainCameraTag>();
     for (auto entity : view) {
-        const auto& camera = view.get<CameraComponent>(entity);
-        if (camera.bIsPrimary) {
-            return Entity{ entity, const_cast<Scene*>(this) };
-        }
+        return Entity{ entity, const_cast<Scene*>(this) };
     }
     return {};
 }
@@ -215,6 +218,7 @@ Entity Scene::CreateEntity(UUID UUID,
     entity.AddComponent<TagComponent>(GenerateUniqueName(name));
     entity.AddComponent<MobilityComponent>(EMobilityType::STATIC);
     entity.AddComponent<TransformComponent>();
+    entity.AddComponent<DirtyComponent>();
 
     if (!parent.has_value()) {
         entity.AddComponent<RelationshipComponent>();

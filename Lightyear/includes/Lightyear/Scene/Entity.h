@@ -23,9 +23,25 @@ public:
     template <typename T, typename... Args>
     T& AddComponent(Args&&... args) {
         LY_CORE_ASSERT(!HasComponent<T>(), "Entity already has component!");
-        T& component = m_Scene->m_Registry.emplace<T>(m_EntityHandle, std::forward<Args>(args)...);
+        T& component = GetRegistry().emplace<T>(m_EntityHandle, std::forward<Args>(args)...);
         m_Scene->OnComponentAdded<T>(*this, component);
         return component;
+    }
+
+    template <typename T>
+    void AddSingletonComponent() {
+        LY_CORE_ASSERT(!HasComponent<T>(), "Entity already has component!");
+        auto view = GetRegistry().view<T>();
+        LY_ASSERT(view.size() <= 1, "More than one SINGLETON COMPONENT exists!");
+        for (entt::entity entity : view) {
+            if (entity != m_EntityHandle) {
+                GetRegistry().remove<T>(entity);
+            }
+        }
+
+        if (!GetRegistry().all_of<T>(m_EntityHandle)) {
+            GetRegistry().emplace<T>(m_EntityHandle);
+        }
     }
 
     template <typename T, typename... Args>
@@ -38,18 +54,18 @@ public:
     template <typename T>
     T& GetComponent() {
         LY_CORE_ASSERT(HasComponent<T>(), "Entity does not have component!");
-        return m_Scene->m_Registry.get<T>(m_EntityHandle);
+        return GetRegistry().get<T>(m_EntityHandle);
     }
 
     template <typename T>
     [[nodiscard]] bool HasComponent() const {
-        return m_Scene->m_Registry.all_of<T>(m_EntityHandle);
+        return GetRegistry().all_of<T>(m_EntityHandle);
     }
 
     template <typename T>
-    void RemoveComponent() {
+    void RemoveComponent() const {
         LY_CORE_ASSERT(HasComponent<T>(), "Entity does not have component!");
-        m_Scene->m_Registry.remove<T>(m_EntityHandle);
+        GetRegistry().remove<T>(m_EntityHandle);
     }
 
     operator bool() const { return m_EntityHandle != entt::null; }
@@ -67,5 +83,7 @@ public:
 private:
     entt::entity m_EntityHandle{ entt::null };
     Scene* m_Scene{ nullptr };
+
+    FORCEINLINE entt::registry& GetRegistry() const { return m_Scene->m_Registry; }
 };
 }  // namespace ly::scene

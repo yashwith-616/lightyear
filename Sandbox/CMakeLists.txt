@@ -44,7 +44,9 @@ endfunction()
 target_compile_definitions(Sandbox PRIVATE LY_PLATFORM_WINDOWS LY_BUILD_STATIC LY_DEBUG)
 target_compile_options(Sandbox PRIVATE
     # MSVC
-    $<$<CXX_COMPILER_ID:MSVC>:/EHsc>
+    $<$<CXX_COMPILER_ID:MSVC>:
+        /EHsc
+        /utf-8>
 
     # Clang on Windows (clang-cl)
     $<$<AND:$<CXX_COMPILER_ID:Clang>>:

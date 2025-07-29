@@ -141,7 +141,9 @@ target_compile_definitions(Lightyear
 
 target_compile_options(Lightyear PRIVATE
     # MSVC
-    $<$<CXX_COMPILER_ID:MSVC>:/EHsc>
+    $<$<CXX_COMPILER_ID:MSVC>:
+        /EHsc
+        /utf-8>
 
     # Clang on Windows (clang-cl)
     $<$<AND:$<CXX_COMPILER_ID:Clang>>:

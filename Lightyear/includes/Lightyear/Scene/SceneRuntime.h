@@ -3,10 +3,7 @@
 #include "Lightyear/LightyearCore.h"
 #include "Lightyear/Scene/Scene.h"
 #include "Lightyear/Scene/SceneData.h"
-
-namespace ly::renderer {
-class SceneCamera;
-}
+#include "Lightyear/Scene/Systems/ISystem.h"
 
 namespace ly::scene {
 
@@ -21,6 +18,8 @@ public:
     SceneRuntime& operator=(SceneRuntime&&)      = default;
 
     ~SceneRuntime() = default;
+
+    void Initialize();
 
     void OnRuntimeStart();
     void OnRuntimeStop();
@@ -39,28 +38,28 @@ public:
      * @brief Update physics layer and render using sceneCamera
      *
      * @param deltaTime the time between each frame
-     * @param editorCamera the editor camera that is part of the scene
      */
-    void OnUpdateSimulation(Timestep deltaTime, Ref<renderer::SceneCamera> editorCamera);
+    void OnUpdateSimulation(Timestep deltaTime);
 
     /**
      * @brief The following update is performed on the editor while rendering using the sceneCamera
      * @param deltaTime the time between each frame
-     * @param camera the editorial camera
      */
-    void OnUpdateEditor(Timestep deltaTime, const Ref<renderer::SceneCamera>& camera);
+    void OnUpdateEditor(Timestep deltaTime);
 
     void OnViewportResize(glm::uvec2 size);
 
     void SetSceneExecState(SceneExecState state) { m_SceneExecState = state; }
-    bool IsRunning() const { return m_SceneExecState == SceneExecState::RUNNING; }
-    bool IsPaused() const { return m_SceneExecState == SceneExecState::PAUSED; }
+    [[nodiscard]] bool IsRunning() const { return m_SceneExecState == SceneExecState::RUNNING; }
+    [[nodiscard]] bool IsPaused() const { return m_SceneExecState == SceneExecState::PAUSED; }
 
 private:
     Scene* m_WPtrScene{};
     glm::uvec2 m_ViewportSize{};
     SceneExecState m_SceneExecState{ SceneExecState::PAUSED };
     SceneData m_SceneData{};
+
+    std::vector<Scope<ISystem>> m_SceneSystems;
 };
 
 }  // namespace ly::scene

@@ -1,7 +1,5 @@
 #pragma once
 
-#include "ComponentsForward.h"
-
 namespace ly::scene {
 
 /**

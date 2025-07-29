@@ -7,8 +7,6 @@ const std::unordered_map<ly::renderer::ShaderType, ly::CPath> g_GridShader = {
     { ly::renderer::ShaderType::FRAGMENT, ASSET_DIR "/Shaders/Fragment/S_Grid.frag" }
 };
 
-class EditorCamera;
-
 class GridRender {
 public:
     GridRender();

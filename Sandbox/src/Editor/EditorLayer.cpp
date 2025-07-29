@@ -1,5 +1,4 @@
 ﻿#include "Sandbox/Editor/EditorLayer.h"
-#include "Sandbox/Core/Camera/EditorCamera.h"
 #include "Sandbox/Geometry/Geometry.h"
 #include "Sandbox/Helpers/GridRender.h"
 
@@ -13,6 +12,9 @@ namespace renderer = ly::renderer;
 EditorLayer::EditorLayer() : Layer("Editor") {}
 
 void EditorLayer::OnAttach() {
+    m_Scene        = ly::MakeRef<ly::scene::Scene>();
+    m_SceneRuntime = ly::MakeScope<ly::scene::SceneRuntime>(m_Scene.get());
+
 #pragma region Framebuffer Init
     // TODO: Framebuffer must be moved to a separate Framebuffer pool and must be accessed by the
     // world. The world needs to be responsible for rendering.
@@ -32,26 +34,22 @@ void EditorLayer::OnAttach() {
 #pragma endregion
 
 #pragma region SceneCamera
-    // TODO: Move to separate functions to create a SceneCamera
-    // Camera system will be re-written using entt, current implementation
-    // will be modified significantly
-
-    m_EditorCamera = ly::MakeRef<EditorCamera>(ly::kDefaultAspectRatio);
-    m_EditorCamera->SetSpeed(1.f);
+    ly::scene::Entity editorCamera = m_Scene->CreateEntity("EditorCamera");
+    editorCamera.AddComponent<ly::scene::CameraComponent>();
+    editorCamera.AddSingletonComponent<ly::scene::EditorCameraTag>();
 #pragma endregion
 
 #pragma region Game Scene
-    m_Scene        = ly::MakeRef<ly::scene::Scene>();
-    m_SceneRuntime = ly::MakeScope<ly::scene::SceneRuntime>(m_Scene.get());
-
-    auto newCamera                 = ly::MakeRef<EditorCamera>(ly::kDefaultAspectRatio);
-    ly::scene::Entity cameraEntity = m_Scene->CreateEntity("GameCamera");
-    cameraEntity.AddComponent<ly::scene::CameraComponent>(newCamera);
-    m_SceneRuntime->OnViewportResize(glm::uvec2(spec.Width, spec.Height));
+    ly::scene::Entity gameCamera = m_Scene->CreateEntity("GameCamera");
+    gameCamera.AddComponent<ly::scene::CameraComponent>();
+    gameCamera.AddSingletonComponent<ly::scene::MainCameraTag>();
 
     m_CubeEntity = m_Scene->CreateEntity("Cube");
     m_CubeEntity.AddComponent<ly::scene::MeshComponent>(Geometry::GetCube(), m_Shader, m_Texture);
     m_CubeEntity.AddComponent<ly::scene::RenderComponent>();
+
+    m_SceneRuntime->OnViewportResize(glm::uvec2(spec.Width, spec.Height));
+    m_SceneRuntime->SetSceneExecState(ly::scene::SceneExecState::RUNNING);
 #pragma endregion
 
 #pragma region Inti Scene and Panels
@@ -71,7 +69,8 @@ void EditorLayer::OnUpdate(float deltaTime) {
     renderer::RenderCommand::Clear();
 
     if (m_SceneRuntime->IsPaused()) {
-        m_SceneRuntime->OnUpdateEditor(deltaTime, std::static_pointer_cast<ly::renderer::SceneCamera>(m_EditorCamera));
+        // Fix this code
+        m_SceneRuntime->OnUpdateEditor(deltaTime);
     }
 
     if (m_SceneRuntime->IsRunning()) {
@@ -92,39 +91,39 @@ void EditorLayer::OnEditorRender() {
  */
 void EditorLayer::PollInput(float deltaTime) {
     if (ly::Input::IsKeyPressed(ly::Key::Q)) {
-        m_EditorCamera->MoveUp(deltaTime * m_EditorCamera->GetSpeed());
+        // m_EditorCamera->MoveUp(deltaTime * m_EditorCamera->GetSpeed());
     }
 
     if (ly::Input::IsKeyPressed(ly::Key::E)) {
-        m_EditorCamera->MoveUp(deltaTime * m_EditorCamera->GetSpeed() * -1.f);
+        // m_EditorCamera->MoveUp(deltaTime * m_EditorCamera->GetSpeed() * -1.f);
     }
 
     if (ly::Input::IsKeyPressed(ly::Key::D)) {
-        m_EditorCamera->MoveRight(deltaTime * m_EditorCamera->GetSpeed());
+        // m_EditorCamera->MoveRight(deltaTime * m_EditorCamera->GetSpeed());
     }
 
     if (ly::Input::IsKeyPressed(ly::Key::A)) {
-        m_EditorCamera->MoveRight(deltaTime * m_EditorCamera->GetSpeed() * -1.f);
+        // m_EditorCamera->MoveRight(deltaTime * m_EditorCamera->GetSpeed() * -1.f);
     }
 
     if (ly::Input::IsKeyPressed(ly::Key::W)) {
-        m_EditorCamera->MoveForward(deltaTime * m_EditorCamera->GetSpeed() * -1.f);
+        // m_EditorCamera->MoveForward(deltaTime * m_EditorCamera->GetSpeed() * -1.f);
     }
 
     if (ly::Input::IsKeyPressed(ly::Key::S)) {
-        m_EditorCamera->MoveForward(deltaTime * m_EditorCamera->GetSpeed());
+        // m_EditorCamera->MoveForward(deltaTime * m_EditorCamera->GetSpeed());
     }
 
     if (ly::Input::IsMouseButtonPressed(ly::Mouse::Button1)) {
         if (const float val = ly::Input::GetMouseY(); val > 0) {
             const float diff = val - m_PrevMouseY;
-            m_EditorCamera->AddPitch(diff * deltaTime * m_MouseSensitivity);
+            // m_EditorCamera->AddPitch(diff * deltaTime * m_MouseSensitivity);
             m_PrevMouseY = val;
         }
 
         if (const float val = ly::Input::GetMouseX(); val > 0) {
             const float diff = val - m_PrevMouseX;
-            m_EditorCamera->AddYaw(diff * deltaTime * m_MouseSensitivity);
+            // m_EditorCamera->AddYaw(diff * deltaTime * m_MouseSensitivity);
             m_PrevMouseX = val;
         }
     }

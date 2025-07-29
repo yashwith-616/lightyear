@@ -1,15 +1,24 @@
 #include "Lightyear/Scene/SceneRuntime.h"
 
+#include <Lightyear/Scene/Components/Core/DirtyComponent.h>
+
 #include "Lightyear/Core/Application.h"
 #include "Lightyear/Core/Window.h"
 #include "Lightyear/Renderer/Abstract/Renderer.h"
-#include "Lightyear/Renderer/Camera/SceneCamera.h"
+
 #include "Lightyear/Scene/Components/Components.h"
 #include "Lightyear/Scene/Entity.h"
+#include "Lightyear/Scene/Systems/Camera/CameraSystem.h"
+#include "Lightyear/Scene/Systems/Renderer/RenderSystem.h"
 
 namespace ly::scene {
 
 SceneRuntime::SceneRuntime(Scene* scene) : m_WPtrScene(scene) {}
+
+void SceneRuntime::Initialize() {
+    m_SceneSystems.push_back(MakeScope<CameraSystem>());
+    m_SceneSystems.push_back(MakeScope<RenderSystem>());
+}
 
 // NOLINTNEXTLINE
 void SceneRuntime::OnRuntimeStart() {
@@ -36,49 +45,28 @@ void SceneRuntime::OnUpdateRuntime(Timestep /*deltaTime*/) {
 
     m_SceneData.Time = Application::Get().GetWindow().GetTime();
 
-    const auto cameraComp = m_WPtrScene->GetPrimaryCameraEntity().GetComponent<CameraComponent>();
-    renderer::Renderer::BeginScene(cameraComp.Camera, m_SceneData);
+    Entity mainCamera          = m_WPtrScene->GetPrimaryCameraEntity();
+    const auto cameraComp      = mainCamera.GetComponent<CameraComponent>();
+    const auto cameraTransform = mainCamera.GetComponent<TransformComponent>();
+    renderer::Renderer::BeginScene(cameraComp, cameraTransform, m_SceneData);
 
-    const auto& registry = m_WPtrScene->GetRegistry();
-    auto view            = registry.view<RenderComponent, MeshComponent, TransformComponent>();
-    for (auto entity : view) {
-        const auto& [render, mesh, transform] = view.get<RenderComponent, MeshComponent, TransformComponent>(entity);
-
-        if (!mesh.ShaderAsset || !mesh.MeshAsset) {
-            continue;
-        }
-
-        renderer::Renderer::Submit(
-            renderer::RenderSubmission(mesh.ShaderAsset, mesh.MeshAsset, mesh.TextureAsset, transform.GetTransform()));
+    auto& registry = m_WPtrScene->GetRegistry();
+    for (const auto& system : m_SceneSystems) {
+        system->Execute(registry);
     }
 
     renderer::Renderer::EndScene();
 }
 
 // NOLINTNEXTLINE
-void SceneRuntime::OnUpdateSimulation(Timestep /*deltaTime*/, Ref<renderer::SceneCamera> /*camera*/) {
+void SceneRuntime::OnUpdateSimulation(Timestep /*deltaTime*/) {
     // TODO: Update physics simulation logic only
     LY_CORE_ASSERT(false, "OnUpdateSimulation has not been updated yet");
 }
 
-void SceneRuntime::OnUpdateEditor(Timestep /*deltaTime*/, const Ref<renderer::SceneCamera>& camera) {
+void SceneRuntime::OnUpdateEditor(Timestep /*deltaTime*/) {
     m_SceneData.Time = Application::Get().GetWindow().GetTime();
-
     LY_CORE_ASSERT(IsPaused(), "EditorUpdate is performed when scene is not paused!");
-    renderer::Renderer::BeginScene(std::static_pointer_cast<renderer::Camera>(camera), m_SceneData);
-
-    const auto& registry = m_WPtrScene->GetRegistry();
-    auto view            = registry.view<RenderComponent, MeshComponent, TransformComponent>();
-    for (auto entity : view) {
-        const auto& [render, mesh, transform] = view.get<RenderComponent, MeshComponent, TransformComponent>(entity);
-
-        if (!mesh.ShaderAsset || !mesh.MeshAsset) {
-            continue;
-        }
-
-        renderer::Renderer::Submit(
-            renderer::RenderSubmission(mesh.ShaderAsset, mesh.MeshAsset, mesh.TextureAsset, transform.GetTransform()));
-    }
 
     renderer::Renderer::EndScene();
 }
@@ -87,8 +75,14 @@ void SceneRuntime::OnViewportResize(glm::uvec2 size) {
     m_ViewportSize.x = size.x;
     m_ViewportSize.y = size.y;
 
-    // NOLINTNEXTLINE
-    m_WPtrScene->GetPrimaryCameraEntity().GetComponent<CameraComponent>().Camera->Resize(size.x, size.y);
+    const float kNewAspectRatio = static_cast<float>(size.x) / static_cast<float>(size.y);
+
+    Entity primaryCamera   = m_WPtrScene->GetPrimaryCameraEntity();
+    auto& cameraComp       = primaryCamera.GetComponent<CameraComponent>();
+    cameraComp.AspectRatio = kNewAspectRatio;
+
+    auto& dirty             = primaryCamera.GetComponent<DirtyComponent>();
+    dirty.Camera_Projection = true;
 }
 
 }  // namespace ly::scene

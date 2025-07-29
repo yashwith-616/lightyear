@@ -1,5 +1,4 @@
 ﻿#include "Sandbox/Helpers/GridRender.h"
-#include "Sandbox/Core/Camera/EditorCamera.h"
 
 namespace {
 // NOLINTNEXTLINE

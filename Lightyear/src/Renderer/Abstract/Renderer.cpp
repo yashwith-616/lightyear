@@ -1,6 +1,9 @@
 #include "Lightyear/Renderer/Abstract/Renderer.h"
+
+#include "Lightyear/Scene/Components/Camera/CameraComponent.h"
+#include "Lightyear/Scene/Components/Transform/TransformComponent.h"
+
 #include "Lightyear/Renderer/Abstract/RenderCommand.h"
-#include "Lightyear/Renderer/Camera/Camera.h"
 #include "Lightyear/Renderer/Primitives/Shader.h"
 #include "Lightyear/Renderer/Primitives/Texture.h"
 #include "Lightyear/Renderer/Primitives/VertexArray.h"
@@ -35,11 +38,13 @@ void Renderer::Shutdown() {}
 
 void Renderer::OnWindowResize(glm::uvec2 size) {}
 
-void Renderer::BeginScene(const Ref<Camera>& camera, const scene::SceneData& sceneData) {
-    s_CameraUBO.ViewProjection = camera->GetViewProjectionMatrix();
-    s_CameraUBO.View           = camera->GetViewMatrix();
-    s_CameraUBO.CameraPosition = camera->GetPosition();
-    s_CameraUBO.CameraRotation = camera->GetRotation();
+void Renderer::BeginScene(const scene::CameraComponent& camera,
+                          const scene::TransformComponent& cameraTransform,
+                          const scene::SceneData& sceneData) {
+    s_CameraUBO.ViewProjection = camera.Cache_ViewProjectionMatrix;
+    s_CameraUBO.View           = camera.ViewMatrix;
+    s_CameraUBO.CameraPosition = cameraTransform.Translation;
+    s_CameraUBO.CameraRotation = cameraTransform.Rotation;
     s_CameraUBO.ZoomLevel      = 1.f;
     s_GlobalUniforms.UploadCamera(s_CameraUBO);
 
