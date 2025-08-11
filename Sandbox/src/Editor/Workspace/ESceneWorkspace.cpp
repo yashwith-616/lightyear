@@ -7,6 +7,7 @@ using SceneComponent =
 void ESceneWorkspace::OnAttach(ly::Ref<GlobalEditorContext> globalContext) {
     m_GlobalContext   = globalContext;
     m_SceneGraphPanel = ly::MakeScope<ESceneGraphPanelExp>(GetPanelTitle(EEditorPanel::SCENE_GRAPH));
+    m_ViewportPanel   = ly::MakeScope<EViewportPanel>(GetPanelTitle(EEditorPanel::VIEWPORT));
 }
 
 void ESceneWorkspace::OnEvent(ly::Event& event) {}
@@ -18,6 +19,7 @@ void ESceneWorkspace::OnEditorUpdate() {
     BuildSceneTree();
 
     m_SceneGraphPanel->SetSceneTree(m_SceneTree);
+    m_ViewportPanel->SetFramebuffer(m_GlobalContext->SceneFramebufferId);
 }
 
 void ESceneWorkspace::OnImGuiRender() {
@@ -29,6 +31,7 @@ void ESceneWorkspace::OnImGuiRender() {
     }
 
     m_SceneGraphPanel->OnImGuiRender();
+    m_ViewportPanel->OnImGuiRender();
 }
 
 void ESceneWorkspace::DrawDockspace() {
@@ -96,8 +99,7 @@ void ESceneWorkspace::BuildSceneTree() {
 
     m_SceneTree = ly::MakeRef<SceneTreeNode>("root", ly::UUID(0), entt::null);
 
-    // NOLINTNEXTLINE
-    for (auto [entity, tag, id, relation] : ly::scene::ComponentGroupView<SceneComponent>::view(registry).each()) {
+    for (auto&& [entity, tag, id, relation] : ly::scene::ComponentGroupView<SceneComponent>::view(registry).each()) {
         if (relation.Parent != entt::null) {
             continue;
         }
@@ -106,13 +108,13 @@ void ESceneWorkspace::BuildSceneTree() {
 }
 
 ly::Ref<SceneTreeNode> ESceneWorkspace::BuildSceneTreeRecursive(entt::entity entity) {
-    const auto& registry     = GetScene().GetRegistry();
-    auto [tag, id, relation] = ly::scene::ComponentGroupGet<SceneComponent>::get(registry, entity);
+    const auto& registry      = GetScene().GetRegistry();
+    auto [tag, uid, relation] = ly::scene::ComponentGroupGet<SceneComponent>::get(registry, entity);
 
-    ly::Ref<SceneTreeNode> head = ly::MakeRef<SceneTreeNode>(tag.Tag, id.ID, entity);
+    ly::Ref<SceneTreeNode> head = ly::MakeRef<SceneTreeNode>(tag.Tag, uid.ID, entity);
 
     entt::entity curr = relation.FirstChild;
-    for (int i = 0; i < relation.ChildrenCount; ++i) {
+    for (uint32_t i = 0; i < relation.ChildrenCount; ++i) {
         head->AddChild(BuildSceneTreeRecursive(curr));
 
         const auto& childRelation = registry.get<ly::scene::RelationshipComponent>(curr);

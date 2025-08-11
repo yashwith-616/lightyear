@@ -7,6 +7,8 @@ LY_DISABLE_WARNINGS_PUSH
 #include <imgui_internal.h>
 LY_DISABLE_WARNINGS_POP
 
+constexpr glm::vec4 kClearColor = glm::vec4(0.12, 0.12, 0.13, 1.0);
+
 namespace renderer = ly::renderer;
 
 EditorLayer::EditorLayer() : Layer("Editor") {}
@@ -14,6 +16,7 @@ EditorLayer::EditorLayer() : Layer("Editor") {}
 void EditorLayer::OnAttach() {
     m_Scene        = ly::MakeRef<ly::scene::Scene>();
     m_SceneRuntime = ly::MakeScope<ly::scene::SceneRuntime>(m_Scene.get());
+    m_SceneRuntime->Initialize();
 
 #pragma region Framebuffer Init
     // TODO: Framebuffer must be moved to a separate Framebuffer pool and must be accessed by the
@@ -49,33 +52,27 @@ void EditorLayer::OnAttach() {
     m_CubeEntity.AddComponent<ly::scene::RenderComponent>();
 
     m_SceneRuntime->OnViewportResize(glm::uvec2(spec.Width, spec.Height));
-    m_SceneRuntime->SetSceneExecState(ly::scene::SceneExecState::RUNNING);
+    m_SceneRuntime->SetSceneExecState(ly::scene::SceneRuntimeMode::PLAY);
 #pragma endregion
 
 #pragma region Inti Scene and Panels
-    m_SceneWorkspace               = ly::MakeScope<ESceneWorkspace>("SceneWorkspace");
-    m_EditorContext                = ly::MakeRef<GlobalEditorContext>();
-    m_EditorContext->m_ActiveScene = m_Scene;
+    m_SceneWorkspace                    = ly::MakeScope<ESceneWorkspace>("SceneWorkspace");
+    m_EditorContext                     = ly::MakeRef<GlobalEditorContext>();
+    m_EditorContext->ActiveScene        = m_Scene;
+    m_EditorContext->SceneFramebufferId = m_Framebuffer->GetColorAttachmentRenderID();
     m_SceneWorkspace->OnAttach(m_EditorContext);
 #pragma endregion
 }
 
 void EditorLayer::OnUpdate(float deltaTime) {
     PollInput(deltaTime);
-
-    constexpr glm::vec4 clearColor(0.0f, 0.0f, 0.0f, 0.5f);
-
     m_Framebuffer->Bind();
     renderer::RenderCommand::Clear();
+    renderer::RenderCommand::SetClearColor(kClearColor);
 
-    if (m_SceneRuntime->IsPaused()) {
-        // Fix this code
-        m_SceneRuntime->OnUpdateEditor(deltaTime);
-    }
-
-    if (m_SceneRuntime->IsRunning()) {
-        m_SceneRuntime->OnUpdateRuntime(deltaTime);
-    }
+    // m_SceneRuntime->OnStart();
+    m_SceneRuntime->OnUpdate(deltaTime);
+    // m_SceneRuntime->OnEnd();
 
     m_Framebuffer->Unbind();
 }
@@ -83,6 +80,13 @@ void EditorLayer::OnUpdate(float deltaTime) {
 void EditorLayer::OnEditorRender() {
     m_SceneWorkspace->OnEditorUpdate();
     m_SceneWorkspace->OnImGuiRender();
+
+    ImGui::SetNextWindowBgAlpha(0.35f);  // Transparent background
+    if (ImGui::Begin("Example: Simple overlay")) {
+        ImGui::Text(std::format("IsRunning: {}", m_SceneRuntime->IsRunning()).c_str());
+        ImGui::Text(std::format("IsPaused: {}", m_SceneRuntime->IsPaused()).c_str());
+    }
+    ImGui::End();
 }
 
 /**

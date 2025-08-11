@@ -30,6 +30,7 @@ public:
 
     [[nodiscard]] SystemLayer GetSystemLayer() const { return m_SystemLayer; }
     [[nodiscard]] bool IsEnabled() const { return m_IsEnabled; }
+    [[nodiscard]] std::string GetName() const { return m_Name; }
 
     void SetEnabled(bool enable) { m_IsEnabled = enable; }
 

@@ -2,6 +2,8 @@
 
 #include <Sandbox/Editor/Comman/SceneTreeNode.h>
 #include <Sandbox/Editor/Panel/SceneGraphPanelExp.h>
+
+#include "Sandbox/Editor/Panel/EViewportPanel.h"
 #include "Sandbox/Editor/Workspace/IEditorWorkspace.h"
 
 /**
@@ -23,23 +25,26 @@ protected:
     ImGuiID m_DockspaceID{};
 
     void DrawDockspace();
-    void SetupDockspace()const;
+    void SetupDockspace() const;
     void BuildSceneTree();
     ly::Ref<SceneTreeNode> BuildSceneTreeRecursive(entt::entity entity);
 
     [[nodiscard]] bool IsDockspaceInitialized() const { return m_bIsInitialized; }
-    const ly::scene::Scene& GetScene() const {
-        LY_CORE_ASSERT(m_GlobalContext && m_GlobalContext->m_ActiveScene, "Active Scene is null!");
-        return *(m_GlobalContext->m_ActiveScene);
+
+    [[nodiscard]] const ly::scene::Scene& GetScene() const {
+        LY_CORE_ASSERT(m_GlobalContext && m_GlobalContext->ActiveScene, "Active Scene is null!");
+        return *(m_GlobalContext->ActiveScene);
     }
 
     static std::string GetPanelTitle(EEditorPanel editorPanel);
 
 private:
-    ly::Scope<ESceneGraphPanelExp> m_SceneGraphPanel{};
+    // Move all panels to a registry, along with what they need.
+    ly::Scope<ESceneGraphPanelExp> m_SceneGraphPanel;
+    ly::Scope<EViewportPanel> m_ViewportPanel;
 
     bool m_bIsInitialized{ false };
-    ly::Ref<GlobalEditorContext> m_GlobalContext{};
-    ly::Ref<SceneTreeNode> m_SceneTree{};
-    ly::WeakRef<SceneTreeNode> m_SelectedNode{};
+    ly::Ref<GlobalEditorContext> m_GlobalContext;
+    ly::Ref<SceneTreeNode> m_SceneTree;
+    ly::WeakRef<SceneTreeNode> m_SelectedNode;
 };

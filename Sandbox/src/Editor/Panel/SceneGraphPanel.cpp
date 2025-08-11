@@ -1,7 +1,9 @@
 #include "Sandbox/Editor/Panel/SceneGraphPanel.h"
 
+LY_DISABLE_WARNINGS_PUSH
 #include <imgui.h>
 #include <imgui_internal.h>
+LY_DISABLE_WARNINGS_POP
 
 /**
  * @brief Needs fix - Not well optimized

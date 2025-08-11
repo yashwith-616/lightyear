@@ -7,6 +7,7 @@
 class IEditorWorkspace {
 public:
     IEditorWorkspace(std::string name) : m_Name(std::move(name)) {}
+    virtual ~IEditorWorkspace() = default;
 
     virtual void OnAttach(ly::Ref<GlobalEditorContext> globalContext) = 0;
     virtual void OnEvent(ly::Event& event)                            = 0;
