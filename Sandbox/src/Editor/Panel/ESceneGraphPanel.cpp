@@ -1,10 +1,10 @@
-#include <Sandbox/Editor/Panel/SceneGraphPanelExp.h>
+#include <Sandbox/Editor/Panel/ESceneGraphPanel.h>
 
-void ESceneGraphPanelExp::OnImGuiRender() {
+void EESceneGraphPanel::OnImGuiRender() {
     DrawSceneTree();
 }
 
-void ESceneGraphPanelExp::DrawSceneTree() {
+void EESceneGraphPanel::DrawSceneTree() {
     ImGui::Begin("Scene Hierarchy");
     if (const auto shared = m_SceneTree.lock()) {
         DrawSceneTreeNode(shared);
@@ -12,14 +12,14 @@ void ESceneGraphPanelExp::DrawSceneTree() {
     ImGui::End();
 }
 
-void ESceneGraphPanelExp::DrawSceneTreeNode(const ly::Ref<SceneTreeNode>& node) {
+void EESceneGraphPanel::DrawSceneTreeNode(const ly::Ref<SceneTreeNode>& node) {
     ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow;
 
     if (node->Children.empty()) {
         flags |= ImGuiTreeNodeFlags_Leaf;
     }
 
-    if (m_SelectedNode.lock() == node) {
+    if (m_SelectedNode == node) {
         flags |= ImGuiTreeNodeFlags_Selected;
     }
 

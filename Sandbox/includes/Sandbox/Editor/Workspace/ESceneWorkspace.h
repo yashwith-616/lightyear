@@ -1,8 +1,9 @@
 #pragma once
 
 #include <Sandbox/Editor/Comman/SceneTreeNode.h>
-#include <Sandbox/Editor/Panel/SceneGraphPanelExp.h>
+#include <Sandbox/Editor/Panel/ESceneGraphPanel.h>
 
+#include "Sandbox/Editor/Panel/EEntityDetailsPanel.h"
 #include "Sandbox/Editor/Panel/EViewportPanel.h"
 #include "Sandbox/Editor/Workspace/IEditorWorkspace.h"
 
@@ -40,8 +41,9 @@ protected:
 
 private:
     // Move all panels to a registry, along with what they need.
-    ly::Scope<ESceneGraphPanelExp> m_SceneGraphPanel;
+    ly::Scope<EESceneGraphPanel> m_SceneGraphPanel;
     ly::Scope<EViewportPanel> m_ViewportPanel;
+    ly::Scope<EEntityDetailsPanel> m_EntityDetailsPanel;
 
     bool m_bIsInitialized{ false };
     ly::Ref<GlobalEditorContext> m_GlobalContext;

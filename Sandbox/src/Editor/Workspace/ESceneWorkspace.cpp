@@ -5,9 +5,10 @@ using SceneComponent =
     ly::scene::ComponentGroup<ly::scene::TagComponent, ly::scene::IDComponent, ly::scene::RelationshipComponent>;
 
 void ESceneWorkspace::OnAttach(ly::Ref<GlobalEditorContext> globalContext) {
-    m_GlobalContext   = globalContext;
-    m_SceneGraphPanel = ly::MakeScope<ESceneGraphPanelExp>(GetPanelTitle(EEditorPanel::SCENE_GRAPH));
-    m_ViewportPanel   = ly::MakeScope<EViewportPanel>(GetPanelTitle(EEditorPanel::VIEWPORT));
+    m_GlobalContext      = globalContext;
+    m_SceneGraphPanel    = ly::MakeScope<EESceneGraphPanel>(GetPanelTitle(EEditorPanel::SCENE_GRAPH));
+    m_ViewportPanel      = ly::MakeScope<EViewportPanel>(GetPanelTitle(EEditorPanel::VIEWPORT));
+    m_EntityDetailsPanel = ly::MakeScope<EEntityDetailsPanel>(GetPanelTitle(EEditorPanel::INSPECTOR));
 }
 
 void ESceneWorkspace::OnEvent(ly::Event& event) {}
@@ -20,6 +21,12 @@ void ESceneWorkspace::OnEditorUpdate() {
 
     m_SceneGraphPanel->SetSceneTree(m_SceneTree);
     m_ViewportPanel->SetFramebuffer(m_GlobalContext->SceneFramebufferId);
+    m_SelectedNode = m_SceneGraphPanel->GetSelectedNode();
+    if (auto selected = m_SelectedNode.lock()) {
+        LY_LOG(ly::LogType::Info, "Selected a node in scene graph with name {}", selected->Name);
+        m_EntityDetailsPanel->SetSelectedEntity(
+            ly::MakeRef<ly::scene::Entity>(selected->Entity, m_GlobalContext->ActiveScene.get()));
+    }
 }
 
 void ESceneWorkspace::OnImGuiRender() {
@@ -32,6 +39,7 @@ void ESceneWorkspace::OnImGuiRender() {
 
     m_SceneGraphPanel->OnImGuiRender();
     m_ViewportPanel->OnImGuiRender();
+    m_EntityDetailsPanel->OnImGuiRender();
 }
 
 void ESceneWorkspace::DrawDockspace() {

@@ -3,12 +3,11 @@
 #include "Sandbox/Editor/Comman/SceneTreeNode.h"
 #include "IEditorPanel.h"
 #include "Lightyear.h"
-#include "Sandbox/Editor/Widgets/WidgetDrawer.h"
 
-class ESceneGraphPanelExp : public IEditorPanel {
+class EESceneGraphPanel : public IEditorPanel {
 public:
-    explicit ESceneGraphPanelExp(std::string name) : IEditorPanel(std::move(name)) {}
-    ~ESceneGraphPanelExp() override = default;
+    explicit EESceneGraphPanel(std::string name) : IEditorPanel(std::move(name)) {}
+    ~EESceneGraphPanel() override = default;
 
     void OnImGuiRender() override;
 
@@ -21,6 +20,5 @@ protected:
 
 private:
     ly::WeakRef<SceneTreeNode> m_SceneTree;
-    ly::Ref<ly::scene::Entity> m_SelectedEntity;
-    ly::WeakRef<SceneTreeNode> m_SelectedNode;
+    ly::Ref<SceneTreeNode> m_SelectedNode;
 };

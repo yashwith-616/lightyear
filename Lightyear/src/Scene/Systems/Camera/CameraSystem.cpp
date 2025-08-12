@@ -15,9 +15,7 @@ CameraSystem::CameraSystem() : ISystem(std::move("Singleton Camera"), SystemLaye
 void CameraSystem::Init(entt::registry& registry) {}
 
 void CameraSystem::Execute(entt::registry& registry) {
-    LY_CORE_LOG(ly::LogType::Info, "Updating camera system");
     auto view = registry.view<CameraComponent, TransformComponent, DirtyComponent>();
-    LY_CORE_LOG(ly::LogType::Warn, "Number of cameras: {}", view.size_hint());
 
     for (auto&& [entity, camera, transform, dirty] : view.each()) {
         if (!registry.any_of<MainCameraTag, EditorCameraTag>(entity)) {
