@@ -23,7 +23,6 @@ void ESceneWorkspace::OnEditorUpdate() {
     m_ViewportPanel->SetFramebuffer(m_GlobalContext->SceneFramebufferId);
     m_SelectedNode = m_SceneGraphPanel->GetSelectedNode();
     if (auto selected = m_SelectedNode.lock()) {
-        LY_LOG(ly::LogType::Info, "Selected a node in scene graph with name {}", selected->Name);
         m_EntityDetailsPanel->SetSelectedEntity(
             ly::MakeRef<ly::scene::Entity>(selected->Entity, m_GlobalContext->ActiveScene.get()));
     }
@@ -92,8 +91,8 @@ void ESceneWorkspace::SetupDockspace() const {
     constexpr float verticalSplitRatio   = 0.2;
     constexpr float horizontalSplitRatio = 0.5;
 
-    ImGui::DockBuilderSplitNode(m_DockspaceID, ImGuiDir::ImGuiDir_Right, verticalSplitRatio, &right, &left);
-    ImGui::DockBuilderSplitNode(left, ImGuiDir::ImGuiDir_Down, horizontalSplitRatio, &bottomRight, &topRight);
+    ImGui::DockBuilderSplitNode(m_DockspaceID, ImGuiDir_Right, verticalSplitRatio, &right, &left);
+    ImGui::DockBuilderSplitNode(left, ImGuiDir_Down, horizontalSplitRatio, &bottomRight, &topRight);
 
     ImGui::DockBuilderDockWindow(GetPanelTitle(EEditorPanel::VIEWPORT).data(), left);
     ImGui::DockBuilderDockWindow(GetPanelTitle(EEditorPanel::SCENE_GRAPH).data(), topRight);

@@ -7,7 +7,7 @@
 #include "Lightyear/Scene/Components/Transform/TransformComponent.h"
 
 namespace ly::scene {
-RenderSystem::RenderSystem() : ISystem(std::move("Renderer"), SystemLayer::Gameplay) {}
+RenderSystem::RenderSystem() : ISystem("Renderer", SystemLayer::Gameplay) {}
 
 void RenderSystem::Init(entt::registry& registry) {
     // Create a scene tree

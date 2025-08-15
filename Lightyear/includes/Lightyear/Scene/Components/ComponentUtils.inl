@@ -46,11 +46,14 @@ struct ComponentGroupGet<ComponentGroup<Components...>> {
 /**
  * @brief All Components present in Lightyear
  */
-using AllComponents = ComponentGroup<TransformComponent,
-                                     CameraComponent,
-                                     MobilityComponent,
-                                     MeshComponent,
-                                     RenderComponent,
-                                     RelationshipComponent>;
+using AllComponents = ComponentGroup<DirtyComponent,
+                                    IDComponent,
+                                    MobilityComponent,
+                                    RelationshipComponent,
+                                    TagComponent,
+                                    CameraComponent,
+                                    TransformComponent,
+                                    MeshComponent,
+                                    RenderComponent>;
 
 }  // namespace ly::scene

@@ -59,7 +59,7 @@ void ImGUILayer::OnAttach() {
 
     ImGui::StyleColorsDark();
     ImGuiStyle& style = ImGui::GetStyle();
-    if (imguiIO.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+    if ((imguiIO.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) != 0) {
         style.WindowRounding              = 0.0f;
         style.Colors[ImGuiCol_WindowBg].w = 1.0f;
     }

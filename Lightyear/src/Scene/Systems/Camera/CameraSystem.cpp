@@ -10,7 +10,7 @@ LY_DISABLE_WARNINGS_POP
 
 namespace ly::scene {
 
-CameraSystem::CameraSystem() : ISystem(std::move("Singleton Camera"), SystemLayer::Gameplay) {}
+CameraSystem::CameraSystem() : ISystem("Singleton Camera", SystemLayer::Gameplay) {}
 
 void CameraSystem::Init(entt::registry& registry) {}
 
@@ -56,7 +56,7 @@ void CameraSystem::RecalculateViewMatrix(CameraComponent& camera, const Transfor
  * @param camera the camera component
  * @param transform the transform component
  */
-void CameraSystem::RecalculateProjectionMatrix(CameraComponent& camera, const TransformComponent& transform) {
+void CameraSystem::RecalculateProjectionMatrix(CameraComponent& camera, const TransformComponent& /*transform*/) {
     const float kOrthoHalfHeight = camera.OrthographicSize * 0.5f;
     const float kOrthoHalfWidth  = kOrthoHalfHeight * camera.AspectRatio;
 

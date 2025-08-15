@@ -7,7 +7,7 @@ LY_DISABLE_WARNINGS_PUSH
 #include <imgui_internal.h>
 LY_DISABLE_WARNINGS_POP
 
-constexpr glm::vec4 kClearColor = glm::vec4(0.12, 0.12, 0.13, 1.0);
+constexpr glm::vec4 g_ClearColor = glm::vec4(0.12, 0.12, 0.13, 1.0);
 
 namespace renderer = ly::renderer;
 
@@ -68,7 +68,7 @@ void EditorLayer::OnUpdate(float deltaTime) {
     PollInput(deltaTime);
     m_Framebuffer->Bind();
     renderer::RenderCommand::Clear();
-    renderer::RenderCommand::SetClearColor(kClearColor);
+    renderer::RenderCommand::SetClearColor(g_ClearColor);
 
     // m_SceneRuntime->OnStart();
     m_SceneRuntime->OnUpdate(deltaTime);
@@ -87,6 +87,8 @@ void EditorLayer::OnEditorRender() {
         ImGui::Text(std::format("IsPaused: {}", m_SceneRuntime->IsPaused()).c_str());
     }
     ImGui::End();
+
+    ImGui::ShowDemoWindow();
 }
 
 /**
