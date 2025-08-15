@@ -33,7 +33,7 @@ void EditorLayer::OnAttach() {
     // Will be removed from here in the future implementation
 
     m_Texture = renderer::Texture2D::Create(ASSET_DIR "/Textures/T_Grid.png");
-    m_Shader  = renderer::Shader::Create("ShaderBg", g_GridShader);
+    m_Shader  = renderer::Shader::Create("ShaderBg", g_DefaultShader);
 #pragma endregion
 
 #pragma region SceneCamera

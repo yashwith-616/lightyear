@@ -20,7 +20,7 @@ public:
 
 private:
     static void RecalculateViewMatrix(CameraComponent& camera, const TransformComponent& transform);
-    static void RecalculateProjectionMatrix(CameraComponent& camera, const TransformComponent& transform);
+    static void RecalculateProjectionMatrix(CameraComponent& camera);
 };
 
 }  // namespace ly::scene
