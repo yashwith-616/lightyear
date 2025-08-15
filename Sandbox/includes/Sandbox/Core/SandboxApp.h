@@ -7,7 +7,7 @@ class SandboxApp : public ly::Application {
 public:
     using super = Application;
 
-    SandboxApp()          = default;
+    SandboxApp()           = default;
     ~SandboxApp() override = default;
 
     void Init() override;

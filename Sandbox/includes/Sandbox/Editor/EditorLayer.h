@@ -26,7 +26,7 @@ private:
     ly::Ref<ly::renderer::Framebuffer> m_Framebuffer;
     ly::Ref<ly::renderer::Shader> m_Shader;
     ly::Ref<ly::renderer::Texture2D> m_Texture;
-    
+
     ly::scene::Entity m_CubeEntity;
 
     // Will be present

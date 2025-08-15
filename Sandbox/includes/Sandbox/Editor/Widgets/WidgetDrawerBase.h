@@ -2,10 +2,10 @@
 
 #include <string_view>
 
-template<typename Derived>
+template <typename Derived>
 class WidgetDrawerBase {
 public:
-    template<typename T>
+    template <typename T>
     void Draw(T& object) {
         static_cast<Derived*>(this)->Draw(object);
     }

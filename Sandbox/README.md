@@ -3,6 +3,7 @@
 ### Coding Style
 
 #### Order of Declaration in a class
+
 1. Types and type aliases (typedef, using, enum, nested structs and classes, and friend types)
 2. Static constants
 3. Factory functions

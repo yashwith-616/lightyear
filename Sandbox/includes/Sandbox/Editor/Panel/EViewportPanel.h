@@ -12,5 +12,5 @@ public:
     void SetFramebuffer(uint32_t framebufferId) { m_FramebufferId = framebufferId; }
 
 private:
-    uint32_t m_FramebufferId { 0 };
+    uint32_t m_FramebufferId{ 0 };
 };

@@ -30,10 +30,9 @@ public:
     }
 
     void RemoveChild(const ly::UUID& id) {
-        const auto it =
-            std::ranges::remove_if(Children, [&](const ly::Ref<SceneTreeNode>& child) {
-                return child->Id == id;
-            }).begin();
+        const auto it = std::ranges::remove_if(Children, [&](const ly::Ref<SceneTreeNode>& child) {
+                            return child->Id == id;
+                        }).begin();
         Children.erase(it, Children.end());
     }
 };

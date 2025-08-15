@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Sandbox/Editor/Comman/SceneTreeNode.h"
 #include "IEditorPanel.h"
 #include "Lightyear.h"
+#include "Sandbox/Editor/Comman/SceneTreeNode.h"
 
 class EESceneGraphPanel : public IEditorPanel {
 public:
@@ -12,7 +12,7 @@ public:
     void OnImGuiRender() override;
 
     ly::WeakRef<SceneTreeNode> GetSelectedNode() { return m_SelectedNode; }
-    void SetSceneTree(const ly::Ref<SceneTreeNode> &sceneTree) { m_SceneTree = sceneTree; }
+    void SetSceneTree(const ly::Ref<SceneTreeNode>& sceneTree) { m_SceneTree = sceneTree; }
 
 protected:
     void DrawSceneTree();
