@@ -21,7 +21,9 @@ private:
     void DrawComponent() {
         T& component = m_SelectedEntity->GetComponent<T>();
         ImGui::SeparatorText(typeid(T).name());
-        m_WidgetDrawer->Draw(component);
+        if (m_WidgetDrawer->Draw(component)) {
+            m_SelectedEntity->SendUpdateSignal<T>();
+        }
     }
 
     template <typename Tuple, typename Entity, std::size_t... Is>

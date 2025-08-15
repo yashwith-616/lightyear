@@ -12,6 +12,12 @@ class Entity;
 
 class LIGHTYEAR_API Scene {
 public:
+    Scene();
+    Scene(const Scene&)            = delete;
+    Scene(Scene&&) noexcept        = default;
+    Scene& operator=(const Scene&) = delete;
+    Scene& operator=(Scene&&)      = default;
+
     Entity CreateEntity(const std::string& name);
     Entity CreateEntity(const std::string& name, const Entity& parent);
     void DestroyEntity(Entity entity);
@@ -42,6 +48,10 @@ private:
     std::unordered_map<std::string, uint32_t> m_EntityNameMap;
 
     std::string GenerateUniqueName(const std::string& baseName);
+
+    static void OnTransformUpdated(entt::registry& registry, entt::entity entity);
+    static void OnCameraUpdated(entt::registry& registry, entt::entity entity);
+
     template <typename T>
     void OnComponentAdded(Entity entity, T& component);
 

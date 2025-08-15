@@ -51,6 +51,11 @@ void CopyComponentIfExists(ly::scene::ComponentGroup<Component...>, ly::scene::E
 
 namespace ly::scene {
 
+Scene::Scene() {
+    m_Registry.on_update<TransformComponent>().connect<&Scene::OnTransformUpdated>();
+    m_Registry.on_update<CameraComponent>().connect<&Scene::OnCameraUpdated>();
+}
+
 #pragma region Entity Management
 Entity Scene::CreateEntity(const std::string& name) {
     return CreateEntity(UUID(), name);
@@ -243,6 +248,24 @@ std::string Scene::GenerateUniqueName(const std::string& baseName) {
         return std::format("{}{}", baseName, count);
     }
     return baseName;
+}
+
+void Scene::OnTransformUpdated(entt::registry& registry, entt::entity entity) {
+    LY_CORE_ASSERT(registry.any_of<DirtyComponent>(entity), "Transform does not have a dirty component");
+
+    LY_CORE_LOG(LogType::Info, "Updated Transform");
+    auto& dirty     = registry.get<DirtyComponent>(entity);
+    dirty.Transform = true;
+}
+
+void Scene::OnCameraUpdated(entt::registry& registry, entt::entity entity) {
+    LY_CORE_ASSERT(registry.any_of<DirtyComponent>(entity), "Camera does not have a dirty component");
+
+    LY_CORE_LOG(LogType::Info, "Updated Camera");
+
+    auto& dirty             = registry.get<DirtyComponent>(entity);
+    dirty.Camera_View       = true;
+    dirty.Camera_Projection = true;
 }
 
 template <typename T>
