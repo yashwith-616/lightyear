@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Lightyear/Common/Assertions.h"
-
 namespace ly {
 
 class DynamicBitset {

@@ -18,7 +18,7 @@ constexpr std::string_view kNOTSET{ "NOT_SET" };
 constexpr float kDefaultAspectRatio{ 1.7777777778f };
 constexpr float kDefaultFOVRadians{ glm::radians(45.f) };
 constexpr float kDefaultNearClip{ 0.1f };
-constexpr float kDefaultFarClip{ 1000.f };
+constexpr float kDefaultFarClip{ 100.f };
 constexpr float kOrthographicCameraSize{ 10.f };
 
 // ----------------------- Custom ------------------------------

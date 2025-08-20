@@ -17,6 +17,7 @@ void RenderSystem::Execute(entt::registry& registry) {
     auto view = registry.view<TransformComponent, MeshComponent, RenderComponent, DirtyComponent>();
     for (auto&& [entity, transform, mesh, renderProperty, dirty] : view.each()) {
         if (!mesh.ShaderAsset || !mesh.MeshAsset) {
+            LY_CORE_LOG(LogType::Warn, "Submission skipped");
             continue;
         }
 

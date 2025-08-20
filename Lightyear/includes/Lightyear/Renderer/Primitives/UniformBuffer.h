@@ -20,7 +20,7 @@ public:
     [[nodiscard]] virtual const std::string& GetName() const { return m_Name; }
 
 protected:
-    std::string m_Name{ "NULL" };
+    std::string m_Name{ kNOTSET };
 };
 
 }  // namespace ly::renderer

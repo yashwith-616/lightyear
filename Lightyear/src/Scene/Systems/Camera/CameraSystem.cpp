@@ -27,9 +27,10 @@ void CameraSystem::Execute(entt::registry& registry) {
             dirty.Camera_Projection = false;
         }
 
-        if (dirty.Camera_View) {
+        if (dirty.Camera_View || dirty.Transform) {
             RecalculateViewMatrix(camera, transform);
             dirty.Camera_View = false;
+            dirty.Transform   = false;
         }
     }
 }
@@ -43,8 +44,6 @@ void CameraSystem::Shutdown(entt::registry& registry) {}
  * @param transform the transform
  */
 void CameraSystem::RecalculateViewMatrix(CameraComponent& camera, const TransformComponent& transform) {
-    LY_CORE_LOG(LogType::Warn, "Recalculate View Matrix");
-
     const glm::mat4 rotationMat  = glm::toMat4(glm::quat(transform.Rotation));
     const glm::mat4 newTransform = glm::translate(glm::mat4(1.0f), transform.Translation) * rotationMat;
 
@@ -58,8 +57,6 @@ void CameraSystem::RecalculateViewMatrix(CameraComponent& camera, const Transfor
  * @param camera the camera component
  */
 void CameraSystem::RecalculateProjectionMatrix(CameraComponent& camera) {
-    LY_CORE_LOG(LogType::Warn, "Recalculate Projection Matrix");
-
     const float kOrthoHalfHeight = camera.OrthographicSize * 0.5f;
     const float kOrthoHalfWidth  = kOrthoHalfHeight * camera.AspectRatio;
 

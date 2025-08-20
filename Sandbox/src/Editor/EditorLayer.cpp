@@ -7,7 +7,7 @@ LY_DISABLE_WARNINGS_PUSH
 #include <imgui_internal.h>
 LY_DISABLE_WARNINGS_POP
 
-constexpr glm::vec4 g_ClearColor = glm::vec4(0.12, 0.12, 0.13, 1.0);
+constexpr glm::vec4 g_ClearColor = glm::vec4(0.20, 0.12, 0.13, 1.0);
 
 namespace renderer = ly::renderer;
 
@@ -36,6 +36,14 @@ void EditorLayer::OnAttach() {
     m_Shader  = renderer::Shader::Create("ShaderBg", g_DefaultShader);
 #pragma endregion
 
+#pragma region Object2
+    /*auto planeEntity = m_Scene->CreateEntity("PlaneObject");
+    planeEntity.AddComponent<ly::scene::MeshComponent>(
+        Geometry::GetPlane(), renderer::Shader::Create("GridShader", g_GridShader), m_Texture);
+    planeEntity.AddComponent<ly::scene::RenderComponent>();*/
+
+#pragma endregion
+
 #pragma region SceneCamera
     ly::scene::Entity editorCamera = m_Scene->CreateEntity("EditorCamera");
     editorCamera.AddComponent<ly::scene::CameraComponent>();
@@ -43,7 +51,7 @@ void EditorLayer::OnAttach() {
 #pragma endregion
 
 #pragma region Game Scene
-    ly::scene::Entity gameCamera = m_Scene->CreateEntity("GameCamera");
+    auto gameCamera = m_Scene->CreateEntity("GameCamera");
     gameCamera.AddComponent<ly::scene::CameraComponent>();
     gameCamera.AddSingletonComponent<ly::scene::MainCameraTag>();
 

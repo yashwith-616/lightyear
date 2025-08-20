@@ -41,7 +41,7 @@ endfunction()
 #-------------------------------------------------
 # Compile definations
 #-------------------------------------------------
-target_compile_definitions(Sandbox PRIVATE LY_PLATFORM_WINDOWS LY_BUILD_STATIC LY_DEBUG)
+target_compile_definitions(Sandbox PRIVATE LY_PLATFORM_WINDOWS LY_BUILD_STATIC LY_DEBUG LY_OPENGL_DEBUG)
 target_compile_options(Sandbox PRIVATE
         # MSVC
         $<$<CXX_COMPILER_ID:MSVC>:
