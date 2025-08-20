@@ -7,7 +7,7 @@ LY_DISABLE_WARNINGS_PUSH
 #include <imgui_internal.h>
 LY_DISABLE_WARNINGS_POP
 
-constexpr glm::vec4 g_ClearColor = glm::vec4(0.20, 0.12, 0.13, 1.0);
+constexpr glm::vec4 g_ClearColor = glm::vec4(0.13, 0.13, 0.13, 1.0);
 
 namespace renderer = ly::renderer;
 
@@ -97,48 +97,4 @@ void EditorLayer::OnEditorRender() {
     ImGui::End();
 
     ImGui::ShowDemoWindow();
-}
-
-/**
- * @brief Move the camera based on the following action
- * @param deltaTime the deltaTime
- */
-void EditorLayer::PollInput(float deltaTime) {
-    if (ly::Input::IsKeyPressed(ly::Key::Q)) {
-        // m_EditorCamera->MoveUp(deltaTime * m_EditorCamera->GetSpeed());
-    }
-
-    if (ly::Input::IsKeyPressed(ly::Key::E)) {
-        // m_EditorCamera->MoveUp(deltaTime * m_EditorCamera->GetSpeed() * -1.f);
-    }
-
-    if (ly::Input::IsKeyPressed(ly::Key::D)) {
-        // m_EditorCamera->MoveRight(deltaTime * m_EditorCamera->GetSpeed());
-    }
-
-    if (ly::Input::IsKeyPressed(ly::Key::A)) {
-        // m_EditorCamera->MoveRight(deltaTime * m_EditorCamera->GetSpeed() * -1.f);
-    }
-
-    if (ly::Input::IsKeyPressed(ly::Key::W)) {
-        // m_EditorCamera->MoveForward(deltaTime * m_EditorCamera->GetSpeed() * -1.f);
-    }
-
-    if (ly::Input::IsKeyPressed(ly::Key::S)) {
-        // m_EditorCamera->MoveForward(deltaTime * m_EditorCamera->GetSpeed());
-    }
-
-    if (ly::Input::IsMouseButtonPressed(ly::Mouse::Button1)) {
-        if (const float val = ly::Input::GetMouseY(); val > 0) {
-            const float diff = val - m_PrevMouseY;
-            // m_EditorCamera->AddPitch(diff * deltaTime * m_MouseSensitivity);
-            m_PrevMouseY = val;
-        }
-
-        if (const float val = ly::Input::GetMouseX(); val > 0) {
-            const float diff = val - m_PrevMouseX;
-            // m_EditorCamera->AddYaw(diff * deltaTime * m_MouseSensitivity);
-            m_PrevMouseX = val;
-        }
-    }
 }

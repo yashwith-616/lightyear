@@ -70,7 +70,6 @@ void Renderer::Submit(const RenderSubmission& submission) {
 }
 
 void Renderer::Flush() {
-    // glDisable(GL_DEPTH_TEST);
     for (const auto& submission : s_RenderQueue) {
         s_ObjectUBO.u_ModelMatrix = submission.RSTransform;
         s_GlobalUniforms.UploadObject(s_ObjectUBO);
@@ -85,8 +84,6 @@ void Renderer::Flush() {
 
         submission.RSVertexArray->Bind();
         RenderCommand::DrawIndexed(submission.RSVertexArray);
-
-        // s_GlobalUniforms.ObjectUBO->Debug(openGLShader->GetShaderHandle(), "Camera");
     }
 }
 

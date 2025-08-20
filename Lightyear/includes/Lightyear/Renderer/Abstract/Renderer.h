@@ -66,4 +66,5 @@ private:
     static UBO_Object s_ObjectUBO;
     static UBO_Scene s_SceneUBO;
 };
+
 }  // namespace ly::renderer

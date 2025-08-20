@@ -253,15 +253,12 @@ std::string Scene::GenerateUniqueName(const std::string& baseName) {
 void Scene::OnTransformUpdated(entt::registry& registry, entt::entity entity) {
     LY_CORE_ASSERT(registry.any_of<DirtyComponent>(entity), "Transform does not have a dirty component");
 
-    LY_CORE_LOG(LogType::Info, "Updated Transform");
     auto& dirty     = registry.get<DirtyComponent>(entity);
     dirty.Transform = true;
 }
 
 void Scene::OnCameraUpdated(entt::registry& registry, entt::entity entity) {
     LY_CORE_ASSERT(registry.any_of<DirtyComponent>(entity), "Camera does not have a dirty component");
-
-    LY_CORE_LOG(LogType::Info, "Updated Camera");
 
     auto& dirty             = registry.get<DirtyComponent>(entity);
     dirty.Camera_View       = true;

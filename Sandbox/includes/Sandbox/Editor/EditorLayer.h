@@ -27,6 +27,7 @@ private:
     ly::Ref<ly::renderer::Shader> m_Shader;
     ly::Ref<ly::renderer::Texture2D> m_Texture;
 
+    // Will be removed. All entities will be serialized in the World.
     ly::scene::Entity m_CubeEntity;
 
     // Will be present
@@ -36,6 +37,4 @@ private:
     float m_PrevMouseY{ 0.f };
     float m_PrevMouseX{ 0.f };
     float m_MouseSensitivity{ 0.1f };
-
-    void PollInput(float deltaTime);
 };
