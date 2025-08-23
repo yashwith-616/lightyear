@@ -34,7 +34,7 @@ void ESceneWorkspace::OnImGuiRender() {
     DrawDockspace();
 
     if (!IsDockspaceInitialized()) {
-        SetupDockspace();
+        SetupLayout();
         m_bIsInitialized = true;
     }
 
@@ -77,9 +77,9 @@ void ESceneWorkspace::DrawDockspace() {
  * 4. Layouts for all window will be distributed to all window beforehand.
  * 5. Panel will have property to hide them. Panel need an enum based dirty flag
  */
-void ESceneWorkspace::SetupDockspace() const {
+void ESceneWorkspace::SetupLayout() const {
     if (ImGui::DockBuilderGetNode(m_DockspaceID) != nullptr) {
-        ImGui::DockBuilderRemoveNode(m_DockspaceID);
+        return;
     }
 
     ImGui::DockBuilderAddNode(m_DockspaceID, ImGuiDockNodeFlags_DockSpace);
@@ -90,8 +90,8 @@ void ESceneWorkspace::SetupDockspace() const {
     ImGuiID topRight{};
     ImGuiID bottomRight{};
 
-    constexpr float verticalSplitRatio   = 0.2;
-    constexpr float horizontalSplitRatio = 0.5;
+    constexpr float verticalSplitRatio   = 0.2f;
+    constexpr float horizontalSplitRatio = 0.5f;
 
     ImGui::DockBuilderSplitNode(m_DockspaceID, ImGuiDir_Right, verticalSplitRatio, &right, &left);
     ImGui::DockBuilderSplitNode(left, ImGuiDir_Down, horizontalSplitRatio, &bottomRight, &topRight);

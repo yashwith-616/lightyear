@@ -26,7 +26,7 @@ protected:
     ImGuiID m_DockspaceID{};
 
     void DrawDockspace();
-    void SetupDockspace() const;
+    void SetupLayout() const;
     void BuildSceneTree();
     ly::Ref<SceneTreeNode> BuildSceneTreeRecursive(entt::entity entity);
 
