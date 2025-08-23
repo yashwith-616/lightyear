@@ -4,9 +4,10 @@
 Geometry* Geometry::s_Geometry = nullptr;
 
 namespace {
+
 ly::Ref<ly::renderer::VertexArray> Init(std::span<const float> vertexData, std::span<const uint32_t> indexData) {
-    const ly::renderer::BufferElement bufferElement(ly::renderer::ShaderDataType::FLOAT3, "Positions", false);
-    const ly::renderer::BufferElement texCoordBuffer(ly::renderer::ShaderDataType::FLOAT2, "TexCoord", false);
+    const ly::renderer::BufferElement bufferElement(ly::renderer::ShaderDataType::FLOAT3, "aPosition", false);
+    const ly::renderer::BufferElement texCoordBuffer(ly::renderer::ShaderDataType::FLOAT2, "aTexCoord", false);
     const ly::renderer::BufferLayout bufferLayout = { bufferElement, texCoordBuffer };
 
     const auto vertexBuffer = ly::renderer::VertexBuffer::Create(vertexData);
@@ -20,11 +21,12 @@ ly::Ref<ly::renderer::VertexArray> Init(std::span<const float> vertexData, std::
 
     return vertexArray;
 }
+
 }  // namespace
 
 static Geometry* GetGeometry() {
     if (Geometry::s_Geometry == nullptr) {
-        return new Geometry();
+        Geometry::s_Geometry = new Geometry;
     }
 
     return Geometry::s_Geometry;

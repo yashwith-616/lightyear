@@ -7,9 +7,9 @@ LY_DISABLE_WARNINGS_POP
 namespace ly::renderer {
 
 OpenGLUniformBuffer::OpenGLUniformBuffer(std::string name, uint32_t size, uint32_t bindingPoint)
-    : UniformBuffer(std::move(name)), m_BindingPoint(bindingPoint) {
+    : UniformBuffer(std::move(name)), m_BindingPoint(bindingPoint), m_Size(size) {
     glCreateBuffers(1, &m_BufferID);
-    glNamedBufferData(m_BufferID, size, nullptr, GL_DYNAMIC_DRAW);  // TODO: investigate usage hint
+    glNamedBufferData(m_BufferID, size, nullptr, GL_DYNAMIC_DRAW);
     glBindBufferBase(GL_UNIFORM_BUFFER, bindingPoint, m_BufferID);
 }
 
@@ -23,6 +23,11 @@ void OpenGLUniformBuffer::Bind() const {
 
 void OpenGLUniformBuffer::UnBind() const {
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
+}
+
+void OpenGLUniformBuffer::SetData(const void* data, uint32_t size, uint32_t offset) {
+    LY_ASSERT(offset + size <= m_Size, "UniformBuffer overflow!");
+    glNamedBufferSubData(m_BufferID, offset, size, data);
 }
 
 void OpenGLUniformBuffer::Debug(uint32_t programID, const std::string& blockName) {
@@ -90,23 +95,23 @@ void OpenGLUniformBuffer::Debug(uint32_t programID, const std::string& blockName
 
         LY_CORE_LOG(LogType::Info, "  Name: {}, Offset: {}, Type: 0x{:X}", name, offset, type);
 
-        constexpr int maxPreviewBytes = 16;
+        constexpr int maxPreviewBytes = 4 * 4 * 4;
 
-        // Dump value bytes (up to kMaxPreviewBytes)
-        std::string hexDump;
-        const int availableBytes = blockSize - offset;
-        const int bytesToDump    = std::min(maxPreviewBytes, availableBytes);
+        const float* floatData = reinterpret_cast<const float*>(&bufferData[offset]);
+        if (uniformType == GL_FLOAT_MAT4) {
+            const float* mat = reinterpret_cast<const float*>(&bufferData[offset]);
 
-        for (int j = 0; j < bytesToDump; ++j) {
-            std::format_to(std::back_inserter(hexDump), "{:02X} ", static_cast<uint8_t>(bufferData[offset + j]));
+            // std140 stores mat4 column-major by default
+            for (int row = 0; row < 4; ++row) {
+                std::string rowStr;
+                for (int col = 0; col < 4; ++col) {
+                    float value = mat[col * 4 + row];  // column-major indexing
+                    std::format_to(std::back_inserter(rowStr), "{: .6f} ", value);
+                }
+                LY_CORE_LOG(LogType::Info, "Row {}: {}", row, rowStr);
+            }
         }
-
-        LY_CORE_LOG(LogType::Info, "    Raw bytes: {}", hexDump);
     }
-}
-
-void OpenGLUniformBuffer::SetData(const void* data, uint32_t size, uint32_t offset) {
-    glNamedBufferSubData(m_BufferID, offset, size, data);
 }
 
 }  // namespace ly::renderer

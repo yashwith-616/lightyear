@@ -1,4 +1,6 @@
 #include "Lightyear/Scene/Scene.h"
+
+#include "Lightyear/Scene/Components/Camera/CameraTag.h"
 #include "Lightyear/Scene/Components/Components.h"
 #include "Lightyear/Scene/Entity.h"
 
@@ -48,6 +50,11 @@ void CopyComponentIfExists(ly::scene::ComponentGroup<Component...>, ly::scene::E
 // NOLINTEND
 
 namespace ly::scene {
+
+Scene::Scene() {
+    m_Registry.on_update<TransformComponent>().connect<&Scene::OnTransformUpdated>();
+    m_Registry.on_update<CameraComponent>().connect<&Scene::OnCameraUpdated>();
+}
 
 #pragma region Entity Management
 Entity Scene::CreateEntity(const std::string& name) {
@@ -194,13 +201,14 @@ Entity Scene::FindEntityByName(const std::string& name) const {
     return {};
 }
 
+/**
+ * Primary camera is game camera in runtime. Else, it is the editor camera present in the scene.
+ * @return The camera entity
+ */
 Entity Scene::GetPrimaryCameraEntity() const {
-    auto view = m_Registry.view<CameraComponent>();
+    auto view = m_Registry.view<MainCameraTag>();
     for (auto entity : view) {
-        const auto& camera = view.get<CameraComponent>(entity);
-        if (camera.bIsPrimary) {
-            return Entity{ entity, const_cast<Scene*>(this) };
-        }
+        return Entity{ entity, const_cast<Scene*>(this) };
     }
     return {};
 }
@@ -215,6 +223,7 @@ Entity Scene::CreateEntity(UUID UUID,
     entity.AddComponent<TagComponent>(GenerateUniqueName(name));
     entity.AddComponent<MobilityComponent>(EMobilityType::STATIC);
     entity.AddComponent<TransformComponent>();
+    entity.AddComponent<DirtyComponent>();
 
     if (!parent.has_value()) {
         entity.AddComponent<RelationshipComponent>();
@@ -239,6 +248,21 @@ std::string Scene::GenerateUniqueName(const std::string& baseName) {
         return std::format("{}{}", baseName, count);
     }
     return baseName;
+}
+
+void Scene::OnTransformUpdated(entt::registry& registry, entt::entity entity) {
+    LY_CORE_ASSERT(registry.any_of<DirtyComponent>(entity), "Transform does not have a dirty component");
+
+    auto& dirty     = registry.get<DirtyComponent>(entity);
+    dirty.Transform = true;
+}
+
+void Scene::OnCameraUpdated(entt::registry& registry, entt::entity entity) {
+    LY_CORE_ASSERT(registry.any_of<DirtyComponent>(entity), "Camera does not have a dirty component");
+
+    auto& dirty             = registry.get<DirtyComponent>(entity);
+    dirty.Camera_View       = true;
+    dirty.Camera_Projection = true;
 }
 
 template <typename T>

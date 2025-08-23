@@ -34,7 +34,7 @@ Application::~Application() {
 }
 
 void Application::Init() {
-    Application::PushLayer(MakeScope<ImGUILayer>());
+    Application::PushOverlay(MakeScope<ImGUILayer>());
     renderer::Renderer::Init();
 }
 

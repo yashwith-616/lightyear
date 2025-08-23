@@ -157,7 +157,7 @@ void OpenGLContext::Init() {
 #ifdef LY_OPENGL_DEBUG
     int flags{};
     glGetIntegerv(GL_CONTEXT_FLAGS, &flags);
-    if (bool isContextFlagSet = (flags & GL_CONTEXT_FLAG_DEBUG_BIT)) {
+    if ((flags & GL_CONTEXT_FLAG_DEBUG_BIT) != 0) {
         glEnable(GL_DEBUG_OUTPUT);
         glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
         glDebugMessageCallback(GLDebugCallback, nullptr);
@@ -168,7 +168,7 @@ void OpenGLContext::Init() {
     int profile{};
     glGetIntegerv(GL_CONTEXT_PROFILE_MASK, &profile);
 
-    const bool isCoreProfileSet = profile & GL_CONTEXT_CORE_PROFILE_BIT;
+    const bool isCoreProfileSet = (profile & GL_CONTEXT_CORE_PROFILE_BIT) != 0;
     std::string_view glProfile  = isCoreProfileSet ? "Core" : "Compatibility";
     LY_CORE_LOG(LogType::Info, "OpenGL Context: {} profile is active", glProfile);
 }

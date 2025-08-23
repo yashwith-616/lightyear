@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.20)
 
 project(
-    Sandbox
-    VERSION 0.1.0
-	LANGUAGES C CXX
+        Sandbox
+        VERSION 0.1.0
+        LANGUAGES C CXX
 )
 
 
@@ -32,22 +32,24 @@ target_link_libraries(Sandbox PRIVATE Lightyear)
 # Utility definations
 #-------------------------------------------------
 function(disable_clang_tidy TARGET)
-    if(TARGET ${TARGET})
+    if (TARGET ${TARGET})
         set_target_properties(${TARGET} PROPERTIES CXX_CLANG_TIDY "")
-    endif()
+    endif ()
 endfunction()
 
 
 #-------------------------------------------------
 # Compile definations
 #-------------------------------------------------
-target_compile_definitions(Sandbox PRIVATE LY_PLATFORM_WINDOWS LY_BUILD_STATIC LY_DEBUG)
+target_compile_definitions(Sandbox PRIVATE LY_PLATFORM_WINDOWS LY_BUILD_STATIC LY_DEBUG LY_OPENGL_DEBUG)
 target_compile_options(Sandbox PRIVATE
-    # MSVC
-    $<$<CXX_COMPILER_ID:MSVC>:/EHsc>
+        # MSVC
+        $<$<CXX_COMPILER_ID:MSVC>:
+        /EHsc
+        /utf-8>
 
-    # Clang on Windows (clang-cl)
-    $<$<AND:$<CXX_COMPILER_ID:Clang>>:
+        # Clang on Windows (clang-cl)
+        $<$<AND:$<CXX_COMPILER_ID:Clang>>:
         -fexceptions
         -std=c++20
         -Wno-c++98-compat
@@ -55,12 +57,12 @@ target_compile_options(Sandbox PRIVATE
         -Wno-pre-c++14-compat
         -Wno-deprecated-declarations
         -w  # disables all warnings (optional extreme)
-    >
+        >
 
-    # GNU Compiler
-    $<$<CXX_COMPILER_ID:GNU>:
+        # GNU Compiler
+        $<$<CXX_COMPILER_ID:GNU>:
         -w  # disables all warnings
-    >
+        >
 )
 
 

@@ -11,10 +11,15 @@ namespace ly {
 // TO BE MOVED: Windows properties
 constexpr glm::uvec2 kDefaultWindowSize{ 1280, 720 };
 constexpr float kDefaultFrametime{ 1 / 60.f };
-constexpr float kDefaultAspectRatio{ 1.7777777778f };
 constexpr std::string_view kDefaultWindowTitle{ "LightYear" };
 constexpr std::string_view kGLSLVersion = "#version 460 core";
 constexpr std::string_view kNOTSET{ "NOT_SET" };
+
+constexpr float kDefaultAspectRatio{ 1.7777777778f };
+constexpr float kDefaultFOVRadians{ glm::radians(45.f) };
+constexpr float kDefaultNearClip{ 0.1f };
+constexpr float kDefaultFarClip{ 100.f };
+constexpr float kOrthographicCameraSize{ 10.f };
 
 // ----------------------- Custom ------------------------------
 constexpr uint8_t BIT(const uint8_t x) {

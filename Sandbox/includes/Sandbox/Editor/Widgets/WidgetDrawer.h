@@ -1,69 +1,95 @@
 #pragma once
 
-#include <Lightyear.h>
-#include <imgui.h>
-#include <glm/glm.hpp>
-#include <refl.hpp>
+#include "Lightyear.h"
+#include "Sandbox/Editor/Widgets/WidgetDrawerBase.h"
 
-class WidgetDrawer {
+class WidgetDrawer : public WidgetDrawerBase<WidgetDrawer> {
 public:
-    bool field(const char* name, bool& value) { return ImGui::Checkbox(name, &value); }
-
-    bool field(const char* name, int& value) { return ImGui::DragInt(name, &value); }
-
-    bool field(const char* name, float& value) { return ImGui::DragFloat(name, &value); }
-
-    bool field(const char* name, glm::vec3& value) { return ImGui::DragFloat3(name, &value.x); }
-
-    bool field(const char* name, glm::quat& value) {
-        // Display quaternion as euler angles.
-        glm::vec3 angles = glm::degrees(glm::eulerAngles(value));
-        if (ImGui::InputFloat3(name, &angles.x)) {
-            value = glm::quat(radians(angles));
-            return true;
-        }
-        return false;
-    }
-
-    bool field(const char* name, std::string_view value) {
-        ImGui::Text("%s:", name);
-        ImGui::SameLine();
-        ImGui::TextWrapped("%s", value.data());
-        return false;
-    }
-
-    bool field(const char* name, std::string& value) { return InputText(name, &value); }
+    WidgetDrawer()  = default;
+    ~WidgetDrawer() = default;
 
     template <typename T>
-    bool operator()(T& object) {
+    bool Draw(T& object) {
         bool changed = false;
 
         if constexpr (refl::is_reflectable<T>()) {
             auto members = refl::reflect<T>().members;
             auto fields  = filter(members, [](auto member) { return is_field(member); });
-            for_each(fields,
-                     [&](auto member) { changed |= field(member.name.c_str(), member(object)); });
+
+            for_each(fields, [&](auto member) { changed |= DrawWidget(member.name.c_str(), member(object)); });
         }
 
         return changed;
     }
 
 private:
-    // Fallback to silently accept all types that are not drawable.
     template <typename T>
-    bool field(const char*, T&) {
+    bool DrawWidget(std::string_view name, T& value) {
+        LY_CORE_ASSERT(false, "Undefined behaviour for widget name {} of type {}", name, typeid(T).name());
         return false;
     }
-    
-    bool InputText(const char* label, std::string* str, ImGuiInputTextFlags flags = 0) {
-        static char temp_buffer[1024];
-        strncpy(temp_buffer, str->c_str(), sizeof(temp_buffer) - 1);
-        temp_buffer[sizeof(temp_buffer) - 1] = '\0';
 
-        bool changed = ImGui::InputText(label, temp_buffer, sizeof(temp_buffer), flags);
-        if (changed && strlen(temp_buffer) > 0) {
-            *str = temp_buffer;
-        }
-        return changed;
+    template <typename T>
+        requires std::is_enum_v<T>
+    bool DrawWidget(std::string_view name, T& value) {
+        using Underlying = std::underlying_type_t<T>;
+        ImGui::Text("%s: %llu", name.data(), static_cast<unsigned long long>(static_cast<Underlying>(value)));
+        return false;
     }
 };
+template <>
+inline bool WidgetDrawer::DrawWidget(std::string_view name, int& value) {
+    return ImGui::DragInt(name.data(), &value, 1);
+}
+
+template <>
+inline bool WidgetDrawer::DrawWidget(std::string_view name, float& value) {
+    return ImGui::DragFloat(name.data(), &value, 0.1f);
+}
+
+template <>
+inline bool WidgetDrawer::DrawWidget(std::string_view name, std::string& value) {
+    char buffer[256];
+    std::strncpy(buffer, value.c_str(), sizeof(buffer));
+    buffer[sizeof(buffer) - 1] = '\0';
+    if (ImGui::InputText(name.data(), buffer, sizeof(buffer))) {
+        value = buffer;
+        return true;
+    }
+    return false;
+}
+
+template <>
+inline bool WidgetDrawer::DrawWidget(std::string_view name, ly::UUID& value) {
+    ImGui::Text("%s: %llu", name.data(), static_cast<unsigned long long>(value.Get()));
+    return false;
+}
+
+template <>
+inline bool WidgetDrawer::DrawWidget(std::string_view name, glm::vec2& value) {
+    return ImGui::DragFloat2(name.data(), glm::value_ptr(value), 0.1f);
+}
+
+template <>
+inline bool WidgetDrawer::DrawWidget(std::string_view name, glm::vec3& value) {
+    return ImGui::DragFloat3(name.data(), glm::value_ptr(value), 0.1f);
+}
+
+template <>
+inline bool WidgetDrawer::DrawWidget(std::string_view name, glm::vec4& value) {
+    return ImGui::DragFloat4(name.data(), glm::value_ptr(value), 0.1f);
+}
+template <>
+inline bool WidgetDrawer::DrawWidget(std::string_view name, glm::mat4& value) {
+    bool changed = false;
+
+    ImGui::Text("%s:", name.data());
+    ImGui::Indent();
+    for (int i = 0; i < 4; ++i) {
+        changed |=
+            ImGui::DragFloat4(("##" + std::string(name) + std::to_string(i)).c_str(), glm::value_ptr(value[i]), 0.1f);
+    }
+    ImGui::Unindent();
+
+    return changed;
+}

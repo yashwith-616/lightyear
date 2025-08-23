@@ -1,66 +1,53 @@
 #pragma once
 
 #include "Lightyear/LightyearCore.h"
+#include "Lightyear/Scene/Enums/SceneRuntimeMode.h"
 #include "Lightyear/Scene/Scene.h"
 #include "Lightyear/Scene/SceneData.h"
-
-namespace ly::renderer {
-class SceneCamera;
-}
+#include "Lightyear/Scene/Systems/ISystem.h"
 
 namespace ly::scene {
-
-enum class SceneExecState : uint8_t { NONE = 0, PAUSED = 1, RUNNING = 2, SIMULATION = 3, MAX = 4 };
 
 class LIGHTYEAR_API SceneRuntime {
 public:
     explicit SceneRuntime(Scene* scene);
-    SceneRuntime(const SceneRuntime&)            = delete;
-    SceneRuntime& operator=(const SceneRuntime&) = delete;
-    SceneRuntime(SceneRuntime&&)                 = default;
-    SceneRuntime& operator=(SceneRuntime&&)      = default;
-
     ~SceneRuntime() = default;
 
-    void OnRuntimeStart();
-    void OnRuntimeStop();
+    SceneRuntime(const SceneRuntime&)            = delete;
+    SceneRuntime& operator=(const SceneRuntime&) = delete;
 
-    void OnSimulationStart();
-    void OnSimulationStop();
+    SceneRuntime(SceneRuntime&&)            = default;
+    SceneRuntime& operator=(SceneRuntime&&) = default;
 
-    /**
-     * @brief The following update is performed on the editor along with games logical layer and
-     * using the main camera that is part of the game
-     * @param deltaTime the timestep between each frame
-     */
-    void OnUpdateRuntime(Timestep deltaTime);
-
-    /**
-     * @brief Update physics layer and render using sceneCamera
-     *
-     * @param deltaTime the time between each frame
-     * @param editorCamera the editor camera that is part of the scene
-     */
-    void OnUpdateSimulation(Timestep deltaTime, Ref<renderer::SceneCamera> editorCamera);
-
-    /**
-     * @brief The following update is performed on the editor while rendering using the sceneCamera
-     * @param deltaTime the time between each frame
-     * @param camera the editorial camera
-     */
-    void OnUpdateEditor(Timestep deltaTime, const Ref<renderer::SceneCamera>& camera);
+    void Initialize();
+    void OnBegin();
+    void OnUpdate(float deltaTime);
+    void OnEnd();
 
     void OnViewportResize(glm::uvec2 size);
 
-    void SetSceneExecState(SceneExecState state) { m_SceneExecState = state; }
-    bool IsRunning() const { return m_SceneExecState == SceneExecState::RUNNING; }
-    bool IsPaused() const { return m_SceneExecState == SceneExecState::PAUSED; }
+    void SetSceneExecState(SceneRuntimeMode state) { m_SceneMode = state; }
+    [[nodiscard]] bool IsRunning() const { return m_SceneMode == SceneRuntimeMode::PLAY; }
+    [[nodiscard]] bool IsPaused() const { return m_SceneMode == SceneRuntimeMode::PAUSE; }
 
 private:
+    void OnRuntimeBegin();
+    void OnRuntimeUpdate(Timestep deltaTime);
+    void OnRuntimeEnd();
+
+    void OnSimulationBegin();
+    void OnSimulationUpdate(Timestep deltaTime);
+    void OnSimulationEnd();
+
+    void OnEditBegin();
+    void OnEditUpdate(Timestep deltaTime);
+    void OnEditEnd();
+
     Scene* m_WPtrScene{};
     glm::uvec2 m_ViewportSize{};
-    SceneExecState m_SceneExecState{ SceneExecState::PAUSED };
+    SceneRuntimeMode m_SceneMode{ SceneRuntimeMode::PAUSE };
     SceneData m_SceneData{};
+    std::vector<Scope<ISystem>> m_SceneSystems;
 };
 
 }  // namespace ly::scene

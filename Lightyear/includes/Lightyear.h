@@ -25,10 +25,8 @@
 #include "Lightyear/Scene/Scene.h"
 #include "Lightyear/Scene/SceneRuntime.h"
 
-// -------------------- Camera -------------------------
-#include "Lightyear/Renderer/Camera/Camera.h"
-#include "Lightyear/Renderer/Camera/OrthographicCamera.h"
-#include "Lightyear/Renderer/Camera/SceneCamera.h"
-
 // -------------------- Input -------------------------
 #include "Lightyear/Input/Input.h"
+
+// -------------------- Components ---------------------
+#include "Lightyear/Scene/Components/Components.h"
