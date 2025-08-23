@@ -21,9 +21,9 @@
 
 // -------------------- Scene -------------------------
 #include "Lightyear/Scene/Components/Components.h"
-#include "Lightyear/Scene/Entity.h"
-#include "Lightyear/Scene/Scene.h"
-#include "Lightyear/Scene/SceneRuntime.h"
+#include "Lightyear/Scene/Core/Entity.h"
+#include "Lightyear/Scene/Core/SceneRuntime.h"
+#include "Lightyear/Scene/Core/Scene.h"
 
 // -------------------- Camera -------------------------
 #include "Lightyear/Renderer/Camera/Camera.h"

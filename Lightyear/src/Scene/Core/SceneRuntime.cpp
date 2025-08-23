@@ -1,11 +1,11 @@
-#include "Lightyear/Scene/SceneRuntime.h"
+#include "Lightyear/Scene/Core/SceneRuntime.h"
 
 #include "Lightyear/Core/Application.h"
 #include "Lightyear/Core/Window.h"
 #include "Lightyear/Renderer/Abstract/Renderer.h"
 #include "Lightyear/Renderer/Camera/SceneCamera.h"
 #include "Lightyear/Scene/Components/Components.h"
-#include "Lightyear/Scene/Entity.h"
+#include "Lightyear/Scene/Core/Entity.h"
 
 namespace ly::scene {
 

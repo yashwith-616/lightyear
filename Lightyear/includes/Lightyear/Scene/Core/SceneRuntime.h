@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Lightyear/LightyearCore.h"
-#include "Lightyear/Scene/Scene.h"
 #include "Lightyear/Scene/SceneData.h"
+#include "Scene.h"
 
 namespace ly::renderer {
 class SceneCamera;

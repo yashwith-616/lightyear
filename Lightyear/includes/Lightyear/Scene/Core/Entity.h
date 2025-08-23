@@ -2,7 +2,7 @@
 
 #include "Lightyear/LightyearCore.h"
 #include "Lightyear/Scene/Components/Components.h"
-#include "Lightyear/Scene/Scene.h"
+#include "Scene.h"
 
 namespace ly::scene {
 
