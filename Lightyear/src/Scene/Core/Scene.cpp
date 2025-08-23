@@ -1,4 +1,4 @@
-#include "../../../includes/Lightyear/Scene/Core/Scene.h"
+#include "Lightyear/Scene/Core/Scene.h"
 #include "Lightyear/Scene/Core/Entity.h"
 #include "Lightyear/Scene/Components/Components.h"
 
