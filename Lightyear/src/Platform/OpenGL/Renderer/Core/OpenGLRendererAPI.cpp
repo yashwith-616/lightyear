@@ -72,9 +72,8 @@ void OpenGLRendererAPI::Init() {
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glDisable(GL_DEPTH_TEST);
+    glEnable(GL_DEPTH_TEST);
     glEnable(GL_LINE_SMOOTH);
-    glDisable(GL_CULL_FACE);
 
     CheckOpenGLErrors();
 }

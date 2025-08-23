@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Lightyear.h"
 #include "Sandbox/Editor/Panel/IEditorPanel.h"
 
 class EViewportPanel : public IEditorPanel {
@@ -9,8 +10,12 @@ public:
 
     void OnImGuiRender() override;
 
-    void SetFramebuffer(uint32_t framebufferId) { m_FramebufferId = framebufferId; }
+    void SetFramebuffer(ly::Ref<ly::renderer::Framebuffer> framebuffer) { m_Framebuffer = framebuffer; }
+
+    void SetSceneRuntime(ly::Ref<ly::scene::SceneRuntime> sceneRuntime) { m_SceneRuntime = sceneRuntime; }
 
 private:
-    uint32_t m_FramebufferId{ 0 };
+    ly::Ref<ly::renderer::Framebuffer> m_Framebuffer;
+    ly::Ref<ly::scene::SceneRuntime> m_SceneRuntime;
+    ImVec2 m_ViewportSize{};
 };

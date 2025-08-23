@@ -7,7 +7,7 @@ LY_DISABLE_WARNINGS_PUSH
 #include <imgui_internal.h>
 LY_DISABLE_WARNINGS_POP
 
-constexpr glm::vec4 g_ClearColor = glm::vec4(0.13, 0.13, 0.13, 1.0);
+constexpr auto g_ClearColor = glm::vec4(0.13, 0.13, 0.13, 1.0);
 
 namespace renderer = ly::renderer;
 
@@ -15,7 +15,7 @@ EditorLayer::EditorLayer() : Layer("Editor") {}
 
 void EditorLayer::OnAttach() {
     m_Scene        = ly::MakeRef<ly::scene::Scene>();
-    m_SceneRuntime = ly::MakeScope<ly::scene::SceneRuntime>(m_Scene.get());
+    m_SceneRuntime = ly::MakeRef<ly::scene::SceneRuntime>(m_Scene.get());
     m_SceneRuntime->Initialize();
 
 #pragma region Framebuffer Init
@@ -64,16 +64,16 @@ void EditorLayer::OnAttach() {
 #pragma endregion
 
 #pragma region Inti Scene and Panels
-    m_SceneWorkspace                    = ly::MakeScope<ESceneWorkspace>("SceneWorkspace");
-    m_EditorContext                     = ly::MakeRef<GlobalEditorContext>();
-    m_EditorContext->ActiveScene        = m_Scene;
-    m_EditorContext->SceneFramebufferId = m_Framebuffer->GetColorAttachmentRenderID();
+    m_SceneWorkspace                  = ly::MakeScope<ESceneWorkspace>("SceneWorkspace");
+    m_EditorContext                   = ly::MakeRef<GlobalEditorContext>();
+    m_EditorContext->ActiveScene      = m_Scene;
+    m_EditorContext->SceneFramebuffer = m_Framebuffer;
+    m_EditorContext->SceneRuntime     = m_SceneRuntime;
     m_SceneWorkspace->OnAttach(m_EditorContext);
 #pragma endregion
 }
 
 void EditorLayer::OnUpdate(float deltaTime) {
-    PollInput(deltaTime);
     m_Framebuffer->Bind();
     renderer::RenderCommand::Clear();
     renderer::RenderCommand::SetClearColor(g_ClearColor);

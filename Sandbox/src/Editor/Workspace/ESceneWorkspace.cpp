@@ -20,7 +20,9 @@ void ESceneWorkspace::OnEditorUpdate() {
     BuildSceneTree();
 
     m_SceneGraphPanel->SetSceneTree(m_SceneTree);
-    m_ViewportPanel->SetFramebuffer(m_GlobalContext->SceneFramebufferId);
+    m_ViewportPanel->SetFramebuffer(m_GlobalContext->SceneFramebuffer);
+    m_ViewportPanel->SetSceneRuntime(m_GlobalContext->SceneRuntime);
+
     m_SelectedNode = m_SceneGraphPanel->GetSelectedNode();
     if (auto selected = m_SelectedNode.lock()) {
         m_EntityDetailsPanel->SetSelectedEntity(
