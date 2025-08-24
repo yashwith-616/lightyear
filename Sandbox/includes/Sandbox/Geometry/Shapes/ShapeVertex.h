@@ -6,15 +6,16 @@
 // clang-format off
 
 // NOLINTNEXTLINE
-static constexpr float g_CubeVertices[8][5] = {
-    {-0.5f, -0.5f, -0.5f, 0.0f, 0.0f},
-    { 0.5f, -0.5f, -0.5f, 1.0f, 0.0f},
-    { 0.5f,  0.5f, -0.5f, 1.0f, 1.0f},
-    {-0.5f,  0.5f, -0.5f, 0.0f, 1.0f},
-    {-0.5f, -0.5f,  0.5f, 0.0f, 0.0f},
-    { 0.5f, -0.5f,  0.5f, 1.0f, 0.0f},
-    { 0.5f,  0.5f,  0.5f, 1.0f, 1.0f},
-    {-0.5f,  0.5f,  0.5f, 0.0f, 1.0f}
+static constexpr float g_CubeVertices[] = {
+    // x,     y,     z,     u,    v
+    -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, // 0
+     0.5f, -0.5f, -0.5f,  1.0f,  0.0f, // 1
+     0.5f,  0.5f, -0.5f,  1.0f,  1.0f, // 2
+    -0.5f,  0.5f, -0.5f,  0.0f,  1.0f, // 3
+    -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, // 4
+     0.5f, -0.5f,  0.5f,  1.0f,  0.0f, // 5
+     0.5f,  0.5f,  0.5f,  1.0f,  1.0f, // 6
+    -0.5f,  0.5f,  0.5f,  0.0f,  1.0f  // 7
 };
 
 // NOLINTNEXTLINE
@@ -28,12 +29,12 @@ static constexpr uint32_t g_CubeIndices[] = {
 };
 
 // NOLINTNEXTLINE
-static constexpr float g_PlaneVertices[4][5] = {
+static constexpr float g_PlaneVertices[] = {
     // { x,     y,     z,     u,     v }
-    { -0.5f, -0.5f, 0.0f, 0.0f, 0.0f },  // Bottom-left
-    {  0.5f, -0.5f, 0.0f, 1.0f, 0.0f },  // Bottom-right
-    {  0.5f,  0.5f, 0.0f, 1.0f, 1.0f },  // Top-right
-    { -0.5f,  0.5f, 0.0f, 0.0f, 1.0f }   // Top-left
+     -0.5f, -0.5f, 0.0f, 0.0f, 0.0f ,  // Bottom-left
+      0.5f, -0.5f, 0.0f, 1.0f, 0.0f,  // Bottom-right
+      0.5f,  0.5f, 0.0f, 1.0f, 1.0f,  // Top-right
+     -0.5f,  0.5f, 0.0f, 0.0f, 1.0f   // Top-left
 };
 
 // NOLINTNEXTLINE
@@ -42,16 +43,12 @@ static constexpr uint32_t g_PlaneIndices[] = {
 };
 
 
-constexpr auto g_CubeVerticesSpan = std::span{
-    &g_CubeVertices[0][0],
-    std::size(g_CubeVertices) * std::size(g_CubeVertices[0])
-};
+constexpr std::span g_CubeVerticesSpan{ g_CubeVertices };
+
 constexpr auto g_CubeIndicesSpan  = std::span{g_CubeIndices};
 
-constexpr auto g_PlaneVerticesSpan = std::span{
-    &g_PlaneVertices[0][0],
-    std::size(g_PlaneVertices) * std::size(g_PlaneVertices[0])
-};
+constexpr std::span g_PlaneVerticesSpan { g_PlaneVertices };
+
 constexpr auto g_PlaneIndicesSpan  = std::span{g_PlaneIndices};
 
 // clang-format on

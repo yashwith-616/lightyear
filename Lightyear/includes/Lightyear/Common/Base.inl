@@ -71,9 +71,9 @@ Ref<T> TryLock(const WeakRef<T>& weak) {
  * @param value the value to be cast
  * @return value after cast
  */
-template<typename T, typename U>
+template <typename T, typename U>
 constexpr T narrow_cast(U value) {
     return static_cast<T>(value);
 }
 
-} // namespace ly
+}  // namespace ly

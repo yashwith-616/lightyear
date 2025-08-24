@@ -1,4 +1,5 @@
 #include "Lightyear/Helpers/DynamicBitset.h"
+#include "Lightyear/Common/Assertions.h"
 
 namespace ly {
 

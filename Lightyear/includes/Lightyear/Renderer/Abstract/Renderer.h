@@ -6,11 +6,12 @@
 
 namespace ly::scene {
 struct SceneData;
-}
+struct CameraComponent;
+struct TransformComponent;
+}  // namespace ly::scene
 
 namespace ly::renderer {
 
-class Camera;
 class Shader;
 class VertexArray;
 class Texture;
@@ -38,7 +39,9 @@ public:
 
     static void OnWindowResize(glm::uvec2 size);
 
-    static void BeginScene(const Ref<Camera>& camera, const scene::SceneData& sceneData);
+    static void BeginScene(const scene::CameraComponent& camera,
+                           const scene::TransformComponent& cameraTransform,
+                           const scene::SceneData& sceneData);
     static void EndScene();
 
     /**
@@ -63,4 +66,5 @@ private:
     static UBO_Object s_ObjectUBO;
     static UBO_Scene s_SceneUBO;
 };
+
 }  // namespace ly::renderer

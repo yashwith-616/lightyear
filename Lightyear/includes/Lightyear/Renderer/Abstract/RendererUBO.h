@@ -5,26 +5,27 @@
 namespace ly::renderer {
 
 struct alignas(16) UBO_Camera {
-    glm::mat4 ViewProjection{};  // 64 bytes
-    glm::mat4 View{};            // 64 bytes
-    glm::vec3 CameraPosition{};  // 12 bytes
-    float _pad1;                 // 4 bytes (to align to 16 bytes)
-    glm::vec3 CameraRotation{};  // 12 bytes
-    float ZoomLevel;             // 4 bytes (to align to 16 bytes)
+    glm::mat4 u_ViewProjection;  // 64 bytes
+    glm::mat4 u_View;            // 64 bytes
+    glm::vec3 u_CameraPosition;  // 12 bytes
+    float _padCameraPos{};       // 4 bytes - Alignment
+    float u_ZoomLevel;           // 4 bytes
+    glm::vec3 _padZoom{};        // 12 bytes - Alignment
 };
 
-struct UBO_Scene {
-    float Time{ 1.f };  // 4
+struct alignas(16) UBO_Scene {
+    float u_Time;  // padded to 16
+    glm::vec3 _padTime;
 };
 
 struct alignas(16) UBO_Material {
-    glm::vec4 BaseColor{};   // Could be used for tint (16 bytes)
-    glm::vec4 Properties{};  // 4 (to align to 16)
+    glm::vec4 u_BaseColor;   // 16 bytes
+    glm::vec4 u_Properties;  // 16 bytes
 };
 
 struct alignas(16) UBO_Object {
-    glm::mat4 ModelMatrix{};
-    glm::mat4 NormalMatrix{};  // Optional: for correct lighting
+    glm::mat4 u_ModelMatrix;   // 64 bytes
+    glm::mat4 u_NormalMatrix;  // 64 bytes
 };
 
 struct LIGHTYEAR_API GlobalUniforms {
@@ -34,13 +35,13 @@ struct LIGHTYEAR_API GlobalUniforms {
     Ref<UniformBuffer> SceneUBO;
 
     void Init() {
-        CameraUBO   = UniformBuffer::Create("Camera", sizeof(UBO_Camera), 0);
-        SceneUBO    = UniformBuffer::Create("Scene", sizeof(UBO_Scene), 1);
-        MaterialUBO = UniformBuffer::Create("Material", sizeof(UBO_Material), 2);
-        ObjectUBO   = UniformBuffer::Create("Object", sizeof(UBO_Object), 3);
+        CameraUBO   = UniformBuffer::Create("Camera", sizeof(UBO_Camera), 1);      // binding = 0
+        SceneUBO    = UniformBuffer::Create("Scene", sizeof(UBO_Scene), 2);        // binding = 1
+        MaterialUBO = UniformBuffer::Create("Material", sizeof(UBO_Material), 3);  // binding = 2
+        ObjectUBO   = UniformBuffer::Create("Object", sizeof(UBO_Object), 4);      // binding = 3
     }
 
-    void Bind() {
+    void Bind() const {
         CameraUBO->Bind();
         MaterialUBO->Bind();
         ObjectUBO->Bind();
@@ -49,7 +50,7 @@ struct LIGHTYEAR_API GlobalUniforms {
 
     void UploadCamera(const UBO_Camera& data) const { CameraUBO->SetData(&data, sizeof(UBO_Camera), 0); }
 
-    void UploadMaterial(const UBO_Material& data) const { MaterialUBO->SetData(&data, sizeof(UBO_Material)); }
+    void UploadMaterial(const UBO_Material& data) const { MaterialUBO->SetData(&data, sizeof(UBO_Material), 0); }
 
     void UploadObject(const UBO_Object& data) const { ObjectUBO->SetData(&data, sizeof(UBO_Object), 0); }
 

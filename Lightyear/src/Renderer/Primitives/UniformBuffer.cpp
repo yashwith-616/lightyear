@@ -14,7 +14,6 @@ Ref<UniformBuffer> UniformBuffer::Create(std::string name, uint32_t size, uint32
     }
 
     LY_CORE_ASSERT(false, "Invalid RendererAPI!");
-    return nullptr;
 }
 
 }  // namespace ly::renderer

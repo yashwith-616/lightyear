@@ -23,6 +23,7 @@ public:
 private:
     uint32_t m_BufferID{ 0 };
     uint32_t m_BindingPoint{ 0 };
+    uint32_t m_Size{ 0 };
 };
 
 }  // namespace ly::renderer

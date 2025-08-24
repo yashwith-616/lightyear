@@ -1,6 +1,9 @@
 #include "Lightyear/Renderer/Abstract/Renderer.h"
+
+#include "Lightyear/Scene/Components/Camera/CameraComponent.h"
+#include "Lightyear/Scene/Components/Transform/TransformComponent.h"
+
 #include "Lightyear/Renderer/Abstract/RenderCommand.h"
-#include "Lightyear/Renderer/Camera/Camera.h"
 #include "Lightyear/Renderer/Primitives/Shader.h"
 #include "Lightyear/Renderer/Primitives/Texture.h"
 #include "Lightyear/Renderer/Primitives/VertexArray.h"
@@ -35,17 +38,26 @@ void Renderer::Shutdown() {}
 
 void Renderer::OnWindowResize(glm::uvec2 size) {}
 
-void Renderer::BeginScene(const Ref<Camera>& camera, const scene::SceneData& sceneData) {
-    s_CameraUBO.ViewProjection = camera->GetViewProjectionMatrix();
-    s_CameraUBO.View           = camera->GetViewMatrix();
-    s_CameraUBO.CameraPosition = camera->GetPosition();
-    s_CameraUBO.CameraRotation = camera->GetRotation();
-    s_CameraUBO.ZoomLevel      = 1.f;
+void Renderer::BeginScene(const scene::CameraComponent& camera,
+                          const scene::TransformComponent& cameraTransform,
+                          const scene::SceneData& sceneData) {
+    // Camera UBO
+    s_CameraUBO.u_ViewProjection = camera.Cache_ViewProjectionMatrix;
+    s_CameraUBO.u_View           = camera.ViewMatrix;
+    s_CameraUBO.u_CameraPosition = cameraTransform.Translation;
+    s_CameraUBO.u_ZoomLevel      = 1.0f;
     s_GlobalUniforms.UploadCamera(s_CameraUBO);
 
-    s_SceneUBO.Time = sceneData.Time;
+    // Scene UBO
+    s_SceneUBO.u_Time = sceneData.Time;
     s_GlobalUniforms.UploadScene(s_SceneUBO);
 
+    // Material UBO
+    s_MaterialUBO.u_BaseColor  = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+    s_MaterialUBO.u_Properties = glm::vec4(0.0f);
+    s_GlobalUniforms.UploadMaterial(s_MaterialUBO);
+
+    // Reset render queue
     s_RenderQueue.clear();
 }
 
@@ -58,9 +70,8 @@ void Renderer::Submit(const RenderSubmission& submission) {
 }
 
 void Renderer::Flush() {
-    // glDisable(GL_DEPTH_TEST);
     for (const auto& submission : s_RenderQueue) {
-        s_ObjectUBO.ModelMatrix = submission.RSTransform;
+        s_ObjectUBO.u_ModelMatrix = submission.RSTransform;
         s_GlobalUniforms.UploadObject(s_ObjectUBO);
 
         const Ref<OpenGLShader> openGLShader = std::dynamic_pointer_cast<OpenGLShader>(submission.RSShader);

@@ -1,7 +1,5 @@
 #pragma once
 
-#include "ComponentsForward.h"
-
 namespace ly::scene {
 
 /**
@@ -48,11 +46,14 @@ struct ComponentGroupGet<ComponentGroup<Components...>> {
 /**
  * @brief All Components present in Lightyear
  */
-using AllComponents = ComponentGroup<TransformComponent,
-                                     CameraComponent,
+using AllComponents = ComponentGroup<DirtyComponent,
+                                     IDComponent,
                                      MobilityComponent,
+                                     RelationshipComponent,
+                                     TagComponent,
+                                     CameraComponent,
+                                     TransformComponent,
                                      MeshComponent,
-                                     RenderComponent,
-                                     RelationshipComponent>;
+                                     RenderComponent>;
 
 }  // namespace ly::scene

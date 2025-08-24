@@ -5,8 +5,10 @@ using SceneComponent =
     ly::scene::ComponentGroup<ly::scene::TagComponent, ly::scene::IDComponent, ly::scene::RelationshipComponent>;
 
 void ESceneWorkspace::OnAttach(ly::Ref<GlobalEditorContext> globalContext) {
-    m_GlobalContext   = globalContext;
-    m_SceneGraphPanel = ly::MakeScope<ESceneGraphPanelExp>(GetPanelTitle(EEditorPanel::SCENE_GRAPH));
+    m_GlobalContext      = globalContext;
+    m_SceneGraphPanel    = ly::MakeScope<EESceneGraphPanel>(GetPanelTitle(EEditorPanel::SCENE_GRAPH));
+    m_ViewportPanel      = ly::MakeScope<EViewportPanel>(GetPanelTitle(EEditorPanel::VIEWPORT));
+    m_EntityDetailsPanel = ly::MakeScope<EEntityDetailsPanel>(GetPanelTitle(EEditorPanel::INSPECTOR));
 }
 
 void ESceneWorkspace::OnEvent(ly::Event& event) {}
@@ -18,17 +20,27 @@ void ESceneWorkspace::OnEditorUpdate() {
     BuildSceneTree();
 
     m_SceneGraphPanel->SetSceneTree(m_SceneTree);
+    m_ViewportPanel->SetFramebuffer(m_GlobalContext->SceneFramebuffer);
+    m_ViewportPanel->SetSceneRuntime(m_GlobalContext->SceneRuntime);
+
+    m_SelectedNode = m_SceneGraphPanel->GetSelectedNode();
+    if (auto selected = m_SelectedNode.lock()) {
+        m_EntityDetailsPanel->SetSelectedEntity(
+            ly::MakeRef<ly::scene::Entity>(selected->Entity, m_GlobalContext->ActiveScene.get()));
+    }
 }
 
 void ESceneWorkspace::OnImGuiRender() {
     DrawDockspace();
 
     if (!IsDockspaceInitialized()) {
-        SetupDockspace();
+        SetupLayout();
         m_bIsInitialized = true;
     }
 
     m_SceneGraphPanel->OnImGuiRender();
+    m_ViewportPanel->OnImGuiRender();
+    m_EntityDetailsPanel->OnImGuiRender();
 }
 
 void ESceneWorkspace::DrawDockspace() {
@@ -65,9 +77,9 @@ void ESceneWorkspace::DrawDockspace() {
  * 4. Layouts for all window will be distributed to all window beforehand.
  * 5. Panel will have property to hide them. Panel need an enum based dirty flag
  */
-void ESceneWorkspace::SetupDockspace() const {
+void ESceneWorkspace::SetupLayout() const {
     if (ImGui::DockBuilderGetNode(m_DockspaceID) != nullptr) {
-        ImGui::DockBuilderRemoveNode(m_DockspaceID);
+        return;
     }
 
     ImGui::DockBuilderAddNode(m_DockspaceID, ImGuiDockNodeFlags_DockSpace);
@@ -78,11 +90,11 @@ void ESceneWorkspace::SetupDockspace() const {
     ImGuiID topRight{};
     ImGuiID bottomRight{};
 
-    constexpr float verticalSplitRatio   = 0.2;
-    constexpr float horizontalSplitRatio = 0.5;
+    constexpr float verticalSplitRatio   = 0.2f;
+    constexpr float horizontalSplitRatio = 0.5f;
 
-    ImGui::DockBuilderSplitNode(m_DockspaceID, ImGuiDir::ImGuiDir_Right, verticalSplitRatio, &right, &left);
-    ImGui::DockBuilderSplitNode(left, ImGuiDir::ImGuiDir_Down, horizontalSplitRatio, &bottomRight, &topRight);
+    ImGui::DockBuilderSplitNode(m_DockspaceID, ImGuiDir_Right, verticalSplitRatio, &right, &left);
+    ImGui::DockBuilderSplitNode(left, ImGuiDir_Down, horizontalSplitRatio, &bottomRight, &topRight);
 
     ImGui::DockBuilderDockWindow(GetPanelTitle(EEditorPanel::VIEWPORT).data(), left);
     ImGui::DockBuilderDockWindow(GetPanelTitle(EEditorPanel::SCENE_GRAPH).data(), topRight);
@@ -96,8 +108,7 @@ void ESceneWorkspace::BuildSceneTree() {
 
     m_SceneTree = ly::MakeRef<SceneTreeNode>("root", ly::UUID(0), entt::null);
 
-    // NOLINTNEXTLINE
-    for (auto [entity, tag, id, relation] : ly::scene::ComponentGroupView<SceneComponent>::view(registry).each()) {
+    for (auto&& [entity, tag, id, relation] : ly::scene::ComponentGroupView<SceneComponent>::view(registry).each()) {
         if (relation.Parent != entt::null) {
             continue;
         }
@@ -106,13 +117,13 @@ void ESceneWorkspace::BuildSceneTree() {
 }
 
 ly::Ref<SceneTreeNode> ESceneWorkspace::BuildSceneTreeRecursive(entt::entity entity) {
-    const auto& registry     = GetScene().GetRegistry();
-    auto [tag, id, relation] = ly::scene::ComponentGroupGet<SceneComponent>::get(registry, entity);
+    const auto& registry      = GetScene().GetRegistry();
+    auto [tag, uid, relation] = ly::scene::ComponentGroupGet<SceneComponent>::get(registry, entity);
 
-    ly::Ref<SceneTreeNode> head = ly::MakeRef<SceneTreeNode>(tag.Tag, id.ID, entity);
+    ly::Ref<SceneTreeNode> head = ly::MakeRef<SceneTreeNode>(tag.Tag, uid.ID, entity);
 
     entt::entity curr = relation.FirstChild;
-    for (int i = 0; i < relation.ChildrenCount; ++i) {
+    for (uint32_t i = 0; i < relation.ChildrenCount; ++i) {
         head->AddChild(BuildSceneTreeRecursive(curr));
 
         const auto& childRelation = registry.get<ly::scene::RelationshipComponent>(curr);
