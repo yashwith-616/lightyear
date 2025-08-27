@@ -46,7 +46,8 @@ target_compile_options(Sandbox PRIVATE
         # MSVC
         $<$<CXX_COMPILER_ID:MSVC>:
         /EHsc
-        /utf-8>
+        /utf-8
+        /permissive->
 
         # Clang on Windows (clang-cl)
         $<$<AND:$<CXX_COMPILER_ID:Clang>>:
