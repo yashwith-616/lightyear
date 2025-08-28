@@ -49,6 +49,19 @@ endfunction()
 
 
 #-------------------------------------------------
+# Configuration Files
+#-------------------------------------------------
+set(FILE_HEADER_MAGIC "LYFS")
+set(FILE_VERSION 1)
+
+configure_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/config/Config.hpp.in
+        ${CMAKE_CURRENT_SOURCE_DIR}/config/Config.hpp
+        @ONLY
+)
+
+
+#-------------------------------------------------
 # Setup Dependencies
 #-------------------------------------------------
 find_package(OpenGL REQUIRED )
@@ -104,6 +117,7 @@ add_library (Lightyear STATIC ${SOURCES} "${HEADERS}")
 target_include_directories(Lightyear
     PUBLIC
         "${HDRS_DIR}"
+        "${CMAKE_CURRENT_SOURCE_DIR}/config"
     SYSTEM PUBLIC
         "${IMGUI_DIR}"
         "${GLAD_DIR}"

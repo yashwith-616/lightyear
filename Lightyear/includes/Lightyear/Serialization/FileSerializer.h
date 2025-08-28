@@ -3,10 +3,14 @@
 #include "Lightyear/Serialization/StreamReader.h"
 #include "Lightyear/Serialization/StreamWriter.h"
 
-// -------------------------------------------------
-// File Write Stream
-// -------------------------------------------------
 namespace ly {
+
+#pragma pack(push, 1)
+struct FileHeader {
+    char magic[4]    = { 'L', 'Y', 'F', 'S' };
+    uint32_t version = 1;
+};
+#pragma pack(pop)
 
 /*
  TODO:
@@ -14,11 +18,16 @@ namespace ly {
     2. Chunk based file stream save
     3. Chunk migration must be present in the components class
  */
+/**
+ * The class has methods that allows you to write to a file in binary format
+ */
 class LIGHTYEAR_API FileStreamWriter : public StreamWriter {
 public:
-    FileStreamWriter(const std::filesystem::path& filePath);
-    FileStreamWriter(const FileStreamWriter&) = delete;
+    explicit FileStreamWriter(const std::filesystem::path& filePath);
+    FileStreamWriter(const FileStreamWriter&)            = delete;
     FileStreamWriter& operator=(const FileStreamWriter&) = delete;
+    FileStreamWriter(FileStreamWriter&&)                 = delete;
+    FileStreamWriter& operator=(FileStreamWriter&&)      = delete;
     ~FileStreamWriter() override;
 
     [[nodiscard]] bool IsStreamGood() const override;
@@ -29,21 +38,20 @@ public:
 private:
     std::filesystem::path m_FilePath;
     std::ofstream m_Stream;
+
+    void WriteHeader();
 };
 
-} // namespace ly
-
-
-// -------------------------------------------------
-// File Read Stream
-// -------------------------------------------------
-namespace ly {
-
+/**
+ * The class helps to read data from a file that had been binary serialized
+ */
 class LIGHTYEAR_API FileStreamReader : public StreamReader {
 public:
-    FileStreamReader(const std::filesystem::path& filePath);
-    FileStreamReader(const FileStreamReader&) = delete;
+    explicit FileStreamReader(const std::filesystem::path& filePath);
+    FileStreamReader(const FileStreamReader&)            = delete;
     FileStreamReader& operator=(const FileStreamReader&) = delete;
+    FileStreamReader(FileStreamReader&&)                 = delete;
+    FileStreamReader& operator=(FileStreamReader&&)      = delete;
     ~FileStreamReader() override;
 
     [[nodiscard]] bool IsStreamGood() const override;
@@ -54,6 +62,9 @@ public:
 private:
     std::filesystem::path m_FilePath;
     std::ifstream m_Stream;
+    int m_FileVersion{};
+
+    bool validateHeader();
 };
 
-} // namespace ly
+}  // namespace ly

@@ -1,4 +1,5 @@
 #include "Lightyear/Serialization/FileSerializer.h"
+#include "Config.hpp"
 
 // -------------------------------------------------
 // File Write Stream
@@ -6,7 +7,9 @@
 namespace ly {
 
 FileStreamWriter::FileStreamWriter(const std::filesystem::path& filePath)
-    : m_FilePath(filePath), m_Stream(m_FilePath, std::ios::out | std::ios::binary) {}
+    : m_FilePath(filePath), m_Stream(m_FilePath, std::ios::out | std::ios::binary) {
+    WriteHeader();
+}
 
 FileStreamWriter::~FileStreamWriter() {
     m_Stream.close();
@@ -29,6 +32,11 @@ bool FileStreamWriter::WriteData(const char* data, uint64_t size) {
     return true;
 }
 
+void FileStreamWriter::WriteHeader() {
+    FileHeader header{};
+    m_Stream.write(reinterpret_cast<const char*>(&header), sizeof(header));
+}
+
 }  // namespace ly
 
 // -------------------------------------------------
@@ -37,7 +45,9 @@ bool FileStreamWriter::WriteData(const char* data, uint64_t size) {
 namespace ly {
 
 FileStreamReader::FileStreamReader(const std::filesystem::path& filePath)
-    : m_FilePath(filePath), m_Stream(m_FilePath, std::ios::in | std::ios::binary) {}
+    : m_FilePath(filePath), m_Stream(m_FilePath, std::ios::in | std::ios::binary) {
+    validateHeader();
+}
 
 FileStreamReader::~FileStreamReader() {
     m_Stream.close();
@@ -57,6 +67,23 @@ void FileStreamReader::SetStreamPosition(uint64_t position) {
 
 bool FileStreamReader::ReadData(char* destination, uint64_t size) {
     m_Stream.read(destination, ly::narrow_cast<std::streamsize>(size));
+    return true;
+}
+
+bool FileStreamReader::validateHeader() {
+    FileHeader header{};
+    m_Stream.read(reinterpret_cast<char*>(&header), sizeof(header));
+
+    const bool isValidHeader = std::memcmp(header.magic, kFileHeaderMagic.data(), kFileHeaderMagic.size()) == 0;
+    if (!isValidHeader) {
+        LY_CORE_LOG(LogType::Error,
+                    "File header mismatch; required {}, received {}",
+                    kFileHeaderMagic,
+                    std::string_view(header.magic, sizeof(header.magic)));
+        return false;
+    }
+
+    m_FileVersion = header.version;
     return true;
 }
 
