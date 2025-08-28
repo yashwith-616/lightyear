@@ -1,12 +1,15 @@
 #pragma once
 
 #include "Lightyear/LightyearCore.h"
+#include "Lightyear/Serialization/ISerializable.h"
 
 namespace ly::scene {
 
 enum class CameraProjectionType : uint8_t { PERSPECTIVE = BIT(0), ORTHOGRAPHIC = BIT(1) };
 
-struct LIGHTYEAR_API CameraComponent {
+struct LIGHTYEAR_API CameraComponent : ISerializable<CameraComponent> {
+    static constexpr int Version = 1;
+
     glm::mat4 ProjectionMatrix;
     glm::mat4 ViewMatrix;
     glm::mat4 Cache_ViewProjectionMatrix;
@@ -17,6 +20,35 @@ struct LIGHTYEAR_API CameraComponent {
     float NearClip{ kDefaultNearClip };
     float FarClip{ kDefaultFarClip };
     CameraProjectionType ProjectionType{ CameraProjectionType::PERSPECTIVE };
+
+    static void Serialize(StreamWriter* serializer, const CameraComponent& camera) {
+        serializer->WriteVersion(Version);
+        serializer->WriteRaw(camera.ProjectionMatrix);
+        serializer->WriteRaw(camera.ViewMatrix);
+        serializer->WriteRaw(camera.OrthographicSize);
+        serializer->WriteRaw(camera.AspectRatio);
+        serializer->WriteRaw(camera.FOVRadians);
+        serializer->WriteRaw(camera.NearClip);
+        serializer->WriteRaw(camera.FarClip);
+        serializer->WriteRaw(camera.ProjectionType);
+    }
+
+    static void Deserialize(StreamReader* deserializer, CameraComponent& camera) {
+        const int currVersion = deserializer->ReadVersion();
+        if (Version != currVersion) {
+            LY_CORE_ASSERT(false, "Version {} and Curr Version has a mismatch! Cannot read file!");
+        }
+        deserializer->ReadRaw(camera.ProjectionMatrix);
+        deserializer->ReadRaw(camera.ViewMatrix);
+        deserializer->ReadRaw(camera.OrthographicSize);
+        deserializer->ReadRaw(camera.AspectRatio);
+        deserializer->ReadRaw(camera.FOVRadians);
+        deserializer->ReadRaw(camera.NearClip);
+        deserializer->ReadRaw(camera.FarClip);
+        deserializer->ReadRaw(camera.ProjectionType);
+
+        camera.Cache_ViewProjectionMatrix = camera.ProjectionMatrix * camera.ViewMatrix;
+    }
 };
 
 }  // namespace ly::scene

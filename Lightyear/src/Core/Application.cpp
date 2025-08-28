@@ -58,6 +58,10 @@ void Application::Run() {
         ImGUILayer::EndFrame();
         m_Window->OnUpdate();
     }
+
+    for (const Scope<Layer>& layer : m_LayerStack) {
+        layer->OnDetach();
+    }
 }
 
 void Application::OnEvent(Event& event) {

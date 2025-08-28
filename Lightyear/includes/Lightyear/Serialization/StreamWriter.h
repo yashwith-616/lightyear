@@ -15,6 +15,8 @@ public:
     virtual void SetStreamPosition(uint64_t position)       = 0;
     virtual bool WriteData(const char* data, uint64_t size) = 0;
 
+    void WriteVersion(uint16_t version) { WriteData(reinterpret_cast<const char*>(&version), sizeof(version)); }
+
     void WriteZero(uint64_t size) {
         constexpr char zero = 0;
         for (uint64_t i = 0; i < size; i++) {

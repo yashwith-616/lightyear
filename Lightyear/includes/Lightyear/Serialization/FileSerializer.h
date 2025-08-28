@@ -12,12 +12,6 @@ struct FileHeader {
 };
 #pragma pack(pop)
 
-/*
- TODO:
-    1. Need to add file version header
-    2. Chunk based file stream save
-    3. Chunk migration must be present in the components class
- */
 /**
  * The class has methods that allows you to write to a file in binary format
  */
@@ -57,7 +51,7 @@ public:
     [[nodiscard]] bool IsStreamGood() const override;
     uint64_t GetStreamPosition() override;
     void SetStreamPosition(uint64_t position) override;
-    bool ReadData(char* destination, uint64_t size) override;
+    bool ReadData(char* destination, size_t size) override;
 
 private:
     std::filesystem::path m_FilePath;

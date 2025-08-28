@@ -71,6 +71,7 @@ target_compile_options(Sandbox PRIVATE
 # Add definations
 #-------------------------------------------------
 add_definitions(-DASSET_DIR="${CMAKE_CURRENT_SOURCE_DIR}/assets")
+add_definitions(-DSAVED_DIR="${CMAKE_CURRENT_SOURCE_DIR}/saved")
 
 
 #-------------------------------------------------

@@ -30,3 +30,6 @@
 
 // -------------------- Components ---------------------
 #include "Lightyear/Scene/Components/Components.h"
+
+// -------------------- Serialization -------------------------
+#include "Lightyear/Serialization/FileSerializer.h"

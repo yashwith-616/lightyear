@@ -8,31 +8,41 @@ class LIGHTYEAR_API StreamReader {
 public:
     virtual ~StreamReader() = default;
 
-    [[nodiscard]] virtual bool IsStreamGood() const         = 0;
-    [[nodiscard]] virtual uint64_t GetStreamPosition()      = 0;
-    virtual void SetStreamPosition(uint64_t position)       = 0;
-    virtual bool ReadData(char* destination, uint64_t size) = 0;
+    [[nodiscard]] virtual bool IsStreamGood() const       = 0;
+    [[nodiscard]] virtual uint64_t GetStreamPosition()    = 0;
+    virtual void SetStreamPosition(uint64_t position)     = 0;
+    virtual bool ReadData(char* destination, size_t size) = 0;
 
     operator bool() const { return IsStreamGood(); }
 
-    void ReadString(const std::string& str) {
-        size_t size = str.size();
-        ReadData(reinterpret_cast<char*>(&size), sizeof(size));
+    uint16_t ReadVersion() {
+        uint16_t version{};
+        ReadData(reinterpret_cast<char*>(&version), sizeof(version));
+        return version;
+    }
+
+    void ReadString(std::string& destinationStr) {
+        size_t strSize{};
+        ReadRaw(strSize);
+
+        if (strSize > 0) {
+            ReadData(reinterpret_cast<char*>(&destinationStr), strSize);
+        }
     }
 
     template <typename T>
-    void ReadRaw(const T& type) {
-        bool success = ReadData(reinterpret_cast<char*>(&type), sizeof(type));
+    void ReadRaw(T& type) {
+        const bool success = ReadData(reinterpret_cast<char*>(&type), sizeof(type));
         LY_CORE_ASSERT(success, "Read raw failed");
     }
 
     template <typename T>
-    void ReadObject(const T& obj) {
+    void ReadObject(T& obj) {
         T::Deserialize(this, obj);
     }
 
     template <typename Key, typename Value>
-    void ReadMap(const std::map<Key, Value>& map, bool readSize = false) {
+    void ReadMap(std::map<Key, Value>& map, bool readSize = false) {
         if (readSize) {
             ReadRaw<uint32_t>(map.size());
         }
@@ -53,7 +63,7 @@ public:
     }
 
     template <typename Key, typename Value>
-    void ReadMap(const std::unordered_map<Key, Value>& map, bool readSize = false) {
+    void ReadMap(std::unordered_map<Key, Value>& map, bool readSize = false) {
         if (readSize) {
             ReadRaw<uint32_t>(map.size());
         }
