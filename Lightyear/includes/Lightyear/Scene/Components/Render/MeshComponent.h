@@ -16,7 +16,10 @@ struct MeshComponent {
     MeshComponent(Ref<renderer::VertexArray> vertexArray, Ref<renderer::Shader> shader, Ref<renderer::Texture> texture)
         : MeshAsset(std::move(vertexArray)), ShaderAsset(std::move(shader)), TextureAsset(std::move(texture)) {}
 
-    MeshComponent(const MeshComponent&) = default;
+    MeshComponent(const MeshComponent&)            = default;
+    MeshComponent(MeshComponent&&)                 = default;
+    MeshComponent& operator=(const MeshComponent&) = default;
+    MeshComponent& operator=(MeshComponent&&)      = default;
 };
 
 }  // namespace ly::scene

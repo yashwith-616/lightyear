@@ -23,8 +23,6 @@ struct LIGHTYEAR_API CameraComponent : ISerializable<CameraComponent> {
 
     static void Serialize(StreamWriter* serializer, const CameraComponent& camera) {
         serializer->WriteVersion(Version);
-        serializer->WriteRaw(camera.ProjectionMatrix);
-        serializer->WriteRaw(camera.ViewMatrix);
         serializer->WriteRaw(camera.OrthographicSize);
         serializer->WriteRaw(camera.AspectRatio);
         serializer->WriteRaw(camera.FOVRadians);
@@ -38,16 +36,12 @@ struct LIGHTYEAR_API CameraComponent : ISerializable<CameraComponent> {
         if (Version != currVersion) {
             LY_CORE_ASSERT(false, "Version {} and Curr Version has a mismatch! Cannot read file!");
         }
-        deserializer->ReadRaw(camera.ProjectionMatrix);
-        deserializer->ReadRaw(camera.ViewMatrix);
-        deserializer->ReadRaw(camera.OrthographicSize);
-        deserializer->ReadRaw(camera.AspectRatio);
-        deserializer->ReadRaw(camera.FOVRadians);
-        deserializer->ReadRaw(camera.NearClip);
-        deserializer->ReadRaw(camera.FarClip);
-        deserializer->ReadRaw(camera.ProjectionType);
-
-        camera.Cache_ViewProjectionMatrix = camera.ProjectionMatrix * camera.ViewMatrix;
+        camera.OrthographicSize = deserializer->ReadRaw<float>();
+        camera.AspectRatio      = deserializer->ReadRaw<float>();
+        camera.FOVRadians       = deserializer->ReadRaw<float>();
+        camera.NearClip         = deserializer->ReadRaw<float>();
+        camera.FarClip          = deserializer->ReadRaw<float>();
+        camera.ProjectionType   = static_cast<CameraProjectionType>(deserializer->ReadRaw<uint8_t>());
     }
 };
 
@@ -58,8 +52,6 @@ LY_DISABLE_WARNINGS_PUSH
 LY_DISABLE_WARNINGS_POP
 
 REFL_TYPE(ly::scene::CameraComponent)
-REFL_FIELD(ProjectionMatrix)
-REFL_FIELD(ViewMatrix)
 REFL_FIELD(AspectRatio)
 REFL_FIELD(FOVRadians)
 REFL_FIELD(NearClip)
