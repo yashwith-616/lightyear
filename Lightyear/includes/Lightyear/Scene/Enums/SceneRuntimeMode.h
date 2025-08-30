@@ -1,4 +1,5 @@
 #pragma once
+#include "Lightyear/pch/lypch.h"
 
 namespace ly::scene {
 

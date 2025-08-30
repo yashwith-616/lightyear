@@ -21,19 +21,23 @@ public:
         return version;
     }
 
-    void ReadString(std::string& destinationStr) {
-        size_t strSize{};
-        ReadRaw(strSize);
+    std::string ReadString() {
+        auto strSize = ReadRaw<size_t>();
 
+        std::string destinationStr(strSize, '\0');
         if (strSize > 0) {
             ReadData(reinterpret_cast<char*>(&destinationStr), strSize);
         }
+
+        return destinationStr;
     }
 
     template <typename T>
-    void ReadRaw(T& type) {
-        const bool success = ReadData(reinterpret_cast<char*>(&type), sizeof(type));
+    T ReadRaw() {
+        T value{};
+        const bool success = ReadData(reinterpret_cast<char*>(&value), sizeof(value));
         LY_CORE_ASSERT(success, "Read raw failed");
+        return value;
     }
 
     template <typename T>
