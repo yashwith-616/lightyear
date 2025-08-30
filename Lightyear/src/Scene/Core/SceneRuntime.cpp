@@ -1,11 +1,11 @@
-#include "Lightyear/Scene/SceneRuntime.h"
+#include "Lightyear/Scene/Core/SceneRuntime.h"
 
 #include "Lightyear/Core/Application.h"
 #include "Lightyear/Core/Window.h"
 #include "Lightyear/Renderer/Abstract/Renderer.h"
 #include "Lightyear/Scene/Components/Components.h"
 #include "Lightyear/Scene/Components/Core/DirtyComponent.h"
-#include "Lightyear/Scene/Entity.h"
+#include "Lightyear/Scene/Core/Entity.h"
 #include "Lightyear/Scene/Systems/Camera/CameraSystem.h"
 #include "Lightyear/Scene/Systems/Renderer/RenderSystem.h"
 

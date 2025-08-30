@@ -14,9 +14,13 @@ enum class ERenderVisibilityFlags : uint8_t {
 struct LIGHTYEAR_API RenderComponent {
     uint8_t VisibilityFlags = static_cast<uint8_t>(ERenderVisibilityFlags::None);
 
-    bool IsHidden() const { return VisibilityFlags & static_cast<uint8_t>(ERenderVisibilityFlags::Hidden); }
+    [[nodiscard]] bool IsHidden() const {
+        return VisibilityFlags & static_cast<uint8_t>(ERenderVisibilityFlags::Hidden);
+    }
 
-    bool IsEditorHidden() const { return VisibilityFlags & static_cast<uint8_t>(ERenderVisibilityFlags::EditorHidden); }
+    [[nodiscard]] bool IsEditorHidden() const {
+        return VisibilityFlags & static_cast<uint8_t>(ERenderVisibilityFlags::EditorHidden);
+    }
 };
 
 }  // namespace ly::scene

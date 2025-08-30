@@ -21,12 +21,15 @@
 
 // -------------------- Scene -------------------------
 #include "Lightyear/Scene/Components/Components.h"
-#include "Lightyear/Scene/Entity.h"
-#include "Lightyear/Scene/Scene.h"
-#include "Lightyear/Scene/SceneRuntime.h"
+#include "Lightyear/Scene/Core/Entity.h"
+#include "Lightyear/Scene/Core/Scene.h"
+#include "Lightyear/Scene/Core/SceneRuntime.h"
 
 // -------------------- Input -------------------------
 #include "Lightyear/Input/Input.h"
 
 // -------------------- Components ---------------------
 #include "Lightyear/Scene/Components/Components.h"
+
+// -------------------- Serialization -------------------------
+#include "Lightyear/Serialization/FileSerializer.h"

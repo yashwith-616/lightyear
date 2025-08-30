@@ -1,4 +1,4 @@
-#include "Lightyear/Scene/Entity.h"
+#include "Lightyear/Scene/Core/Entity.h"
 
 namespace ly::scene {
 

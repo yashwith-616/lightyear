@@ -1,10 +1,14 @@
 #pragma once
 
 #include "Lightyear/LightyearCore.h"
+#include "Lightyear/Scene/Core/Scene.h"
 #include "Lightyear/Scene/Enums/SceneRuntimeMode.h"
-#include "Lightyear/Scene/Scene.h"
 #include "Lightyear/Scene/SceneData.h"
 #include "Lightyear/Scene/Systems/ISystem.h"
+
+namespace ly::renderer {
+class SceneCamera;
+}
 
 namespace ly::scene {
 

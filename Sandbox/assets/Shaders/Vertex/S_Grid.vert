@@ -1,6 +1,6 @@
 ﻿#version 460 core
 
-layout(location = 0) in vec2 aPosition; // Vertex in NDC: [-1, -1] to [1, 1]
+layout(location = 0) in vec2 aPosition;// Vertex in NDC: [-1, -1] to [1, 1]
 
 layout(std140, binding = 1) uniform Camera {
     mat4 u_ViewProjection;
@@ -24,9 +24,9 @@ layout(std140, binding = 4) uniform Object {
 };
 
 
-out vec2 v_ScreenCoord; // [0, 1] normalized screen coordinates
+out vec2 v_ScreenCoord;// [0, 1] normalized screen coordinates
 
 void main() {
-    v_ScreenCoord = aPosition * 0.5 + 0.5; // NDC [-1, 1] → Screen [0, 1]
+    v_ScreenCoord = aPosition * 0.5 + 0.5;// NDC [-1, 1] → Screen [0, 1]
     gl_Position = vec4(aPosition, 0.0, 1.0);
 }

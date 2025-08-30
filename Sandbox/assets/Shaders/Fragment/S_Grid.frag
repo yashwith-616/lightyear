@@ -22,7 +22,7 @@ layout(std140, binding = 4) uniform Object {
 };
 
 
-in vec2 v_ScreenCoord; // Normalized screen coordinates [0, 1]
+in vec2 v_ScreenCoord;// Normalized screen coordinates [0, 1]
 
 out vec4 FragColor;
 
