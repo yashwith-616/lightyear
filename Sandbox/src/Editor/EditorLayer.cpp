@@ -101,17 +101,17 @@ void EditorLayer::OnDetach() {
 }
 
 ly::scene::CameraComponent EditorLayer::LoadGameCamera() const {
-    LY_LOG(ly::LogType::Info, "Loading camera");
+    LY_LOG(ly::LogType::INFO, "Loading camera");
 
     auto* deserializer = new ly::FileStreamReader(kCameraSavePath);
     ly::scene::CameraComponent cameraComp;
     deserializer->ReadObject(cameraComp);
-    LY_LOG(ly::LogType::Info, "Camera Aspect: {}", cameraComp.AspectRatio);
+    LY_LOG(ly::LogType::INFO, "Camera Aspect: {}", cameraComp.AspectRatio);
     return cameraComp;
 }
 
 void EditorLayer::SaveGameCamera() const {
-    LY_LOG(ly::LogType::Info, "Saving camera");
+    LY_LOG(ly::LogType::INFO, "Saving camera");
     auto* serializer               = new ly::FileStreamWriter(kCameraSavePath);
     ly::scene::Entity cameraEntity = m_Scene->GetPrimaryCameraEntity();
     auto& cameraComp               = cameraEntity.GetComponent<ly::scene::CameraComponent>();

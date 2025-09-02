@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Lightyear/LightyearCore.h"
+#include "Lightyear/Serialization/SerializableContract.h"
 
 namespace ly {
 
@@ -15,7 +16,7 @@ public:
     virtual void SetStreamPosition(uint64_t position)       = 0;
     virtual bool WriteData(const char* data, uint64_t size) = 0;
 
-    void WriteVersion(uint16_t version) { WriteData(reinterpret_cast<const char*>(&version), sizeof(version)); }
+    void WriteVersion(Version version) { WriteData(reinterpret_cast<const char*>(&version), sizeof(version)); }
 
     void WriteZero(uint64_t size) {
         constexpr char zero = 0;
@@ -36,9 +37,29 @@ public:
         LY_CORE_ASSERT(success, "Write raw failed");
     }
 
+    /// \brief Writes an object of type T from the StreamWriter
+    /// \details
+    /// This function enforces serialization contracts at compile-time using concepts and
+    /// custom asserts.
+    ///
+    /// \tparam T Type of the object being serialized. Must satisfy the serialization concepts.
     template <typename T>
     void WriteObject(const T& obj) {
-        T::Serialize(this, obj);
+        if constexpr (HasSerializeContract<T>) {
+            // Contract exists → verify required members
+            LY_CORE_ASSERT(!HasVersion<T>,
+                           "Serializable class missing 'version'");
+            LY_CORE_ASSERT(!HasSerialize<T>,
+                           "Serializable class missing static 'Serialize(StreamWriter&, const T&)'");
+
+            T::Serialize(this, obj);
+        } else {
+            // Class did not inherit the contract → ensure it does not define serialization members
+            // Ensures that the contract is not forgotten by chance.
+            constexpr bool has_any_serialization = HasSerialize<T> || HasDeserialize<T>;
+            LY_CORE_ASSERT(has_any_serialization,
+                           "Class defines serialization members but does not inherit SerializableContract");
+        }
     }
 
     template <typename Key, typename Value>

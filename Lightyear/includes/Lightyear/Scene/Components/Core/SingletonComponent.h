@@ -4,16 +4,20 @@
 
 namespace ly::scene {
 
-/**
- * Extend components using this class to indicate that a class is singleton. There will be only one instance of this
- * component across the Entities. Example: MainCamera, EditorCamera. At a time there will only be one camera present.
- *
- * The following template class allows for certain typesafe behaviours and checks to ensure there is only one instance
- * of this class across all entities.
- *
- * Singleton components can be stateless and may be used for indicating specific things in a game world. It can also
- * act as a tag for things such as MainCamera, PlayerCharacter, PlayerController and so on.
- */
+/// @brief Base class to mark a component as a singleton.
+///
+/// Singleton components ensure that only one instance of the component exists
+/// across all entities in a scene. For example, `MainCamera` or `EditorCamera`
+/// components should only ever exist once at a time.
+///
+/// This template provides type-safe checks and enforces the singleton constraint
+/// at compile-time or runtime, depending on usage.
+///
+/// Singleton components may be stateless and are often used as tags to indicate
+/// special roles in the game world, such as:
+/// - MainCamera
+/// - PlayerCharacter
+/// - PlayerController
 template <typename T>
 struct SingletonComponent {};
 

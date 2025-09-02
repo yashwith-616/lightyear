@@ -27,7 +27,7 @@ constexpr uint8_t BIT(const uint8_t x) {
 }
 
 inline const void* AsVoidPtr(const uint32_t value) {
-    return reinterpret_cast<const void*>(static_cast<uintptr_t>(value));
+    return reinterpret_cast<const void*>(static_cast<uintptr_t>(value)); // NOLINT
 }
 
 // ----------------------- Callbacks ---------------------------

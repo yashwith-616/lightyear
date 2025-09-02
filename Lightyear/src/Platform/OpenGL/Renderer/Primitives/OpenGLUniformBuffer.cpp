@@ -39,7 +39,7 @@ void OpenGLUniformBuffer::Debug(uint32_t programID, const std::string& blockName
 
     GLint blockSize = 0;
     glGetActiveUniformBlockiv(programID, blockIndex, GL_UNIFORM_BLOCK_DATA_SIZE, &blockSize);
-    LY_CORE_LOG(LogType::Info, "UBO '{}' block Size: {} bytes", blockName, blockSize);
+    LY_CORE_LOG(LogType::INFO, "UBO '{}' block Size: {} bytes", blockName, blockSize);
 
     GLint activeUniforms = 0;
     glGetActiveUniformBlockiv(programID, blockIndex, GL_UNIFORM_BLOCK_ACTIVE_UNIFORMS, &activeUniforms);
@@ -75,7 +75,7 @@ void OpenGLUniformBuffer::Debug(uint32_t programID, const std::string& blockName
     glBindBuffer(GL_UNIFORM_BUFFER, m_BufferID);
     glGetBufferSubData(GL_UNIFORM_BUFFER, 0, blockSize, bufferData.data());
 
-    LY_CORE_LOG(LogType::Info, "UBO '{}' has {} active uniforms:", blockName, activeUniforms);
+    LY_CORE_LOG(LogType::INFO, "UBO '{}' has {} active uniforms:", blockName, activeUniforms);
 
     for (GLint i = 0; i < activeUniforms; ++i) {
         GLsizei nameLength = 0;
@@ -93,7 +93,7 @@ void OpenGLUniformBuffer::Debug(uint32_t programID, const std::string& blockName
         GLint offset     = offsets[i];
         GLenum type      = types[i];
 
-        LY_CORE_LOG(LogType::Info, "  Name: {}, Offset: {}, Type: 0x{:X}", name, offset, type);
+        LY_CORE_LOG(LogType::INFO, "  Name: {}, Offset: {}, Type: 0x{:X}", name, offset, type);
 
         constexpr int maxPreviewBytes = 4 * 4 * 4;
 
@@ -108,7 +108,7 @@ void OpenGLUniformBuffer::Debug(uint32_t programID, const std::string& blockName
                     float value = mat[col * 4 + row];  // column-major indexing
                     std::format_to(std::back_inserter(rowStr), "{: .6f} ", value);
                 }
-                LY_CORE_LOG(LogType::Info, "Row {}: {}", row, rowStr);
+                LY_CORE_LOG(LogType::INFO, "Row {}: {}", row, rowStr);
             }
         }
     }

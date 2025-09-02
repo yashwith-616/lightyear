@@ -18,16 +18,16 @@ void OpenGLMessageCallback(unsigned source,
                            const void* userParam) {
     switch (severity) {
         case GL_DEBUG_SEVERITY_HIGH:
-            LY_CORE_LOG(ly::LogType::Fatal, "{0}", message);
+            LY_CORE_LOG(ly::LogType::FATAL, "{0}", message);
             return;
         case GL_DEBUG_SEVERITY_MEDIUM:
             LY_CORE_LOG(ly::LogType::Error, "{0}", message);
             return;
         case GL_DEBUG_SEVERITY_LOW:
-            LY_CORE_LOG(ly::LogType::Warn, "{0}", message);
+            LY_CORE_LOG(ly::LogType::WARN, "{0}", message);
             return;
         case GL_DEBUG_SEVERITY_NOTIFICATION:
-            LY_CORE_LOG(ly::LogType::Trace, "{0}", message);
+            LY_CORE_LOG(ly::LogType::TRACE, "{0}", message);
             return;
         default:
             LY_CORE_ASSERT(false, "Unknown severity level!");

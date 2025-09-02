@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Lightyear/LightyearCore.h"
+#include "SerializableContract.h"
 
 namespace ly {
 
@@ -15,10 +16,10 @@ public:
 
     operator bool() const { return IsStreamGood(); }
 
-    uint16_t ReadVersion() {
-        uint16_t version{};
+    Version ReadVersion() {
+        int16_t version{};
         ReadData(reinterpret_cast<char*>(&version), sizeof(version));
-        return version;
+        return Version(version);
     }
 
     std::string ReadString() {
@@ -40,9 +41,29 @@ public:
         return value;
     }
 
+    /// \brief Reads an object of type T from the StreamReader
+    /// \details
+    /// This function enforces serialization contracts at compile-time using concepts and
+    /// custom asserts.
+    ///
+    /// \tparam T Type of the object being deserialized. Must satisfy the serialization concepts.
     template <typename T>
     void ReadObject(T& obj) {
-        T::Deserialize(this, obj);
+        if constexpr (HasSerializeContract<T>) {
+            // Contract exists → verify required members
+            LY_CORE_ASSERT(!HasVersion<T>,
+                           "Serializable class missing 'version'");
+            LY_CORE_ASSERT(!HasDeserialize<T>,
+                           "Serializable class missing static 'Deserialize(StreamReader&, T&)'");
+
+            T::Deserialize(this, obj);
+        } else {
+            // Class did not inherit the contract → ensure it does not define serialization members
+            // Ensures that the contract is not forgotten by chance.
+            constexpr bool has_any_serialization = HasSerialize<T> || HasDeserialize<T>;
+            LY_CORE_ASSERT(has_any_serialization,
+                           "Class defines serialization members but does not inherit SerializableContract");
+        }
     }
 
     template <typename Key, typename Value>

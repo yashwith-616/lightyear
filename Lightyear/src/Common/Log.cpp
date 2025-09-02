@@ -1,5 +1,8 @@
 #include "Lightyear/Common/Log.h"
 
+#include "Lightyear/Settings/ProjectSettings.h"
+#include "Lightyear/Settings/SettingsManager.h"
+
 LY_DISABLE_WARNINGS_PUSH
 #include <spdlog/sinks/basic_file_sink.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
@@ -12,10 +15,14 @@ namespace ly {
 Ref<spdlog::logger> Log::s_CoreLogger;
 Ref<spdlog::logger> Log::s_ClientLogger;
 
+constexpr std::string_view kLogRelativePath{"log/lightyear.log"};
+
 void Log::Init() {
+    std::filesystem::path savedDirectory = SettingsManager::Project().savedDirectory;
+
     std::vector<spdlog::sink_ptr> logSinks;
     logSinks.emplace_back(MakeRef<spdlog::sinks::stdout_color_sink_mt>());
-    logSinks.emplace_back(MakeRef<spdlog::sinks::basic_file_sink_mt>("log/lightyear.log", true));
+    logSinks.emplace_back(MakeRef<spdlog::sinks::basic_file_sink_mt>((savedDirectory/kLogRelativePath).string(), true));
 
     logSinks[0]->set_pattern("%^[%Y-%m-%d %H:%M:%S.%e %z] [%n] [%l] [thread %t] %v%$");
     logSinks[1]->set_pattern("%^[%Y-%m-%d %H:%M:%S %z] [%n] [%l] [thread %t] %v%$");

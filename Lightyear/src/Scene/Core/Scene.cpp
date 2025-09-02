@@ -266,10 +266,10 @@ void Scene::OnCameraUpdated(entt::registry& registry, entt::entity entity) {
 
 template <typename T>
 void Scene::OnComponentAdded(Entity /*entity*/, T& /*component*/) {
-    LY_CORE_LOG(ly::LogType::Warn, "Scene::OnComponentAdded: Generic handler for component type {}", typeid(T).name());
+    LY_CORE_LOG(ly::LogType::WARN, "Scene::OnComponentAdded: Generic handler for component type {}", typeid(T).name());
 
     if constexpr (std::is_empty_v<T>) {
-        LY_CORE_LOG(ly::LogType::Warn, "Component is an empty type");
+        LY_CORE_LOG(ly::LogType::WARN, "Component is an empty type");
     }
 }
 

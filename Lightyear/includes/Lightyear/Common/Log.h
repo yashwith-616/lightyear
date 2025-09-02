@@ -11,7 +11,7 @@ LY_DISABLE_WARNINGS_POP
 
 namespace ly {
 
-enum class LogType { Trace, Info, Warn, Error, Fatal };
+enum LogType { TRACE, INFO, WARN, Error, FATAL };
 
 class LIGHTYEAR_API Log {
 public:
@@ -25,19 +25,19 @@ public:
     template <typename... Args>
     static void LogMessage(LogType type, Ref<spdlog::logger> logger, fmt::format_string<Args...> fmt, Args&&... args) {
         switch (type) {
-            case LogType::Trace:
+            case TRACE:
                 logger->trace(fmt, std::forward<Args>(args)...);
                 break;
-            case LogType::Info:
+            case INFO:
                 logger->info(fmt, std::forward<Args>(args)...);
                 break;
-            case LogType::Warn:
+            case WARN:
                 logger->warn(fmt, std::forward<Args>(args)...);
                 break;
-            case LogType::Error:
+            case Error:
                 logger->error(fmt, std::forward<Args>(args)...);
                 break;
-            case LogType::Fatal:
+            case FATAL:
                 logger->critical(fmt, std::forward<Args>(args)...);
                 break;
         }

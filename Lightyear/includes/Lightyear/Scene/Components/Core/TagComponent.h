@@ -1,29 +1,29 @@
 #pragma once
 
 #include "Lightyear/LightyearCore.h"
-#include "Lightyear/Serialization/ISerializable.h"
+#include "Lightyear/Serialization/Serialization.h"
 
 namespace ly::scene {
 
-struct LIGHTYEAR_API TagComponent : ISerializable<TagComponent> {
-    static constexpr int Version = 1;
+struct LIGHTYEAR_API TagComponent : SerializableContract {
+    static constexpr Version version{ 1 };
 
     std::string Tag{ kNOTSET };
 
     TagComponent() = default;
-    TagComponent(std::string tag) : Tag(std::move(tag)) {}
+    explicit TagComponent(std::string tag) : Tag(std::move(tag)) {}
 
-    static void Serialize(StreamWriter* serializer, const TagComponent& component) {
-        serializer->WriteVersion(Version);
-        serializer->WriteString(component.Tag);
+    static void Serialize(StreamWriter& serializer, const TagComponent& component) {
+        serializer.WriteVersion(version);
+        serializer.WriteString(component.Tag);
     }
 
-    static void Deserialize(StreamReader* deserializer, TagComponent& component) {
-        const int kSerializedVersion = deserializer->ReadVersion();
-        if (kSerializedVersion != Version) {
+    static void Deserialize(StreamReader& deserializer, TagComponent& component) {
+        const Version currVersion = deserializer.ReadVersion();
+        if (currVersion != version) {
             LY_CORE_ASSERT(false, "Serialization Error");
         }
-        component.Tag = deserializer->ReadString();
+        component.Tag = deserializer.ReadString();
     }
 };
 

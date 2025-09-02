@@ -31,6 +31,8 @@
 #include <new>
 #include <utility>
 
+#include <type_traits>
+
 LY_DISABLE_WARNINGS_PUSH
 #include <glm/glm.hpp>
 
