@@ -110,6 +110,10 @@ set(ENTT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/extern/entt/single_include")
 # REFL-CPP
 set(REFL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/extern/refl-cpp")
 
+# YAML-CPP
+set(YAML_DIR "${CMAKE_CURRENT_SOURCE_DIR}/extern/yaml-cpp")
+add_subdirectory(${YAML_DIR} "yaml-binaries")
+
 #-------------------------------------------------
 # Project Library
 #-------------------------------------------------
@@ -128,6 +132,7 @@ target_include_directories(Lightyear
     SYSTEM PRIVATE
         "${GLFW_DIR}/include"
         "${STB_DIR}"
+        "${YAML_DIR}"
 )
 
 target_link_libraries(Lightyear
@@ -135,6 +140,7 @@ target_link_libraries(Lightyear
         imgui
         $<$<BOOL:${MINGW}>:ws_32>
         glad
+        yaml-cpp::yaml-cpp
     PRIVATE
         glfw
 )

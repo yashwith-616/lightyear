@@ -1,76 +1,73 @@
-#include "Lightyear/Serialization/FileSerializer.h"
+#include "Lightyear/Serialization/Binary/BinaryFileSerialization.h"
 #include "Config.hpp"
+#include <utility>
+
+namespace ly {
 
 // -------------------------------------------------
 // File Write Stream
 // -------------------------------------------------
-namespace ly {
-
-FileStreamWriter::FileStreamWriter(const std::filesystem::path& filePath)
-    : m_FilePath(filePath), m_Stream(m_FilePath, std::ios::out | std::ios::binary) {
+BinaryFileSerializer::BinaryFileSerializer(std::filesystem::path filePath)
+    : m_FilePath(std::move(filePath)), m_Stream(m_FilePath, std::ios::out | std::ios::binary) {
     WriteHeader();
 }
 
-FileStreamWriter::~FileStreamWriter() {
+BinaryFileSerializer::~BinaryFileSerializer() {
     m_Stream.close();
 }
 
-uint64_t FileStreamWriter::GetStreamPosition() {
+uint64_t BinaryFileSerializer::GetStreamPosition() {
     return m_Stream.tellp();
 }
 
-bool FileStreamWriter::IsStreamGood() const {
+bool BinaryFileSerializer::IsStreamGood() const {
     return m_Stream.good();
 }
 
-void FileStreamWriter::SetStreamPosition(uint64_t position) {
+void BinaryFileSerializer::SetStreamPosition(uint64_t position) {
     m_Stream.seekp(ly::narrow_cast<std::streamoff>(position));
 }
 
-bool FileStreamWriter::WriteData(const char* data, uint64_t size) {
+bool BinaryFileSerializer::WriteData(const char* data, uint64_t size) {
     m_Stream.write(data, ly::narrow_cast<std::streamsize>(size));
     return true;
 }
 
-void FileStreamWriter::WriteHeader() {
+void BinaryFileSerializer::WriteHeader() {
     FileHeader header{};
     m_Stream.write(reinterpret_cast<const char*>(&header), sizeof(header));
 }
 
-}  // namespace ly
-
 // -------------------------------------------------
 // File Read Stream
 // -------------------------------------------------
-namespace ly {
-
-FileStreamReader::FileStreamReader(const std::filesystem::path& filePath)
+BinaryFileDeserializer::BinaryFileDeserializer(const std::filesystem::path& filePath)
     : m_FilePath(filePath), m_Stream(m_FilePath, std::ios::in | std::ios::binary) {
     validateHeader();
 }
 
-FileStreamReader::~FileStreamReader() {
+BinaryFileDeserializer::~BinaryFileDeserializer() {
     m_Stream.close();
 }
 
-uint64_t FileStreamReader::GetStreamPosition() {
+uint64_t BinaryFileDeserializer::GetStreamPosition() {
     return m_Stream.tellg();
 }
 
-bool FileStreamReader::IsStreamGood() const {
+bool BinaryFileDeserializer::IsStreamGood() const {
     return m_Stream.good();
 }
 
-void FileStreamReader::SetStreamPosition(uint64_t position) {
+void BinaryFileDeserializer::SetStreamPosition(uint64_t position) {
     m_Stream.seekg(ly::narrow_cast<std::streamoff>(position));
 }
 
-bool FileStreamReader::ReadData(char* destination, uint64_t size) {
+bool BinaryFileDeserializer::ReadData(char* destination, uint64_t size) {
     m_Stream.read(destination, ly::narrow_cast<std::streamsize>(size));
     return true;
 }
 
-bool FileStreamReader::validateHeader() {
+bool BinaryFileDeserializer::validateHeader() {
     FileHeader header{};
     m_Stream.read(reinterpret_cast<char*>(&header), sizeof(header));
 
