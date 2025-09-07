@@ -50,7 +50,7 @@ protected:
 
 private:
     YAML::Node m_Root;
-    std::stack<std::reference_wrapper<YAML::Node>> m_NodeStack;
+    std::stack<YAML::Node> m_NodeStack;
     std::stack<size_t> m_ArrayIndexStack;
 };
 

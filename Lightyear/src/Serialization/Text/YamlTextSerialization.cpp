@@ -59,27 +59,27 @@ YamlTextDeserializer::YamlTextDeserializer() : m_Root(YAML::NodeType::Map) {
 }
 
 void YamlTextDeserializer::ReadImpl(const std::string& key, uint64_t& value) {
-    value = m_NodeStack.top().get()[key].as<uint64_t>();
+    value = m_NodeStack.top()[key].as<uint64_t>();
 }
 
 void YamlTextDeserializer::ReadImpl(const std::string& key, int64_t& value) {
-    value = m_NodeStack.top().get()[key].as<int64_t>();
+    value = m_NodeStack.top()[key].as<int64_t>();
 }
 
 void YamlTextDeserializer::ReadImpl(const std::string& key, double& value) {
-    value = m_NodeStack.top().get()[key].as<double>();
+    value = m_NodeStack.top()[key].as<double>();
 }
 
 void YamlTextDeserializer::ReadImpl(const std::string& key, bool& value) {
-    value = m_NodeStack.top().get()[key].as<bool>();
+    value = m_NodeStack.top()[key].as<bool>();
 }
 
 void YamlTextDeserializer::ReadImpl(const std::string& key, std::string& value) {
-    value = m_NodeStack.top().get()[key].as<std::string>();
+    value = m_NodeStack.top()[key].as<std::string>();
 }
 
 void YamlTextDeserializer::BeginObject(const std::string& key) {
-    m_NodeStack.push(m_NodeStack.top().get());
+    m_NodeStack.push(m_NodeStack.top()[key]);
     m_ArrayIndexStack.push(0);
 }
 
@@ -91,8 +91,8 @@ void YamlTextDeserializer::EndObject() {
 }
 
 void YamlTextDeserializer::BeginArray(const std::string& key) {
-    m_NodeStack.push(std::ref(m_NodeStack.top().get()));
-    m_ArrayIndexStack.push(0);  // start index at 0
+    m_NodeStack.push(m_NodeStack.top()[key]);
+    m_ArrayIndexStack.push(0);
 }
 
 void YamlTextDeserializer::EndArray() {
@@ -104,7 +104,7 @@ void YamlTextDeserializer::EndArray() {
 
 bool YamlTextDeserializer::HasNextArrayElement() {
     LY_CORE_ASSERT(m_NodeStack.empty() && m_ArrayIndexStack.empty(), "Array context invalid in HasNextArrayElement");
-    return m_ArrayIndexStack.top() < m_NodeStack.top().get().size();
+    return m_ArrayIndexStack.top() < m_NodeStack.top().size();
 }
 
 }  // namespace ly
