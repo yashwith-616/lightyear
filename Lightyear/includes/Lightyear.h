@@ -32,4 +32,4 @@
 #include "Lightyear/Scene/Components/Components.h"
 
 // -------------------- Serialization -------------------------
-#include "Lightyear/Serialization/FileSerializer.h"
+#include "Lightyear/Serialization/Binary/BinaryFileSerialization.h"

@@ -1,6 +1,6 @@
 #include "Lightyear/Serialization/Binary/BinaryFileSerialization.h"
-#include "Config.hpp"
 #include <utility>
+#include "Config.hpp"
 
 namespace ly {
 

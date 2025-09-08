@@ -2,7 +2,7 @@
 
 namespace ly {
 
-struct SerializableContract  {};
+struct SerializableContract {};
 
 template <typename T, typename = void>
 struct SerializableAdapter {

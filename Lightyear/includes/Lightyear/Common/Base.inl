@@ -80,31 +80,30 @@ constexpr T narrow_cast(U value) {
 /// @brief The following type is used across engine for identifying versions
 ///
 struct Version {
-    int16_t version {0};
+    int16_t version{ 0 };
 
     constexpr explicit Version(int16_t version) : version(version) {}
 
-    bool operator==(const Version& other) const noexcept { return this->version == other.version;}
-    bool operator!=(const Version& other) const noexcept { return this->version != other.version;}
-    bool operator<(const Version& other) const noexcept { return this->version < other.version;}
-    bool operator>(const Version& other) const noexcept { return this->version > other.version;}
-    bool operator<=(const Version& other) const noexcept { return this->version <= other.version;}
-    bool operator>=(const Version& other) const noexcept { return this->version >= other.version;}
+    bool operator==(const Version& other) const noexcept { return this->version == other.version; }
+    bool operator!=(const Version& other) const noexcept { return this->version != other.version; }
+    bool operator<(const Version& other) const noexcept { return this->version < other.version; }
+    bool operator>(const Version& other) const noexcept { return this->version > other.version; }
+    bool operator<=(const Version& other) const noexcept { return this->version <= other.version; }
+    bool operator>=(const Version& other) const noexcept { return this->version >= other.version; }
 
-    [[nodiscard]] constexpr int16_t get() const noexcept {return version;}
+    [[nodiscard]] constexpr int16_t get() const noexcept { return version; }
 };
 
 /// \brief The window size in lightyear
 struct WindowSize {
-    int32_t width {0};
-    int32_t height {0};
+    int32_t width{ 0 };
+    int32_t height{ 0 };
 };
-
 
 /// \brief The graphic context version
 struct GraphicContextVersion {
-    int majorVersion {0};
-    int minorVersion {0};
+    int majorVersion{ 0 };
+    int minorVersion{ 0 };
 };
 
 }  // namespace ly

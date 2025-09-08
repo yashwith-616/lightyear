@@ -5,7 +5,8 @@ namespace ly {
 /// ---------------------------------------------
 /// Yaml Text Serializer
 /// ---------------------------------------------
-YamlTextSerializer::YamlTextSerializer() : m_Root(YAML::NodeType::Map) {
+YamlTextSerializer::YamlTextSerializer(std::filesystem::path filepath)
+    : m_Root(YAML::NodeType::Map), m_FilePath(std::move(filepath)) {
     m_NodeStack.push(std::ref(m_Root));
 }
 
@@ -50,12 +51,38 @@ void YamlTextSerializer::EndArray() {
     LY_CORE_ASSERT(m_NodeStack.empty(), "Mismatched EndArray call");
 }
 
+void YamlTextSerializer::SaveToFile() {
+    try {
+        std::ofstream file;
+        file.exceptions(std::ofstream::failbit | std::ofstream::badbit);
+        file.open(m_FilePath, std::ios::out | std::ios::trunc);
+
+        if (!file.is_open()) {
+            LY_CORE_ASSERT(false, "Failed to open YAML file for writing: {}", m_FilePath.string());
+            return;
+        }
+
+        file << m_Root;
+    } catch (const std::ios_base::failure& e) {
+        LY_CORE_ASSERT(false, "I/O error while writing YAML file {}: {}", m_FilePath.string(), e.what());
+    } catch (const std::exception& e) {
+        LY_CORE_ASSERT(false, "Unexpected error while writing YAML file {}: {}", m_FilePath.string(), e.what());
+    }
+}
+
 /// ---------------------------------------------
 /// Yaml Text Deserializer
 /// ---------------------------------------------
-YamlTextDeserializer::YamlTextDeserializer() : m_Root(YAML::NodeType::Map) {
-    m_NodeStack.push(std::ref(m_Root));
-    m_ArrayIndexStack.push(0);
+YamlTextDeserializer::YamlTextDeserializer(std::filesystem::path filepath) : m_FilePath(std::move(filepath)) {
+    try {
+        m_Root = YAML::LoadFile(m_FilePath.string());
+        m_NodeStack.push(m_Root);
+        m_ArrayIndexStack.push(0);
+    } catch (const YAML::BadFile& e) {
+        LY_CORE_ASSERT(false, "YAML bad file error '{}': {}", m_FilePath.string(), e.what());
+    } catch (const YAML::ParserException& e) {
+        LY_CORE_ASSERT(false, "YAML parsing error in '{}': {}", m_FilePath.string(), e.what());
+    }
 }
 
 void YamlTextDeserializer::ReadImpl(const std::string& key, uint64_t& value) {
