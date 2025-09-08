@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Lightyear/Common/Math.h"
 #include "Lightyear/pch/lypch.h"
 
 constexpr int OPENGL_MAJOR_VERSION{ 4 };

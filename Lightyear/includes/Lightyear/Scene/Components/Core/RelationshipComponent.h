@@ -2,7 +2,7 @@
 
 #include "Lightyear/LightyearCore.h"
 #include "Lightyear/Scene/Core/Scene.h"
-#include "Lightyear/Serialization/Serialization.h"
+#include "Lightyear/Serialization/Text/TextSerialization.h"
 
 LY_DISABLE_WARNINGS_PUSH
 #include <entt/entt.hpp>
@@ -11,7 +11,7 @@ LY_DISABLE_WARNINGS_POP
 namespace ly::scene {
 
 struct LIGHTYEAR_API RelationshipComponent : SerializableContract {
-    static constexpr Version version{1};
+    static constexpr Version version{ 1 };
 
     std::size_t ChildrenCount{};
     entt::entity Parent{ entt::null };
@@ -26,17 +26,18 @@ struct LIGHTYEAR_API RelationshipComponent : SerializableContract {
 
     void SetChild(entt::entity child) { FirstChild = child; }
 
-    static void Serialize(StreamWriter& serializer, const RelationshipComponent& component) {
-        serializer.WriteVersion(version);
-        serializer.WriteRaw(component.ChildrenCount);
+    static void Serialize(TextSerializer& serializer, const RelationshipComponent& component) {
+        serializer.Write("version", version);
+        serializer.Write("children_count", component.ChildrenCount);
     }
 
-    static void Deserialize(StreamReader& deserializer, RelationshipComponent& component) {
-        const Version currVersion = deserializer.ReadVersion();
+    static void Deserialize(TextDeserializer& deserializer, RelationshipComponent& component) {
+        Version currVersion{ 0 };
+        deserializer.Read("version", currVersion);
         if (version != currVersion) {
             LY_CORE_ASSERT(false, "Version not supported");
         }
-        component.ChildrenCount = deserializer.ReadRaw<size_t>();
+        deserializer.Read("children_count", component.ChildrenCount);
     }
 };
 

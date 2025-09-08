@@ -6,6 +6,7 @@
 #include "Common/Base.h"
 #include "Common/Log.h"
 #include "Common/Macros.h"
+#include "Common/Math.h"
 #include "Core/Timestep.h"
 
 #include "Helpers/DynamicBitset.h"

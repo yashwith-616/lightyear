@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Lightyear/LightyearCore.h"
-#include "Lightyear/Serialization/Serialization.h"
+#include "Lightyear/Serialization/Text/TextSerialization.h"
 
 namespace ly::scene {
 
@@ -21,27 +21,32 @@ struct LIGHTYEAR_API CameraComponent : SerializableContract {
     float FarClip{ kDefaultFarClip };
     CameraProjectionType ProjectionType{ CameraProjectionType::PERSPECTIVE };
 
-    static void Serialize(StreamWriter& serializer, const CameraComponent& camera) {
-        serializer.WriteVersion(version);
-        serializer.WriteRaw(camera.OrthographicSize);
-        serializer.WriteRaw(camera.AspectRatio);
-        serializer.WriteRaw(camera.FOVRadians);
-        serializer.WriteRaw(camera.NearClip);
-        serializer.WriteRaw(camera.FarClip);
-        serializer.WriteRaw(camera.ProjectionType);
+    static void Serialize(TextSerializer& serializer, const CameraComponent& camera) {
+        serializer.Write("version", version.get());
+        serializer.Write("orthographic_size", camera.OrthographicSize);
+        serializer.Write("aspect_ratio", camera.AspectRatio);
+        serializer.Write("fov_radians", camera.FOVRadians);
+        serializer.Write("near_clip", camera.NearClip);
+        serializer.Write("far_clip", camera.FarClip);
+        serializer.Write("projection_type", static_cast<uint8_t>(camera.ProjectionType));
     }
 
-    static void Deserialize(StreamReader& deserializer, CameraComponent& camera) {
-        const Version currVersion = deserializer.ReadVersion();
-        if (version != currVersion) {
-            LY_CORE_ASSERT(false, "Version {} and Curr Version has a mismatch! Cannot read file!");
+    static void Deserialize(TextDeserializer& deserializer, CameraComponent& camera) {
+        uint64_t currVersion{ 0 };
+        deserializer.Read("version", currVersion);
+        if (version.get() != currVersion) {
+            LY_CORE_ASSERT(
+                false, "Version {} and CurrVersion {} has a mismatch! Cannot read file!", version.get(), currVersion);
         }
-        camera.OrthographicSize = deserializer.ReadRaw<float>();
-        camera.AspectRatio      = deserializer.ReadRaw<float>();
-        camera.FOVRadians       = deserializer.ReadRaw<float>();
-        camera.NearClip         = deserializer.ReadRaw<float>();
-        camera.FarClip          = deserializer.ReadRaw<float>();
-        camera.ProjectionType   = static_cast<CameraProjectionType>(deserializer.ReadRaw<uint8_t>());
+        deserializer.Read("orthographic_size", camera.OrthographicSize);
+        deserializer.Read("aspect_ratio", camera.AspectRatio);
+        deserializer.Read("fov_radians", camera.FOVRadians);
+        deserializer.Read("near_clip", camera.NearClip);
+        deserializer.Read("far_clip", camera.FarClip);
+
+        uint8_t projectionType{ 0 };
+        deserializer.Read("projection_type", projectionType);
+        camera.ProjectionType = static_cast<CameraProjectionType>(projectionType);
     }
 };
 

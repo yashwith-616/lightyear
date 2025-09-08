@@ -11,63 +11,59 @@ YamlTextSerializer::YamlTextSerializer(std::filesystem::path filepath)
 }
 
 void YamlTextSerializer::WriteImpl(const std::string& key, int64_t value) {
-    m_NodeStack.top().get()[key] = value;
+    m_NodeStack.top()[key] = value;
 }
 
 void YamlTextSerializer::WriteImpl(const std::string& key, uint64_t value) {
-    m_NodeStack.top().get()[key] = value;
+    m_NodeStack.top()[key] = value;
 }
 
 void YamlTextSerializer::WriteImpl(const std::string& key, double value) {
-    m_NodeStack.top().get()[key] = value;
+    m_NodeStack.top()[key] = value;
 }
 
 void YamlTextSerializer::WriteImpl(const std::string& key, bool value) {
-    m_NodeStack.top().get()[key] = value;
+    m_NodeStack.top()[key] = value;
 }
 
 void YamlTextSerializer::WriteImpl(const std::string& key, const std::string& value) {
-    m_NodeStack.top().get()[key] = value;
+    m_NodeStack.top()[key] = value;
 }
 
 void YamlTextSerializer::BeginObject(const std::string& key) {
     YAML::Node newNode(YAML::NodeType::Map);
-    m_NodeStack.top().get()[key] = newNode;
+    m_NodeStack.top()[key] = newNode;
     m_NodeStack.push(std::ref(newNode));
 }
 
 void YamlTextSerializer::EndObject() {
-    LY_CORE_ASSERT(m_NodeStack.empty(), "Mismatched EndObject call");
+    LY_CORE_ASSERT(!m_NodeStack.empty(), "Mismatched EndObject call");
     m_NodeStack.pop();
 }
 
 void YamlTextSerializer::BeginArray(const std::string& key) {
     YAML::Node newNode(YAML::NodeType::Sequence);
-    m_NodeStack.top().get()[key] = newNode;
+    m_NodeStack.top()[key] = newNode;
     m_NodeStack.push(std::ref(newNode));
 }
 
 void YamlTextSerializer::EndArray() {
-    LY_CORE_ASSERT(m_NodeStack.empty(), "Mismatched EndArray call");
+    LY_CORE_ASSERT(!m_NodeStack.empty(), "Mismatched EndArray call");
 }
 
 void YamlTextSerializer::SaveToFile() {
-    try {
-        std::ofstream file;
-        file.exceptions(std::ofstream::failbit | std::ofstream::badbit);
-        file.open(m_FilePath, std::ios::out | std::ios::trunc);
+    LY_CORE_LOG(LogType::INFO, "Saving yaml data to file {}", m_FilePath.string());
 
-        if (!file.is_open()) {
-            LY_CORE_ASSERT(false, "Failed to open YAML file for writing: {}", m_FilePath.string());
-            return;
-        }
+    std::ofstream file;
+    file.exceptions(std::ofstream::failbit | std::ofstream::badbit);
+    file.open(m_FilePath, std::ios::out | std::ios::trunc);
 
-        file << m_Root;
-    } catch (const std::ios_base::failure& e) {
-        LY_CORE_ASSERT(false, "I/O error while writing YAML file {}: {}", m_FilePath.string(), e.what());
-    } catch (const std::exception& e) {
-        LY_CORE_ASSERT(false, "Unexpected error while writing YAML file {}: {}", m_FilePath.string(), e.what());
+    if (!file.is_open()) {
+        LY_CORE_LOG(LogType::Error, "Failed to open YAML file for writing: {}", m_FilePath.string());
+        return;
     }
+
+    file << m_Root;
 }
 
 /// ---------------------------------------------
@@ -111,8 +107,8 @@ void YamlTextDeserializer::BeginObject(const std::string& key) {
 }
 
 void YamlTextDeserializer::EndObject() {
-    LY_CORE_ASSERT(m_NodeStack.empty(), "Mismatched EndObject call");
-    LY_CORE_ASSERT(m_ArrayIndexStack.empty(), "Mismatched EndObject array index");
+    LY_CORE_ASSERT(!m_NodeStack.empty(), "Mismatched EndObject call");
+    LY_CORE_ASSERT(!m_ArrayIndexStack.empty(), "Mismatched EndObject array index");
     m_NodeStack.pop();
     m_ArrayIndexStack.pop();
 }

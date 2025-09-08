@@ -1,12 +1,12 @@
 #pragma once
 
 #include "Lightyear/LightyearCore.h"
-#include "Lightyear/Serialization/Serialization.h"
+#include "Lightyear/Serialization/Text/TextSerialization.h"
 
 namespace ly::scene {
 
 struct LIGHTYEAR_API TransformComponent : SerializableContract {
-    static constexpr Version version {1};
+    static constexpr Version version{ 1 };
 
     glm::vec3 Translation{ glm::vec3(0.0f) };
     glm::vec3 Rotation{ glm::vec3(0.0f) };
@@ -20,21 +20,22 @@ struct LIGHTYEAR_API TransformComponent : SerializableContract {
         return glm::translate(glm::mat4(1.0f), Translation) * rotation * glm::scale(glm::mat4(1.0f), Scale);
     }
 
-    static void Serialize(StreamWriter& serializer, const TransformComponent& component) {
-        serializer.WriteVersion(version);
-        serializer.WriteRaw(component.Translation);
-        serializer.WriteRaw(component.Rotation);
-        serializer.WriteRaw(component.Scale);
+    static void Serialize(TextSerializer& serializer, const TransformComponent& component) {
+        serializer.Write("version", version);
+        serializer.Write("transform", component.Translation);
+        serializer.Write("rotation", component.Rotation);
+        serializer.Write("scale", component.Scale);
     }
 
-    static void Deserialize(StreamReader& deserialize, TransformComponent& component) {
-        const Version currVersion = deserialize.ReadVersion();
+    static void Deserialize(TextDeserializer& deserializer, TransformComponent& component) {
+        Version currVersion{ 0 };
+        deserializer.Read("version", currVersion);
         if (version == currVersion) {
             LY_CORE_ASSERT(false, "Serialization error");
         }
-        component.Translation = deserialize.ReadRaw<glm::vec3>();
-        component.Rotation    = deserialize.ReadRaw<glm::vec3>();
-        component.Scale       = deserialize.ReadRaw<glm::vec3>();
+        deserializer.Read("transform", component.Translation);
+        deserializer.Read("rotation", component.Rotation);
+        deserializer.Read("scale", component.Scale);
     }
 };
 

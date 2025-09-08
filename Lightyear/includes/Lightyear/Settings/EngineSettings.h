@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Lightyear/LightyearCore.h>
-#include <Lightyear/Serialization/Serialization.h>
+#include <Lightyear/Serialization/Text/TextSerialization.h>
 
 enum class BackendRendererAPI : uint8_t { OpenGL, Vulkan };
 
@@ -23,7 +23,7 @@ static ly::GraphicContextVersion GetOpenGLVersion(OpenGLVersion version) {
 
 namespace ly {
 
-/// @brief Holds data related to engine specific requirements such as binary cache
+/// \brief Holds data related to engine specific requirements such as binary cache
 /// resource search and other details
 struct EngineSettings : SerializableContract {
     static constexpr Version version{ 1 };
@@ -34,19 +34,23 @@ struct EngineSettings : SerializableContract {
     // The current openGL version
     OpenGLVersion openGLVersion;
 
-    static void Serialize(StreamWriter& serializer, const EngineSettings& settings) {
-        serializer.WriteVersion(settings.version);
-        serializer.WriteRaw(static_cast<uint8_t>(settings.rendererAPI));
-        serializer.WriteRaw(static_cast<uint8_t>(settings.openGLVersion));
+    static void Serialize(TextSerializer& serializer, const EngineSettings& settings) {
+        serializer.Write("version", version);
+        serializer.Write("renderer_api", static_cast<uint8_t>(settings.rendererAPI));
+        serializer.Write("opengl_version", static_cast<uint8_t>(settings.openGLVersion));
     }
 
-
-    static void Deserialize(StreamReader& deserializer, EngineSettings& settings) {
-        Version currVersion = deserializer.ReadVersion();
+    static void Deserialize(TextDeserializer& deserializer, EngineSettings& settings) {
+        Version currVersion{ 0 };
+        deserializer.Read("version", currVersion);
         LY_CORE_ASSERT(currVersion == settings.version, "Version mismatch can't read file");
 
-        settings.rendererAPI   = static_cast<BackendRendererAPI>(deserializer.ReadRaw<uint8_t>());
-        settings.openGLVersion = static_cast<OpenGLVersion>(deserializer.ReadRaw<uint8_t>());
+        uint8_t enumVal{ 0 };
+        deserializer.Read("renderer_api", enumVal);
+        settings.rendererAPI = static_cast<BackendRendererAPI>(enumVal);
+
+        deserializer.Read("opengl_version", enumVal);
+        settings.openGLVersion = static_cast<OpenGLVersion>(enumVal);
     }
 };
 

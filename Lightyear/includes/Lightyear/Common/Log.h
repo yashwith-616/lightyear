@@ -2,6 +2,7 @@
 
 #include "Lightyear/Common/Base.h"
 #include "Lightyear/Common/Macros.h"
+#include "Lightyear/Common/Math.h"
 #include "Lightyear/pch/lypch.h"
 
 LY_DISABLE_WARNINGS_PUSH
@@ -11,7 +12,7 @@ LY_DISABLE_WARNINGS_POP
 
 namespace ly {
 
-enum LogType { TRACE, INFO, WARN, Error, FATAL };
+enum class LogType { TRACE, INFO, WARN, Error, FATAL };
 
 class LIGHTYEAR_API Log {
 public:
@@ -25,19 +26,19 @@ public:
     template <typename... Args>
     static void LogMessage(LogType type, Ref<spdlog::logger> logger, fmt::format_string<Args...> fmt, Args&&... args) {
         switch (type) {
-            case TRACE:
+            case LogType::TRACE:
                 logger->trace(fmt, std::forward<Args>(args)...);
                 break;
-            case INFO:
+            case LogType::INFO:
                 logger->info(fmt, std::forward<Args>(args)...);
                 break;
-            case WARN:
+            case LogType::WARN:
                 logger->warn(fmt, std::forward<Args>(args)...);
                 break;
-            case Error:
+            case LogType::Error:
                 logger->error(fmt, std::forward<Args>(args)...);
                 break;
-            case FATAL:
+            case LogType::FATAL:
                 logger->critical(fmt, std::forward<Args>(args)...);
                 break;
         }

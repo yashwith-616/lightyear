@@ -4,7 +4,6 @@ namespace ly {
 
 class Filesystem {
 public:
-
 };
 
-} // namespace ly
+}  // namespace ly

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Lightyear/LightyearCore.h"
-#include "Lightyear/Serialization/Serialization.h"
+#include "Lightyear/Serialization/Text/TextSerialization.h"
 
 namespace ly::scene {
 
@@ -9,7 +9,7 @@ enum class EMobilityType { STATIC, STATIONARY, MOVABLE };
 
 /// \brief Used for optimization. Describes if the entity position can be changes
 struct LIGHTYEAR_API MobilityComponent : SerializableContract {
-    static constexpr Version version{1};
+    static constexpr Version version{ 1 };
 
     EMobilityType MobilityType{ EMobilityType::STATIC };
 
@@ -19,18 +19,21 @@ struct LIGHTYEAR_API MobilityComponent : SerializableContract {
     MobilityComponent(const MobilityComponent&)            = default;
     MobilityComponent& operator=(const MobilityComponent&) = default;
 
-    static void Serialize(StreamWriter& serializer, MobilityComponent& component) {
-        serializer.WriteVersion(version);
-        serializer.WriteRaw(static_cast<uint8_t>(component.MobilityType));
+    static void Serialize(TextSerializer& serializer, MobilityComponent& component) {
+        serializer.Write("version", version);
+        serializer.Write("mobility_type", static_cast<uint8_t>(component.MobilityType));
     }
 
-    static void Deserialize(StreamReader& deserializer, MobilityComponent& component) {
-        const Version currVersion = deserializer.ReadVersion();
+    static void Deserialize(TextDeserializer& deserializer, MobilityComponent& component) {
+        Version currVersion{ 0 };
+        deserializer.Read("version", currVersion);
         if (version != currVersion) {
             LY_CORE_ASSERT(false, "Invalid chunk version");
         }
 
-        component.MobilityType = static_cast<EMobilityType>(deserializer.ReadRaw<uint8_t>());
+        uint8_t mobilityType{ 0 };
+        deserializer.Read("mobility_type", mobilityType);
+        component.MobilityType = static_cast<EMobilityType>(mobilityType);
     }
 };
 

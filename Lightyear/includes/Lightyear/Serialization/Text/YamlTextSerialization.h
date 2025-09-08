@@ -7,9 +7,11 @@ LY_DISABLE_WARNINGS_POP
 
 namespace ly {
 
-class LIGHTYEAR_API YamlTextSerializer final : TextSerializer {
+class LIGHTYEAR_API YamlTextSerializer : public TextSerializer {
 public:
     YamlTextSerializer(std::filesystem::path filepath);
+
+    void SaveToFile();
 
 protected:
     void WriteImpl(const std::string& key, int64_t value) override;
@@ -24,15 +26,13 @@ protected:
     void BeginArray(const std::string& key) override;
     void EndArray() override;
 
-    virtual void SaveToFile();
-
 private:
     YAML::Node m_Root;
-    std::stack<std::reference_wrapper<YAML::Node>> m_NodeStack;
+    std::stack<YAML::Node> m_NodeStack;
     std::filesystem::path m_FilePath;
 };
 
-class LIGHTYEAR_API YamlTextDeserializer final : TextDeserializer {
+class LIGHTYEAR_API YamlTextDeserializer : public TextDeserializer {
 public:
     YamlTextDeserializer(std::filesystem::path filepath);
 

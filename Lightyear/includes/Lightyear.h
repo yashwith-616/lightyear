@@ -28,8 +28,6 @@
 // -------------------- Input -------------------------
 #include "Lightyear/Input/Input.h"
 
-// -------------------- Components ---------------------
-#include "Lightyear/Scene/Components/Components.h"
-
 // -------------------- Serialization -------------------------
 #include "Lightyear/Serialization/Binary/BinaryFileSerialization.h"
+#include "Lightyear/Serialization/Text/YamlTextSerialization.h"

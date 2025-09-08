@@ -2,6 +2,9 @@
 
 namespace ly {
 
+class TextSerializer;
+class TextDeserializer;
+
 struct SerializableContract {};
 
 template <typename T, typename = void>

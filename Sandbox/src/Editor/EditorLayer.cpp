@@ -1,4 +1,5 @@
 ﻿#include "Sandbox/Editor/EditorLayer.h"
+
 #include "Sandbox/Geometry/Geometry.h"
 #include "Sandbox/Helpers/GridRender.h"
 
@@ -8,7 +9,7 @@ LY_DISABLE_WARNINGS_PUSH
 LY_DISABLE_WARNINGS_POP
 
 constexpr auto g_ClearColor = glm::vec4(0.13, 0.13, 0.13, 1.0);
-const auto kCameraSavePath  = std::filesystem::path(SAVED_DIR "/camera.ly");
+const auto kCameraSavePath  = std::filesystem::path(SAVED_DIR "/camera.yaml");
 
 namespace renderer = ly::renderer;
 
@@ -88,8 +89,8 @@ void EditorLayer::OnEditorRender() {
 
     ImGui::SetNextWindowBgAlpha(0.35f);  // Transparent background
     if (ImGui::Begin("Example: Simple overlay")) {
-        ImGui::Text(std::format("IsRunning: {}", m_SceneRuntime->IsRunning()).c_str());
-        ImGui::Text(std::format("IsPaused: {}", m_SceneRuntime->IsPaused()).c_str());
+        ImGui::Text("IsRunning: %s", m_SceneRuntime->IsRunning() ? "true" : "false");
+        ImGui::Text("IsPaused: %s", m_SceneRuntime->IsPaused() ? "true" : "false");
     }
     ImGui::End();
 
@@ -103,17 +104,17 @@ void EditorLayer::OnDetach() {
 ly::scene::CameraComponent EditorLayer::LoadGameCamera() const {
     LY_LOG(ly::LogType::INFO, "Loading camera");
 
-    auto* deserializer = new ly::FileStreamReader(kCameraSavePath);
-    ly::scene::CameraComponent cameraComp;
-    deserializer->ReadObject(cameraComp);
-    LY_LOG(ly::LogType::INFO, "Camera Aspect: {}", cameraComp.AspectRatio);
+    auto deserializer = ly::YamlTextDeserializer(kCameraSavePath);
+    ly::scene::CameraComponent cameraComp{};
+    deserializer.Read("camera", cameraComp);
     return cameraComp;
 }
 
 void EditorLayer::SaveGameCamera() const {
     LY_LOG(ly::LogType::INFO, "Saving camera");
-    auto* serializer               = new ly::FileStreamWriter(kCameraSavePath);
+    auto serializer                = ly::YamlTextSerializer(kCameraSavePath);
     ly::scene::Entity cameraEntity = m_Scene->GetPrimaryCameraEntity();
     auto& cameraComp               = cameraEntity.GetComponent<ly::scene::CameraComponent>();
-    serializer->WriteObject(cameraComp);
+    serializer.Write("camera", cameraComp);
+    serializer.SaveToFile();
 }

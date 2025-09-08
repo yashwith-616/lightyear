@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Lightyear/LightyearCore.h>
-#include "Lightyear/Serialization/Serialization.h"
+#include "Lightyear/Serialization/Text/TextSerialization.h"
 
 namespace ly {
 
@@ -31,27 +31,38 @@ struct LIGHTYEAR_API ProjectSettings : SerializableContract {
     // The logs or screenshots and other persistent data is added here
     std::filesystem::path savedDirectory;
 
-    static void Serialize(StreamWriter& serializer, const ProjectSettings& settings) {
-        serializer.WriteVersion(ProjectSettings::version);
-        serializer.WriteString(settings.name);
-        serializer.WriteString(settings.description);
-        serializer.WriteString(settings.projectVersion);
-        serializer.WriteString(settings.assetDirectory.string());
-        serializer.WriteString(settings.cacheDirectory.string());
-        serializer.WriteString(settings.configDirectory.string());
-        serializer.WriteString(settings.savedDirectory.string());
+    static void Serialize(TextSerializer& serializer, const ProjectSettings& settings) {
+        serializer.Write("version", version);
+        serializer.Write("name", settings.name);
+        serializer.Write("description", settings.description);
+        serializer.Write("project_version", settings.projectVersion);
+        serializer.Write("asset_directory", settings.assetDirectory.string());
+        serializer.Write("cache_directory", settings.cacheDirectory.string());
+        serializer.Write("config_directory", settings.configDirectory.string());
+        serializer.Write("saved_directory", settings.savedDirectory.string());
     }
 
-    static void Deserialize(StreamReader& deserializer, ProjectSettings& settings) {
-        const Version currVersion = deserializer.ReadVersion();
-        LY_CORE_ASSERT(currVersion == settings.version, "Version mismatch can't read file");
-        settings.name            = deserializer.ReadString();
-        settings.description     = deserializer.ReadString();
-        settings.projectVersion  = deserializer.ReadString();
-        settings.assetDirectory  = deserializer.ReadString();
-        settings.cacheDirectory  = deserializer.ReadString();
-        settings.configDirectory = deserializer.ReadString();
-        settings.savedDirectory  = deserializer.ReadString();
+    static void Deserialize(TextDeserializer& deserializer, ProjectSettings& settings) {
+        Version currVersion{ 0 };
+        deserializer.Read("version", currVersion);
+        LY_CORE_ASSERT(currVersion == ProjectSettings::version, "Version mismatch, can't read file");
+
+        deserializer.Read("name", settings.name);
+        deserializer.Read("description", settings.description);
+        deserializer.Read("project_version", settings.projectVersion);
+
+        std::string directory;
+        deserializer.Read("asset_directory", directory);
+        settings.assetDirectory = directory;
+
+        deserializer.Read("cache_directory", directory);
+        settings.cacheDirectory = directory;
+
+        deserializer.Read("config_directory", directory);
+        settings.configDirectory = directory;
+
+        deserializer.Read("saved_directory", directory);
+        settings.savedDirectory = directory;
     }
 };
 

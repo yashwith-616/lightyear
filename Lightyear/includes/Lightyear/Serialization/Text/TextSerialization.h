@@ -1,7 +1,8 @@
 #pragma once
 
-#include "Lightyear/LightyearCore.h"
+#include "Lightyear/Common/Assertions.h"
 #include "Lightyear/Serialization/Concepts.h"
+#include "Lightyear/pch/lypch.h"
 
 namespace ly {
 
@@ -12,6 +13,12 @@ namespace ly {
 class LIGHTYEAR_API TextSerializer {
 public:
     virtual ~TextSerializer() = default;
+
+    /// \brief Starts writing an array under the given key
+    virtual void BeginArray(const std::string& key) = 0;
+
+    /// \brief Ends writing to an array
+    virtual void EndArray() = 0;
 
     /// \brief Write to a key-value pair to the text-based serialization output.
     /// \param key the identifier for the value being written
@@ -25,8 +32,8 @@ public:
     /// \param key the identifier for the value being written
     /// \param value the arithmetic value to be written
     template <typename T>
-        requires std::is_arithmetic_v<T>
-    void Write(const std::string& key, T value) {
+        requires(std::is_arithmetic_v<T> || std::is_same_v<T, bool>)
+    void Write(const std::string& key, const T& value) {
         if constexpr (std::is_signed_v<T> && std::is_integral_v<T>) {
             WriteImpl(key, static_cast<int64_t>(value));
         } else if constexpr (std::is_integral_v<T> && std::is_unsigned_v<T>) {
@@ -36,7 +43,7 @@ public:
         } else if constexpr (std::is_same_v<T, bool>) {
             WriteImpl(key, value);
         } else {
-            LY_CORE_ASSERT(false, "Not implemented yet!");
+            static_assert(false, "Not implemented yet!");
         }
     }
 
@@ -54,7 +61,7 @@ public:
     template <typename T>
         requires internal::is_primitive_serializable<T>::value
     void Write(const std::string& key, const T& value) {
-        SerializableAdapter<T>::Serialize(key, value);
+        SerializableAdapter<T>::Serialize(*this, key, value);
     }
 
     /// \brief Writes a container type to the text-based serialization output.
@@ -86,12 +93,11 @@ public:
     template <typename T>
         requires internal::has_serialize_contract_v<T>
     void Write(const std::string& key, const T& value) {
-        LY_CORE_ASSERT(!internal::has_version_v<T>, "Serializable class missing 'version'");
-        LY_CORE_ASSERT(!internal::has_text_serialize_v<T>,
-                       "Serializable class missing static 'Serialize(ITextWriter&, const T&)'");
-
+        static_assert(internal::has_version_v<T>, "Serializable class missing 'version'");
+        static_assert(internal::has_text_serialize_v<T>,
+                      "Serializable class missing static 'Serialize(TextSerialize&, const T&)'");
         BeginObject(key);
-        T::Serialize(this, value);
+        T::Serialize(*this, value);
         EndObject();
     }
 
@@ -107,8 +113,9 @@ public:
     template <typename T>
     void Write(const std::string& key, const T& value) {
         constexpr bool hasAnySerialization = internal::has_serialize_v<T> || internal::has_deserialize_v<T>;
-        LY_CORE_ASSERT(!hasAnySerialization,
-                       "Class defines serialization members but does not inherit SerializableContract");
+        constexpr bool isContract          = internal::has_serialize_contract_v<T>;
+        static_assert(!hasAnySerialization || isContract,
+                      "Class defines serialization members but does not inherit SerializableContract");
     }
 
 protected:
@@ -120,9 +127,6 @@ protected:
 
     virtual void BeginObject(const std::string& key) = 0;
     virtual void EndObject()                         = 0;
-
-    virtual void BeginArray(const std::string& key) = 0;
-    virtual void EndArray()                         = 0;
 };
 
 /// \brief Base class for text based deserialization
@@ -132,6 +136,17 @@ protected:
 class LIGHTYEAR_API TextDeserializer {
 public:
     virtual ~TextDeserializer() = default;
+
+    /// \brief Starts reading an array under the given key.
+    ///
+    /// \param key The name of the array field to begin.
+    virtual void BeginArray(const std::string& key) = 0;
+
+    /// \brief Ends reading an array field to begin
+    virtual void EndArray() = 0;
+
+    /// \brief Check if the array that is currently read has next element
+    virtual bool HasNextArrayElement() = 0;
 
     /// \brief Reads a string value from the text-based deserialization input.
     ///
@@ -164,7 +179,7 @@ public:
             ReadImpl(key, temp);
             value = temp;
         } else {
-            LY_CORE_ASSERT(false, "Not implemented yet!");
+            static_assert(false, "Not implemented yet!");
         }
     }
 
@@ -176,7 +191,7 @@ public:
     template <typename T>
         requires internal::is_primitive_serializable<T>::value
     void Read(const std::string& key, T& value) {
-        SerializableAdapter<T>::Deserialize(key, value);
+        SerializableAdapter<T>::Deserialize(*this, key, value);
     }
 
     /// \brief Reads a container type from the text-based input.
@@ -205,12 +220,12 @@ public:
     template <typename T>
         requires internal::has_serialize_contract_v<T>
     void Read(const std::string& key, T& value) {
-        LY_CORE_ASSERT(!internal::has_version_v<T>, "Deserializable class missing 'version'");
-        LY_CORE_ASSERT(!internal::has_text_deserialize_v<T>,
-                       "Serializable class missing static 'Deserialize(ITextReader&, T&)'");
+        static_assert(internal::has_version_v<T>, "Deserializable class missing 'version'");
+        static_assert(internal::has_text_deserialize_v<T>,
+                      "Serializable class missing static 'Deserialize(TextDeserializer&, T&)'");
 
         BeginObject(key);
-        T::Deserialize(this, value);
+        T::Deserialize(*this, value);
         EndObject();
     }
 
@@ -222,8 +237,9 @@ public:
     template <typename T>
     void Read(const std::string& /*key*/, T& /*value*/) {
         constexpr bool hasAnySerialization = internal::has_serialize_v<T> || internal::has_deserialize_v<T>;
-        LY_CORE_ASSERT(!hasAnySerialization,
-                       "Class defines serialization members but does not inherit SerializableContract");
+        constexpr bool isContract          = internal::has_serialize_contract_v<T>;
+        static_assert(!hasAnySerialization || isContract,
+                      "Class defines serialization members but does not inherit SerializableContract");
     }
 
 protected:
@@ -235,10 +251,6 @@ protected:
 
     virtual void BeginObject(const std::string& key) = 0;
     virtual void EndObject()                         = 0;
-
-    virtual void BeginArray(const std::string& key) = 0;
-    virtual void EndArray()                         = 0;
-    virtual bool HasNextArrayElement()              = 0;
 };
 
 }  // namespace ly

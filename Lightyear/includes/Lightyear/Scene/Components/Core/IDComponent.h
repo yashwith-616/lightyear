@@ -1,31 +1,33 @@
 #pragma once
 
 #include "Lightyear/LightyearCore.h"
-#include "Lightyear/Serialization/Serialization.h"
+#include "Lightyear/Serialization/Text/TextSerialization.h"
 
 namespace ly::scene {
 
 /// \brief Attaches a UUID to the component. All entity present in scene will have this component.
 struct LIGHTYEAR_API IDComponent : SerializableContract {
-    static constexpr Version version{1};
+    static constexpr Version version{ 1 };
 
     UUID ID;
 
     IDComponent() : ID(UUID()) {}
     explicit IDComponent(const UUID& id) : ID(id) {}
 
-    static void Serialize(StreamWriter& serializer, const IDComponent& component) {
-        serializer.WriteVersion(version);
-        serializer.WriteRaw(component.ID.Get());
+    static void Serialize(TextSerializer& serializer, const IDComponent& component) {
+        serializer.Write("version", version);
+        serializer.Write("id", component.ID);
     }
 
-    static void Deserialize(StreamReader& deserializer, IDComponent& component) {
-        const Version currVersion = deserializer.ReadVersion();
+    static void Deserialize(TextDeserializer& deserializer, IDComponent& component) {
+        Version currVersion{ 0 };
+        deserializer.Read("version", currVersion);
         if (version != currVersion) {
             LY_CORE_ASSERT(false, "Version {} and Curr Version has a mismatch! Cannot read file!");
         }
-
-        component.ID = UUID(deserializer.ReadRaw<uint64_t>());
+        uint64_t id;
+        deserializer.Read("id", id);
+        component.ID = UUID(id);
     }
 };
 

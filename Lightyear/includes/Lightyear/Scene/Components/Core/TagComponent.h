@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Lightyear/LightyearCore.h"
-#include "Lightyear/Serialization/Serialization.h"
+#include "Lightyear/Serialization/Text/TextSerialization.h"
 
 namespace ly::scene {
 
@@ -13,17 +13,18 @@ struct LIGHTYEAR_API TagComponent : SerializableContract {
     TagComponent() = default;
     explicit TagComponent(std::string tag) : Tag(std::move(tag)) {}
 
-    static void Serialize(StreamWriter& serializer, const TagComponent& component) {
-        serializer.WriteVersion(version);
-        serializer.WriteString(component.Tag);
+    static void Serialize(TextSerializer& serializer, const TagComponent& component) {
+        serializer.Write("version", version);
+        serializer.Write("tag", component.Tag);
     }
 
-    static void Deserialize(StreamReader& deserializer, TagComponent& component) {
-        const Version currVersion = deserializer.ReadVersion();
+    static void Deserialize(TextDeserializer& deserializer, TagComponent& component) {
+        Version currVersion{ 0 };
+        deserializer.Read("version", currVersion);
         if (currVersion != version) {
             LY_CORE_ASSERT(false, "Serialization Error");
         }
-        component.Tag = deserializer.ReadString();
+        deserializer.Read("tag", component.Tag);
     }
 };
 
