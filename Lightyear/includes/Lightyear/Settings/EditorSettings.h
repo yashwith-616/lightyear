@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Lightyear/LightyearCore.h"
-#include "Lightyear/Serialization/Serialization.h"
+#include "Lightyear/Serialization/Binary/BinarySerialization.h"
 
 namespace ly {
 
@@ -28,8 +28,7 @@ struct LIGHTYEAR_API EditorSettings : SerializableContract {
 
     float defaultFrameTime{ kDefaultFrametime };
 
-    static void Serialize(StreamWriter& serializer, const EditorSettings& settings) {
-        serializer.WriteVersion(settings.version);
+    static void Serialize(BinarySerializer& serializer, const EditorSettings& settings) {
         serializer.WriteRaw(settings.startupWindowSize.width);
         serializer.WriteRaw(settings.startupWindowSize.height);
         serializer.WriteString(settings.windowTitle);
@@ -40,10 +39,7 @@ struct LIGHTYEAR_API EditorSettings : SerializableContract {
         serializer.WriteRaw(settings.defaultFrameTime);
     }
 
-    static void Deserialize(StreamReader& deserializer, EditorSettings& settings) {
-        Version currVersion = deserializer.ReadVersion();
-        LY_CORE_ASSERT(currVersion == settings.version, "Version mismatch can't read file");
-
+    static void Deserialize(BinaryDeserializer& deserializer, EditorSettings& settings) {
         settings.startupWindowSize.width  = deserializer.ReadRaw<int32_t>();
         settings.startupWindowSize.height = deserializer.ReadRaw<int32_t>();
         settings.windowTitle              = deserializer.ReadString();

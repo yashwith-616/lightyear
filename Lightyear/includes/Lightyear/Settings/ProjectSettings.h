@@ -8,8 +8,6 @@ namespace ly {
 /// @brief Project specific properties are placed in following class. Will be added to
 /// in UI for easier access to these properties
 struct LIGHTYEAR_API ProjectSettings : SerializableContract {
-    static constexpr Version version{ 1 };
-
     // Name of the project
     std::string name;
 
@@ -32,7 +30,6 @@ struct LIGHTYEAR_API ProjectSettings : SerializableContract {
     std::filesystem::path savedDirectory;
 
     static void Serialize(TextSerializer& serializer, const ProjectSettings& settings) {
-        serializer.Write("version", version);
         serializer.Write("name", settings.name);
         serializer.Write("description", settings.description);
         serializer.Write("project_version", settings.projectVersion);
@@ -43,10 +40,6 @@ struct LIGHTYEAR_API ProjectSettings : SerializableContract {
     }
 
     static void Deserialize(TextDeserializer& deserializer, ProjectSettings& settings) {
-        Version currVersion{ 0 };
-        deserializer.Read("version", currVersion);
-        LY_CORE_ASSERT(currVersion == ProjectSettings::version, "Version mismatch, can't read file");
-
         deserializer.Read("name", settings.name);
         deserializer.Read("description", settings.description);
         deserializer.Read("project_version", settings.projectVersion);

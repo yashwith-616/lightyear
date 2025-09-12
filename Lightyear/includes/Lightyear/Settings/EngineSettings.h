@@ -26,8 +26,6 @@ namespace ly {
 /// \brief Holds data related to engine specific requirements such as binary cache
 /// resource search and other details
 struct EngineSettings : SerializableContract {
-    static constexpr Version version{ 1 };
-
     // Renderer API
     BackendRendererAPI rendererAPI;
 
@@ -35,16 +33,11 @@ struct EngineSettings : SerializableContract {
     OpenGLVersion openGLVersion;
 
     static void Serialize(TextSerializer& serializer, const EngineSettings& settings) {
-        serializer.Write("version", version);
         serializer.Write("renderer_api", static_cast<uint8_t>(settings.rendererAPI));
         serializer.Write("opengl_version", static_cast<uint8_t>(settings.openGLVersion));
     }
 
     static void Deserialize(TextDeserializer& deserializer, EngineSettings& settings) {
-        Version currVersion{ 0 };
-        deserializer.Read("version", currVersion);
-        LY_CORE_ASSERT(currVersion == settings.version, "Version mismatch can't read file");
-
         uint8_t enumVal{ 0 };
         deserializer.Read("renderer_api", enumVal);
         settings.rendererAPI = static_cast<BackendRendererAPI>(enumVal);

@@ -11,8 +11,6 @@ LY_DISABLE_WARNINGS_POP
 namespace ly::scene {
 
 struct LIGHTYEAR_API RelationshipComponent : SerializableContract {
-    static constexpr Version version{ 1 };
-
     std::size_t ChildrenCount{};
     entt::entity Parent{ entt::null };
     entt::entity FirstChild{ entt::null };
@@ -27,16 +25,10 @@ struct LIGHTYEAR_API RelationshipComponent : SerializableContract {
     void SetChild(entt::entity child) { FirstChild = child; }
 
     static void Serialize(TextSerializer& serializer, const RelationshipComponent& component) {
-        serializer.Write("version", version);
         serializer.Write("children_count", component.ChildrenCount);
     }
 
     static void Deserialize(TextDeserializer& deserializer, RelationshipComponent& component) {
-        Version currVersion{ 0 };
-        deserializer.Read("version", currVersion);
-        if (version != currVersion) {
-            LY_CORE_ASSERT(false, "Version not supported");
-        }
         deserializer.Read("children_count", component.ChildrenCount);
     }
 };

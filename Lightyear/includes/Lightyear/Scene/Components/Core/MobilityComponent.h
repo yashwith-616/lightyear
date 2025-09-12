@@ -9,8 +9,6 @@ enum class EMobilityType { STATIC, STATIONARY, MOVABLE };
 
 /// \brief Used for optimization. Describes if the entity position can be changes
 struct LIGHTYEAR_API MobilityComponent : SerializableContract {
-    static constexpr Version version{ 1 };
-
     EMobilityType MobilityType{ EMobilityType::STATIC };
 
     MobilityComponent() = default;
@@ -20,17 +18,10 @@ struct LIGHTYEAR_API MobilityComponent : SerializableContract {
     MobilityComponent& operator=(const MobilityComponent&) = default;
 
     static void Serialize(TextSerializer& serializer, MobilityComponent& component) {
-        serializer.Write("version", version);
         serializer.Write("mobility_type", static_cast<uint8_t>(component.MobilityType));
     }
 
     static void Deserialize(TextDeserializer& deserializer, MobilityComponent& component) {
-        Version currVersion{ 0 };
-        deserializer.Read("version", currVersion);
-        if (version != currVersion) {
-            LY_CORE_ASSERT(false, "Invalid chunk version");
-        }
-
         uint8_t mobilityType{ 0 };
         deserializer.Read("mobility_type", mobilityType);
         component.MobilityType = static_cast<EMobilityType>(mobilityType);

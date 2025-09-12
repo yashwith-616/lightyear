@@ -59,7 +59,7 @@ public:
     /// \param value The value to serialize. Types adapted via `SerializableAdapter`
     ///              are treated as primitive for serialization purposes.
     template <typename T>
-        requires internal::is_primitive_serializable<T>::value
+        requires internal::is_primitive_serializable<T>
     void Write(const std::string& key, const T& value) {
         SerializableAdapter<T>::Serialize(*this, key, value);
     }
@@ -93,9 +93,9 @@ public:
     template <typename T>
         requires internal::has_serialize_contract_v<T>
     void Write(const std::string& key, const T& value) {
-        static_assert(internal::has_version_v<T>, "Serializable class missing 'version'");
         static_assert(internal::has_text_serialize_v<T>,
                       "Serializable class missing static 'Serialize(TextSerialize&, const T&)'");
+        Write("version", GetVersion<T>());
         BeginObject(key);
         T::Serialize(*this, value);
         EndObject();
@@ -127,6 +127,20 @@ protected:
 
     virtual void BeginObject(const std::string& key) = 0;
     virtual void EndObject()                         = 0;
+
+private:
+    /// \brief If static version present in class file return it
+    ///
+    /// \tparam T the class that is being serialized
+    /// \return return the static version in file, else return 1
+    template <typename T>
+    constexpr Version GetVersion() {
+        if constexpr (internal::has_version_v<T>) {
+            return T::version;
+        } else {
+            return Version{ 1 };  // default version
+        }
+    }
 };
 
 /// \brief Base class for text based deserialization
@@ -189,7 +203,7 @@ public:
     /// \param key The identifier for the value.
     /// \param value Output parameter where the deserialized value will be stored.
     template <typename T>
-        requires internal::is_primitive_serializable<T>::value
+        requires internal::is_primitive_serializable<T>
     void Read(const std::string& key, T& value) {
         SerializableAdapter<T>::Deserialize(*this, key, value);
     }
@@ -220,9 +234,22 @@ public:
     template <typename T>
         requires internal::has_serialize_contract_v<T>
     void Read(const std::string& key, T& value) {
-        static_assert(internal::has_version_v<T>, "Deserializable class missing 'version'");
         static_assert(internal::has_text_deserialize_v<T>,
                       "Serializable class missing static 'Deserialize(TextDeserializer&, T&)'");
+
+        uint64_t deserializeVersion{};
+        Read("version", deserializeVersion);
+
+        Version currentTVersion = GetVersion<T>();
+        if (deserializeVersion != currentTVersion.get()) {
+            if constexpr (internal::has_migrate<T>) {
+                T::Migrate(currentTVersion);
+            } else {
+                LY_CORE_LOG(LogType::Error,
+                            "Type must implement static Migrate(uint64_t) when version mismatch occurs");
+                return;
+            }
+        }
 
         BeginObject(key);
         T::Deserialize(*this, value);
@@ -251,6 +278,20 @@ protected:
 
     virtual void BeginObject(const std::string& key) = 0;
     virtual void EndObject()                         = 0;
+
+private:
+    /// \brief If static version present in class file return it
+    ///
+    /// \tparam T the class that is being serialized
+    /// \return return the static version in file, else return 1
+    template <typename T>
+    Version GetVersion() {
+        if constexpr (internal::has_version_v<T>) {
+            return T::version;
+        } else {
+            return Version{ 1 };  // default version
+        }
+    }
 };
 
 }  // namespace ly

@@ -6,8 +6,6 @@
 namespace ly::scene {
 
 struct LIGHTYEAR_API TransformComponent : SerializableContract {
-    static constexpr Version version{ 1 };
-
     glm::vec3 Translation{ glm::vec3(0.0f) };
     glm::vec3 Rotation{ glm::vec3(0.0f) };
     glm::vec3 Scale{ glm::vec3(1.0f) };
@@ -21,18 +19,12 @@ struct LIGHTYEAR_API TransformComponent : SerializableContract {
     }
 
     static void Serialize(TextSerializer& serializer, const TransformComponent& component) {
-        serializer.Write("version", version);
         serializer.Write("transform", component.Translation);
         serializer.Write("rotation", component.Rotation);
         serializer.Write("scale", component.Scale);
     }
 
     static void Deserialize(TextDeserializer& deserializer, TransformComponent& component) {
-        Version currVersion{ 0 };
-        deserializer.Read("version", currVersion);
-        if (version == currVersion) {
-            LY_CORE_ASSERT(false, "Serialization error");
-        }
         deserializer.Read("transform", component.Translation);
         deserializer.Read("rotation", component.Rotation);
         deserializer.Read("scale", component.Scale);

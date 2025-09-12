@@ -63,8 +63,6 @@ public:
     template <typename T>
     void WriteObject(const T& obj) {
         if constexpr (internal::has_serialize_contract_v<T>) {
-            // Contract exists → verify required members
-            LY_CORE_ASSERT(!internal::has_version_v<T>, "Serializable class missing 'version'");
             LY_CORE_ASSERT(!internal::has_serialize_v<T>,
                            "Serializable class missing static 'Serialize(StreamWriter&, const T&)'");
 
@@ -182,7 +180,6 @@ public:
     void ReadObject(T& obj) {
         if constexpr (internal::has_serialize_contract_v<T>) {
             // Contract exists → verify required members
-            LY_CORE_ASSERT(!internal::has_version_v<T>, "Serializable class missing 'version'");
             LY_CORE_ASSERT(!internal::has_deserialize_v<T>,
                            "Serializable class missing static 'Deserialize(StreamReader&, T&)'");
 

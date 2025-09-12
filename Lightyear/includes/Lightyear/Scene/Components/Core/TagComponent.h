@@ -14,16 +14,10 @@ struct LIGHTYEAR_API TagComponent : SerializableContract {
     explicit TagComponent(std::string tag) : Tag(std::move(tag)) {}
 
     static void Serialize(TextSerializer& serializer, const TagComponent& component) {
-        serializer.Write("version", version);
         serializer.Write("tag", component.Tag);
     }
 
     static void Deserialize(TextDeserializer& deserializer, TagComponent& component) {
-        Version currVersion{ 0 };
-        deserializer.Read("version", currVersion);
-        if (currVersion != version) {
-            LY_CORE_ASSERT(false, "Serialization Error");
-        }
         deserializer.Read("tag", component.Tag);
     }
 };

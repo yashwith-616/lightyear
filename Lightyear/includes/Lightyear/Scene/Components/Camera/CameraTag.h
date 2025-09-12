@@ -7,12 +7,12 @@ namespace ly::scene {
 /**
  * Indicates the following is the main camera and is used for rendering the scene during game runtime
  */
-struct LIGHTYEAR_API MainCameraTag : SingletonComponent<MainCameraTag> {};
+struct LIGHTYEAR_API MainCameraTag final : SingletonComponent<MainCameraTag> {};
 
 /**
  * The editor camera tag is used for indicating the editor camera and used when rendering the scene inside the editor.
  */
-struct LIGHTYEAR_API EditorCameraTag : SingletonComponent<EditorCameraTag> {};
+struct LIGHTYEAR_API EditorCameraTag final : SingletonComponent<EditorCameraTag> {};
 
 }  // namespace ly::scene
 

@@ -57,4 +57,9 @@ concept is_container_type_v = requires(T a) {
     std::end(a);
 } && !std::is_same_v<T, std::string>;
 
+template <typename T>
+concept has_migrate = requires(uint64_t v) {
+    { T::Migrate(v) };
+};
+
 }  // namespace ly::internal
