@@ -2,7 +2,6 @@
 
 #include "Lightyear/Scene/Components/Core/DirtyComponent.h"
 #include "Lightyear/Scene/Components/Core/IDComponent.h"
-#include "Lightyear/Scene/Components/Core/MobilityComponent.h"
 #include "Lightyear/Scene/Components/Core/RelationshipComponent.h"
 #include "Lightyear/Scene/Components/Core/TagComponent.h"
 

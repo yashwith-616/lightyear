@@ -50,7 +50,6 @@ struct ComponentGroupGet<ComponentGroup<Components...>> {
  */
 using AllComponents = ComponentGroup<DirtyComponent,
                                      IDComponent,
-                                     MobilityComponent,
                                      RelationshipComponent,
                                      TagComponent,
                                      CameraComponent,

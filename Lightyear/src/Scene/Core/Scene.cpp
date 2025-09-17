@@ -220,7 +220,6 @@ Entity Scene::CreateEntity(UUID UUID,
     Entity entity{ m_Registry.create(), this };
     entity.AddComponent<IDComponent>(UUID);
     entity.AddComponent<TagComponent>(GenerateUniqueName(name));
-    entity.AddComponent<MobilityComponent>(EMobilityType::STATIC);
     entity.AddComponent<TransformComponent>();
     entity.AddComponent<DirtyComponent>();
 
