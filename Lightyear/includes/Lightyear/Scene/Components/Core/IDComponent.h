@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Lightyear/LightyearCore.h"
+#include "Lightyear/Scene/Components/ComponentRegistry.h"
 #include "Lightyear/Serialization/Text/TextSerialization.h"
 
 namespace ly::scene {
@@ -13,17 +14,23 @@ struct LIGHTYEAR_API IDComponent : SerializableContract {
     explicit IDComponent(const UUID& id) : ID(id) {}
 
     static void Serialize(TextSerializer& serializer, const IDComponent& component) {
-        serializer.Write("id", component.ID);
+        serializer.BeginObject("IDComponent");
+        serializer.Write("id", component.ID.Get());
+        serializer.EndObject();
     }
 
     static void Deserialize(TextDeserializer& deserializer, IDComponent& component) {
+        deserializer.BeginObject("IDComponent");
         uint64_t id;
         deserializer.Read("id", id);
         component.ID = UUID(id);
+        deserializer.EndObject();
     }
 };
 
 }  // namespace ly::scene
+
+REGISTER_COMPONENT(ly::scene::IDComponent, "IDComponent");
 
 LY_DISABLE_WARNINGS_PUSH
 #include <refl.hpp>

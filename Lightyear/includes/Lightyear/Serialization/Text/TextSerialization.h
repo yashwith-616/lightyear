@@ -20,6 +20,12 @@ public:
     /// \brief Ends writing to an array
     virtual void EndArray() = 0;
 
+    /// \brief Begin a new object
+    virtual void BeginObject(const std::string& key) = 0;
+
+    /// \brief End a new object
+    virtual void EndObject() = 0;
+
     /// \brief Write to a key-value pair to the text-based serialization output.
     /// \param key the identifier for the value being written
     /// \param value The string value to serialize.
@@ -125,9 +131,6 @@ protected:
     virtual void WriteImpl(const std::string& key, bool value)               = 0;
     virtual void WriteImpl(const std::string& key, const std::string& value) = 0;
 
-    virtual void BeginObject(const std::string& key) = 0;
-    virtual void EndObject()                         = 0;
-
 private:
     /// \brief If static version present in class file return it
     ///
@@ -158,6 +161,12 @@ public:
 
     /// \brief Ends reading an array field to begin
     virtual void EndArray() = 0;
+
+    /// \brief Begin a new object
+    virtual void BeginObject(const std::string& key) = 0;
+
+    /// \brief End a new object
+    virtual void EndObject() = 0;
 
     /// \brief Check if the array that is currently read has next element
     virtual bool HasNextArrayElement() = 0;
@@ -275,9 +284,6 @@ protected:
     virtual void ReadImpl(const std::string& key, double& value)      = 0;
     virtual void ReadImpl(const std::string& key, bool& value)        = 0;
     virtual void ReadImpl(const std::string& key, std::string& value) = 0;
-
-    virtual void BeginObject(const std::string& key) = 0;
-    virtual void EndObject()                         = 0;
 
 private:
     /// \brief If static version present in class file return it

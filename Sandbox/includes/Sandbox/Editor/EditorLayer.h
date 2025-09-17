@@ -38,6 +38,5 @@ private:
     float m_PrevMouseX{ 0.f };
     float m_MouseSensitivity{ 0.1f };
 
-    [[nodiscard]] ly::scene::CameraComponent LoadGameCamera() const;
-    void SaveGameCamera() const;
+    void SaveScene() const;
 };

@@ -25,6 +25,9 @@
 #include "Lightyear/Scene/Core/Scene.h"
 #include "Lightyear/Scene/Core/SceneRuntime.h"
 
+// -------------------- World -------------------------
+#include "Lightyear/World/Level.h"
+
 // -------------------- Input -------------------------
 #include "Lightyear/Input/Input.h"
 

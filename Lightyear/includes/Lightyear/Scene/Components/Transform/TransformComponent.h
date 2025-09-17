@@ -1,6 +1,8 @@
 #pragma once
 
+#include "Lightyear/Common/Math.hpp"
 #include "Lightyear/LightyearCore.h"
+#include "Lightyear/Scene/Components/ComponentRegistry.h"
 #include "Lightyear/Serialization/Text/TextSerialization.h"
 
 namespace ly::scene {
@@ -19,19 +21,25 @@ struct LIGHTYEAR_API TransformComponent : SerializableContract {
     }
 
     static void Serialize(TextSerializer& serializer, const TransformComponent& component) {
+        serializer.BeginObject("TransformComponent");
         serializer.Write("transform", component.Translation);
         serializer.Write("rotation", component.Rotation);
         serializer.Write("scale", component.Scale);
+        serializer.EndObject();
     }
 
     static void Deserialize(TextDeserializer& deserializer, TransformComponent& component) {
+        deserializer.BeginObject("TransformComponent");
         deserializer.Read("transform", component.Translation);
         deserializer.Read("rotation", component.Rotation);
         deserializer.Read("scale", component.Scale);
+        deserializer.EndObject();
     }
 };
 
 }  // namespace ly::scene
+
+REGISTER_COMPONENT(ly::scene::TransformComponent, "TransformComponent");
 
 LY_DISABLE_WARNINGS_PUSH
 #include <refl.hpp>

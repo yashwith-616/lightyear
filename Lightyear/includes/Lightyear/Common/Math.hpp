@@ -34,22 +34,22 @@ struct SerializableAdapter<glm::vec3, void> {
 
     static void Serialize(TextSerializer& serializer, const std::string& key, const glm::vec3& v) {
         serializer.BeginArray(key);
-        serializer.Write("", v.x);
-        serializer.Write("", v.y);
-        serializer.Write("", v.z);
+        serializer.Write("x", v.x);
+        serializer.Write("y", v.y);
+        serializer.Write("z", v.z);
         serializer.EndArray();
     }
 
     static void Deserialize(TextDeserializer& deserializer, const std::string& key, glm::vec3& v) {
         deserializer.BeginArray(key);
         if (deserializer.HasNextArrayElement()) {
-            deserializer.Read("", v.x);
+            deserializer.Read("x", v.x);
         }
         if (deserializer.HasNextArrayElement()) {
-            deserializer.Read("", v.y);
+            deserializer.Read("y", v.y);
         }
         if (deserializer.HasNextArrayElement()) {
-            deserializer.Read("", v.z);
+            deserializer.Read("z", v.z);
         }
         deserializer.EndArray();
     }

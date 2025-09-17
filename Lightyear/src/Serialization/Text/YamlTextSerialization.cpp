@@ -43,15 +43,19 @@ void YamlTextSerializer::EndObject() {
 
 void YamlTextSerializer::BeginArray(const std::string& key) {
     YAML::Node newNode(YAML::NodeType::Sequence);
+    newNode.SetStyle(YAML::EmitterStyle::Flow);
+
     m_NodeStack.top()[key] = newNode;
+    YAML::Node child       = m_NodeStack.top()[key];
     m_NodeStack.push(std::ref(newNode));
 }
 
 void YamlTextSerializer::EndArray() {
     LY_CORE_ASSERT(!m_NodeStack.empty(), "Mismatched EndArray call");
+    m_NodeStack.pop();
 }
 
-void YamlTextSerializer::SaveToFile() {
+void YamlTextSerializer::SaveToFile() const {
     LY_CORE_LOG(LogType::INFO, "Saving yaml data to file {}", m_FilePath.string());
 
     std::ofstream file;

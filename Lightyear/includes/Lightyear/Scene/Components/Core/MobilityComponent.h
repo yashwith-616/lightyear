@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Lightyear/LightyearCore.h"
+#include "Lightyear/Scene/Components/ComponentRegistry.h"
 #include "Lightyear/Serialization/Text/TextSerialization.h"
 
 namespace ly::scene {
@@ -18,17 +19,23 @@ struct LIGHTYEAR_API MobilityComponent : SerializableContract {
     MobilityComponent& operator=(const MobilityComponent&) = default;
 
     static void Serialize(TextSerializer& serializer, MobilityComponent& component) {
+        serializer.BeginObject("MobilityComponent");
         serializer.Write("mobility_type", static_cast<uint8_t>(component.MobilityType));
+        serializer.EndObject();
     }
 
     static void Deserialize(TextDeserializer& deserializer, MobilityComponent& component) {
+        deserializer.BeginObject("MobilityComponent");
         uint8_t mobilityType{ 0 };
         deserializer.Read("mobility_type", mobilityType);
         component.MobilityType = static_cast<EMobilityType>(mobilityType);
+        deserializer.EndObject();
     }
 };
 
 }  // namespace ly::scene
+
+REGISTER_COMPONENT(ly::scene::MobilityComponent, "MobilityComponent");
 
 LY_DISABLE_WARNINGS_PUSH
 #include <refl.hpp>

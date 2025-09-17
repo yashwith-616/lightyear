@@ -10,6 +10,7 @@ LY_DISABLE_WARNINGS_POP
 
 constexpr auto g_ClearColor = glm::vec4(0.13, 0.13, 0.13, 1.0);
 const auto kCameraSavePath  = std::filesystem::path(SAVED_DIR "/camera.yaml");
+const auto kSceneSavePath   = std::filesystem::path(SAVED_DIR "/scene.yaml");
 
 namespace renderer = ly::renderer;
 
@@ -47,11 +48,7 @@ void EditorLayer::OnAttach() {
 #pragma region Game Scene
     auto gameCamera = m_Scene->CreateEntity("GameCamera");
     gameCamera.AddSingletonComponent<ly::scene::MainCameraTag>();
-    if (std::filesystem::exists(kCameraSavePath)) {
-        gameCamera.AddComponent<ly::scene::CameraComponent>(LoadGameCamera());
-    } else {
-        gameCamera.AddComponent<ly::scene::CameraComponent>();
-    }
+    gameCamera.AddComponent<ly::scene::CameraComponent>();
 
     m_CubeEntity = m_Scene->CreateEntity("Cube");
     m_CubeEntity.AddComponent<ly::scene::MeshComponent>(Geometry::GetCube(), m_Shader, m_Texture);
@@ -98,23 +95,11 @@ void EditorLayer::OnEditorRender() {
 }
 
 void EditorLayer::OnDetach() {
-    SaveGameCamera();
+    SaveScene();
 }
 
-ly::scene::CameraComponent EditorLayer::LoadGameCamera() const {
-    LY_LOG(ly::LogType::INFO, "Loading camera");
-
-    auto deserializer = ly::YamlTextDeserializer(kCameraSavePath);
-    ly::scene::CameraComponent cameraComp{};
-    deserializer.Read("camera", cameraComp);
-    return cameraComp;
-}
-
-void EditorLayer::SaveGameCamera() const {
-    LY_LOG(ly::LogType::INFO, "Saving camera");
-    auto serializer                = ly::YamlTextSerializer(kCameraSavePath);
-    ly::scene::Entity cameraEntity = m_Scene->GetPrimaryCameraEntity();
-    auto& cameraComp               = cameraEntity.GetComponent<ly::scene::CameraComponent>();
-    serializer.Write("camera", cameraComp);
-    serializer.SaveToFile();
+void EditorLayer::SaveScene() const {
+    LY_LOG(ly::LogType::INFO, "Saving scene");
+    auto* level = new ly::Level(kSceneSavePath, "ALevel");
+    level->SaveScene(*m_Scene);
 }

@@ -108,16 +108,16 @@ struct GraphicContextVersion {
 
 template <typename T>
 constexpr std::string_view type_name() {
-    #ifdef __clang__
+#ifdef __clang__
     constexpr std::string_view p = __PRETTY_FUNCTION__;
     return p.substr(31, p.size() - 32);
-    #elif defined(__GNUC__)
+#elif defined(__GNUC__)
     constexpr std::string_view p = __PRETTY_FUNCTION__;
     return p.substr(46, p.size() - 47);
-    #elif defined(_MSC_VER)
+#elif defined(_MSC_VER)
     constexpr std::string_view p = __FUNCSIG__;
     return p.substr(38, p.size() - 45);
-    #endif
+#endif
 }
 
 }  // namespace ly
