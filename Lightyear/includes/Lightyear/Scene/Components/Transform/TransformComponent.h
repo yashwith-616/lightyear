@@ -1,13 +1,11 @@
 #pragma once
 
-#include "Lightyear/Common/Math.hpp"
 #include "Lightyear/LightyearCore.h"
 #include "Lightyear/Scene/Components/ComponentRegistry.h"
-#include "Lightyear/Serialization/Text/TextSerialization.h"
 
 namespace ly::scene {
 
-struct LIGHTYEAR_API TransformComponent : SerializableContract {
+struct LIGHTYEAR_API TransformComponent {
     glm::vec3 Translation{ glm::vec3(0.0f) };
     glm::vec3 Rotation{ glm::vec3(0.0f) };
     glm::vec3 Scale{ glm::vec3(1.0f) };
@@ -20,21 +18,14 @@ struct LIGHTYEAR_API TransformComponent : SerializableContract {
         return glm::translate(glm::mat4(1.0f), Translation) * rotation * glm::scale(glm::mat4(1.0f), Scale);
     }
 
-    static void Serialize(TextSerializer& serializer, const TransformComponent& component) {
-        serializer.BeginObject("TransformComponent");
-        serializer.Write("transform", component.Translation);
-        serializer.Write("rotation", component.Rotation);
-        serializer.Write("scale", component.Scale);
-        serializer.EndObject();
+    template <class Archive>
+    void serialize(Archive& archive) {
+        archive(cereal::make_nvp("Translation", Translation),
+                cereal::make_nvp("Rotation", Rotation),
+                cereal::make_nvp("Scale", Scale));
     }
 
-    static void Deserialize(TextDeserializer& deserializer, TransformComponent& component) {
-        deserializer.BeginObject("TransformComponent");
-        deserializer.Read("transform", component.Translation);
-        deserializer.Read("rotation", component.Rotation);
-        deserializer.Read("scale", component.Scale);
-        deserializer.EndObject();
-    }
+    SERIALIZE_BODY(TransformComponent)
 };
 
 }  // namespace ly::scene

@@ -3,7 +3,6 @@
 #include "Lightyear/LightyearCore.h"
 #include "Lightyear/Scene/Components/ComponentRegistry.h"
 #include "Lightyear/Scene/Core/Scene.h"
-#include "Lightyear/Serialization/Text/TextSerialization.h"
 
 LY_DISABLE_WARNINGS_PUSH
 #include <entt/entt.hpp>
@@ -11,7 +10,7 @@ LY_DISABLE_WARNINGS_POP
 
 namespace ly::scene {
 
-struct LIGHTYEAR_API RelationshipComponent : SerializableContract {
+struct LIGHTYEAR_API RelationshipComponent {
     std::size_t ChildrenCount{};
     entt::entity Parent{ entt::null };
     entt::entity FirstChild{ entt::null };
@@ -25,17 +24,12 @@ struct LIGHTYEAR_API RelationshipComponent : SerializableContract {
 
     void SetChild(entt::entity child) { FirstChild = child; }
 
-    static void Serialize(TextSerializer& serializer, const RelationshipComponent& component) {
-        serializer.BeginObject("RelationshipComponent");
-        serializer.Write("children_count", component.ChildrenCount);
-        serializer.EndObject();
+    template <class Archive>
+    void serialize(Archive& archive) {
+        archive(cereal::make_nvp("ChildrenCount", ChildrenCount));
     }
 
-    static void Deserialize(TextDeserializer& deserializer, RelationshipComponent& component) {
-        deserializer.BeginObject("RelationshipComponent");
-        deserializer.Read("children_count", component.ChildrenCount);
-        deserializer.EndObject();
-    }
+    SERIALIZE_BODY(RelationshipComponent);
 };
 
 }  // namespace ly::scene

@@ -114,6 +114,9 @@ set(REFL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/extern/refl-cpp")
 set(YAML_DIR "${CMAKE_CURRENT_SOURCE_DIR}/extern/yaml-cpp")
 add_subdirectory(${YAML_DIR} "yaml-binaries")
 
+# Cereal
+set(CEREAL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/extern/cereal")
+
 #-------------------------------------------------
 # Project Library
 #-------------------------------------------------
@@ -129,6 +132,7 @@ target_include_directories(Lightyear
         "${ENTT_DIR}"
         "${SPDLOG_DIR}/include"
         "${REFL_DIR}/include"
+        "${CEREAL_DIR}/include"
     SYSTEM PRIVATE
         "${GLFW_DIR}/include"
         "${STB_DIR}"

@@ -2,29 +2,21 @@
 
 #include "Lightyear/LightyearCore.h"
 #include "Lightyear/Scene/Components/ComponentRegistry.h"
-#include "Lightyear/Serialization/Text/TextSerialization.h"
 
 namespace ly::scene {
 
-struct LIGHTYEAR_API TagComponent : SerializableContract {
-    static constexpr Version version{ 1 };
-
+struct LIGHTYEAR_API TagComponent {
     std::string Tag{ kNOTSET };
 
     TagComponent() = default;
     explicit TagComponent(std::string tag) : Tag(std::move(tag)) {}
 
-    static void Serialize(TextSerializer& serializer, const TagComponent& component) {
-        serializer.BeginObject("TagComponent");
-        serializer.Write("tag", component.Tag);
-        serializer.EndObject();
+    template <class Archive>
+    void serialize(Archive& archive) {
+        archive(cereal::make_nvp("Tag", Tag));
     }
 
-    static void Deserialize(TextDeserializer& deserializer, TagComponent& component) {
-        deserializer.BeginObject("TagComponent");
-        deserializer.Read("tag", component.Tag);
-        deserializer.EndObject();
-    }
+    SERIALIZE_BODY(TagComponent)
 };
 
 }  // namespace ly::scene

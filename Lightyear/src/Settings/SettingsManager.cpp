@@ -3,8 +3,6 @@
 #include <Lightyear/Settings/EngineSettings.h>
 #include <Lightyear/Settings/ProjectSettings.h>
 
-#include "Lightyear/Serialization/Text/TextSerialization.h"
-
 namespace ly {
 
 void SettingsManager::LoadConfigs() {

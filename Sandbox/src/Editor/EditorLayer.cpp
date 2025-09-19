@@ -8,16 +8,19 @@ LY_DISABLE_WARNINGS_PUSH
 #include <imgui_internal.h>
 LY_DISABLE_WARNINGS_POP
 
-constexpr auto g_ClearColor = glm::vec4(0.13, 0.13, 0.13, 1.0);
-const auto kCameraSavePath  = std::filesystem::path(SAVED_DIR "/camera.yaml");
-const auto kSceneSavePath   = std::filesystem::path(SAVED_DIR "/scene.yaml");
+constexpr auto g_ClearColor       = glm::vec4(0.13, 0.13, 0.13, 1.0);
+const auto kCameraSavePath        = std::filesystem::path(SAVED_DIR "/camera.yaml");
+const auto kSceneSavePath         = std::filesystem::path(SAVED_DIR "/scene.yaml");
+const auto kSceneSavePathJson     = std::filesystem::path(SAVED_DIR "/scene.json");
+const auto kSceneSavePathJsonTest = std::filesystem::path(SAVED_DIR "/scene_test.json");
 
 namespace renderer = ly::renderer;
 
 EditorLayer::EditorLayer() : Layer("Editor") {}
 
 void EditorLayer::OnAttach() {
-    m_Scene        = ly::MakeRef<ly::scene::Scene>();
+    m_Scene = ly::MakeRef<ly::scene::Scene>();
+    // LoadScene();
     m_SceneRuntime = ly::MakeRef<ly::scene::SceneRuntime>(m_Scene.get());
     m_SceneRuntime->Initialize();
 
@@ -100,6 +103,10 @@ void EditorLayer::OnDetach() {
 
 void EditorLayer::SaveScene() const {
     LY_LOG(ly::LogType::INFO, "Saving scene");
-    auto* level = new ly::Level(kSceneSavePath, "ALevel");
+    auto* level = new ly::Level(kSceneSavePathJson, "ALevel");
     level->SaveScene(*m_Scene);
+}
+void EditorLayer::LoadScene() {
+    auto* level = new ly::Level(kSceneSavePathJson, "ALevel");
+    m_Scene     = level->LoadScene();
 }

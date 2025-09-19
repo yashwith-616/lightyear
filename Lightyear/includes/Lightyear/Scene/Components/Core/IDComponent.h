@@ -2,30 +2,26 @@
 
 #include "Lightyear/LightyearCore.h"
 #include "Lightyear/Scene/Components/ComponentRegistry.h"
-#include "Lightyear/Serialization/Text/TextSerialization.h"
 
 namespace ly::scene {
 
 /// \brief Attaches a UUID to the component. All entity present in scene will have this component.
-struct LIGHTYEAR_API IDComponent : SerializableContract {
+struct LIGHTYEAR_API IDComponent {
     UUID ID;
 
     IDComponent() : ID(UUID()) {}
     explicit IDComponent(const UUID& id) : ID(id) {}
 
-    static void Serialize(TextSerializer& serializer, const IDComponent& component) {
-        serializer.BeginObject("IDComponent");
-        serializer.Write("id", component.ID.Get());
-        serializer.EndObject();
+    template <class Archive>
+    void serialize(Archive& archive) {
+        uint64_t value = ID.Get();
+        archive(cereal::make_nvp("ID", value));
+        if constexpr (Archive::is_loading::value) {
+            ID = UUID(value);
+        }
     }
 
-    static void Deserialize(TextDeserializer& deserializer, IDComponent& component) {
-        deserializer.BeginObject("IDComponent");
-        uint64_t id;
-        deserializer.Read("id", id);
-        component.ID = UUID(id);
-        deserializer.EndObject();
-    }
+    SERIALIZE_BODY(IDComponent)
 };
 
 }  // namespace ly::scene

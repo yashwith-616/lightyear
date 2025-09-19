@@ -2,7 +2,6 @@
 
 #include "Lightyear/LightyearCore.h"
 #include "Lightyear/Scene/Components/ComponentRegistry.h"
-#include "Lightyear/Serialization/Text/TextSerialization.h"
 
 LY_DISABLE_WARNINGS_PUSH
 #include "entt/entt.hpp"
@@ -10,9 +9,9 @@ LY_DISABLE_WARNINGS_POP
 
 namespace ly::scene {
 
-enum class CameraProjectionType : uint8_t { PERSPECTIVE = BIT(0), ORTHOGRAPHIC = BIT(1) };
+enum class CameraProjectionType : uint8_t { PERSPECTIVE = 0, ORTHOGRAPHIC = 1 };
 
-struct LIGHTYEAR_API CameraComponent : SerializableContract {
+struct LIGHTYEAR_API CameraComponent {
     glm::mat4 ProjectionMatrix;
     glm::mat4 ViewMatrix;
     glm::mat4 Cache_ViewProjectionMatrix;
@@ -24,30 +23,23 @@ struct LIGHTYEAR_API CameraComponent : SerializableContract {
     float FarClip{ kDefaultFarClip };
     CameraProjectionType ProjectionType{ CameraProjectionType::PERSPECTIVE };
 
-    static void Serialize(TextSerializer& serializer, const CameraComponent& camera) {
-        serializer.BeginObject("CameraComponent");
-        serializer.Write("orthographic_size", camera.OrthographicSize);
-        serializer.Write("aspect_ratio", camera.AspectRatio);
-        serializer.Write("fov_radians", camera.FOVRadians);
-        serializer.Write("near_clip", camera.NearClip);
-        serializer.Write("far_clip", camera.FarClip);
-        serializer.Write("projection_type", static_cast<uint8_t>(camera.ProjectionType));
-        serializer.EndObject();
+    template <class Archive>
+    void serialize(Archive& archive) {
+        uint8_t kProjectionType = static_cast<uint8_t>(ProjectionType);
+
+        archive(cereal::make_nvp("OrthographicSize", OrthographicSize),
+                cereal::make_nvp("AspectRatio", AspectRatio),
+                cereal::make_nvp("FOVRadians", FOVRadians),
+                cereal::make_nvp("NearClip", NearClip),
+                cereal::make_nvp("FarClip", FarClip),
+                cereal::make_nvp("ProjectionType", kProjectionType));
+
+        if constexpr (Archive::is_loading::value) {
+            ProjectionType = static_cast<CameraProjectionType>(kProjectionType);
+        }
     }
 
-    static void Deserialize(TextDeserializer& deserializer, CameraComponent& camera) {
-        deserializer.BeginObject("CameraComponent");
-        deserializer.Read("orthographic_size", camera.OrthographicSize);
-        deserializer.Read("aspect_ratio", camera.AspectRatio);
-        deserializer.Read("fov_radians", camera.FOVRadians);
-        deserializer.Read("near_clip", camera.NearClip);
-        deserializer.Read("far_clip", camera.FarClip);
-
-        uint8_t projectionType{ 0 };
-        deserializer.Read("projection_type", projectionType);
-        camera.ProjectionType = static_cast<CameraProjectionType>(projectionType);
-        deserializer.EndObject();
-    }
+    SERIALIZE_BODY(CameraComponent)
 };
 
 }  // namespace ly::scene

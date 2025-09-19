@@ -13,7 +13,7 @@ public:
     Level(Level&&)                 = delete;
     Level& operator=(Level&&)      = delete;
 
-    Scope<scene::Scene> LoadScene() const;
+    Ref<scene::Scene> LoadScene() const;
     void SaveScene(scene::Scene& scene) const;
 
 private:

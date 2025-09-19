@@ -1,7 +1,6 @@
 #pragma once
 
 #include <Lightyear/LightyearCore.h>
-#include <Lightyear/Serialization/Text/TextSerialization.h>
 
 enum class BackendRendererAPI : uint8_t { OpenGL, Vulkan };
 
@@ -25,26 +24,12 @@ namespace ly {
 
 /// \brief Holds data related to engine specific requirements such as binary cache
 /// resource search and other details
-struct EngineSettings : SerializableContract {
+struct EngineSettings {
     // Renderer API
     BackendRendererAPI rendererAPI;
 
     // The current openGL version
     OpenGLVersion openGLVersion;
-
-    static void Serialize(TextSerializer& serializer, const EngineSettings& settings) {
-        serializer.Write("renderer_api", static_cast<uint8_t>(settings.rendererAPI));
-        serializer.Write("opengl_version", static_cast<uint8_t>(settings.openGLVersion));
-    }
-
-    static void Deserialize(TextDeserializer& deserializer, EngineSettings& settings) {
-        uint8_t enumVal{ 0 };
-        deserializer.Read("renderer_api", enumVal);
-        settings.rendererAPI = static_cast<BackendRendererAPI>(enumVal);
-
-        deserializer.Read("opengl_version", enumVal);
-        settings.openGLVersion = static_cast<OpenGLVersion>(enumVal);
-    }
 };
 
 }  // namespace ly

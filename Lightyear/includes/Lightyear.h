@@ -30,7 +30,3 @@
 
 // -------------------- Input -------------------------
 #include "Lightyear/Input/Input.h"
-
-// -------------------- Serialization -------------------------
-#include "Lightyear/Serialization/Binary/BinaryFileSerialization.h"
-#include "Lightyear/Serialization/Text/YamlTextSerialization.h"

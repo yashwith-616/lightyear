@@ -39,4 +39,5 @@ private:
     float m_MouseSensitivity{ 0.1f };
 
     void SaveScene() const;
+    void LoadScene();
 };
