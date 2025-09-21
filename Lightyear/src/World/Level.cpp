@@ -1,18 +1,24 @@
 #include "Lightyear/World/Level.h"
 
+#include "Lightyear/Scene/Components/Core/DirtyComponent.h"
+
+#include "Lightyear/Scene/Components/Core/IDComponent.h"
+
 LY_DISABLE_WARNINGS_PUSH
 #include <cereal/archives/json.hpp>
 #include <cereal/types/memory.hpp>
 #include <cereal/types/string.hpp>
 #include <cereal/types/vector.hpp>
 #include <fstream>
+
+#include <nlohmann/json.hpp>
 LY_DISABLE_WARNINGS_POP
 
 namespace ly {
-
 Level::Level(std::filesystem::path path, std::string name)
     : m_FilePath(std::move(path)), m_LevelName(std::move(name)) {}
 
+/// \brief Load Serialized scene
 Ref<scene::Scene> Level::LoadScene() const {
     auto scene          = MakeRef<scene::Scene>();
     auto& sceneRegistry = scene->GetRegistry();
@@ -23,6 +29,8 @@ Ref<scene::Scene> Level::LoadScene() const {
     }
 
     cereal::JSONInputArchive archive(is);
+    std::ifstream file(m_FilePath);
+    auto data = nlohmann::ordered_json::parse(file);
 
     std::string levelName;
     archive(cereal::make_nvp("LevelName", levelName));
@@ -30,53 +38,62 @@ Ref<scene::Scene> Level::LoadScene() const {
     int entityCount = 0;
     archive(cereal::make_nvp("EntityCount", entityCount));
 
-    for (int i = 0; i < entityCount; i++) {
-        std::string entityKey = std::to_string(i);
+    for (auto& [entityKey, entityData] : data.items()) {
+        if (entityKey == "LevelName" || entityKey == "EntityCount") {
+            continue;
+        }
 
         archive.setNextName(entityKey.c_str());
         archive.startNode();
+        [[maybe_unused]] auto entityFinishNode = MakeScopeGuard([&]() { archive.finishNode(); });
 
         entt::entity entity = sceneRegistry.create();
+        sceneRegistry.emplace_or_replace<scene::DirtyComponent>(entity, scene::DirtyComponent());
+        LY_CORE_LOG(LogType::INFO, "Created an entity {} with Id {}", entityKey, static_cast<uint32_t>(entity));
 
-        for (auto&& [typeId, storage] : sceneRegistry.storage()) {
+        for (auto& [compName, compData] : entityData.items()) {
+            archive.setNextName(compName.c_str());
+            archive.startNode();
+
+            [[maybe_unused]] auto componentFinishNode = MakeScopeGuard([&]() { archive.finishNode(); });
+
             using namespace entt::literals;
-            auto currentType = entt::resolve(storage.type());
+            auto compType = entt::resolve(entt::hashed_string{ compName.c_str() });
+            if (!compType) {
+                archive.finishNode();
+                continue;
+            }
 
-            if (auto loadFunc = currentType.func("enttLoad"_hs); loadFunc) {
-                auto instance = currentType.construct();
-                if (!instance) {
-                    LY_CORE_LOG(LogType::Error, "Could not construct instance");
-                }
+            // Check if entity can be loaded
+            auto loadFunc = compType.func("enttLoad"_hs);
+            if (!loadFunc) {
+                LY_CORE_LOG(LogType::WARN, "No enttLoad function registered for '{}'", compName);
+            }
 
-                auto nameData = currentType.data("name"_hs);
-                if (!nameData) {
-                    LY_CORE_LOG(ly::LogType::INFO, "Can't resolve name");
-                    continue;
-                }
-                entt::meta_any enttMetaValue = nameData.get(instance);
-                const char* compName         = enttMetaValue.cast<const char*>();
+            // construct instance of an entity
+            auto instance = compType.construct();
+            if (!instance) {
+                LY_CORE_LOG(LogType::Error, "Could not construct instance");
+                continue;
+            }
 
-                // TODO: If compName exists in document only then invoke, else not require
+            // Load the entity
+            if (!loadFunc.invoke({}, entt::forward_as_meta(archive), instance.as_ref())) {
+                LY_CORE_LOG(LogType::Error, "Failed to deserialize component '{}'", compName);
+                continue;
+            }
 
-                // Deserialize into component instance
-                if (!loadFunc.invoke({}, entt::forward_as_meta(archive), instance)) {
-                    LY_CORE_LOG(LogType::Error, "Could not call deserialize");
-                }
-
-                // Emplace into registry
-                if (!currentType.func("emplace"_hs)
-                         .invoke({},
-                                 entt::forward_as_meta(sceneRegistry),
-                                 entt::forward_as_meta(entity),
-                                 entt::forward_as_meta(instance))) {
-                    LY_CORE_LOG(LogType::Error, "Could not emplace json values");
-                }
+            // Update the deserialized entity in registry
+            if (!compType.func("emplace"_hs)
+                     .invoke({},
+                             entt::forward_as_meta(sceneRegistry),
+                             entt::forward_as_meta(entity),
+                             entt::forward_as_meta(instance))) {
+                LY_CORE_LOG(LogType::Error, "Emplace not called on component '{}'", compName);
             }
         }
-
-        archive.finishNode();
     }
-    LY_CORE_LOG(LogType::INFO, "Scene loaded");
+    LY_CORE_LOG(LogType::INFO, "Loading scene successfully completed");
     return std::move(scene);
 }
 
@@ -99,58 +116,44 @@ void Level::SaveScene(scene::Scene& scene) const {
         std::string entityKey = std::to_string(val);
 
         archive.setNextName(entityKey.c_str());
-        archive.startNode();  // push a new JSON object scope
+        archive.startNode();
+        [[maybe_unused]] auto entityFinishNode = MakeScopeGuard([&]() { archive.finishNode(); });
 
-        {
-            for (auto&& [typeId, storage] : sceneRegistry.storage()) {
-                if (!storage.contains(entity)) continue;
+        for (auto&& [typeId, storage] : sceneRegistry.storage()) {
+            if (!storage.contains(entity)) continue;
 
-                using namespace entt::literals;
+            using namespace entt::literals;
 
-                auto currentType = entt::resolve(storage.type());
-                if (auto serializeFunc = currentType.func("enttSave"_hs); serializeFunc) {
-                    LY_CORE_LOG(ly::LogType::INFO, "Serializing function");
+            auto currentType   = entt::resolve(storage.type());
+            auto serializeFunc = currentType.func("enttSave"_hs);
+            if (!serializeFunc) {
+                LY_CORE_LOG(LogType::INFO, "Serialize func does not exist for type {}", typeId);
+            }
 
-                    auto instance = currentType.from_void(storage.value(entity));
-                    if (!instance) {
-                        continue;
-                    }
+            auto instance = currentType.from_void(storage.value(entity));
+            if (!instance) {
+                LY_CORE_LOG(LogType::INFO, "Type instance could not be created for type {}", typeId);
+                continue;
+            }
 
-                    auto nameData = currentType.data("name"_hs);
-                    if (!nameData) {
-                        LY_CORE_LOG(ly::LogType::INFO, "Can't resolve name");
-                        continue;
-                    }
-                    entt::meta_any compName = nameData.get(instance);
-                    archive.setNextName(compName.cast<const char*>());
-                    archive.startNode();
+            auto nameData = currentType.data("name"_hs);
+            if (!nameData) {
+                LY_CORE_LOG(ly::LogType::WARN, "Can't resolve component name of type {}", typeId);
+                continue;
+            }
 
-                    if (!serializeFunc.invoke(instance, entt::forward_as_meta(archive))) {
-                        LY_CORE_LOG(ly::LogType::INFO, "Invoke failed to match arguments");
-                    }
+            entt::meta_any compName = nameData.get(instance);
+            archive.setNextName(compName.cast<const char*>());
+            archive.startNode();
+            [[maybe_unused]] auto componentFinishNode = MakeScopeGuard([&]() { archive.finishNode(); });
 
-                    archive.finishNode();
-                }
+            if (!serializeFunc.invoke(instance, entt::forward_as_meta(archive))) {
+                LY_CORE_LOG(ly::LogType::WARN, "Serialize function invoke failed for type {}", typeId);
             }
         }
-        archive.finishNode();  // close JSON object
         val++;
     }
     LY_CORE_LOG(LogType::INFO, "Scene saved");
 }
-
-/*void Level::SaveScene(scene::Scene& scene) const {
-    const entt::registry& sceneRegistry = scene.GetRegistry();
-
-    std::ofstream os(m_FilePath);
-    cereal::JSONOutputArchive archive(os);
-    archive(cereal::make_nvp("LevelName", m_LevelName));
-
-    using namespace entt::literals;
-    for (auto&& [typeId, storage] : sceneRegistry.storage()) {
-        auto type = entt::resolve(typeId);
-        type.invoke("enttSave"_hs, {}, entt::forward_as_meta(archive), entt::forward_as_meta(sceneRegistry));
-    }
-}*/
 
 }  // namespace ly

@@ -120,4 +120,18 @@ constexpr std::string_view type_name() {
 #endif
 }
 
+/// \brief Enables easy use of RAII wrappers using lambda
+template <typename F>
+struct ScopeGuard {
+    F func;
+    explicit ScopeGuard(F f) : func(f) {}
+    ~ScopeGuard() { func(); }
+};
+
+/// \brief Provides an easier way to implement RAII guards
+template <typename F>
+ScopeGuard<F> MakeScopeGuard(F f) {
+    return ScopeGuard<F>(f);
+}
+
 }  // namespace ly

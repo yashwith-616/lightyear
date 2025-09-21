@@ -13,15 +13,24 @@ struct LIGHTYEAR_API IDComponent {
     explicit IDComponent(const UUID& id) : ID(id) {}
 
     template <class Archive>
-    void serialize(Archive& archive) {
+    void save(Archive& archive) {
         uint64_t value = ID.Get();
         archive(cereal::make_nvp("ID", value));
-        if constexpr (Archive::is_loading::value) {
-            ID = UUID(value);
-        }
     }
 
-    SERIALIZE_BODY(IDComponent)
+    template <class Archive>
+    void load(Archive& archive) {
+        uint64_t value{};
+        archive(cereal::make_nvp("ID", value));
+        ID = UUID(value);
+    }
+
+    // SERIALIZE_BODY(IDComponent)
+    const char* Name = "IDComponent";
+
+    void SaveJson(cereal::JSONOutputArchive& archive) { save(archive); }
+
+    static void LoadJson(cereal::JSONInputArchive& archive, IDComponent& component) { component.load(archive); }
 };
 
 }  // namespace ly::scene

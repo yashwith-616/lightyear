@@ -12,7 +12,12 @@ struct LIGHTYEAR_API TagComponent {
     explicit TagComponent(std::string tag) : Tag(std::move(tag)) {}
 
     template <class Archive>
-    void serialize(Archive& archive) {
+    void save(Archive& archive) const {
+        archive(cereal::make_nvp("Tag", Tag));
+    }
+
+    template <class Archive>
+    void load(Archive& archive) {
         archive(cereal::make_nvp("Tag", Tag));
     }
 

@@ -10,8 +10,9 @@ LY_DISABLE_WARNINGS_POP
 namespace ly {
 
 template <typename T>
-static void emplaceComponent(entt::registry& registry, entt::entity entity, T component) {
-    registry.emplace_or_replace<T>(entity, std::move(component));
+static void emplaceComponent(entt::registry& registry, entt::entity entity, entt::meta_any instance) {
+    T obj = instance.cast<T>();
+    registry.emplace_or_replace<T>(entity, obj);
 }
 
 }  // namespace ly
@@ -36,11 +37,11 @@ struct ComponentRegistrar {
             using namespace entt::literals;
 
             entt::meta_factory<T>()
-                .type(entt::hashed_string{ Name.value })    // hashed type ID
-                .data<&T::Name>("name"_hs)                  // static Name property
-                .func<&T::SaveJson>("enttSave"_hs)          // static save function
-                .func<&T::LoadJson>("enttLoad"_hs)          // static load function
-                .func<&emplaceComponent<T>>("emplace"_hs);  // emplace into registry
+                .type(entt::hashed_string{ Name.value })
+                .data<&T::Name>("name"_hs)
+                .func<&T::SaveJson>("enttSave"_hs)
+                .func<&T::LoadJson>("enttLoad"_hs)
+                .func<&emplaceComponent<T>>("emplace"_hs);
             return true;
         }();
         return once;
@@ -61,10 +62,8 @@ struct ComponentRegistrar {
 #define SERIALIZE_BODY(T)                                                                                              \
     const char* Name = #T;                                                                                             \
     void SaveJson(cereal::JSONOutputArchive& archive) {                                                                \
-        LY_CORE_LOG(LogType::INFO, "Saving Json Called");                                                              \
-        serialize(archive);                                                                                            \
+        save(archive);                                                                                                 \
     }                                                                                                                  \
     static void LoadJson(cereal::JSONInputArchive& archive, T& component) {                                            \
-        LY_CORE_LOG(LogType::INFO, "Loading Json Called");                                                             \
-        component.serialize(archive);                                                                                  \
+        component.load(archive);                                                                                       \
     }

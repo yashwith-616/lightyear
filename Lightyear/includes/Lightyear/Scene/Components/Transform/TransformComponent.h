@@ -19,7 +19,14 @@ struct LIGHTYEAR_API TransformComponent {
     }
 
     template <class Archive>
-    void serialize(Archive& archive) {
+    void save(Archive& archive) const {
+        archive(cereal::make_nvp("Translation", Translation),
+                cereal::make_nvp("Rotation", Rotation),
+                cereal::make_nvp("Scale", Scale));
+    }
+
+    template <class Archive>
+    void load(Archive& archive) {
         archive(cereal::make_nvp("Translation", Translation),
                 cereal::make_nvp("Rotation", Rotation),
                 cereal::make_nvp("Scale", Scale));

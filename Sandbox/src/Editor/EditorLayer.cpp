@@ -19,8 +19,7 @@ namespace renderer = ly::renderer;
 EditorLayer::EditorLayer() : Layer("Editor") {}
 
 void EditorLayer::OnAttach() {
-    m_Scene = ly::MakeRef<ly::scene::Scene>();
-    // LoadScene();
+    LoadScene();
     m_SceneRuntime = ly::MakeRef<ly::scene::SceneRuntime>(m_Scene.get());
     m_SceneRuntime->Initialize();
 
@@ -42,24 +41,13 @@ void EditorLayer::OnAttach() {
     m_Shader  = renderer::Shader::Create("ShaderBg", g_DefaultShader);
 #pragma endregion
 
-#pragma region SceneCamera
-    ly::scene::Entity editorCamera = m_Scene->CreateEntity("EditorCamera");
-    editorCamera.AddComponent<ly::scene::CameraComponent>();
-    editorCamera.AddSingletonComponent<ly::scene::EditorCameraTag>();
-#pragma endregion
-
-#pragma region Game Scene
-    auto gameCamera = m_Scene->CreateEntity("GameCamera");
-    gameCamera.AddSingletonComponent<ly::scene::MainCameraTag>();
-    gameCamera.AddComponent<ly::scene::CameraComponent>();
-
-    m_CubeEntity = m_Scene->CreateEntity("Cube");
-    m_CubeEntity.AddComponent<ly::scene::MeshComponent>(Geometry::GetCube(), m_Shader, m_Texture);
-    m_CubeEntity.AddComponent<ly::scene::RenderComponent>();
+    /// TODO: Remove when asset-registry is done. Add mesh and render component to cube.
+    ly::scene::Entity entity = m_Scene->FindEntityByName("Cube");
+    entity.AddComponent<ly::scene::MeshComponent>(Geometry::GetCube(), m_Shader, m_Texture);
+    entity.AddComponent<ly::scene::RenderComponent>();
 
     m_SceneRuntime->OnViewportResize(glm::uvec2(spec.Width, spec.Height));
     m_SceneRuntime->SetSceneExecState(ly::scene::SceneRuntimeMode::PLAY);
-#pragma endregion
 
 #pragma region Inti Scene and Panels
     m_SceneWorkspace                  = ly::MakeScope<ESceneWorkspace>("SceneWorkspace");

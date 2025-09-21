@@ -24,7 +24,7 @@ struct LIGHTYEAR_API CameraComponent {
     CameraProjectionType ProjectionType{ CameraProjectionType::PERSPECTIVE };
 
     template <class Archive>
-    void serialize(Archive& archive) {
+    void save(Archive& archive) const {
         uint8_t kProjectionType = static_cast<uint8_t>(ProjectionType);
 
         archive(cereal::make_nvp("OrthographicSize", OrthographicSize),
@@ -33,10 +33,20 @@ struct LIGHTYEAR_API CameraComponent {
                 cereal::make_nvp("NearClip", NearClip),
                 cereal::make_nvp("FarClip", FarClip),
                 cereal::make_nvp("ProjectionType", kProjectionType));
+    }
 
-        if constexpr (Archive::is_loading::value) {
-            ProjectionType = static_cast<CameraProjectionType>(kProjectionType);
-        }
+    template <class Archive>
+    void load(Archive& archive) {
+        uint8_t kProjectionType{};
+
+        archive(cereal::make_nvp("OrthographicSize", OrthographicSize),
+                cereal::make_nvp("AspectRatio", AspectRatio),
+                cereal::make_nvp("FOVRadians", FOVRadians),
+                cereal::make_nvp("NearClip", NearClip),
+                cereal::make_nvp("FarClip", FarClip),
+                cereal::make_nvp("ProjectionType", kProjectionType));
+
+        ProjectionType = static_cast<CameraProjectionType>(kProjectionType);
     }
 
     SERIALIZE_BODY(CameraComponent)
