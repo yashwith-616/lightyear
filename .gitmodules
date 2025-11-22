@@ -29,3 +29,6 @@
 [submodule "Lightyear/extern/cereal"]
 	path = Lightyear/extern/cereal
 	url = git@github.com:USCiLab/cereal.git
+[submodule "Lightyear/extern/json"]
+	path = Lightyear/extern/json
+	url = git@github.com:nlohmann/json.git
