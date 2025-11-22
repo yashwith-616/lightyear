@@ -13,6 +13,7 @@ struct MeshComponent {
     Ref<renderer::Shader> ShaderAsset;
     Ref<renderer::Texture> TextureAsset;
 
+    MeshComponent() = default;
     MeshComponent(Ref<renderer::VertexArray> vertexArray, Ref<renderer::Shader> shader, Ref<renderer::Texture> texture)
         : MeshAsset(std::move(vertexArray)), ShaderAsset(std::move(shader)), TextureAsset(std::move(texture)) {}
 

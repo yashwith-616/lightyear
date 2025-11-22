@@ -20,6 +20,7 @@ void ESceneWorkspace::OnEditorUpdate() {
     BuildSceneTree();
 
     m_SceneGraphPanel->SetSceneTree(m_SceneTree);
+    m_SceneGraphPanel->SetScene(m_GlobalContext->ActiveScene);
     m_ViewportPanel->SetFramebuffer(m_GlobalContext->SceneFramebuffer);
     m_ViewportPanel->SetSceneRuntime(m_GlobalContext->SceneRuntime);
 

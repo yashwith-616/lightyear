@@ -25,12 +25,7 @@ struct LIGHTYEAR_API IDComponent {
         ID = UUID(value);
     }
 
-    // SERIALIZE_BODY(IDComponent)
-    const char* Name = "IDComponent";
-
-    void SaveJson(cereal::JSONOutputArchive& archive) { save(archive); }
-
-    static void LoadJson(cereal::JSONInputArchive& archive, IDComponent& component) { component.load(archive); }
+    SERIALIZE_BODY(IDComponent)
 };
 
 }  // namespace ly::scene

@@ -38,10 +38,10 @@ struct ComponentRegistrar {
 
             entt::meta_factory<T>()
                 .type(entt::hashed_string{ Name.value })
-                .data<&T::Name>("name"_hs)
-                .func<&T::SaveJson>("enttSave"_hs)
-                .func<&T::LoadJson>("enttLoad"_hs)
-                .func<&emplaceComponent<T>>("emplace"_hs);
+                .template data<&T::Name>("name"_hs)
+                .template func<&T::SaveJson>("enttSave"_hs)
+                .template func<&T::LoadJson>("enttLoad"_hs)
+                .template func<&emplaceComponent<T>>("emplace"_hs);
             return true;
         }();
         return once;
