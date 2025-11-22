@@ -1,5 +1,7 @@
 #pragma once
 
+#include <type_traits>
+
 namespace ly::scene {
 
 /**
@@ -48,7 +50,6 @@ struct ComponentGroupGet<ComponentGroup<Components...>> {
  */
 using AllComponents = ComponentGroup<DirtyComponent,
                                      IDComponent,
-                                     MobilityComponent,
                                      RelationshipComponent,
                                      TagComponent,
                                      CameraComponent,

@@ -1,4 +1,5 @@
 ﻿#include "Sandbox/Editor/EditorLayer.h"
+
 #include "Sandbox/Geometry/Geometry.h"
 #include "Sandbox/Helpers/GridRender.h"
 
@@ -7,15 +8,18 @@ LY_DISABLE_WARNINGS_PUSH
 #include <imgui_internal.h>
 LY_DISABLE_WARNINGS_POP
 
-constexpr auto g_ClearColor = glm::vec4(0.13, 0.13, 0.13, 1.0);
-const auto kCameraSavePath  = std::filesystem::path(SAVED_DIR "/camera.ly");
+constexpr auto g_ClearColor       = glm::vec4(0.13, 0.13, 0.13, 1.0);
+const auto kCameraSavePath        = std::filesystem::path(SAVED_DIR "/camera.yaml");
+const auto kSceneSavePath         = std::filesystem::path(SAVED_DIR "/scene.yaml");
+const auto kSceneSavePathJson     = std::filesystem::path(SAVED_DIR "/scene.json");
+const auto kSceneSavePathJsonTest = std::filesystem::path(SAVED_DIR "/scene_test.json");
 
 namespace renderer = ly::renderer;
 
 EditorLayer::EditorLayer() : Layer("Editor") {}
 
 void EditorLayer::OnAttach() {
-    m_Scene        = ly::MakeRef<ly::scene::Scene>();
+    LoadScene();
     m_SceneRuntime = ly::MakeRef<ly::scene::SceneRuntime>(m_Scene.get());
     m_SceneRuntime->Initialize();
 
@@ -37,28 +41,13 @@ void EditorLayer::OnAttach() {
     m_Shader  = renderer::Shader::Create("ShaderBg", g_DefaultShader);
 #pragma endregion
 
-#pragma region SceneCamera
-    ly::scene::Entity editorCamera = m_Scene->CreateEntity("EditorCamera");
-    editorCamera.AddComponent<ly::scene::CameraComponent>();
-    editorCamera.AddSingletonComponent<ly::scene::EditorCameraTag>();
-#pragma endregion
-
-#pragma region Game Scene
-    auto gameCamera = m_Scene->CreateEntity("GameCamera");
-    gameCamera.AddSingletonComponent<ly::scene::MainCameraTag>();
-    if (std::filesystem::exists(kCameraSavePath)) {
-        gameCamera.AddComponent<ly::scene::CameraComponent>(LoadGameCamera());
-    } else {
-        gameCamera.AddComponent<ly::scene::CameraComponent>();
-    }
-
-    m_CubeEntity = m_Scene->CreateEntity("Cube");
-    m_CubeEntity.AddComponent<ly::scene::MeshComponent>(Geometry::GetCube(), m_Shader, m_Texture);
-    m_CubeEntity.AddComponent<ly::scene::RenderComponent>();
+    /// TODO: Remove when asset-registry is done. Add mesh and render component to cube.
+    ly::scene::Entity entity = m_Scene->FindEntityByName("Cube");
+    entity.AddComponent<ly::scene::MeshComponent>(Geometry::GetCube(), m_Shader, m_Texture);
+    entity.AddComponent<ly::scene::RenderComponent>();
 
     m_SceneRuntime->OnViewportResize(glm::uvec2(spec.Width, spec.Height));
     m_SceneRuntime->SetSceneExecState(ly::scene::SceneRuntimeMode::PLAY);
-#pragma endregion
 
 #pragma region Inti Scene and Panels
     m_SceneWorkspace                  = ly::MakeScope<ESceneWorkspace>("SceneWorkspace");
@@ -88,8 +77,8 @@ void EditorLayer::OnEditorRender() {
 
     ImGui::SetNextWindowBgAlpha(0.35f);  // Transparent background
     if (ImGui::Begin("Example: Simple overlay")) {
-        ImGui::Text(std::format("IsRunning: {}", m_SceneRuntime->IsRunning()).c_str());
-        ImGui::Text(std::format("IsPaused: {}", m_SceneRuntime->IsPaused()).c_str());
+        ImGui::Text("IsRunning: %s", m_SceneRuntime->IsRunning() ? "true" : "false");
+        ImGui::Text("IsPaused: %s", m_SceneRuntime->IsPaused() ? "true" : "false");
     }
     ImGui::End();
 
@@ -97,23 +86,15 @@ void EditorLayer::OnEditorRender() {
 }
 
 void EditorLayer::OnDetach() {
-    SaveGameCamera();
+    SaveScene();
 }
 
-ly::scene::CameraComponent EditorLayer::LoadGameCamera() const {
-    LY_LOG(ly::LogType::Info, "Loading camera");
-
-    auto* deserializer = new ly::FileStreamReader(kCameraSavePath);
-    ly::scene::CameraComponent cameraComp;
-    deserializer->ReadObject(cameraComp);
-    LY_LOG(ly::LogType::Info, "Camera Aspect: {}", cameraComp.AspectRatio);
-    return cameraComp;
+void EditorLayer::SaveScene() const {
+    LY_LOG(ly::LogType::INFO, "Saving scene");
+    auto* level = new ly::Level(kSceneSavePathJson, "ALevel");
+    level->SaveScene(*m_Scene);
 }
-
-void EditorLayer::SaveGameCamera() const {
-    LY_LOG(ly::LogType::Info, "Saving camera");
-    auto* serializer               = new ly::FileStreamWriter(kCameraSavePath);
-    ly::scene::Entity cameraEntity = m_Scene->GetPrimaryCameraEntity();
-    auto& cameraComp               = cameraEntity.GetComponent<ly::scene::CameraComponent>();
-    serializer->WriteObject(cameraComp);
+void EditorLayer::LoadScene() {
+    auto* level = new ly::Level(kSceneSavePathJson, "ALevel");
+    m_Scene     = level->LoadScene();
 }

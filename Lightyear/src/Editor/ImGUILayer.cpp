@@ -70,7 +70,7 @@ void ImGUILayer::OnAttach() {
 }
 
 void ImGUILayer::OnDetach() {
-    LY_CORE_LOG(LogType::Trace, "Shutdown IMGUI Editor Layer!");
+    LY_CORE_LOG(LogType::TRACE, "Shutdown IMGUI Editor Layer!");
 
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();

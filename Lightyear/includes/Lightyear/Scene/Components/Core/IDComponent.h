@@ -1,37 +1,36 @@
 #pragma once
 
 #include "Lightyear/LightyearCore.h"
-#include "Lightyear/Serialization/ISerializable.h"
+#include "Lightyear/Scene/Components/ComponentRegistry.h"
 
 namespace ly::scene {
 
-/**
- * @brief Attaches a UUID to the component. All entity present in scene will have this component.
- */
-struct LIGHTYEAR_API IDComponent : ISerializable<IDComponent> {
-    static constexpr int Version = 1;
-
+/// \brief Attaches a UUID to the component. All entity present in scene will have this component.
+struct LIGHTYEAR_API IDComponent {
     UUID ID;
 
     IDComponent() : ID(UUID()) {}
-    IDComponent(const UUID& id) : ID(id) {}
+    explicit IDComponent(const UUID& id) : ID(id) {}
 
-    static void Serialize(StreamWriter* serializer, const IDComponent& component) {
-        serializer->WriteVersion(Version);
-        serializer->WriteRaw(component.ID.Get());
+    template <class Archive>
+    void save(Archive& archive) {
+        uint64_t value = ID.Get();
+        archive(cereal::make_nvp("ID", value));
     }
 
-    static void Deserialize(StreamReader* deserializer, IDComponent& component) {
-        const int currVersion = deserializer->ReadVersion();
-        if (Version != currVersion) {
-            LY_CORE_ASSERT(false, "Version {} and Curr Version has a mismatch! Cannot read file!");
-        }
-
-        component.ID = UUID(deserializer->ReadRaw<uint64_t>());
+    template <class Archive>
+    void load(Archive& archive) {
+        uint64_t value{};
+        archive(cereal::make_nvp("ID", value));
+        ID = UUID(value);
     }
+
+    SERIALIZE_BODY(IDComponent)
 };
 
 }  // namespace ly::scene
+
+REGISTER_COMPONENT(ly::scene::IDComponent, "IDComponent");
 
 LY_DISABLE_WARNINGS_PUSH
 #include <refl.hpp>

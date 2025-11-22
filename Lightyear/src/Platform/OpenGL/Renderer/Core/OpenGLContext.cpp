@@ -71,29 +71,29 @@ constexpr std::string_view GetOpenGLTypeString(GLenum type) {
 ly::LogType GetLogLevelFromOpenGLSeverity(GLenum severity) {
     switch (severity) {
         case GL_DEBUG_SEVERITY_HIGH:
-            return ly::LogType::Fatal;
+            return ly::LogType::FATAL;
         case GL_DEBUG_SEVERITY_MEDIUM:
             return ly::LogType::Error;
         case GL_DEBUG_SEVERITY_LOW:
-            return ly::LogType::Warn;
+            return ly::LogType::WARN;
         case GL_DEBUG_SEVERITY_NOTIFICATION:
-            return ly::LogType::Trace;
+            return ly::LogType::TRACE;
         default:
-            return ly::LogType::Info;
+            return ly::LogType::INFO;
     }
 }
 
 constexpr std::string_view LogTypeToString(ly::LogType type) {
     switch (type) {
-        case ly::LogType::Trace:
+        case ly::LogType::TRACE:
             return "Trace";
-        case ly::LogType::Info:
+        case ly::LogType::INFO:
             return "Info";
-        case ly::LogType::Warn:
+        case ly::LogType::WARN:
             return "Warn";
         case ly::LogType::Error:
             return "Error";
-        case ly::LogType::Fatal:
+        case ly::LogType::FATAL:
             return "Fatal";
         default:
             return "Unknown";
@@ -143,7 +143,7 @@ void OpenGLContext::Init() {
     std::string_view glVersion       = reinterpret_cast<const char*>(glGetString(GL_VERSION));
     std::string_view glShaderVersion = reinterpret_cast<const char*>(glGetString(GL_SHADING_LANGUAGE_VERSION));
 
-    LY_CORE_LOG(LogType::Info,
+    LY_CORE_LOG(LogType::INFO,
                 "OpenGL Renderer:\n"
                 "\tVendor   : {}\n"
                 "\tRenderer : {}\n"
@@ -170,7 +170,7 @@ void OpenGLContext::Init() {
 
     const bool isCoreProfileSet = (profile & GL_CONTEXT_CORE_PROFILE_BIT) != 0;
     std::string_view glProfile  = isCoreProfileSet ? "Core" : "Compatibility";
-    LY_CORE_LOG(LogType::Info, "OpenGL Context: {} profile is active", glProfile);
+    LY_CORE_LOG(LogType::INFO, "OpenGL Context: {} profile is active", glProfile);
 }
 
 void OpenGLContext::SwapBuffers() {

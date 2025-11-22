@@ -13,6 +13,10 @@ public:
 
     void SetSelectedEntity(ly::Ref<ly::scene::Entity> selectedEntity) { m_SelectedEntity = selectedEntity; }
 
+protected:
+    void AddComponent() const;
+    void DrawComponentPanel();
+
 private:
     ly::Ref<ly::scene::Entity> m_SelectedEntity;
     ly::Scope<WidgetDrawer> m_WidgetDrawer;

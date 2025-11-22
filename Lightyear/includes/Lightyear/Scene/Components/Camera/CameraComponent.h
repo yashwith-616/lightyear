@@ -1,15 +1,17 @@
 #pragma once
 
 #include "Lightyear/LightyearCore.h"
-#include "Lightyear/Serialization/ISerializable.h"
+#include "Lightyear/Scene/Components/ComponentRegistry.h"
+
+LY_DISABLE_WARNINGS_PUSH
+#include "entt/entt.hpp"
+LY_DISABLE_WARNINGS_POP
 
 namespace ly::scene {
 
-enum class CameraProjectionType : uint8_t { PERSPECTIVE = BIT(0), ORTHOGRAPHIC = BIT(1) };
+enum class CameraProjectionType : uint8_t { PERSPECTIVE = 0, ORTHOGRAPHIC = 1 };
 
-struct LIGHTYEAR_API CameraComponent : ISerializable<CameraComponent> {
-    static constexpr int Version = 1;
-
+struct LIGHTYEAR_API CameraComponent {
     glm::mat4 ProjectionMatrix;
     glm::mat4 ViewMatrix;
     glm::mat4 Cache_ViewProjectionMatrix;
@@ -21,31 +23,38 @@ struct LIGHTYEAR_API CameraComponent : ISerializable<CameraComponent> {
     float FarClip{ kDefaultFarClip };
     CameraProjectionType ProjectionType{ CameraProjectionType::PERSPECTIVE };
 
-    static void Serialize(StreamWriter* serializer, const CameraComponent& camera) {
-        serializer->WriteVersion(Version);
-        serializer->WriteRaw(camera.OrthographicSize);
-        serializer->WriteRaw(camera.AspectRatio);
-        serializer->WriteRaw(camera.FOVRadians);
-        serializer->WriteRaw(camera.NearClip);
-        serializer->WriteRaw(camera.FarClip);
-        serializer->WriteRaw(camera.ProjectionType);
+    template <class Archive>
+    void save(Archive& archive) const {
+        uint8_t kProjectionType = static_cast<uint8_t>(ProjectionType);
+
+        archive(cereal::make_nvp("OrthographicSize", OrthographicSize),
+                cereal::make_nvp("AspectRatio", AspectRatio),
+                cereal::make_nvp("FOVRadians", FOVRadians),
+                cereal::make_nvp("NearClip", NearClip),
+                cereal::make_nvp("FarClip", FarClip),
+                cereal::make_nvp("ProjectionType", kProjectionType));
     }
 
-    static void Deserialize(StreamReader* deserializer, CameraComponent& camera) {
-        const int currVersion = deserializer->ReadVersion();
-        if (Version != currVersion) {
-            LY_CORE_ASSERT(false, "Version {} and Curr Version has a mismatch! Cannot read file!");
-        }
-        camera.OrthographicSize = deserializer->ReadRaw<float>();
-        camera.AspectRatio      = deserializer->ReadRaw<float>();
-        camera.FOVRadians       = deserializer->ReadRaw<float>();
-        camera.NearClip         = deserializer->ReadRaw<float>();
-        camera.FarClip          = deserializer->ReadRaw<float>();
-        camera.ProjectionType   = static_cast<CameraProjectionType>(deserializer->ReadRaw<uint8_t>());
+    template <class Archive>
+    void load(Archive& archive) {
+        uint8_t kProjectionType{};
+
+        archive(cereal::make_nvp("OrthographicSize", OrthographicSize),
+                cereal::make_nvp("AspectRatio", AspectRatio),
+                cereal::make_nvp("FOVRadians", FOVRadians),
+                cereal::make_nvp("NearClip", NearClip),
+                cereal::make_nvp("FarClip", FarClip),
+                cereal::make_nvp("ProjectionType", kProjectionType));
+
+        ProjectionType = static_cast<CameraProjectionType>(kProjectionType);
     }
+
+    SERIALIZE_BODY(CameraComponent)
 };
 
 }  // namespace ly::scene
+
+REGISTER_COMPONENT(ly::scene::CameraComponent, "CameraComponent");
 
 LY_DISABLE_WARNINGS_PUSH
 #include <refl.hpp>

@@ -105,10 +105,20 @@ set(STB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/extern/stb")
 set(SPDLOG_DIR "${CMAKE_CURRENT_SOURCE_DIR}/extern/spdlog")
 
 # ENTT
-set(ENTT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/extern/entt/single_include")
+set(ENTT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/extern/entt")
 
 # REFL-CPP
 set(REFL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/extern/refl-cpp")
+
+# YAML-CPP
+set(YAML_DIR "${CMAKE_CURRENT_SOURCE_DIR}/extern/yaml-cpp")
+add_subdirectory(${YAML_DIR} "yaml-binaries")
+
+# Cereal
+set(CEREAL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/extern/cereal")
+
+# nlohmann json
+set(JSON_DIR "${CMAKE_CURRENT_SOURCE_DIR}/extern/json")
 
 #-------------------------------------------------
 # Project Library
@@ -122,12 +132,15 @@ target_include_directories(Lightyear
         "${IMGUI_DIR}"
         "${GLAD_DIR}"
         "${GLM_DIR}"
-        "${ENTT_DIR}"
+        "${ENTT_DIR}/single_include"
         "${SPDLOG_DIR}/include"
         "${REFL_DIR}/include"
+        "${CEREAL_DIR}/include"
+        "${JSON_DIR}/single_include"
     SYSTEM PRIVATE
         "${GLFW_DIR}/include"
         "${STB_DIR}"
+        "${YAML_DIR}"
 )
 
 target_link_libraries(Lightyear
@@ -135,6 +148,7 @@ target_link_libraries(Lightyear
         imgui
         $<$<BOOL:${MINGW}>:ws_32>
         glad
+        yaml-cpp::yaml-cpp
     PRIVATE
         glfw
 )

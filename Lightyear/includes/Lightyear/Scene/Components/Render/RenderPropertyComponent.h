@@ -15,11 +15,11 @@ struct LIGHTYEAR_API RenderComponent {
     uint8_t VisibilityFlags = static_cast<uint8_t>(ERenderVisibilityFlags::None);
 
     [[nodiscard]] bool IsHidden() const {
-        return VisibilityFlags & static_cast<uint8_t>(ERenderVisibilityFlags::Hidden);
+        return (VisibilityFlags & static_cast<uint8_t>(ERenderVisibilityFlags::Hidden)) != 0;
     }
 
     [[nodiscard]] bool IsEditorHidden() const {
-        return VisibilityFlags & static_cast<uint8_t>(ERenderVisibilityFlags::EditorHidden);
+        return (VisibilityFlags & static_cast<uint8_t>(ERenderVisibilityFlags::EditorHidden)) != 0;
     }
 };
 

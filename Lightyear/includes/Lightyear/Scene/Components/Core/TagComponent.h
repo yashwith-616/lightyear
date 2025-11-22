@@ -1,33 +1,32 @@
 #pragma once
 
 #include "Lightyear/LightyearCore.h"
-#include "Lightyear/Serialization/ISerializable.h"
+#include "Lightyear/Scene/Components/ComponentRegistry.h"
 
 namespace ly::scene {
 
-struct LIGHTYEAR_API TagComponent : ISerializable<TagComponent> {
-    static constexpr int Version = 1;
-
+struct LIGHTYEAR_API TagComponent {
     std::string Tag{ kNOTSET };
 
     TagComponent() = default;
-    TagComponent(std::string tag) : Tag(std::move(tag)) {}
+    explicit TagComponent(std::string tag) : Tag(std::move(tag)) {}
 
-    static void Serialize(StreamWriter* serializer, const TagComponent& component) {
-        serializer->WriteVersion(Version);
-        serializer->WriteString(component.Tag);
+    template <class Archive>
+    void save(Archive& archive) const {
+        archive(cereal::make_nvp("Tag", Tag));
     }
 
-    static void Deserialize(StreamReader* deserializer, TagComponent& component) {
-        const int kSerializedVersion = deserializer->ReadVersion();
-        if (kSerializedVersion != Version) {
-            LY_CORE_ASSERT(false, "Serialization Error");
-        }
-        component.Tag = deserializer->ReadString();
+    template <class Archive>
+    void load(Archive& archive) {
+        archive(cereal::make_nvp("Tag", Tag));
     }
+
+    SERIALIZE_BODY(TagComponent)
 };
 
 }  // namespace ly::scene
+
+REGISTER_COMPONENT(ly::scene::TagComponent, "TagComponent");
 
 LY_DISABLE_WARNINGS_PUSH
 #include <refl.hpp>

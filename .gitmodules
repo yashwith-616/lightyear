@@ -26,3 +26,6 @@
 [submodule "Lightyear/extern/refl-cpp"]
 	path = Lightyear/extern/refl-cpp
 	url = https://github.com/veselink1/refl-cpp.git
+[submodule "Lightyear/extern/cereal"]
+	path = Lightyear/extern/cereal
+	url = git@github.com:USCiLab/cereal.git
