@@ -19,13 +19,12 @@ set(HDRS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/includes")
 file(GLOB_RECURSE SOURCES "${SRC_DIR}/*.cpp")
 file(GLOB_RECURSE HEADERS "${HDRS_DIR}/*.h")
 
-
 #-------------------------------------------------
 # Project Executable
 #-------------------------------------------------
 add_executable(Sandbox ${SOURCES})
 target_include_directories(Sandbox PUBLIC "${HDRS_DIR}")
-target_link_libraries(Sandbox PRIVATE Lightyear)
+target_link_libraries(Sandbox PUBLIC Lightyear)
 
 
 #-------------------------------------------------
@@ -60,9 +59,11 @@ target_compile_options(Sandbox PRIVATE
         -w  # disables all warnings (optional extreme)
         >
 
-        # GNU Compiler
+        # GCC Compiler
         $<$<CXX_COMPILER_ID:GNU>:
         -w  # disables all warnings
+        -Wl,--gc-sections
+        -s
         >
 )
 

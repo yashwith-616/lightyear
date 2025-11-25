@@ -2,7 +2,7 @@
 
 LY_DISABLE_WARNINGS_PUSH
 #include <GLFW/glfw3.h>
-#include <glad.h>
+#include <glad/glad.h>
 LY_DISABLE_WARNINGS_POP
 
 namespace {

@@ -3,7 +3,6 @@
 #include "Lightyear/Common/Base.h"
 #include "Lightyear/Common/Macros.h"
 #include "Lightyear/Common/Math.h"
-#include "Lightyear/pch/lypch.h"
 
 LY_DISABLE_WARNINGS_PUSH
 #include <spdlog/fmt/ostr.h>

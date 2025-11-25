@@ -3,7 +3,7 @@
 #include "Lightyear/Renderer/Primitives/Buffer.h"
 
 LY_DISABLE_WARNINGS_PUSH
-#include <glad.h>
+#include <glad/glad.h>
 LY_DISABLE_WARNINGS_POP
 
 #pragma region OpenGL Debugging

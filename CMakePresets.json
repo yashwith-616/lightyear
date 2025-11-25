@@ -1,0 +1,170 @@
+{
+  "version": 6,
+  "configurePresets": [
+    {
+      "name": "base",
+      "description": "Common settings for all configurations.",
+      "cacheVariables": {
+        "CMAKE_CXX_STANDARD": "20",
+        "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/extern/vcpkg/scripts/buildsystems/vcpkg.cmake",
+        "VCPKG_FEATURE_FLAGS": "manifests",
+        "LY_TIDY": "OFF"
+      }
+    },
+
+    {
+      "name": "linux-base",
+      "inherits": "base",
+      "description": "Common Linux settings.",
+      "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Linux" },
+      "generator": "Ninja"
+    },
+    {
+      "name": "windows-base",
+      "inherits": "base",
+      "description": "Common Windows settings.",
+      "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Windows" }
+    },
+
+    {
+      "name": "gcc-base",
+      "description": "Shared settings for GCC toolchains.",
+      "cacheVariables": {
+        "CMAKE_CXX_STANDARD": "20"
+      }
+    },
+
+    {
+      "name": "clang-base",
+      "description": "Shared settings for Clang toolchains."
+    },
+
+    {
+      "name": "msvc-base",
+      "inherits": "windows-base",
+      "description": "Shared settings for MSVC.",
+      "generator": "Visual Studio 17 2022",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "cl.exe",
+        "CMAKE_CXX_COMPILER": "cl.exe",
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_GENERATOR_PLATFORM": "x64"
+      },
+      "vendor": {
+        "microsoft.com/VisualStudioSettings/CMake/1.0": {
+          "hostArch": "x64"
+        }
+      }
+    },
+
+    {
+      "name": "linux-gcc-debug",
+      "inherits": ["linux-base", "gcc-base"],
+      "binaryDir": "${sourceDir}/build/linux/gcc/debug",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "gcc",
+        "CMAKE_CXX_COMPILER": "g++",
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "linux-gcc-release",
+      "inherits": ["linux-base", "gcc-base"],
+      "binaryDir": "${sourceDir}/build/linux/gcc/release",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "gcc",
+        "CMAKE_CXX_COMPILER": "g++",
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+
+
+    {
+      "name": "linux-clang-debug",
+      "inherits": ["linux-base", "clang-base"],
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/linux/clang/debug",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "clang",
+        "CMAKE_CXX_COMPILER": "clang++",
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "linux-clang-release",
+      "inherits": ["linux-base", "clang-base"],
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/linux/clang/release",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "clang",
+        "CMAKE_CXX_COMPILER": "clang++",
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+
+
+    {
+      "name": "windows-gcc-debug",
+      "inherits": ["windows-base", "gcc-base"],
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/windows/gcc/debug",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "gcc",
+        "CMAKE_CXX_COMPILER": "g++",
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "windows-gcc-release",
+      "inherits": ["windows-base", "gcc-base"],
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/windows/gcc/release",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "gcc",
+        "CMAKE_CXX_COMPILER": "g++",
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+
+
+    {
+      "name": "windows-clang-debug",
+      "inherits": ["windows-base", "clang-base"],
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/windows/clang/debug",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "clang-cl",
+        "CMAKE_CXX_COMPILER": "clang-cl",
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "windows-clang-release",
+      "inherits": ["windows-base", "clang-base"],
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/windows/clang/release",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "clang-cl",
+        "CMAKE_CXX_COMPILER": "clang-cl",
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+
+    {
+      "name": "windows-msvc-debug",
+      "inherits": "msvc-base",
+      "binaryDir": "${sourceDir}/build/windows/msvc/debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "windows-msvc-release",
+      "inherits": "msvc-base",
+      "binaryDir": "${sourceDir}/build/windows/msvc/release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    }
+  ]
+}

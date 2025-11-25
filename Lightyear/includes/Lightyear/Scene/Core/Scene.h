@@ -52,8 +52,15 @@ private:
     static void OnTransformUpdated(entt::registry& registry, entt::entity entity);
     static void OnCameraUpdated(entt::registry& registry, entt::entity entity);
 
-    template <typename T>
-    void OnComponentAdded(Entity entity, T& component);
+    /*template <typename T>
+    void Scene::OnComponentAdded(Entity /*entity#1#, T& /*component#1#) {
+        LY_CORE_LOG(ly::LogType::WARN, "Scene::OnComponentAdded: Generic handler for component type {}",
+    typeid(T).name());
+
+        if constexpr (std::is_empty_v<T>) {
+            LY_CORE_LOG(ly::LogType::WARN, "Component is an empty type");
+        }
+    }*/
 
     friend class Entity;
 };
