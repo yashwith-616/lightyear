@@ -23,7 +23,6 @@ project (
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
-set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 set(SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
 set(HDRS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/includes")
@@ -61,7 +60,6 @@ configure_file(
         @ONLY
 )
 
-
 #-------------------------------------------------
 # Setup Dependencies
 #-------------------------------------------------
@@ -77,11 +75,12 @@ find_package(imgui CONFIG REQUIRED)
 find_package(nlohmann_json CONFIG REQUIRED)
 find_package(spdlog CONFIG REQUIRED)
 find_package(unordered_dense CONFIG REQUIRED)
-find_package(spdlog CONFIG REQUIRED)
 find_path(REFL_CPP_INCLUDE_DIRS "refl.hpp")
 
 # Configure packages
 set(nlohmann-json_IMPLICIT_CONVERSIONS OFF)
+
+
 
 #-------------------------------------------------
 # Project Library
@@ -106,7 +105,7 @@ target_link_libraries(Lightyear
         glfw
         glm::glm
         imgui::imgui
-        spdlog::spdlog
+        spdlog::spdlog_header_only
         unordered_dense::unordered_dense
     PRIVATE
         glfw
@@ -122,8 +121,6 @@ target_compile_definitions(Lightyear
 	LY_PLATFORM_WINDOWS 
 	GLFW_INCLUDE_NONE
 	STB_IMAGE_IMPLEMENTATION
-    SPDLOG_HEADER_ONLY 
-    FMT_HEADER_ONLY
 )
 
 target_compile_options(Lightyear PRIVATE
@@ -148,8 +145,6 @@ target_compile_options(Lightyear PRIVATE
         # GCC / MinGW
         $<$<CXX_COMPILER_ID:GNU>:
         -w
-        -Wl,--gc-sections
-        -s
         >
 )
 

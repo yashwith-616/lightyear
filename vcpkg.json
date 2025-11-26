@@ -10,11 +10,14 @@
         "gl-api-46"
       ]
     },
+    "glfw3",
     "glm",
     {
       "name": "imgui",
       "features": [
-        "docking-experimental"
+        "docking-experimental",
+        "glfw-binding",
+        "opengl3-binding"
       ]
     },
     "nlohmann-json",
@@ -22,6 +25,6 @@
     "spdlog",
     "stb",
     "unordered-dense",
-    "glfw3"
+    "fmt"
   ]
 }

@@ -4,6 +4,10 @@
 #include "Lightyear/Common/Macros.h"
 #include "Lightyear/Common/Math.h"
 
+#ifdef SPDLOG_FWRITE_UNLOCKED
+    #undef SPDLOG_FWRITE_UNLOCKED
+#endif
+
 LY_DISABLE_WARNINGS_PUSH
 #include <spdlog/fmt/ostr.h>
 #include <spdlog/spdlog.h>
