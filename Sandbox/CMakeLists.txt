@@ -42,30 +42,43 @@ endfunction()
 #-------------------------------------------------
 target_compile_definitions(Sandbox PRIVATE LY_PLATFORM_WINDOWS LY_BUILD_STATIC LY_DEBUG LY_OPENGL_DEBUG)
 target_compile_options(Sandbox PRIVATE
-        # MSVC
+
+        # ---- MSVC (native or clang-cl using MSVC frontend) ----
+        $<$<AND:$<CXX_COMPILER_ID:Clang>,$<STREQUAL:${CMAKE_CXX_COMPILER_FRONTEND_VARIANT},MSVC>>:
+        /EHsc
+        /utf-8
+        /permissive-
+        >
         $<$<CXX_COMPILER_ID:MSVC>:
         /EHsc
         /utf-8
-        /permissive->
+        /permissive-
+        >
 
-        # Clang on Windows (clang-cl)
-        $<$<AND:$<CXX_COMPILER_ID:Clang>>:
+        # ---- Clang GNU mode (clang++ using MinGW) ----
+        $<$<AND:$<CXX_COMPILER_ID:Clang>,$<STREQUAL:${CMAKE_CXX_COMPILER_FRONTEND_VARIANT},GNU>>:
         -fexceptions
         -std=c++20
         -Wno-c++98-compat
         -Wno-c++98-compat-pedantic
         -Wno-pre-c++14-compat
         -Wno-deprecated-declarations
-        -w  # disables all warnings (optional extreme)
+        -w
         >
 
-        # GCC Compiler
+        # ---- GCC ----
         $<$<CXX_COMPILER_ID:GNU>:
-        -w  # disables all warnings
-        -Wl,--gc-sections
-        -s
+        -fexceptions
+        -std=c++20
+        -Wno-c++98-compat
+        -Wno-c++98-compat-pedantic
+        -Wno-pre-c++14-compat
+        -Wno-deprecated-declarations
+        -w
+        -fno-dwarf2-cfi-asm
         >
 )
+
 
 
 #-------------------------------------------------

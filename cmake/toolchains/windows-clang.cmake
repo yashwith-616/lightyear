@@ -1,9 +1,7 @@
 set(CMAKE_SYSTEM_NAME Windows)
 set(CMAKE_SYSTEM_PROCESSOR x86_64)
 
-set(CMAKE_C_COMPILER clang-cl)
-set(CMAKE_CXX_COMPILER clang-cl)
 set(CMAKE_CXX_STANDARD 20)
 
-# Match MSVC ABI
-set(VCPKG_TARGET_TRIPLET "x64-windows-static-md" CACHE STRING "")
+# Match GNU ABI
+set(VCPKG_TARGET_TRIPLET "x64-windows" CACHE STRING "")

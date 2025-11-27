@@ -124,15 +124,21 @@ target_compile_definitions(Lightyear
 )
 
 target_compile_options(Lightyear PRIVATE
-        # MSVC
+
+        # ---- MSVC (native or clang-cl using MSVC frontend) ----
+        $<$<AND:$<CXX_COMPILER_ID:Clang>,$<STREQUAL:${CMAKE_CXX_COMPILER_FRONTEND_VARIANT},MSVC>>:
+        /EHsc
+        /utf-8
+        /permissive-
+        >
         $<$<CXX_COMPILER_ID:MSVC>:
         /EHsc
         /utf-8
         /permissive-
         >
 
-        # Clang on Windows (clang-cl)
-        $<$<AND:$<CXX_COMPILER_ID:Clang>>:
+        # ---- Clang GNU mode (clang++ using MinGW) ----
+        $<$<AND:$<CXX_COMPILER_ID:Clang>,$<STREQUAL:${CMAKE_CXX_COMPILER_FRONTEND_VARIANT},GNU>>:
         -fexceptions
         -std=c++20
         -Wno-c++98-compat
@@ -142,9 +148,16 @@ target_compile_options(Lightyear PRIVATE
         -w
         >
 
-        # GCC / MinGW
+        # ---- GCC ----
         $<$<CXX_COMPILER_ID:GNU>:
+        -fexceptions
+        -std=c++20
+        -Wno-c++98-compat
+        -Wno-c++98-compat-pedantic
+        -Wno-pre-c++14-compat
+        -Wno-deprecated-declarations
         -w
+        -fno-dwarf2-cfi-asm
         >
 )
 
