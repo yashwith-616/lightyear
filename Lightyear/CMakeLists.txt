@@ -157,7 +157,8 @@ target_compile_options(Lightyear PRIVATE
         -Wno-pre-c++14-compat
         -Wno-deprecated-declarations
         -w
-        -fno-dwarf2-cfi-asm
+        -Wa,-mbig-obj
+        -gdwarf-4
         >
 )
 
@@ -186,21 +187,16 @@ target_precompile_headers(Lightyear PRIVATE "${HDRS_DIR}/Lightyear/pch/lypch.h")
 #-------------------------------------------------
 # Post build step
 #-------------------------------------------------
-add_custom_command(TARGET Lightyear POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-    $<TARGET_FILE:Lightyear>
-    $<TARGET_FILE_DIR:Sandbox>
-)
+if (LY_BUILD_DLL)
+    add_custom_target(copy_lightyear_to_sandbox ALL
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_FILE:Lightyear>
+            ${CMAKE_BINARY_DIR}/bin/$<CONFIG>/
+            DEPENDS Lightyear
+    )
+endif ()
 
 add_custom_command(TARGET Lightyear POST_BUILD
 	COMMAND ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR} --target clangformat
 	COMMENT "Running clang-format"
 )
-
-
-#-------------------------------------------------
-# Disable Clang-Tidy
-#-------------------------------------------------
-disable_clang_tidy(imgui)
-disable_clang_tidy(glfw)
-disable_clang_tidy(glad)
