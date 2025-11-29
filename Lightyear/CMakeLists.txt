@@ -26,8 +26,8 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 set(SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
 set(HDRS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/includes")
-file(GLOB_RECURSE SOURCES "${SRC_DIR}/*.cpp")
-file(GLOB_RECURSE HEADERS "${HDRS_DIR}/*.h")
+file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS  "${SRC_DIR}/*.cpp")
+file(GLOB_RECURSE HEADERS CONFIGURE_DEPENDS  "${HDRS_DIR}/*.h")
 
 
 #-------------------------------------------------
@@ -60,65 +60,27 @@ configure_file(
         @ONLY
 )
 
-
 #-------------------------------------------------
 # Setup Dependencies
 #-------------------------------------------------
 find_package(OpenGL REQUIRED )
 include_directories(${OPENGL_INCLUDE_DIRS})
 
-# Glad
-set(GLAD_DIR "${CMAKE_CURRENT_SOURCE_DIR}/extern/glad")
-add_library(glad STATIC "${GLAD_DIR}/glad.c")
-target_include_directories(glad PRIVATE "${GLAD_DIR}")
+#cereal
+find_package(cereal CONFIG REQUIRED)
+find_package(EnTT CONFIG REQUIRED)
+find_package(glad CONFIG REQUIRED)
+find_package(glm CONFIG REQUIRED)
+find_package(imgui CONFIG REQUIRED)
+find_package(nlohmann_json CONFIG REQUIRED)
+find_package(spdlog CONFIG REQUIRED)
+find_package(unordered_dense CONFIG REQUIRED)
+find_path(REFL_CPP_INCLUDE_DIRS "refl.hpp")
 
-# GLFW
-set(GLFW_DIR "${CMAKE_CURRENT_SOURCE_DIR}/extern/glfw")
-set(GLFW_BUILD_EXAMPLES OFF CACHE INTERNAL "Build the glfw example programs")
-set(GLFW_BUILD_TESTS OFF CACHE INTERNAL "Build the glfw test programs")
-set(GLFW_BUILD_DOCS OFF CACHE INTERNAL "Build the glfw documentation")
-set(GLFW_INSTALL OFF CACHE INTERNAL "Generate installation target")
-add_subdirectory(${GLFW_DIR} "glfw-binaries")
+# Configure packages
+set(nlohmann-json_IMPLICIT_CONVERSIONS OFF)
 
-# ImGUI
-set(IMGUI_DIR "${CMAKE_CURRENT_SOURCE_DIR}/extern/imgui")
-add_library(imgui STATIC
-  "${IMGUI_DIR}/imgui.cpp"
-  "${IMGUI_DIR}/imgui_demo.cpp"
-  "${IMGUI_DIR}/imgui_draw.cpp"
-  "${IMGUI_DIR}/imgui_widgets.cpp"
-  "${IMGUI_DIR}/imgui_tables.cpp"
-  "${IMGUI_DIR}/backends/imgui_impl_glfw.cpp"
-  "${IMGUI_DIR}/backends/imgui_impl_opengl3.cpp"
-)
-target_include_directories(imgui PRIVATE "${IMGUI_DIR}")
-target_include_directories(imgui PRIVATE "${GLFW_DIR}/include")
-target_link_libraries(imgui PUBLIC glfw ${OPENGL_LIBRARIES})
 
-# GLM
-set(GLM_DIR "${CMAKE_CURRENT_SOURCE_DIR}/extern/glm")
-
-# STB
-set(STB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/extern/stb")
-
-# SPDLOG
-set(SPDLOG_DIR "${CMAKE_CURRENT_SOURCE_DIR}/extern/spdlog")
-
-# ENTT
-set(ENTT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/extern/entt")
-
-# REFL-CPP
-set(REFL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/extern/refl-cpp")
-
-# YAML-CPP
-set(YAML_DIR "${CMAKE_CURRENT_SOURCE_DIR}/extern/yaml-cpp")
-add_subdirectory(${YAML_DIR} "yaml-binaries")
-
-# Cereal
-set(CEREAL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/extern/cereal")
-
-# nlohmann json
-set(JSON_DIR "${CMAKE_CURRENT_SOURCE_DIR}/extern/json")
 
 #-------------------------------------------------
 # Project Library
@@ -129,26 +91,22 @@ target_include_directories(Lightyear
         "${HDRS_DIR}"
         "${CMAKE_CURRENT_SOURCE_DIR}/config"
     SYSTEM PUBLIC
-        "${IMGUI_DIR}"
-        "${GLAD_DIR}"
-        "${GLM_DIR}"
-        "${ENTT_DIR}/single_include"
-        "${SPDLOG_DIR}/include"
-        "${REFL_DIR}/include"
-        "${CEREAL_DIR}/include"
-        "${JSON_DIR}/single_include"
+        ${REFL_CPP_INCLUDE_DIRS}
     SYSTEM PRIVATE
-        "${GLFW_DIR}/include"
-        "${STB_DIR}"
-        "${YAML_DIR}"
+        ${Stb_INCLUDE_DIR}
 )
 
 target_link_libraries(Lightyear
-    PUBLIC 
-        imgui
-        $<$<BOOL:${MINGW}>:ws_32>
-        glad
-        yaml-cpp::yaml-cpp
+    PUBLIC
+        $<$<BOOL:${MINGW}>:ws2_32>
+        cereal::cereal
+        EnTT::EnTT
+        glad::glad
+        glfw
+        glm::glm
+        imgui::imgui
+        spdlog::spdlog_header_only
+        unordered_dense::unordered_dense
     PRIVATE
         glfw
 )
@@ -163,32 +121,45 @@ target_compile_definitions(Lightyear
 	LY_PLATFORM_WINDOWS 
 	GLFW_INCLUDE_NONE
 	STB_IMAGE_IMPLEMENTATION
-    SPDLOG_HEADER_ONLY 
-    FMT_HEADER_ONLY
 )
 
 target_compile_options(Lightyear PRIVATE
-    # MSVC
-    $<$<CXX_COMPILER_ID:MSVC>:
+
+        # ---- MSVC (native or clang-cl using MSVC frontend) ----
+        $<$<AND:$<CXX_COMPILER_ID:Clang>,$<STREQUAL:${CMAKE_CXX_COMPILER_FRONTEND_VARIANT},MSVC>>:
         /EHsc
         /utf-8
-        /permissive->
+        /permissive-
+        >
+        $<$<CXX_COMPILER_ID:MSVC>:
+        /EHsc
+        /utf-8
+        /permissive-
+        >
 
-    # Clang on Windows (clang-cl)
-    $<$<AND:$<CXX_COMPILER_ID:Clang>>:
+        # ---- Clang GNU mode (clang++ using MinGW) ----
+        $<$<AND:$<CXX_COMPILER_ID:Clang>,$<STREQUAL:${CMAKE_CXX_COMPILER_FRONTEND_VARIANT},GNU>>:
         -fexceptions
         -std=c++20
         -Wno-c++98-compat
         -Wno-c++98-compat-pedantic
         -Wno-pre-c++14-compat
         -Wno-deprecated-declarations
-        -w  # disables all warnings (optional extreme)
-    >
+        -w
+        >
 
-    # GCC Compiler
-    $<$<CXX_COMPILER_ID:GNU>:
-        -w  # disables all warnings
-    >
+        # ---- GCC ----
+        $<$<CXX_COMPILER_ID:GNU>:
+        -fexceptions
+        -std=c++20
+        -Wno-c++98-compat
+        -Wno-c++98-compat-pedantic
+        -Wno-pre-c++14-compat
+        -Wno-deprecated-declarations
+        -w
+        -Wa,-mbig-obj
+        -gdwarf-4
+        >
 )
 
 #-------------------------------------------------
@@ -216,21 +187,16 @@ target_precompile_headers(Lightyear PRIVATE "${HDRS_DIR}/Lightyear/pch/lypch.h")
 #-------------------------------------------------
 # Post build step
 #-------------------------------------------------
-add_custom_command(TARGET Lightyear POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-    $<TARGET_FILE:Lightyear>
-    $<TARGET_FILE_DIR:Sandbox>
-)
+if (LY_BUILD_DLL)
+    add_custom_target(copy_lightyear_to_sandbox ALL
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_FILE:Lightyear>
+            ${CMAKE_BINARY_DIR}/bin/$<CONFIG>/
+            DEPENDS Lightyear
+    )
+endif ()
 
 add_custom_command(TARGET Lightyear POST_BUILD
 	COMMAND ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR} --target clangformat
 	COMMENT "Running clang-format"
 )
-
-
-#-------------------------------------------------
-# Disable Clang-Tidy
-#-------------------------------------------------
-disable_clang_tidy(imgui)
-disable_clang_tidy(glfw)
-disable_clang_tidy(glad)

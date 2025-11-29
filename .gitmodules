@@ -1,34 +1,3 @@
-[submodule "Lightyear/extern/imgui"]
-	path = Lightyear/extern/imgui
-	url = https://github.com/ocornut/imgui.git
-	branch = docking
-[submodule "Lightyear/extern/glfw"]
-	path = Lightyear/extern/glfw
-	url = https://github.com/glfw/glfw.git
-[submodule "Lightyear/extern/glm"]
-	path = Lightyear/extern/glm
-	url = https://github.com/g-truc/glm.git
-[submodule "Lightyear/extern/stb"]
-	path = Lightyear/extern/stb
-	url = https://github.com/nothings/stb.git
-[submodule "Lightyear/extern/entt"]
-	path = Lightyear/extern/entt
-	url = git@github.com:skypjack/entt.git
-[submodule "Lightyear/extern/spdlog"]
-	path = Lightyear/extern/spdlog
-	url = git@github.com:gabime/spdlog.git
-[submodule "Lightyear/extern/yaml-cpp"]
-	path = Lightyear/extern/yaml-cpp
-	url = git@github.com:jbeder/yaml-cpp.git
-[submodule "Lightyear/extern/PhysX"]
-	path = Lightyear/extern/PhysX
-	url = git@github.com:NVIDIA-Omniverse/PhysX.git
-[submodule "Lightyear/extern/refl-cpp"]
-	path = Lightyear/extern/refl-cpp
-	url = https://github.com/veselink1/refl-cpp.git
-[submodule "Lightyear/extern/cereal"]
-	path = Lightyear/extern/cereal
-	url = git@github.com:USCiLab/cereal.git
-[submodule "Lightyear/extern/json"]
-	path = Lightyear/extern/json
-	url = git@github.com:nlohmann/json.git
+[submodule "extern/vcpkg"]
+	path = extern/vcpkg
+	url = git@github.com:microsoft/vcpkg.git

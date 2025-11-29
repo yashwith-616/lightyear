@@ -2,7 +2,7 @@
 #include "Lightyear/Renderer/Primitives/Texture.h"
 
 LY_DISABLE_WARNINGS_PUSH
-#include <glad.h>
+#include <glad/glad.h>
 #include <stb_image.h>
 LY_DISABLE_WARNINGS_POP
 

@@ -24,7 +24,7 @@ public:
     T& AddComponent(Args&&... args) {
         LY_CORE_ASSERT(!HasComponent<T>(), "Entity already has component!");
         T& component = GetRegistry().emplace<T>(m_EntityHandle, std::forward<Args>(args)...);
-        m_Scene->OnComponentAdded<T>(*this, component);
+        // m_Scene->OnComponentAdded<T>(*this, component);
         return component;
     }
 
@@ -47,7 +47,7 @@ public:
     template <typename T, typename... Args>
     T& AddOrReplaceComponent(Args&&... args) {
         T& component = m_Scene->m_Registry.emplace_or_replace<T>(m_EntityHandle, std::forward<Args>(args)...);
-        m_Scene->OnComponentAdded<T>(*this, component);
+        // m_Scene->OnComponentAdded<T>(*this, component);
         return component;
     }
 

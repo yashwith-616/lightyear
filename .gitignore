@@ -11,3 +11,5 @@ out
 *.png*
 
 */saved
+
+CMakeUserPresets.json

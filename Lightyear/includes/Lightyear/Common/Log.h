@@ -3,7 +3,10 @@
 #include "Lightyear/Common/Base.h"
 #include "Lightyear/Common/Macros.h"
 #include "Lightyear/Common/Math.h"
-#include "Lightyear/pch/lypch.h"
+
+#ifdef SPDLOG_FWRITE_UNLOCKED
+    #undef SPDLOG_FWRITE_UNLOCKED
+#endif
 
 LY_DISABLE_WARNINGS_PUSH
 #include <spdlog/fmt/ostr.h>

@@ -19,13 +19,12 @@ set(HDRS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/includes")
 file(GLOB_RECURSE SOURCES "${SRC_DIR}/*.cpp")
 file(GLOB_RECURSE HEADERS "${HDRS_DIR}/*.h")
 
-
 #-------------------------------------------------
 # Project Executable
 #-------------------------------------------------
 add_executable(Sandbox ${SOURCES})
 target_include_directories(Sandbox PUBLIC "${HDRS_DIR}")
-target_link_libraries(Sandbox PRIVATE Lightyear)
+target_link_libraries(Sandbox PUBLIC Lightyear)
 
 
 #-------------------------------------------------
@@ -43,28 +42,43 @@ endfunction()
 #-------------------------------------------------
 target_compile_definitions(Sandbox PRIVATE LY_PLATFORM_WINDOWS LY_BUILD_STATIC LY_DEBUG LY_OPENGL_DEBUG)
 target_compile_options(Sandbox PRIVATE
-        # MSVC
+
+        # ---- MSVC (native or clang-cl using MSVC frontend) ----
+        $<$<AND:$<CXX_COMPILER_ID:Clang>,$<STREQUAL:${CMAKE_CXX_COMPILER_FRONTEND_VARIANT},MSVC>>:
+        /EHsc
+        /utf-8
+        /permissive-
+        >
         $<$<CXX_COMPILER_ID:MSVC>:
         /EHsc
         /utf-8
-        /permissive->
+        /permissive-
+        >
 
-        # Clang on Windows (clang-cl)
-        $<$<AND:$<CXX_COMPILER_ID:Clang>>:
+        # ---- Clang GNU mode (clang++ using MinGW) ----
+        $<$<AND:$<CXX_COMPILER_ID:Clang>,$<STREQUAL:${CMAKE_CXX_COMPILER_FRONTEND_VARIANT},GNU>>:
         -fexceptions
         -std=c++20
         -Wno-c++98-compat
         -Wno-c++98-compat-pedantic
         -Wno-pre-c++14-compat
         -Wno-deprecated-declarations
-        -w  # disables all warnings (optional extreme)
+        -w
         >
 
-        # GNU Compiler
+        # ---- GCC ----
         $<$<CXX_COMPILER_ID:GNU>:
-        -w  # disables all warnings
+        -fexceptions
+        -std=c++20
+        -Wno-c++98-compat
+        -Wno-c++98-compat-pedantic
+        -Wno-pre-c++14-compat
+        -Wno-deprecated-declarations
+        -w
+        -fno-dwarf2-cfi-asm
         >
 )
+
 
 
 #-------------------------------------------------

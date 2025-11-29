@@ -8,30 +8,12 @@ project(LightyearWorkspace)
 add_subdirectory(Lightyear)
 add_subdirectory(Sandbox)
 
-
-##################################################
-# Set build output directories
-##################################################
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-
-option(LY_TIDY "Perform clang tidy analysis on lightyear on build" ON)
-
-##################################################
-# Structure them per configuration (Debug/Release)
-##################################################
-foreach (OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES})
-    string(TOUPPER ${OUTPUTCONFIG} OUTPUTCONFIG)
-    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_BINARY_DIR}/lib)
-    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_BINARY_DIR}/lib)
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_BINARY_DIR}/bin)
-endforeach ()
-
-
 ##################################################
 # Clang Tidy Setup
 ##################################################
+
+option(LY_TIDY "Perform clang tidy analysis on lightyear on build" OFF)
+
 if (LY_TIDY)
     find_program(CLANG_TIDY "clang-tidy")
     if (CLANG_TIDY)

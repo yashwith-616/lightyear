@@ -1,0 +1,30 @@
+{
+  "name": "lightyear",
+  "version": "0.0.1",
+  "dependencies": [
+    "cereal",
+    "entt",
+    {
+      "name": "glad",
+      "features": [
+        "gl-api-46"
+      ]
+    },
+    "glfw3",
+    "glm",
+    {
+      "name": "imgui",
+      "features": [
+        "docking-experimental",
+        "glfw-binding",
+        "opengl3-binding"
+      ]
+    },
+    "nlohmann-json",
+    "refl-cpp",
+    "spdlog",
+    "stb",
+    "unordered-dense",
+    "fmt"
+  ]
+}
