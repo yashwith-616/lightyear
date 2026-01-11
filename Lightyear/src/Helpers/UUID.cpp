@@ -1,18 +1,16 @@
 #include "Lightyear/Helpers/UUID.h"
 
-namespace ly {
+namespace ly
+{
 
-UUID::UUID() : m_UUID(GetUUIDGenerator().Generate()) {}
+Uuid::Uuid() : m_uuid(getUuidGenerator().generate()) {}
 
-UUID::UUID(uint64_t UUID) : m_UUID(UUID) {}
+Uuid::Uuid(uint64_t uuid) : m_uuid(uuid) {}
 
-}  // namespace ly
-
-namespace std {
+} // namespace ly
 
 template <>
-struct hash<ly::UUID> {
-    std::size_t operator()(const ly::UUID& uuid) const noexcept { return hash<uint64_t>()(uuid.Get()); }
-};
-
-}  // namespace std
+struct std::hash<ly::Uuid>
+{
+    std::size_t operator()(const ly::Uuid& uuid) const noexcept { return hash<uint64_t>()(uuid.get()); }
+}; // namespace std

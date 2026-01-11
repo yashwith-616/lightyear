@@ -8,17 +8,18 @@ LY_DISABLE_WARNINGS_PUSH
 #include <imgui_internal.h>
 LY_DISABLE_WARNINGS_POP
 
-constexpr auto g_ClearColor       = glm::vec4(0.13, 0.13, 0.13, 1.0);
-const auto kCameraSavePath        = std::filesystem::path(SAVED_DIR "/camera.yaml");
-const auto kSceneSavePath         = std::filesystem::path(SAVED_DIR "/scene.yaml");
-const auto kSceneSavePathJson     = std::filesystem::path(SAVED_DIR "/scene.json");
+constexpr auto g_ClearColor = glm::vec4(0.13, 0.13, 0.13, 1.0);
+const auto kCameraSavePath = std::filesystem::path(SAVED_DIR "/camera.yaml");
+const auto kSceneSavePath = std::filesystem::path(SAVED_DIR "/scene.yaml");
+const auto kSceneSavePathJson = std::filesystem::path(SAVED_DIR "/scene.json");
 const auto kSceneSavePathJsonTest = std::filesystem::path(SAVED_DIR "/scene_test.json");
 
 namespace renderer = ly::renderer;
 
 EditorLayer::EditorLayer() : Layer("Editor") {}
 
-void EditorLayer::OnAttach() {
+void EditorLayer::OnAttach()
+{
     LoadScene();
     m_SceneRuntime = ly::MakeRef<ly::scene::SceneRuntime>(m_Scene.get());
     m_SceneRuntime->Initialize();
@@ -28,8 +29,8 @@ void EditorLayer::OnAttach() {
     // world. The world needs to be responsible for rendering.
 
     renderer::FramebufferSpecification spec;
-    spec.Width    = ly::kDefaultWindowSize.x;
-    spec.Height   = ly::kDefaultWindowSize.y;
+    spec.Width = ly::kDefaultWindowSize.x;
+    spec.Height = ly::kDefaultWindowSize.y;
     m_Framebuffer = renderer::Framebuffer::Create(spec);
 #pragma endregion
 
@@ -37,8 +38,8 @@ void EditorLayer::OnAttach() {
     // TODO: Texture and Shader will be made as part of the Entity.
     // Will be removed from here in the future implementation
 
-    m_Texture = renderer::Texture2D::Create(ASSET_DIR "/Textures/T_Grid.png");
-    m_Shader  = renderer::Shader::Create("ShaderBg", g_DefaultShader);
+    m_Texture = renderer::Texture2D::create(ASSET_DIR "/Textures/T_Grid.png");
+    m_Shader = renderer::Shader::Create("ShaderBg", g_DefaultShader);
 #pragma endregion
 
     /// TODO: Remove when asset-registry is done. Add mesh and render component to cube.
@@ -50,16 +51,17 @@ void EditorLayer::OnAttach() {
     m_SceneRuntime->SetSceneExecState(ly::scene::SceneRuntimeMode::PLAY);
 
 #pragma region Inti Scene and Panels
-    m_SceneWorkspace                  = ly::MakeScope<ESceneWorkspace>("SceneWorkspace");
-    m_EditorContext                   = ly::MakeRef<GlobalEditorContext>();
-    m_EditorContext->ActiveScene      = m_Scene;
+    m_SceneWorkspace = ly::MakeScope<ESceneWorkspace>("SceneWorkspace");
+    m_EditorContext = ly::MakeRef<GlobalEditorContext>();
+    m_EditorContext->ActiveScene = m_Scene;
     m_EditorContext->SceneFramebuffer = m_Framebuffer;
-    m_EditorContext->SceneRuntime     = m_SceneRuntime;
+    m_EditorContext->SceneRuntime = m_SceneRuntime;
     m_SceneWorkspace->OnAttach(m_EditorContext);
 #pragma endregion
 }
 
-void EditorLayer::OnUpdate(float deltaTime) {
+void EditorLayer::OnUpdate(float deltaTime)
+{
     m_Framebuffer->Bind();
     renderer::RenderCommand::Clear();
     renderer::RenderCommand::SetClearColor(g_ClearColor);
@@ -71,12 +73,14 @@ void EditorLayer::OnUpdate(float deltaTime) {
     m_Framebuffer->Unbind();
 }
 
-void EditorLayer::OnEditorRender() {
+void EditorLayer::OnEditorRender()
+{
     m_SceneWorkspace->OnEditorUpdate();
     m_SceneWorkspace->OnImGuiRender();
 
-    ImGui::SetNextWindowBgAlpha(0.35f);  // Transparent background
-    if (ImGui::Begin("Example: Simple overlay")) {
+    ImGui::SetNextWindowBgAlpha(0.35f); // Transparent background
+    if (ImGui::Begin("Example: Simple overlay"))
+    {
         ImGui::Text("IsRunning: %s", m_SceneRuntime->IsRunning() ? "true" : "false");
         ImGui::Text("IsPaused: %s", m_SceneRuntime->IsPaused() ? "true" : "false");
     }
@@ -85,16 +89,16 @@ void EditorLayer::OnEditorRender() {
     ImGui::ShowDemoWindow();
 }
 
-void EditorLayer::OnDetach() {
-    SaveScene();
-}
+void EditorLayer::OnDetach() { SaveScene(); }
 
-void EditorLayer::SaveScene() const {
+void EditorLayer::SaveScene() const
+{
     LY_LOG(ly::LogType::INFO, "Saving scene");
     auto* level = new ly::Level(kSceneSavePathJson, "ALevel");
     level->SaveScene(*m_Scene);
 }
-void EditorLayer::LoadScene() {
+void EditorLayer::LoadScene()
+{
     auto* level = new ly::Level(kSceneSavePathJson, "ALevel");
-    m_Scene     = level->LoadScene();
+    m_Scene = level->LoadScene();
 }

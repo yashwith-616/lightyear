@@ -1,7 +1,8 @@
 #pragma once
 
 // TODO: Need significant refactoring
-namespace ly {
+namespace ly
+{
 
 /**
  * @brief Tracks the time between frames (frametime)
@@ -9,7 +10,8 @@ namespace ly {
  * This class helps to keep track of the delta time between frames,
  * which can be used to update game logic or animations.
  */
-class Timestep {
+class Timestep
+{
 public:
     Timestep(float time = 0.f) : m_Time(time) {}
 
@@ -24,4 +26,4 @@ private:
     float m_Time;
 };
 
-}  // namespace ly
+} // namespace ly

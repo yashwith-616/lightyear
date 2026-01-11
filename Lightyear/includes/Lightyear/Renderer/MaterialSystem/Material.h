@@ -2,11 +2,13 @@
 
 #include "Lightyear/LightyearCore.h"
 
-namespace ly::renderer {
+namespace ly::renderer
+{
 
 class Shader;
 
-class LIGHTYEAR_API Material {
+class LIGHTYEAR_API Material
+{
 public:
     virtual ~Material() = default;
 
@@ -16,4 +18,4 @@ private:
     Ref<Shader> m_Shader;
 };
 
-}  // namespace ly::renderer
+} // namespace ly::renderer

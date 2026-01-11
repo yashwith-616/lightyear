@@ -3,16 +3,15 @@
 #include "Lightyear.h"
 
 const std::unordered_map<ly::renderer::ShaderType, ly::CPath> g_GridShader = {
-    { ly::renderer::ShaderType::VERTEX, ASSET_DIR "/Shaders/Vertex/S_Grid.vert" },
-    { ly::renderer::ShaderType::FRAGMENT, ASSET_DIR "/Shaders/Fragment/S_Grid.frag" }
-};
+    {ly::renderer::ShaderType::VERTEX, ASSET_DIR "/Shaders/Vertex/S_Grid.vert"},
+    {ly::renderer::ShaderType::FRAGMENT, ASSET_DIR "/Shaders/Fragment/S_Grid.frag"}};
 
 const std::unordered_map<ly::renderer::ShaderType, ly::CPath> g_DefaultShader = {
-    { ly::renderer::ShaderType::VERTEX, ASSET_DIR "/Shaders/Vertex/S_Default.vert" },
-    { ly::renderer::ShaderType::FRAGMENT, ASSET_DIR "/Shaders/Fragment/S_Default.frag" }
-};
+    {ly::renderer::ShaderType::VERTEX, ASSET_DIR "/Shaders/Vertex/S_Default.vert"},
+    {ly::renderer::ShaderType::FRAGMENT, ASSET_DIR "/Shaders/Fragment/S_Default.frag"}};
 
-class GridRender {
+class GridRender
+{
 public:
     GridRender();
     ~GridRender() = default;

@@ -2,9 +2,11 @@
 
 #include "Lightyear/LightyearCore.h"
 
-namespace ly {
+namespace ly
+{
 
-enum class EventType : uint8_t {
+enum class EventType : uint8_t
+{
     None = 0,
 
     WindowClose,
@@ -30,13 +32,14 @@ enum class EventType : uint8_t {
     EditorUpdateEnd,
 };
 
-enum EventCategory {
+enum EventCategory
+{
     EC_APPLICATION = BIT(0),
-    EC_INPUT       = BIT(1),
-    EC_KEYBOARD    = BIT(2),
-    EC_MOUSE       = BIT(3),
+    EC_INPUT = BIT(1),
+    EC_KEYBOARD = BIT(2),
+    EC_MOUSE = BIT(3),
     EC_MOUSEBUTTON = BIT(4),
-    EC_EDITOR      = BIT(5)
+    EC_EDITOR = BIT(5)
 };
 
-}  // namespace ly
+} // namespace ly

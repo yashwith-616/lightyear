@@ -2,25 +2,30 @@
 
 #include "Lightyear/LightyearCore.h"
 
-namespace ly::scene {
+namespace ly::scene
+{
 
-enum class ERenderVisibilityFlags : uint8_t {
-    None             = BIT(0),
-    Hidden           = BIT(1),
-    EditorHidden     = BIT(2),
+enum class ERenderVisibilityFlags : uint8_t
+{
+    None = BIT(0),
+    Hidden = BIT(1),
+    EditorHidden = BIT(2),
     HiddenEverywhere = BIT(3)
 };
 
-struct LIGHTYEAR_API RenderComponent {
+struct LIGHTYEAR_API RenderComponent
+{
     uint8_t VisibilityFlags = static_cast<uint8_t>(ERenderVisibilityFlags::None);
 
-    [[nodiscard]] bool IsHidden() const {
+    [[nodiscard]] bool IsHidden() const
+    {
         return (VisibilityFlags & static_cast<uint8_t>(ERenderVisibilityFlags::Hidden)) != 0;
     }
 
-    [[nodiscard]] bool IsEditorHidden() const {
+    [[nodiscard]] bool IsEditorHidden() const
+    {
         return (VisibilityFlags & static_cast<uint8_t>(ERenderVisibilityFlags::EditorHidden)) != 0;
     }
 };
 
-}  // namespace ly::scene
+} // namespace ly::scene

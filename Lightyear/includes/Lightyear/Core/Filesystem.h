@@ -1,9 +1,11 @@
 #pragma once
 
-namespace ly {
+namespace ly
+{
 
-class Filesystem {
+class Filesystem
+{
 public:
 };
 
-}  // namespace ly
+} // namespace ly

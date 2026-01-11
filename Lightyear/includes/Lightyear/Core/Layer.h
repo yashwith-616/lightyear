@@ -3,7 +3,8 @@
 #include "Lightyear/Events/Event.h"
 #include "Lightyear/LightyearCore.h"
 
-namespace ly {
+namespace ly
+{
 
 /**
  * @brief Base class for all application layers and overlays.
@@ -16,7 +17,8 @@ namespace ly {
  * Derived classes should inherit from `Layer` and override its virtual methods
  * to implement custom behavior specific to their role (e.g., game scene, UI element, debug overlay).
  */
-class LIGHTYEAR_API Layer {
+class LIGHTYEAR_API Layer
+{
 public:
     /**
      * @brief Constructs a Layer with an optional name and assigns a unique ID.
@@ -24,7 +26,7 @@ public:
      * @param name The human-readable name of the layer, useful for debugging and identification.
      * Defaults to "None" if not provided.
      */
-    explicit Layer(std::string name) : m_Name(std::move(name)), m_ID(UUID()) {}
+    explicit Layer(std::string name) : m_Name(std::move(name)), m_ID(Uuid()) {}
 
     /**
      * @brief Virtual destructor to ensure proper cleanup of derived Layer types.
@@ -34,9 +36,9 @@ public:
      */
     virtual ~Layer() = default;
 
-    Layer(const Layer&)                      = delete;
-    Layer& operator=(const Layer&)           = delete;
-    Layer(Layer&& other) noexcept            = default;
+    Layer(const Layer&) = delete;
+    Layer& operator=(const Layer&) = delete;
+    Layer(Layer&& other) noexcept = default;
     Layer& operator=(Layer&& other) noexcept = default;
 
     /**
@@ -86,11 +88,11 @@ public:
     virtual void OnEvent(Event& event) = 0;
 
     [[nodiscard]] const std::string& GetName() const { return m_Name; }
-    [[nodiscard]] UUID GetID() const { return m_ID; }
+    [[nodiscard]] Uuid GetID() const { return m_ID; }
 
 private:
-    std::string m_Name{ "None" };
-    UUID m_ID;
+    std::string m_Name{"None"};
+    Uuid m_ID;
 };
 
-}  // namespace ly
+} // namespace ly

@@ -1,8 +1,17 @@
 #pragma once
 #include "Lightyear/pch/lypch.h"
 
-namespace ly::scene {
+namespace ly::scene
+{
 
-enum class SceneRuntimeMode : uint8_t { NONE = 0, PAUSE, PLAY, SIMULATION, EDIT, MAX };
+enum class SceneRuntimeMode : uint8_t
+{
+    NONE = 0,
+    PAUSE,
+    PLAY,
+    SIMULATION,
+    EDIT,
+    MAX
+};
 
-}  // namespace ly::scene
+} // namespace ly::scene
