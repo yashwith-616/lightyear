@@ -6,21 +6,25 @@
 #include "Lightyear/Renderer/Primitives/Texture.h"
 #include "Lightyear/Renderer/Primitives/VertexArray.h"
 
-namespace ly::scene {
+namespace ly::scene
+{
 
-struct MeshComponent {
+struct MeshComponent
+{
     Ref<renderer::VertexArray> MeshAsset;
     Ref<renderer::Shader> ShaderAsset;
     Ref<renderer::Texture> TextureAsset;
 
     MeshComponent() = default;
-    MeshComponent(Ref<renderer::VertexArray> vertexArray, Ref<renderer::Shader> shader, Ref<renderer::Texture> texture)
-        : MeshAsset(std::move(vertexArray)), ShaderAsset(std::move(shader)), TextureAsset(std::move(texture)) {}
+    MeshComponent(
+        Ref<renderer::VertexArray> vertexArray, Ref<renderer::Shader> shader, Ref<renderer::Texture> texture) :
+        MeshAsset(std::move(vertexArray)), ShaderAsset(std::move(shader)), TextureAsset(std::move(texture))
+    {}
 
-    MeshComponent(const MeshComponent&)            = default;
-    MeshComponent(MeshComponent&&)                 = default;
+    MeshComponent(const MeshComponent&) = default;
+    MeshComponent(MeshComponent&&) = default;
     MeshComponent& operator=(const MeshComponent&) = default;
-    MeshComponent& operator=(MeshComponent&&)      = default;
+    MeshComponent& operator=(MeshComponent&&) = default;
 };
 
-}  // namespace ly::scene
+} // namespace ly::scene

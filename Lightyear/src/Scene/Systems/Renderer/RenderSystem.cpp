@@ -6,17 +6,22 @@
 #include "Lightyear/Scene/Components/Render/RenderPropertyComponent.h"
 #include "Lightyear/Scene/Components/Transform/TransformComponent.h"
 
-namespace ly::scene {
+namespace ly::scene
+{
 RenderSystem::RenderSystem() : ISystem("Renderer", SystemLayer::Gameplay) {}
 
-void RenderSystem::Init(entt::registry& registry) {
+void RenderSystem::Init(entt::registry& registry)
+{
     // Create a scene tree
 }
 
-void RenderSystem::Execute(entt::registry& registry) {
+void RenderSystem::Execute(entt::registry& registry)
+{
     auto view = registry.view<TransformComponent, MeshComponent, RenderComponent, DirtyComponent>();
-    for (auto&& [entity, transform, mesh, renderProperty, dirty] : view.each()) {
-        if (!mesh.ShaderAsset || !mesh.MeshAsset) {
+    for (auto&& [entity, transform, mesh, renderProperty, dirty] : view.each())
+    {
+        if (!mesh.ShaderAsset || !mesh.MeshAsset)
+        {
             LY_CORE_LOG(LogType::WARN, "Submission skipped");
             continue;
         }
@@ -28,8 +33,9 @@ void RenderSystem::Execute(entt::registry& registry) {
     }
 }
 
-void RenderSystem::Shutdown(entt::registry& registry) {
+void RenderSystem::Shutdown(entt::registry& registry)
+{
     // Destroy the scene tree
 }
 
-}  // namespace ly::scene
+} // namespace ly::scene

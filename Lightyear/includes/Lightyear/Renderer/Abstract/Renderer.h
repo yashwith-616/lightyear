@@ -4,13 +4,15 @@
 #include "RendererAPI.h"
 #include "RendererUBO.h"
 
-namespace ly::scene {
+namespace ly::scene
+{
 struct SceneData;
 struct CameraComponent;
 struct TransformComponent;
-}  // namespace ly::scene
+} // namespace ly::scene
 
-namespace ly::renderer {
+namespace ly::renderer
+{
 
 class Shader;
 class VertexArray;
@@ -20,28 +22,32 @@ class Texture;
  * Fix this entire class when Rendering System is prioritized and written
  *
  */
-struct LIGHTYEAR_API RenderSubmission {
+struct LIGHTYEAR_API RenderSubmission
+{
     Ref<Shader> RSShader{};
     Ref<VertexArray> RSVertexArray{};
     Ref<Texture> RSTexture{};
     glm::mat4 RSTransform{};
 
-    RenderSubmission(const Ref<Shader>& shader,
-                     const Ref<VertexArray>& vertexArray,
-                     const Ref<Texture>& texture,
-                     const glm::mat4& transform);
+    RenderSubmission(
+        const Ref<Shader>& shader,
+        const Ref<VertexArray>& vertexArray,
+        const Ref<Texture>& texture,
+        const glm::mat4& transform);
 };
 
-class LIGHTYEAR_API Renderer {
+class LIGHTYEAR_API Renderer
+{
 public:
     static void Init();
     static void Shutdown();
 
     static void OnWindowResize(glm::uvec2 size);
 
-    static void BeginScene(const scene::CameraComponent& camera,
-                           const scene::TransformComponent& cameraTransform,
-                           const scene::SceneData& sceneData);
+    static void BeginScene(
+        const scene::CameraComponent& camera,
+        const scene::TransformComponent& cameraTransform,
+        const scene::SceneData& sceneData);
     static void EndScene();
 
     /**
@@ -67,4 +73,4 @@ private:
     static UBO_Scene s_SceneUBO;
 };
 
-}  // namespace ly::renderer
+} // namespace ly::renderer

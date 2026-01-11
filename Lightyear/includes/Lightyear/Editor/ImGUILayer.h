@@ -5,7 +5,8 @@
 
 enum ImGuiKey : int;
 
-namespace ly {
+namespace ly
+{
 
 class MouseButtonPressedEvent;
 class MouseButtonReleasedEvent;
@@ -18,7 +19,8 @@ class WindowResizeEvent;
 class EditorUpdateBeginEvent;
 class EditorUpdateEndEvent;
 
-class LIGHTYEAR_API ImGUILayer : public Layer {
+class LIGHTYEAR_API ImGUILayer : public Layer
+{
 public:
     ImGUILayer() : Layer("ImGUILayer") {}
     ~ImGUILayer() override;
@@ -52,4 +54,4 @@ protected:
 
     static ImGuiKey GetImGuiKeyCode(int keyCode);
 };
-}  // namespace ly
+} // namespace ly

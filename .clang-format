@@ -1,22 +1,59 @@
-# Format Style Options - Created with Clang Power Tools
+# Generated from CLion C/C++ Code Style settings
 ---
-BasedOnStyle: Chromium
 Language: Cpp
-
+BasedOnStyle: LLVM
 AccessModifierOffset: -4
-AlignConsecutiveAssignments: Consecutive
-AlignEscapedNewlines: Right
-AllowShortBlocksOnASingleLine: Empty
-AllowShortIfStatementsOnASingleLine: WithoutElse
-AllowShortLoopsOnASingleLine: true
-BreakTemplateDeclarations: Yes
+AlignAfterOpenBracket: AlwaysBreak
+AlignConsecutiveAssignments: false
+AlignConsecutiveDeclarations: false
+AlignOperands: false
+AlignTrailingComments: true
+AlwaysBreakTemplateDeclarations: Yes
 BinPackArguments: false
+BinPackParameters: false
+BraceWrapping:
+  AfterCaseLabel: true
+  AfterClass: true
+  AfterControlStatement: true
+  AfterEnum: true
+  AfterFunction: true
+  AfterNamespace: true
+  AfterStruct: true
+  AfterUnion: true
+  AfterExternBlock: true
+  BeforeCatch: true
+  BeforeElse: true
+  BeforeLambdaBody: false
+  BeforeWhile: true
+  SplitEmptyFunction: false
+  SplitEmptyRecord: false
+  SplitEmptyNamespace: false
+BreakBeforeBraces: Custom
+BreakConstructorInitializers: AfterColon
+BreakConstructorInitializersBeforeComma: false
 ColumnLimit: 120
-CompactNamespaces: true
-ConstructorInitializerAllOnOneLineOrOnePerLine: false
-Cpp11BracedListStyle: false
-Standard: c++20
-UseTab: Never
+ConstructorInitializerAllOnOneLineOrOnePerLine: true
+IncludeCategories:
+  - Regex: '^<.*'
+    Priority: 2
+  - Regex: '^".*'
+    Priority: 3
+  - Regex: '.*'
+    Priority: 1
+IncludeIsMainRegex: '([-_](test|unittest))?$'
+IndentCaseBlocks: true
 IndentWidth: 4
-IndentPPDirectives: BeforeHash
+IndentWrappedFunctionNames: true
+InsertNewlineAtEOF: true
+MacroBlockBegin: '^(ASSERT|CHECK|PROFILE|SCOPE).*'
+MacroBlockEnd: ''
+MaxEmptyLinesToKeep: 2
+PointerAlignment: Left
+SpaceAfterCStyleCast: true
+SpaceInEmptyParentheses: false
+SpacesInAngles: false
+SpacesInConditionalStatement: false
+SpacesInCStyleCastParentheses: false
+SpacesInParentheses: false
+TabWidth: 4
 ...

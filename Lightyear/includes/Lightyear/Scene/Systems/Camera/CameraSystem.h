@@ -3,12 +3,14 @@
 #include "Lightyear/LightyearCore.h"
 #include "Lightyear/Scene/Systems/ISystem.h"
 
-namespace ly::scene {
+namespace ly::scene
+{
 
 struct CameraComponent;
 struct TransformComponent;
 
-class LIGHTYEAR_API CameraSystem : public ISystem {
+class LIGHTYEAR_API CameraSystem : public ISystem
+{
 public:
     CameraSystem();
 
@@ -19,8 +21,8 @@ public:
     void Shutdown(entt::registry& registry) override;
 
 private:
-    static void RecalculateViewMatrix(CameraComponent& camera, const TransformComponent& transform);
-    static void RecalculateProjectionMatrix(CameraComponent& camera);
+    static void recalculateViewMatrix(CameraComponent& camera, const TransformComponent& transform);
+    static void recalculateProjectionMatrix(CameraComponent& camera);
 };
 
-}  // namespace ly::scene
+} // namespace ly::scene
