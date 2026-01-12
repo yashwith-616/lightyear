@@ -2,22 +2,20 @@
 
 #include "EventTypes.h"
 
-namespace ly
-{
+namespace ly {
 
 /**
  * @brief The lightyear Event class
  */
-class LIGHTYEAR_API Event
-{
+class LIGHTYEAR_API Event {
     friend class EventDispatcher;
 
 public:
     virtual ~Event() = default;
 
-    virtual EventType GetEventType() const = 0;
+    virtual EventType GetEventType() const   = 0;
     virtual std::string_view GetName() const = 0;
-    virtual int GetCategoryFlags() const = 0;
+    virtual int GetCategoryFlags() const     = 0;
     virtual std::string ToString() const { return std::format("String: {}", GetName()); }
 
     bool IsInCategory(EventCategory category) const noexcept { return GetCategoryFlags() & category; }
@@ -26,24 +24,21 @@ public:
     void SetHandled(bool isHandled) noexcept { m_Handled = isHandled; }
 
 protected:
-    bool m_Handled{false};
+    bool m_Handled{ false };
 };
 
 /**
  * @brief Event dispatcher
  */
-class EventDispatcher
-{
+class EventDispatcher {
 public:
     EventDispatcher(Event& event) : m_Event(event) {}
 
     template <typename T, typename F>
-    bool Dispatch(F&& func)
-    {
+    bool Dispatch(F&& func) {
         static_assert(std::is_base_of_v<Event, T>, "T must inherit from Event");
 
-        if (m_Event.GetEventType() == T::StaticType)
-        {
+        if (m_Event.GetEventType() == T::StaticType) {
             m_Event.m_Handled = func(static_cast<T&>(m_Event));
             return true;
         }
@@ -63,8 +58,7 @@ private:
  * @tparam CategoryFlags the category the event falls under
  */
 template <typename Derived, EventType Type, int CategoryFlags>
-class EventBase : public Event
-{
+class EventBase : public Event {
 public:
     static constexpr EventType StaticType = Type;
 
@@ -75,4 +69,4 @@ public:
     int GetCategoryFlags() const override { return CategoryFlags; }
 };
 
-} // namespace ly
+}  // namespace ly

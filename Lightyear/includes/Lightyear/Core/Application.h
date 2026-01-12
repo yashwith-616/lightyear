@@ -4,8 +4,7 @@
 #include "Lightyear/Core/Window.h"
 #include "Lightyear/LightyearCore.h"
 
-namespace ly
-{
+namespace ly {
 
 class Event;
 class WindowCloseEvent;
@@ -27,29 +26,28 @@ class WindowCloseEvent;
  * This class is not inherently thread-safe by default. All interactions with the `Application` instance should
  * typically occur on the main thread unless explicitly stated otherwise for specific methods.
  */
-class LIGHTYEAR_API Application
-{
+class LIGHTYEAR_API Application {
 public:
     virtual ~Application();
 
-    Application(const Application&) = delete;
+    Application(const Application&)            = delete;
     Application& operator=(const Application&) = delete;
-    Application(Application&&) = delete;
-    Application& operator=(Application&&) = delete;
+    Application(Application&&)                 = delete;
+    Application& operator=(Application&&)      = delete;
 
     /**
      * The following factory method is used for initializing the Application
      *
      * @param app the application ownership
      */
-    static void create(Scope<Application> app);
+    static void Create(Scope<Application> app);
 
     /**
      * Get Reference to Application that has been initialized
      *
      * @return the singleton Application
      */
-    static Application& get();
+    static Application& Get();
 
     /**
      * @brief Initializes the application's core subsystems.
@@ -108,9 +106,9 @@ private:
     Scope<Window> m_Window;
     LayerStack m_LayerStack;
 
-    bool m_IsRunning{true};
-    float m_Frametime{kDefaultFrametime};
-    float m_LastFrameTime{0.f};
+    bool m_IsRunning{ true };
+    float m_Frametime{ kDefaultFrametime };
+    float m_LastFrameTime{ 0.f };
 };
 
-} // namespace ly
+}  // namespace ly

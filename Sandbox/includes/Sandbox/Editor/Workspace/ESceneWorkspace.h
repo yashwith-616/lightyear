@@ -10,8 +10,7 @@
 /**
  * @brief Workspace class responsible for rendering SceneTree.
  */
-class ESceneWorkspace : IEditorWorkspace
-{
+class ESceneWorkspace : IEditorWorkspace {
 public:
     explicit ESceneWorkspace(std::string name) : IEditorWorkspace(std::move(name)) {}
 
@@ -22,14 +21,7 @@ public:
     void OnImGuiRender() override;
 
 protected:
-    enum class EEditorPanel : uint8_t
-    {
-        VIEWPORT = 1,
-        SCENE_GRAPH,
-        INSPECTOR,
-        PLACE_ACTOR,
-        MAX
-    };
+    enum class EEditorPanel : uint8_t { VIEWPORT = 1, SCENE_GRAPH, INSPECTOR, PLACE_ACTOR, MAX };
 
     ImGuiID m_DockspaceID{};
 
@@ -40,8 +32,7 @@ protected:
 
     [[nodiscard]] bool IsDockspaceInitialized() const { return m_bIsInitialized; }
 
-    [[nodiscard]] const ly::scene::Scene& GetScene() const
-    {
+    [[nodiscard]] const ly::scene::Scene& GetScene() const {
         LY_CORE_ASSERT(m_GlobalContext && m_GlobalContext->ActiveScene, "Active Scene is null!");
         return *(m_GlobalContext->ActiveScene);
     }
@@ -54,7 +45,7 @@ private:
     ly::Scope<EViewportPanel> m_ViewportPanel;
     ly::Scope<EEntityDetailsPanel> m_EntityDetailsPanel;
 
-    bool m_bIsInitialized{false};
+    bool m_bIsInitialized{ false };
     ly::Ref<GlobalEditorContext> m_GlobalContext;
     ly::Ref<SceneTreeNode> m_SceneTree;
     ly::WeakRef<SceneTreeNode> m_SelectedNode;

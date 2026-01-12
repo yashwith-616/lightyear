@@ -12,27 +12,24 @@
  * Allows to dirty an entity and reuse the remaining tree as it is.
  * By default dirty should be set to true
  */
-class SceneTreeNode : public std::enable_shared_from_this<SceneTreeNode>
-{
+class SceneTreeNode : public std::enable_shared_from_this<SceneTreeNode> {
 public:
-    std::string Name{"none"};
-    ly::Uuid Id{};
+    std::string Name{ "none" };
+    ly::UUID Id{};
     entt::entity Entity{};
 
     ly::WeakRef<SceneTreeNode> Parent{};
     std::vector<ly::Ref<SceneTreeNode>> Children{};
 
-    SceneTreeNode(std::string name, ly::Uuid uid, entt::entity entity) : Name(std::move(name)), Id(uid), Entity(entity)
-    {}
+    SceneTreeNode(std::string name, ly::UUID uid, entt::entity entity)
+        : Name(std::move(name)), Id(uid), Entity(entity) {}
 
-    void AddChild(ly::Ref<SceneTreeNode> child)
-    {
+    void AddChild(ly::Ref<SceneTreeNode> child) {
         child->Parent = shared_from_this();
         Children.push_back(std::move(child));
     }
 
-    void RemoveChild(const ly::Uuid& id)
-    {
+    void RemoveChild(const ly::UUID& id) {
         const auto it = std::ranges::remove_if(Children, [&](const ly::Ref<SceneTreeNode>& child) {
                             return child->Id == id;
                         }).begin();

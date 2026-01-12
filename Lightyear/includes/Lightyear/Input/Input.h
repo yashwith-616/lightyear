@@ -5,11 +5,9 @@
 #include "KeyCodes.h"
 #include "MouseCodes.h"
 
-namespace ly
-{
+namespace ly {
 
-class LIGHTYEAR_API Input
-{
+class LIGHTYEAR_API Input {
 public:
     static bool IsKeyPressed(KeyCode key);
     static bool IsMouseButtonPressed(MouseCode button);
@@ -17,4 +15,4 @@ public:
     static float GetMouseX();
     static float GetMouseY();
 };
-} // namespace ly
+}  // namespace ly

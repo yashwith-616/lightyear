@@ -2,8 +2,7 @@
 
 #include <Lightyear.h>
 
-class GlobalEditorContext
-{
+class GlobalEditorContext {
 public:
     ly::Ref<ly::scene::Scene> ActiveScene;
     ly::Ref<ly::renderer::Framebuffer> SceneFramebuffer;

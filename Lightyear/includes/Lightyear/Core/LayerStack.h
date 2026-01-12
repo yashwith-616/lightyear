@@ -3,8 +3,7 @@
 #include "Lightyear/Core/Layer.h"
 #include "Lightyear/LightyearCore.h"
 
-namespace ly
-{
+namespace ly {
 
 /**
  * @brief Manages the ordered collection of active Layers and Overlays in the application's runtime.
@@ -22,14 +21,13 @@ namespace ly
  * always be processed and rendered on top of all regular layers. They are pushed via `PushOverlay()`
  * and reside at the higher end of the stack.
  */
-class LIGHTYEAR_API LayerStack final
-{
+class LIGHTYEAR_API LayerStack final {
 public:
-    LayerStack() = default;
-    ~LayerStack() = default;
-    LayerStack(const LayerStack&) = delete;
-    LayerStack& operator=(const LayerStack&) = delete;
-    LayerStack(LayerStack&& other) noexcept = default;
+    LayerStack()                                       = default;
+    ~LayerStack()                                      = default;
+    LayerStack(const LayerStack&)                      = delete;
+    LayerStack& operator=(const LayerStack&)           = delete;
+    LayerStack(LayerStack&& other) noexcept            = default;
     LayerStack& operator=(LayerStack&& other) noexcept = default;
 
     void PushLayer(Scope<Layer> layer);
@@ -46,7 +44,7 @@ public:
 
 private:
     std::vector<Scope<Layer>> m_Layers;
-    int m_LayerInsertIndex{0};
+    int m_LayerInsertIndex{ 0 };
 };
 
-} // namespace ly
+}  // namespace ly

@@ -4,8 +4,7 @@
 #include "Lightyear/Renderer/Abstract/RendererAPI.h"
 #include "Lightyear/Renderer/Primitives/VertexArray.h"
 
-namespace ly::renderer
-{
+namespace ly::renderer {
 
 /**
  * @brief This is a static class which is utilized by the renderer to issue draw calls to the GPU.
@@ -14,8 +13,7 @@ namespace ly::renderer
  * RenderCommand can be improved by adding CommandQueue and running the rendering process in a
  * separate thread
  */
-class LIGHTYEAR_API RenderCommand
-{
+class LIGHTYEAR_API RenderCommand {
 public:
     static void Init() { s_RendererAPI->Init(); }
 
@@ -29,4 +27,4 @@ private:
     static Scope<RendererAPI> s_RendererAPI;
 };
 
-} // namespace ly::renderer
+}  // namespace ly::renderer

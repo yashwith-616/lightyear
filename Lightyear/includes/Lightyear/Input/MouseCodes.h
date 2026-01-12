@@ -1,13 +1,10 @@
 #pragma once
 
-namespace ly
-{
+namespace ly {
 using MouseCode = uint16_t;
 
-namespace Mouse
-{
-enum : MouseCode
-{
+namespace Mouse {
+enum : MouseCode {
     // From glfw3.h
     Button0 = 0,
     Button1 = 1,
@@ -18,10 +15,10 @@ enum : MouseCode
     Button6 = 6,
     Button7 = 7,
 
-    ButtonLast = Button7,
-    ButtonLeft = Button0,
-    ButtonRight = Button1,
+    ButtonLast   = Button7,
+    ButtonLeft   = Button0,
+    ButtonRight  = Button1,
     ButtonMiddle = Button2
 };
 }
-} // namespace ly
+}  // namespace ly

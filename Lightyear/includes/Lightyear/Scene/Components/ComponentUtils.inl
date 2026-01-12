@@ -2,16 +2,14 @@
 
 #include <type_traits>
 
-namespace ly::scene
-{
+namespace ly::scene {
 
 /**
  * @brief Group components together, Allows to pass components in
  * @tparam ...Component List of components
  */
 template <typename... Component>
-struct ComponentGroup
-{
+struct ComponentGroup {
     using Types = std::tuple<Component...>;
 };
 
@@ -24,11 +22,9 @@ struct ComponentGroupView;
  * @tparam ...Components The list of components
  */
 template <typename... Components>
-struct ComponentGroupView<ComponentGroup<Components...>>
-{
+struct ComponentGroupView<ComponentGroup<Components...>> {
     template <typename Registry>
-    static auto view(Registry& registry)
-    {
+    static auto view(Registry& registry) {
         return registry.template view<Components...>();
     }
 };
@@ -42,11 +38,9 @@ struct ComponentGroupGet;
  * @tparam ...Components Group create Component Group using ComponentGroup
  */
 template <typename... Components>
-struct ComponentGroupGet<ComponentGroup<Components...>>
-{
+struct ComponentGroupGet<ComponentGroup<Components...>> {
     template <typename Registry, typename Entity>
-    static auto get(Registry& registry, Entity entity)
-    {
+    static auto get(Registry& registry, Entity entity) {
         return registry.template get<Components...>(entity);
     }
 };
@@ -54,14 +48,13 @@ struct ComponentGroupGet<ComponentGroup<Components...>>
 /**
  * @brief All Components present in Lightyear
  */
-using AllComponents = ComponentGroup<
-    DirtyComponent,
-    IDComponent,
-    RelationshipComponent,
-    TagComponent,
-    CameraComponent,
-    TransformComponent,
-    MeshComponent,
-    RenderComponent>;
+using AllComponents = ComponentGroup<DirtyComponent,
+                                     IDComponent,
+                                     RelationshipComponent,
+                                     TagComponent,
+                                     CameraComponent,
+                                     TransformComponent,
+                                     MeshComponent,
+                                     RenderComponent>;
 
-} // namespace ly::scene
+}  // namespace ly::scene

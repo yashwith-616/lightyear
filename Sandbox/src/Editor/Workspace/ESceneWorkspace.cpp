@@ -4,11 +4,10 @@
 using SceneComponent =
     ly::scene::ComponentGroup<ly::scene::TagComponent, ly::scene::IDComponent, ly::scene::RelationshipComponent>;
 
-void ESceneWorkspace::OnAttach(ly::Ref<GlobalEditorContext> globalContext)
-{
-    m_GlobalContext = globalContext;
-    m_SceneGraphPanel = ly::MakeScope<EESceneGraphPanel>(GetPanelTitle(EEditorPanel::SCENE_GRAPH));
-    m_ViewportPanel = ly::MakeScope<EViewportPanel>(GetPanelTitle(EEditorPanel::VIEWPORT));
+void ESceneWorkspace::OnAttach(ly::Ref<GlobalEditorContext> globalContext) {
+    m_GlobalContext      = globalContext;
+    m_SceneGraphPanel    = ly::MakeScope<EESceneGraphPanel>(GetPanelTitle(EEditorPanel::SCENE_GRAPH));
+    m_ViewportPanel      = ly::MakeScope<EViewportPanel>(GetPanelTitle(EEditorPanel::VIEWPORT));
     m_EntityDetailsPanel = ly::MakeScope<EEntityDetailsPanel>(GetPanelTitle(EEditorPanel::INSPECTOR));
 }
 
@@ -16,30 +15,26 @@ void ESceneWorkspace::OnEvent(ly::Event& event) {}
 
 void ESceneWorkspace::OnUpdate(float deltaTime) {}
 
-void ESceneWorkspace::OnEditorUpdate()
-{
+void ESceneWorkspace::OnEditorUpdate() {
     m_SceneTree.reset();
     BuildSceneTree();
 
     m_SceneGraphPanel->SetSceneTree(m_SceneTree);
     m_SceneGraphPanel->SetScene(m_GlobalContext->ActiveScene);
-    m_ViewportPanel->setFramebuffer(m_GlobalContext->SceneFramebuffer);
-    m_ViewportPanel->setSceneRuntime(m_GlobalContext->SceneRuntime);
+    m_ViewportPanel->SetFramebuffer(m_GlobalContext->SceneFramebuffer);
+    m_ViewportPanel->SetSceneRuntime(m_GlobalContext->SceneRuntime);
 
     m_SelectedNode = m_SceneGraphPanel->GetSelectedNode();
-    if (auto selected = m_SelectedNode.lock())
-    {
+    if (auto selected = m_SelectedNode.lock()) {
         m_EntityDetailsPanel->SetSelectedEntity(
             ly::MakeRef<ly::scene::Entity>(selected->Entity, m_GlobalContext->ActiveScene.get()));
     }
 }
 
-void ESceneWorkspace::OnImGuiRender()
-{
+void ESceneWorkspace::OnImGuiRender() {
     DrawDockspace();
 
-    if (!IsDockspaceInitialized())
-    {
+    if (!IsDockspaceInitialized()) {
         SetupLayout();
         m_bIsInitialized = true;
     }
@@ -49,11 +44,9 @@ void ESceneWorkspace::OnImGuiRender()
     m_EntityDetailsPanel->OnImGuiRender();
 }
 
-void ESceneWorkspace::DrawDockspace()
-{
+void ESceneWorkspace::DrawDockspace() {
     const ImGuiViewport* viewport = ImGui::GetMainViewport();
-    if (viewport == nullptr)
-    {
+    if (viewport == nullptr) {
         LY_LOG(ly::LogType::Error, "Main Viewport is null!");
         return;
     }
@@ -65,8 +58,9 @@ void ESceneWorkspace::DrawDockspace()
     ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
 
     constexpr ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar |
-        ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
-        ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus | ImGuiWindowFlags_NoBackground;
+                                             ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize |
+                                             ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus |
+                                             ImGuiWindowFlags_NoNavFocus | ImGuiWindowFlags_NoBackground;
 
     ImGui::Begin("World Workspace", nullptr, windowFlags);
     ImGui::PopStyleVar(2);
@@ -84,10 +78,8 @@ void ESceneWorkspace::DrawDockspace()
  * 4. Layouts for all window will be distributed to all window beforehand.
  * 5. Panel will have property to hide them. Panel need an enum based dirty flag
  */
-void ESceneWorkspace::SetupLayout() const
-{
-    if (ImGui::DockBuilderGetNode(m_DockspaceID) != nullptr)
-    {
+void ESceneWorkspace::SetupLayout() const {
+    if (ImGui::DockBuilderGetNode(m_DockspaceID) != nullptr) {
         return;
     }
 
@@ -99,7 +91,7 @@ void ESceneWorkspace::SetupLayout() const
     ImGuiID topRight{};
     ImGuiID bottomRight{};
 
-    constexpr float verticalSplitRatio = 0.2f;
+    constexpr float verticalSplitRatio   = 0.2f;
     constexpr float horizontalSplitRatio = 0.5f;
 
     ImGui::DockBuilderSplitNode(m_DockspaceID, ImGuiDir_Right, verticalSplitRatio, &right, &left);
@@ -112,54 +104,47 @@ void ESceneWorkspace::SetupLayout() const
     ImGui::DockBuilderFinish(m_DockspaceID);
 }
 
-void ESceneWorkspace::BuildSceneTree()
-{
+void ESceneWorkspace::BuildSceneTree() {
     const auto& registry = GetScene().GetRegistry();
 
-    m_SceneTree = ly::MakeRef<SceneTreeNode>("root", ly::Uuid(0), entt::null);
+    m_SceneTree = ly::MakeRef<SceneTreeNode>("root", ly::UUID(0), entt::null);
 
-    for (auto&& [entity, tag, id, relation] : ly::scene::ComponentGroupView<SceneComponent>::view(registry).each())
-    {
-        if (relation.Parent != entt::null)
-        {
+    for (auto&& [entity, tag, id, relation] : ly::scene::ComponentGroupView<SceneComponent>::view(registry).each()) {
+        if (relation.Parent != entt::null) {
             continue;
         }
         m_SceneTree->AddChild(BuildSceneTreeRecursive(entity));
     }
 }
 
-ly::Ref<SceneTreeNode> ESceneWorkspace::BuildSceneTreeRecursive(entt::entity entity)
-{
-    const auto& registry = GetScene().GetRegistry();
+ly::Ref<SceneTreeNode> ESceneWorkspace::BuildSceneTreeRecursive(entt::entity entity) {
+    const auto& registry      = GetScene().GetRegistry();
     auto [tag, uid, relation] = ly::scene::ComponentGroupGet<SceneComponent>::get(registry, entity);
 
     ly::Ref<SceneTreeNode> head = ly::MakeRef<SceneTreeNode>(tag.Tag, uid.ID, entity);
 
     entt::entity curr = relation.FirstChild;
-    for (uint32_t i = 0; i < relation.ChildrenCount; ++i)
-    {
+    for (uint32_t i = 0; i < relation.ChildrenCount; ++i) {
         head->AddChild(BuildSceneTreeRecursive(curr));
 
         const auto& childRelation = registry.get<ly::scene::RelationshipComponent>(curr);
-        curr = childRelation.NextSibling;
+        curr                      = childRelation.NextSibling;
     }
 
     return head;
 }
 
-std::string ESceneWorkspace::GetPanelTitle(EEditorPanel editorPanel)
-{
-    switch (editorPanel)
-    {
-    case EEditorPanel::VIEWPORT:
-        return "Viewport";
-    case EEditorPanel::SCENE_GRAPH:
-        return "SceneGraph";
-    case EEditorPanel::INSPECTOR:
-        return "Inspector";
-    case EEditorPanel::PLACE_ACTOR:
-        return "PlaceActor";
-    default:
-        return "None";
+std::string ESceneWorkspace::GetPanelTitle(EEditorPanel editorPanel) {
+    switch (editorPanel) {
+        case EEditorPanel::VIEWPORT:
+            return "Viewport";
+        case EEditorPanel::SCENE_GRAPH:
+            return "SceneGraph";
+        case EEditorPanel::INSPECTOR:
+            return "Inspector";
+        case EEditorPanel::PLACE_ACTOR:
+            return "PlaceActor";
+        default:
+            return "None";
     };
 }
