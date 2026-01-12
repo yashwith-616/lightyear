@@ -110,7 +110,7 @@ enum : keyCode {
     F25         = 314,
 
     /* Keypad */
-    //NOLINTBEGIN
+    // NOLINTBEGIN
     KP0        = 320,
     KP1        = 321,
     KP2        = 322,
@@ -128,7 +128,7 @@ enum : keyCode {
     KPAdd      = 334,
     KPEnter    = 335,
     KPEqual    = 336,
-    //NOLINTEND
+    // NOLINTEND
 
     LeftShift    = 340,
     LeftControl  = 341,

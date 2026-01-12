@@ -36,7 +36,7 @@ struct LIGHTYEAR_API GlobalUniforms {
 
     void init() {
         cameraUbo   = UniformBuffer::create("Camera", sizeof(UboCamera), 1);      // binding = 0
-        sceneUbo    = UniformBuffer::create("Scene", sizeof(UboScene), 2);       // binding = 1
+        sceneUbo    = UniformBuffer::create("Scene", sizeof(UboScene), 2);        // binding = 1
         materialUbo = UniformBuffer::create("Material", sizeof(UboMaterial), 3);  // binding = 2
         objectUbo   = UniformBuffer::create("Object", sizeof(UboObject), 4);      // binding = 3
     }

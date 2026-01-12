@@ -3,7 +3,7 @@
 #include "Lightyear/LightyearCore.h"
 #include "Lightyear/Renderer/Abstract/RendererContext.h"
 
-//NOLINTNEXTLINE
+// NOLINTNEXTLINE
 struct GLFWwindow;
 
 namespace ly::renderer {
