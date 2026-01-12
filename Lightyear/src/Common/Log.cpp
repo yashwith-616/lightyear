@@ -10,16 +10,14 @@ LY_DISABLE_WARNINGS_POP
 
 #include <iostream>
 
-namespace ly
-{
+namespace ly {
 
 Ref<spdlog::logger> Log::s_CoreLogger;
 Ref<spdlog::logger> Log::s_ClientLogger;
 
-constexpr std::string_view kLogRelativePath{"log/lightyear.log"};
+constexpr std::string_view kLogRelativePath{ "log/lightyear.log" };
 
-void Log::Init()
-{
+void Log::Init() {
     // std::filesystem::path savedDirectory = SettingsManager::Project().savedDirectory;
 
     std::vector<spdlog::sink_ptr> logSinks;
@@ -47,6 +45,8 @@ void Log::Init()
     });
 }
 
-void Log::Shutdown() { spdlog::shutdown(); }
+void Log::Shutdown() {
+    spdlog::shutdown();
+}
 
-} // namespace ly
+}  // namespace ly

@@ -7,12 +7,11 @@
 
 extern ly::Scope<ly::Application> CreateApplication();
 
-int main(int argc, char** argv)
-{
+int main(int argc, char** argv) {
     ly::Log::Init();
     {
-        ly::Application::create(CreateApplication());
-        ly::Application::get().Run();
+        ly::Application::Create(CreateApplication());
+        ly::Application::Get().Run();
     }
     ly::Log::Shutdown();
 }

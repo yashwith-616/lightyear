@@ -6,48 +6,44 @@ LY_DISABLE_WARNINGS_PUSH
 #include <random>
 
 #ifdef _MSC_VER
-#include <xhash>
+    #include <xhash>
 #else
-#include <unordered_map>
+    #include <unordered_map>
 #endif
 
 LY_DISABLE_WARNINGS_POP
 
-namespace ly
-{
+namespace ly {
 
-class UuidGenerator
-{
+class UUIDGenerator {
 public:
-    UuidGenerator() : m_engine(m_randomDevice()) {}
+    UUIDGenerator() : m_Engine(m_RandomDevice()) {}
 
-    uint64_t generate() { return m_distribution(m_engine); }
+    uint64_t Generate() { return m_Distribution(m_Engine); }
 
 private:
-    std::random_device m_randomDevice;
-    std::mt19937_64 m_engine;
-    std::uniform_int_distribution<uint64_t> m_distribution;
+    std::random_device m_RandomDevice;
+    std::mt19937_64 m_Engine;
+    std::uniform_int_distribution<uint64_t> m_Distribution;
 };
 
-class Uuid
-{
+class UUID {
 public:
-    Uuid();
-    explicit Uuid(uint64_t uuid);
+    UUID();
+    explicit UUID(uint64_t UUID);
 
-    bool operator==(const Uuid& other) const { return m_uuid == other.m_uuid; }
-    bool operator!=(const Uuid& other) const { return !(*this == other); }
+    bool operator==(const UUID& other) const { return m_UUID == other.m_UUID; }
+    bool operator!=(const UUID& other) const { return !(*this == other); }
 
-    [[nodiscard]] uint64_t get() const { return m_uuid; }
+    [[nodiscard]] uint64_t Get() const { return m_UUID; }
 
 private:
-    uint64_t m_uuid;
+    uint64_t m_UUID;
 };
 
-static UuidGenerator& getUuidGenerator()
-{
-    static UuidGenerator generator;
+static UUIDGenerator& GetUUIDGenerator() {
+    static UUIDGenerator generator;
     return generator;
 }
 
-} // namespace ly
+}  // namespace ly

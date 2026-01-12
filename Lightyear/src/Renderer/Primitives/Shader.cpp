@@ -2,40 +2,33 @@
 #include "Lightyear/Platform/OpenGL/Renderer/Primitives/OpenGLShader.h"
 #include "Lightyear/Renderer/Abstract/Renderer.h"
 
-namespace ly::renderer
-{
+namespace ly::renderer {
 
-Ref<Shader>
-    Shader::Create(const std::string& name, const std::unordered_map<ShaderType, std::filesystem::path>& shaderFiles)
-{
-    switch (Renderer::GetAPI())
-    {
-    case RendererAPI::API::OpenGL:
-        return MakeRef<OpenGLShader>(name, shaderFiles);
-    default:
-        LY_CORE_ASSERT(false, "Invalid API Type is currently not supported!");
-        return nullptr;
+Ref<Shader> Shader::Create(const std::string& name,
+                           const std::unordered_map<ShaderType, std::filesystem::path>& shaderFiles) {
+    switch (Renderer::GetAPI()) {
+        case RendererAPI::API::OpenGL:
+            return MakeRef<OpenGLShader>(name, shaderFiles);
+        default:
+            LY_CORE_ASSERT(false, "Invalid API Type is currently not supported!");
+            return nullptr;
     }
 }
 
-Ref<Shader> Shader::Create(const std::string& name, const std::unordered_map<ShaderType, std::string>& shaderSrcs)
-{
-    switch (Renderer::GetAPI())
-    {
-    case RendererAPI::API::OpenGL:
-        return MakeRef<OpenGLShader>(name, shaderSrcs);
-    default:
-        LY_CORE_ASSERT(false, "Invalid API Type is currently not supported!");
-        return nullptr;
+Ref<Shader> Shader::Create(const std::string& name, const std::unordered_map<ShaderType, std::string>& shaderSrcs) {
+    switch (Renderer::GetAPI()) {
+        case RendererAPI::API::OpenGL:
+            return MakeRef<OpenGLShader>(name, shaderSrcs);
+        default:
+            LY_CORE_ASSERT(false, "Invalid API Type is currently not supported!");
+            return nullptr;
     }
 }
 
-std::string Shader::ReadFile(const std::filesystem::path& shaderFilePath)
-{
+std::string Shader::ReadFile(const std::filesystem::path& shaderFilePath) {
     // Open file in binary, and point the pointer to end of file.
     std::ifstream file(shaderFilePath, std::ios::binary | std::ios::ate);
-    if (!file)
-    {
+    if (!file) {
         LY_CORE_ASSERT(false, "ERROR::SHADER::FILE_NOT_SUCCESSFULLY_READ: {}", shaderFilePath.string());
     }
 
@@ -48,4 +41,4 @@ std::string Shader::ReadFile(const std::filesystem::path& shaderFilePath)
     return content;
 }
 
-} // namespace ly::renderer
+}  // namespace ly::renderer

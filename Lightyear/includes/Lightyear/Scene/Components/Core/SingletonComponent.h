@@ -2,8 +2,7 @@
 
 #include "Lightyear/LightyearCore.h"
 
-namespace ly::scene
-{
+namespace ly::scene {
 
 /// @brief Base class to mark a component as a singleton.
 ///
@@ -20,18 +19,15 @@ namespace ly::scene
 /// - PlayerCharacter
 /// - PlayerController
 template <typename T>
-struct SingletonComponent
-{};
+struct SingletonComponent {};
 
 template <typename T>
-struct is_singleton_component : std::false_type
-{};
+struct is_singleton_component : std::false_type {};
 
 template <typename T>
-struct is_singleton_component<SingletonComponent<T>> : std::true_type
-{};
+struct is_singleton_component<SingletonComponent<T>> : std::true_type {};
 
 template <typename T>
 inline constexpr bool is_singleton_tag_v = is_singleton_component<T>::value;
 
-} // namespace ly::scene
+}  // namespace ly::scene

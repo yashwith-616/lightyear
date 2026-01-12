@@ -7,11 +7,9 @@ LY_DISABLE_WARNINGS_PUSH
 #include <entt/entt.hpp>
 LY_DISABLE_WARNINGS_POP
 
-namespace ly::scene
-{
+namespace ly::scene {
 
-class LIGHTYEAR_API ISystem
-{
+class LIGHTYEAR_API ISystem {
 public:
     ISystem(std::string name, SystemLayer layer) : m_Name(std::move(name)), m_SystemLayer(layer) {}
     virtual ~ISystem() = default;
@@ -27,7 +25,7 @@ public:
      */
     virtual void Execute(entt::registry& registry) = 0;
 
-    virtual void Init(entt::registry& registry) = 0;
+    virtual void Init(entt::registry& registry)     = 0;
     virtual void Shutdown(entt::registry& registry) = 0;
 
     [[nodiscard]] SystemLayer GetSystemLayer() const { return m_SystemLayer; }
@@ -37,10 +35,10 @@ public:
     void SetEnabled(bool enable) { m_IsEnabled = enable; }
 
 private:
-    std::string m_Name{kNOTSET};
-    Uuid m_ID{Uuid()};
-    bool m_IsEnabled{true};
-    SystemLayer m_SystemLayer{SystemLayer::Gameplay};
+    std::string m_Name{ kNOTSET };
+    UUID m_ID{ UUID() };
+    bool m_IsEnabled{ true };
+    SystemLayer m_SystemLayer{ SystemLayer::Gameplay };
 };
 
-} // namespace ly::scene
+}  // namespace ly::scene
