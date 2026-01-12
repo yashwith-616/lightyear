@@ -8,10 +8,10 @@ class LIGHTYEAR_API RendererContext {
 public:
     virtual ~RendererContext() = default;
 
-    static Scope<RendererContext> Create(void* windowHandle);
+    static scope<RendererContext> create(void* windowHandle);
 
-    virtual void Init()        = 0;
-    virtual void SwapBuffers() = 0;
+    virtual void init()        = 0;
+    virtual void swapBuffers() = 0;
 };
 
 }  // namespace ly::renderer

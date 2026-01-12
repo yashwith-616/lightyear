@@ -5,9 +5,9 @@
 namespace ly::scene {
 
 struct LIGHTYEAR_API DirtyComponent {
-    bool Transform : 1         = true;
-    bool Camera_View : 1       = true;
-    bool Camera_Projection : 1 = true;
+    bool transform : 1        = true;
+    bool cameraView : 1       = true;
+    bool cameraProjection : 1 = true;
 };
 
 }  // namespace ly::scene

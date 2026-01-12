@@ -11,101 +11,101 @@
 
 namespace ly::scene {
 
-SceneRuntime::SceneRuntime(Scene* scene) : m_WPtrScene(scene) {}
+SceneRuntime::SceneRuntime(Scene* scene) : m_wPtrScene(scene) {}
 
-void SceneRuntime::Initialize() {
+void SceneRuntime::initialize() {
     // Initialize Systems
-    m_SceneSystems.push_back(MakeScope<CameraSystem>());
-    m_SceneSystems.push_back(MakeScope<RenderSystem>());
+    m_sceneSystems.push_back(makeScope<CameraSystem>());
+    m_sceneSystems.push_back(makeScope<RenderSystem>());
 }
 
-void SceneRuntime::OnBegin() {
-    switch (m_SceneMode) {
-        case SceneRuntimeMode::PAUSE:
-            OnEditBegin();
+void SceneRuntime::onBegin() {
+    switch (m_sceneMode) {
+        case SceneRuntimeMode::Pause:
+            onEditBegin();
             break;
-        case SceneRuntimeMode::PLAY:
-            OnRuntimeBegin();
+        case SceneRuntimeMode::Play:
+            onRuntimeBegin();
             break;
-        case SceneRuntimeMode::SIMULATION:
-            OnSimulationBegin();
+        case SceneRuntimeMode::Simulation:
+            onSimulationBegin();
             break;
         default:
-            LY_CORE_ASSERT(false, "Invalid scene runtime mode {}", static_cast<int>(m_SceneMode));
+            LY_CORE_ASSERT(false, "Invalid scene runtime mode {}", static_cast<int>(m_sceneMode));
     }
 }
 
-void SceneRuntime::OnUpdate(float deltaTime) {
-    switch (m_SceneMode) {
-        case SceneRuntimeMode::PAUSE:
-            OnEditUpdate(deltaTime);
+void SceneRuntime::onUpdate(float deltaTime) {
+    switch (m_sceneMode) {
+        case SceneRuntimeMode::Pause:
+            onEditUpdate(deltaTime);
             break;
-        case SceneRuntimeMode::PLAY:
-            OnRuntimeUpdate(deltaTime);
+        case SceneRuntimeMode::Play:
+            onRuntimeUpdate(deltaTime);
             break;
-        case SceneRuntimeMode::SIMULATION:
-            OnSimulationUpdate(deltaTime);
+        case SceneRuntimeMode::Simulation:
+            onSimulationUpdate(deltaTime);
             break;
         default:
-            LY_CORE_ASSERT(false, "Invalid scene runtime mode {}", static_cast<int>(m_SceneMode));
+            LY_CORE_ASSERT(false, "Invalid scene runtime mode {}", static_cast<int>(m_sceneMode));
     }
 }
 
-void SceneRuntime::OnEnd() {
-    switch (m_SceneMode) {
-        case SceneRuntimeMode::PAUSE:
-            OnEditEnd();
+void SceneRuntime::onEnd() {
+    switch (m_sceneMode) {
+        case SceneRuntimeMode::Pause:
+            onEditEnd();
             break;
-        case SceneRuntimeMode::PLAY:
-            OnRuntimeEnd();
+        case SceneRuntimeMode::Play:
+            onRuntimeEnd();
             break;
-        case SceneRuntimeMode::SIMULATION:
-            OnSimulationEnd();
+        case SceneRuntimeMode::Simulation:
+            onSimulationEnd();
             break;
         default:
-            LY_CORE_ASSERT(false, "Invalid scene runtime mode {}", static_cast<int>(m_SceneMode));
+            LY_CORE_ASSERT(false, "Invalid scene runtime mode {}", static_cast<int>(m_sceneMode));
     }
 }
 
-void SceneRuntime::OnViewportResize(glm::uvec2 size) {
-    m_ViewportSize.x = size.x;
-    m_ViewportSize.y = size.y;
+void SceneRuntime::onViewportResize(glm::uvec2 size) {
+    m_viewportSize.x = size.x;
+    m_viewportSize.y = size.y;
 
-    const float kNewAspectRatio = static_cast<float>(size.x) / static_cast<float>(size.y);
+    float const kNewAspectRatio = static_cast<float>(size.x) / static_cast<float>(size.y);
 
-    Entity primaryCamera   = m_WPtrScene->GetPrimaryCameraEntity();
-    auto& cameraComp       = primaryCamera.GetComponent<CameraComponent>();
-    cameraComp.AspectRatio = kNewAspectRatio;
+    Entity primaryCamera   = m_wPtrScene->getPrimaryCameraEntity();
+    auto& cameraComp       = primaryCamera.getComponent<CameraComponent>();
+    cameraComp.aspectRatio = kNewAspectRatio;
 
-    auto& dirty             = primaryCamera.GetComponent<DirtyComponent>();
-    dirty.Camera_Projection = true;
+    auto& dirty            = primaryCamera.getComponent<DirtyComponent>();
+    dirty.cameraProjection = true;
 }
 
 #pragma region PlayMode
 // NOLINTNEXTLINE
-void SceneRuntime::OnRuntimeBegin() {
+void SceneRuntime::onRuntimeBegin() {
     LY_CORE_ASSERT(false, "OnRuntimeBegin has not been updated yet");
 }
 
-void SceneRuntime::OnRuntimeUpdate(Timestep /*deltaTime*/) {
-    LY_CORE_ASSERT(IsRunning(), "OnUpdate is performed when scene is not paused!");
-    m_SceneData.Time = Application::Get().GetWindow().GetTime();
+void SceneRuntime::onRuntimeUpdate(Timestep /*deltaTime*/) {
+    LY_CORE_ASSERT(isRunning(), "OnUpdate is performed when scene is not paused!");
+    m_sceneData.time = Application::get().getWindow().getTime();
 
-    Entity mainCamera          = m_WPtrScene->GetPrimaryCameraEntity();
-    const auto cameraComp      = mainCamera.GetComponent<CameraComponent>();
-    const auto cameraTransform = mainCamera.GetComponent<TransformComponent>();
-    renderer::Renderer::BeginScene(cameraComp, cameraTransform, m_SceneData);
+    Entity mainCamera          = m_wPtrScene->getPrimaryCameraEntity();
+    auto const cameraComp      = mainCamera.getComponent<CameraComponent>();
+    auto const cameraTransform = mainCamera.getComponent<TransformComponent>();
+    renderer::Renderer::beginScene(cameraComp, cameraTransform, m_sceneData);
 
-    auto& registry = m_WPtrScene->GetRegistry();
-    for (const auto& system : m_SceneSystems) {
-        system->Execute(registry);
+    auto& registry = m_wPtrScene->getRegistry();
+    for (auto const& system : m_sceneSystems) {
+        system->execute(registry);
     }
 
-    renderer::Renderer::EndScene();
+    renderer::Renderer::endScene();
 }
 
 // NOLINTNEXTLINE
-void SceneRuntime::OnRuntimeEnd() {
+void SceneRuntime::onRuntimeEnd() {
     LY_CORE_ASSERT(false, "OnRuntimeEnd has not been updated yet");
 }
 
@@ -113,17 +113,17 @@ void SceneRuntime::OnRuntimeEnd() {
 
 #pragma region SimulateMode
 // NOLINTNEXTLINE
-void SceneRuntime::OnSimulationBegin() {
+void SceneRuntime::onSimulationBegin() {
     LY_CORE_ASSERT(false, "OnSimulationStart has not been updated yet");
 }
 
 // NOLINTNEXTLINE
-void SceneRuntime::OnSimulationUpdate(Timestep /*deltaTime*/) {
+void SceneRuntime::onSimulationUpdate(Timestep /*deltaTime*/) {
     LY_CORE_ASSERT(false, "OnUpdateSimulation has not been updated yet");
 }
 
 // NOLINTNEXTLINE
-void SceneRuntime::OnSimulationEnd() {
+void SceneRuntime::onSimulationEnd() {
     LY_CORE_ASSERT(false, "OnSimulationStop has not been updated yet");
 }
 #pragma endregion
@@ -131,13 +131,13 @@ void SceneRuntime::OnSimulationEnd() {
 #pragma region EditMode
 
 // NOLINTNEXTLINE
-void SceneRuntime::OnEditBegin() {}
+void SceneRuntime::onEditBegin() {}
 
 // NOLINTNEXTLINE
-void SceneRuntime::OnEditUpdate(Timestep deltaTime) {}
+void SceneRuntime::onEditUpdate(Timestep deltaTime) {}
 
 // NOLINTNEXTLINE
-void SceneRuntime::OnEditEnd() {}
+void SceneRuntime::onEditEnd() {}
 
 #pragma endregion
 

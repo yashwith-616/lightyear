@@ -7,23 +7,23 @@ LY_DISABLE_WARNINGS_POP
 
 namespace {
 using ly::renderer::ShaderDataType;
-GLenum GetOpenGLType(const ShaderDataType type) {
+GLenum getOpenGlType(ShaderDataType const type) {
     switch (type) {
-        case ShaderDataType::FLOAT:
-        case ShaderDataType::FLOAT2:
-        case ShaderDataType::FLOAT3:
-        case ShaderDataType::FLOAT4:
-        case ShaderDataType::MAT3:
-        case ShaderDataType::MAT4:
+        case ShaderDataType::Float:
+        case ShaderDataType::Float2:
+        case ShaderDataType::Float3:
+        case ShaderDataType::Float4:
+        case ShaderDataType::Mat3:
+        case ShaderDataType::Mat4:
             return GL_FLOAT;
-        case ShaderDataType::INT:
-        case ShaderDataType::INT2:
-        case ShaderDataType::INT3:
-        case ShaderDataType::INT4:
+        case ShaderDataType::Int:
+        case ShaderDataType::Int2:
+        case ShaderDataType::Int3:
+        case ShaderDataType::Int4:
             return GL_INT;
-        case ShaderDataType::BOOL:
+        case ShaderDataType::Bool:
             return GL_BOOL;
-        case ShaderDataType::NONE:
+        case ShaderDataType::None:
             LY_CORE_ASSERT(false, "ShaderDataType::None is not a valid type!");
             return GL_INVALID_ENUM;
         default:
@@ -35,69 +35,69 @@ GLenum GetOpenGLType(const ShaderDataType type) {
 
 namespace ly::renderer {
 
-OpenGLVertexArray::OpenGLVertexArray() {
-    glCreateVertexArrays(1, &m_RenderID);
+OpenGlVertexArray::OpenGlVertexArray() {
+    glCreateVertexArrays(1, &m_renderId);
 }
 
-OpenGLVertexArray::~OpenGLVertexArray() {
-    glDeleteVertexArrays(1, &m_RenderID);
+OpenGlVertexArray::~OpenGlVertexArray() {
+    glDeleteVertexArrays(1, &m_renderId);
 }
 
-void OpenGLVertexArray::Bind() const {
-    glBindVertexArray(m_RenderID);
+void OpenGlVertexArray::bind() const {
+    glBindVertexArray(m_renderId);
 }
 
-void OpenGLVertexArray::Unbind() const {
+void OpenGlVertexArray::unbind() const {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void OpenGLVertexArray::AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer) {
-    LY_CORE_ASSERT(!vertexBuffer->GetLayout().GetElements().empty(), "Vertex Buffer has no layout");
+void OpenGlVertexArray::addVertexBuffer(ref<VertexBuffer> const& vertexBuffer) {
+    LY_CORE_ASSERT(!vertexBuffer->getLayout().getElements().empty(), "Vertex Buffer has no layout");
 
-    Bind();
-    vertexBuffer->Bind();
+    bind();
+    vertexBuffer->bind();
 
-    const auto& layout = vertexBuffer->GetLayout();
-    for (const auto& element : layout.GetElements()) {
-        const GLenum glType = GetOpenGLType(element.Type);
+    auto const& layout = vertexBuffer->getLayout();
+    for (auto const& element : layout.getElements()) {
+        GLenum const glType = getOpenGlType(element.type);
 
-        switch (element.Type) {
-            case ShaderDataType::FLOAT:
-            case ShaderDataType::FLOAT2:
-            case ShaderDataType::FLOAT3:
-            case ShaderDataType::FLOAT4:
-            case ShaderDataType::INT:
-            case ShaderDataType::INT2:
-            case ShaderDataType::INT3:
-            case ShaderDataType::INT4:
-            case ShaderDataType::BOOL: {
-                const auto strideSize        = narrow_cast<GLsizei>(layout.GetStride());
-                const auto componentCount    = narrow_cast<GLint>(element.GetComponentCount());
-                const GLboolean isNormalized = element.IsNormalized ? GL_TRUE : GL_FALSE;
+        switch (element.type) {
+            case ShaderDataType::Float:
+            case ShaderDataType::Float2:
+            case ShaderDataType::Float3:
+            case ShaderDataType::Float4:
+            case ShaderDataType::Int:
+            case ShaderDataType::Int2:
+            case ShaderDataType::Int3:
+            case ShaderDataType::Int4:
+            case ShaderDataType::Bool: {
+                auto const strideSize        = narrowCast<GLsizei>(layout.getStride());
+                auto const componentCount    = narrowCast<GLint>(element.getComponentCount());
+                GLboolean const isNormalized = element.isNormalized ? GL_TRUE : GL_FALSE;
 
-                glEnableVertexAttribArray(m_VertexBufferIndex);
+                glEnableVertexAttribArray(m_vertexBufferIndex);
                 glVertexAttribPointer(
-                    m_VertexBufferIndex, componentCount, glType, isNormalized, strideSize, AsVoidPtr(element.Offset));
-                m_VertexBufferIndex++;
+                    m_vertexBufferIndex, componentCount, glType, isNormalized, strideSize, asVoidPtr(element.offset));
+                m_vertexBufferIndex++;
                 break;
             }
 
-            case ShaderDataType::MAT3:
-            case ShaderDataType::MAT4: {
-                const auto strideSize        = narrow_cast<GLsizei>(layout.GetStride());
-                const auto componentCount    = narrow_cast<GLint>(element.GetComponentCount());
-                const GLboolean isNormalized = element.IsNormalized ? GL_TRUE : GL_FALSE;
+            case ShaderDataType::Mat3:
+            case ShaderDataType::Mat4: {
+                auto const strideSize        = narrowCast<GLsizei>(layout.getStride());
+                auto const componentCount    = narrowCast<GLint>(element.getComponentCount());
+                GLboolean const isNormalized = element.isNormalized ? GL_TRUE : GL_FALSE;
 
                 for (int i = 0; i < componentCount; i++) {
-                    glEnableVertexAttribArray(m_VertexBufferIndex);
-                    glVertexAttribPointer(m_VertexBufferIndex,
+                    glEnableVertexAttribArray(m_vertexBufferIndex);
+                    glVertexAttribPointer(m_vertexBufferIndex,
                                           componentCount,
                                           glType,
                                           isNormalized,
                                           strideSize,
-                                          AsVoidPtr(element.Offset + (sizeof(float) * componentCount * i)));
-                    glVertexAttribDivisor(m_VertexBufferIndex, 1);
-                    m_VertexBufferIndex++;
+                                          asVoidPtr(element.offset + (sizeof(float) * componentCount * i)));
+                    glVertexAttribDivisor(m_vertexBufferIndex, 1);
+                    m_vertexBufferIndex++;
                 }
                 break;
             }
@@ -106,13 +106,13 @@ void OpenGLVertexArray::AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer) {
         }
     }
 
-    m_Vertexbuffers.push_back(vertexBuffer);
+    m_vertexbuffers.push_back(vertexBuffer);
 }
 
-void OpenGLVertexArray::SetIndexBuffer(const Ref<IndexBuffer>& indexBuffer) {
-    glBindVertexArray(m_RenderID);
-    indexBuffer->Bind();
-    m_IndexBuffer = indexBuffer;
+void OpenGlVertexArray::setIndexBuffer(ref<IndexBuffer> const& indexBuffer) {
+    glBindVertexArray(m_renderId);
+    indexBuffer->bind();
+    m_indexBuffer = indexBuffer;
 }
 
 }  // namespace ly::renderer

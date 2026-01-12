@@ -9,17 +9,17 @@
 namespace ly::scene {
 
 struct MeshComponent {
-    Ref<renderer::VertexArray> MeshAsset;
-    Ref<renderer::Shader> ShaderAsset;
-    Ref<renderer::Texture> TextureAsset;
+    ref<renderer::VertexArray> meshAsset;
+    ref<renderer::Shader> shaderAsset;
+    ref<renderer::Texture> textureAsset;
 
     MeshComponent() = default;
-    MeshComponent(Ref<renderer::VertexArray> vertexArray, Ref<renderer::Shader> shader, Ref<renderer::Texture> texture)
-        : MeshAsset(std::move(vertexArray)), ShaderAsset(std::move(shader)), TextureAsset(std::move(texture)) {}
+    MeshComponent(ref<renderer::VertexArray> vertexArray, ref<renderer::Shader> shader, ref<renderer::Texture> texture)
+        : meshAsset(std::move(vertexArray)), shaderAsset(std::move(shader)), textureAsset(std::move(texture)) {}
 
-    MeshComponent(const MeshComponent&)            = default;
+    MeshComponent(MeshComponent const&)            = default;
     MeshComponent(MeshComponent&&)                 = default;
-    MeshComponent& operator=(const MeshComponent&) = default;
+    MeshComponent& operator=(MeshComponent const&) = default;
     MeshComponent& operator=(MeshComponent&&)      = default;
 };
 

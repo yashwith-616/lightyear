@@ -1,60 +1,60 @@
 #include "Sandbox/Geometry/Geometry.h"
 #include "Sandbox/Geometry/Shapes/ShapeVertex.h"
 
-Geometry* Geometry::s_Geometry = nullptr;
+Geometry* Geometry::geometry = nullptr;
 
 namespace {
 
-ly::Ref<ly::renderer::VertexArray> Init(std::span<const float> vertexData, std::span<const uint32_t> indexData) {
-    const ly::renderer::BufferElement bufferElement(ly::renderer::ShaderDataType::FLOAT3, "aPosition", false);
-    const ly::renderer::BufferElement texCoordBuffer(ly::renderer::ShaderDataType::FLOAT2, "aTexCoord", false);
-    const ly::renderer::BufferLayout bufferLayout = { bufferElement, texCoordBuffer };
+ly::ref<ly::renderer::VertexArray> init(std::span<float const> vertexData, std::span<uint32_t const> indexData) {
+    ly::renderer::BufferElement const bufferElement(ly::renderer::ShaderDataType::Float3, "aPosition", false);
+    ly::renderer::BufferElement const texCoordBuffer(ly::renderer::ShaderDataType::Float2, "aTexCoord", false);
+    ly::renderer::BufferLayout const bufferLayout = { bufferElement, texCoordBuffer };
 
-    const auto vertexBuffer = ly::renderer::VertexBuffer::Create(vertexData);
-    vertexBuffer->SetLayout(bufferLayout);
+    auto const vertexBuffer = ly::renderer::VertexBuffer::create(vertexData);
+    vertexBuffer->setLayout(bufferLayout);
 
-    const auto indexBuffer = ly::renderer::IndexBuffer::Create(indexData);
+    auto const indexBuffer = ly::renderer::IndexBuffer::create(indexData);
 
-    auto vertexArray = ly::renderer::VertexArray::Create();
-    vertexArray->AddVertexBuffer(vertexBuffer);
-    vertexArray->SetIndexBuffer(indexBuffer);
+    auto vertexArray = ly::renderer::VertexArray::create();
+    vertexArray->addVertexBuffer(vertexBuffer);
+    vertexArray->setIndexBuffer(indexBuffer);
 
     return vertexArray;
 }
 
 }  // namespace
 
-static Geometry* GetGeometry() {
-    if (Geometry::s_Geometry == nullptr) {
-        Geometry::s_Geometry = new Geometry;
+static Geometry* getGeometry() {
+    if (Geometry::geometry == nullptr) {
+        Geometry::geometry = new Geometry;
     }
 
-    return Geometry::s_Geometry;
+    return Geometry::geometry;
 }
 
 Geometry::Geometry() {
-    CubeVertexArray  = Init(g_CubeVerticesSpan, g_CubeIndicesSpan);
-    PlaneVertexArray = Init(g_PlaneVerticesSpan, g_PlaneIndicesSpan);
+    cubeVertexArray  = init(k_cubeVerticesSpan, k_cubeIndicesSpan);
+    planeVertexArray = init(k_planeVerticesSpan, k_planeIndicesSpan);
 
-    s_Geometry = this;
+    geometry = this;
 }
 
-ly::Ref<ly::renderer::VertexArray> Geometry::GetPlane() {
-    return GetGeometry()->PlaneVertexArray;
+ly::ref<ly::renderer::VertexArray> Geometry::getPlane() {
+    return getGeometry()->planeVertexArray;
 }
 
-ly::Ref<ly::renderer::VertexArray> Geometry::GetCube() {
-    return GetGeometry()->CubeVertexArray;
+ly::ref<ly::renderer::VertexArray> Geometry::getCube() {
+    return getGeometry()->cubeVertexArray;
 }
 
-ly::Ref<ly::renderer::VertexArray> Geometry::GetCylinder() {
-    return GetGeometry()->CylinderVertexArray;
+ly::ref<ly::renderer::VertexArray> Geometry::getSphere() {
+    return getGeometry()->sphereVertexArray;
 }
 
-ly::Ref<ly::renderer::VertexArray> Geometry::GetSphere() {
-    return GetGeometry()->SphereVertexArray;
+ly::ref<ly::renderer::VertexArray> Geometry::getCylinder() {
+    return getGeometry()->cylinderVertexArray;
 }
 
-ly::Ref<ly::renderer::VertexArray> Geometry::GetTeapot() {
-    return GetGeometry()->TeapotVertexArray;
+ly::ref<ly::renderer::VertexArray> Geometry::getTeapot() {
+    return getGeometry()->teapotVertexArray;
 }

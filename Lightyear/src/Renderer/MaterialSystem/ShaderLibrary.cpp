@@ -2,23 +2,23 @@
 
 namespace ly::renderer {
 
-void ShaderLibrary::Add(const Ref<Shader>& shader) {
-    const auto& name = shader->GetName();
+void ShaderLibrary::add(ref<Shader> const& shader) {
+    auto const& name = shader->getName();
 
-    LY_CORE_ASSERT(!IsPresent(name), "Shader already exists!");
-    m_Shaders[name] = shader;
+    LY_CORE_ASSERT(!isPresent(name), "Shader already exists!");
+    m_shaders[name] = shader;
 }
 
-Ref<Shader> ShaderLibrary::LoadShader(const std::string& shaderName,
-                                      const std::unordered_map<ShaderType, CPath>& filePaths) {
-    auto shader = Shader::Create(shaderName, filePaths);
-    Add(shader);
+ref<Shader> ShaderLibrary::loadShader(std::string const& shaderName,
+                                      std::unordered_map<ShaderType, cPath> const& filePaths) {
+    auto shader = Shader::create(shaderName, filePaths);
+    add(shader);
     return shader;
 }
 
-Ref<Shader> ShaderLibrary::Get(const std::string& shaderName) const {
-    const auto& iterator = m_Shaders.find(shaderName);
-    LY_CORE_ASSERT(iterator != m_Shaders.end(), "Shader not found!");
+ref<Shader> ShaderLibrary::get(std::string const& shaderName) const {
+    auto const& iterator = m_shaders.find(shaderName);
+    LY_CORE_ASSERT(iterator != m_shaders.end(), "Shader not found!");
     return iterator->second;
 }
 

@@ -6,64 +6,64 @@ LY_DISABLE_WARNINGS_POP
 
 namespace ly::renderer {
 
-OpenGLFramebuffer::OpenGLFramebuffer(const FramebufferSpecification& spec) : m_Specification(spec) {
-    Invalidate();
+OpenGlFramebuffer::OpenGlFramebuffer(FramebufferSpecification const& spec) : m_specification(spec) {
+    invalidate();
 }
 
-OpenGLFramebuffer::~OpenGLFramebuffer() {
-    glDeleteFramebuffers(1, &m_RenderID);
-    glDeleteTextures(1, &m_ColorAttachment);
-    glDeleteTextures(1, &m_DepthAttachment);
+OpenGlFramebuffer::~OpenGlFramebuffer() {
+    glDeleteFramebuffers(1, &m_renderId);
+    glDeleteTextures(1, &m_colorAttachment);
+    glDeleteTextures(1, &m_depthAttachment);
 }
 
-void OpenGLFramebuffer::Invalidate() {
-    if (m_RenderID > 0) {
-        glDeleteFramebuffers(1, &m_RenderID);
-        glDeleteTextures(1, &m_ColorAttachment);
-        glDeleteTextures(1, &m_DepthAttachment);
+void OpenGlFramebuffer::invalidate() {
+    if (m_renderId > 0) {
+        glDeleteFramebuffers(1, &m_renderId);
+        glDeleteTextures(1, &m_colorAttachment);
+        glDeleteTextures(1, &m_depthAttachment);
     }
 
-    const GLsizei& width  = narrow_cast<GLsizei>(m_Specification.Width);
-    const GLsizei& height = narrow_cast<GLsizei>(m_Specification.Height);
+    GLsizei const& width  = narrowCast<GLsizei>(m_specification.width);
+    GLsizei const& height = narrowCast<GLsizei>(m_specification.height);
 
     glViewport(0, 0, width, height);
 
     // Create framebuffer
-    glCreateFramebuffers(1, &m_RenderID);
-    glBindFramebuffer(GL_FRAMEBUFFER, m_RenderID);
+    glCreateFramebuffers(1, &m_renderId);
+    glBindFramebuffer(GL_FRAMEBUFFER, m_renderId);
 
     // Color Attachment
-    glCreateTextures(GL_TEXTURE_2D, 1, &m_ColorAttachment);
-    glBindTexture(GL_TEXTURE_2D, m_ColorAttachment);
+    glCreateTextures(GL_TEXTURE_2D, 1, &m_colorAttachment);
+    glBindTexture(GL_TEXTURE_2D, m_colorAttachment);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_ColorAttachment, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_colorAttachment, 0);
 
     // Depth Attachment
-    glCreateTextures(GL_TEXTURE_2D, 1, &m_DepthAttachment);
-    glBindTexture(GL_TEXTURE_2D, m_DepthAttachment);
+    glCreateTextures(GL_TEXTURE_2D, 1, &m_depthAttachment);
+    glBindTexture(GL_TEXTURE_2D, m_depthAttachment);
     glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH24_STENCIL8, width, height);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, m_DepthAttachment, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, m_depthAttachment, 0);
 
     LY_CORE_ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE, "Framebuffer is incomplete!");
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void OpenGLFramebuffer::Resize(uint32_t width, uint32_t height) {
+void OpenGlFramebuffer::resize(uint32_t width, uint32_t height) {
     LY_CORE_ASSERT((width > 0 && height > 0), "Invalid Framebuffer resize width {} & height {}", width, height);
 
-    m_Specification.Width  = width;
-    m_Specification.Height = height;
-    Invalidate();  // Recreate framebuffer with new size
+    m_specification.width  = width;
+    m_specification.height = height;
+    invalidate();  // Recreate framebuffer with new size
 }
 
-void OpenGLFramebuffer::Bind() {
-    glBindFramebuffer(GL_FRAMEBUFFER, m_RenderID);
+void OpenGlFramebuffer::bind() {
+    glBindFramebuffer(GL_FRAMEBUFFER, m_renderId);
 }
 
-void OpenGLFramebuffer::Unbind() {
+void OpenGlFramebuffer::unbind() {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 }  // namespace ly::renderer

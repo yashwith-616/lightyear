@@ -14,77 +14,77 @@
 
 namespace ly::renderer {
 
-GlobalUniforms Renderer::s_GlobalUniforms;
-UBO_Camera Renderer::s_CameraUBO;
-UBO_Material Renderer::s_MaterialUBO;
-UBO_Object Renderer::s_ObjectUBO;
-UBO_Scene Renderer::s_SceneUBO;
-
-std::vector<RenderSubmission> Renderer::s_RenderQueue;
-
-RenderSubmission::RenderSubmission(const Ref<Shader>& shader,
-                                   const Ref<VertexArray>& vertexArray,
-                                   const Ref<Texture>& texture,
-                                   const glm::mat4& transform)
-    : RSShader(shader), RSVertexArray(vertexArray), RSTexture(texture), RSTransform(transform) {}
-
-void Renderer::Init() {
-    RenderCommand::Init();
-    s_GlobalUniforms.Init();
-    s_GlobalUniforms.Bind();
+RenderSubmission::RenderSubmission(ref<Shader> const& shader,
+                                   ref<VertexArray> const& vertexArray,
+                                   ref<Texture> const& texture,
+                                   glm::mat4 const& transform)
+    : rsShader(shader), rsVertexArray(vertexArray), rsTexture(texture), rsTransform(transform) {}
+void Renderer::init() {
+    RenderCommand::init();
+    m_sGlobalUniforms.init();
+    m_sGlobalUniforms.bind();
 }
-
-void Renderer::Shutdown() {}
-
-void Renderer::OnWindowResize(glm::uvec2 size) {}
-
-void Renderer::BeginScene(const scene::CameraComponent& camera,
-                          const scene::TransformComponent& cameraTransform,
-                          const scene::SceneData& sceneData) {
+void Renderer::shutdown() {}
+void Renderer::onWindowResize(glm::uvec2 size) {}
+void Renderer::beginScene(scene::CameraComponent const& camera,
+                          scene::TransformComponent const& cameraTransform,
+                          scene::SceneData const& sceneData) {
     // Camera UBO
-    s_CameraUBO.u_ViewProjection = camera.Cache_ViewProjectionMatrix;
-    s_CameraUBO.u_View           = camera.ViewMatrix;
-    s_CameraUBO.u_CameraPosition = cameraTransform.Translation;
-    s_CameraUBO.u_ZoomLevel      = 1.0f;
-    s_GlobalUniforms.UploadCamera(s_CameraUBO);
+    m_sCameraUbo.uViewProjection = camera.cacheViewProjectionMatrix;
+    m_sCameraUbo.uView           = camera.viewMatrix;
+    m_sCameraUbo.uCameraPosition = cameraTransform.translation;
+    m_sCameraUbo.uZoomLevel      = 1.0f;
+    m_sGlobalUniforms.uploadCamera(m_sCameraUbo);
 
     // Scene UBO
-    s_SceneUBO.u_Time = sceneData.Time;
-    s_GlobalUniforms.UploadScene(s_SceneUBO);
+    m_sSceneUbo.uTime = sceneData.time;
+    m_sGlobalUniforms.uploadScene(m_sSceneUbo);
 
     // Material UBO
-    s_MaterialUBO.u_BaseColor  = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
-    s_MaterialUBO.u_Properties = glm::vec4(0.0f);
-    s_GlobalUniforms.UploadMaterial(s_MaterialUBO);
+    m_sMaterialUbo.uBaseColor  = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+    m_sMaterialUbo.uProperties = glm::vec4(0.0f);
+    m_sGlobalUniforms.uploadMaterial(m_sMaterialUbo);
 
     // Reset render queue
-    s_RenderQueue.clear();
+    m_sRenderQueue.clear();
 }
 
-void Renderer::EndScene() {
-    Flush();
+void Renderer::endScene() {
+    flush();
 }
 
-void Renderer::Submit(const RenderSubmission& submission) {
-    s_RenderQueue.push_back(submission);
+void Renderer::submit(RenderSubmission const& submission) {
+    m_sRenderQueue.push_back(submission);
 }
 
-void Renderer::Flush() {
-    for (const auto& submission : s_RenderQueue) {
-        s_ObjectUBO.u_ModelMatrix = submission.RSTransform;
-        s_GlobalUniforms.UploadObject(s_ObjectUBO);
+void Renderer::flush() {
+    for (auto const& submission : m_sRenderQueue) {
+        m_sObjectUbo.uModelMatrix = submission.rsTransform;
+        m_sGlobalUniforms.uploadObject(m_sObjectUbo);
 
-        const Ref<OpenGLShader> openGLShader = std::dynamic_pointer_cast<OpenGLShader>(submission.RSShader);
-        openGLShader->Use();
+        ref<OpenGlShader> const openGlShader = std::dynamic_pointer_cast<OpenGlShader>(submission.rsShader);
+        openGlShader->use();
 
-        if (submission.RSTexture != nullptr) {
-            submission.RSTexture->Bind(1);
-            openGLShader->SetUniform("u_Color", 1);
+        if (submission.rsTexture != nullptr) {
+            submission.rsTexture->bind(1);
+            openGlShader->setUniform("u_Color", 1);
         }
 
-        submission.RSVertexArray->Bind();
-        RenderCommand::DrawIndexed(submission.RSVertexArray);
+        submission.rsVertexArray->bind();
+        RenderCommand::drawIndexed(submission.rsVertexArray);
     }
 }
+
+std::vector<RenderSubmission> Renderer::m_sRenderQueue;
+
+GlobalUniforms Renderer::m_sGlobalUniforms;
+
+UboCamera Renderer::m_sCameraUbo;
+
+UboMaterial Renderer::m_sMaterialUbo;
+
+UboObject Renderer::m_sObjectUbo;
+
+UboScene Renderer::m_sSceneUbo;
 
 }  // namespace ly::renderer

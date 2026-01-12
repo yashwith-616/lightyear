@@ -5,14 +5,14 @@
 
 #ifdef LY_PLATFORM_WINDOWS
 
-extern ly::Scope<ly::Application> CreateApplication();
+extern ly::scope<ly::Application> createApplication();
 
 int main(int argc, char** argv) {
-    ly::Log::Init();
+    ly::Log::init();
     {
-        ly::Application::Create(CreateApplication());
-        ly::Application::Get().Run();
+        ly::Application::create(createApplication());
+        ly::Application::get().run();
     }
-    ly::Log::Shutdown();
+    ly::Log::shutdown();
 }
 #endif

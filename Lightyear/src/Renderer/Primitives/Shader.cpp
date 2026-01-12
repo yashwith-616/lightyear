@@ -4,28 +4,28 @@
 
 namespace ly::renderer {
 
-Ref<Shader> Shader::Create(const std::string& name,
-                           const std::unordered_map<ShaderType, std::filesystem::path>& shaderFiles) {
-    switch (Renderer::GetAPI()) {
-        case RendererAPI::API::OpenGL:
-            return MakeRef<OpenGLShader>(name, shaderFiles);
+ref<Shader> Shader::create(std::string const& name,
+                           std::unordered_map<ShaderType, std::filesystem::path> const& shaderFiles) {
+    switch (Renderer::getApi()) {
+        case RendererApi::Api::OpenGl:
+            return makeRef<OpenGlShader>(name, shaderFiles);
         default:
             LY_CORE_ASSERT(false, "Invalid API Type is currently not supported!");
             return nullptr;
     }
 }
 
-Ref<Shader> Shader::Create(const std::string& name, const std::unordered_map<ShaderType, std::string>& shaderSrcs) {
-    switch (Renderer::GetAPI()) {
-        case RendererAPI::API::OpenGL:
-            return MakeRef<OpenGLShader>(name, shaderSrcs);
+ref<Shader> Shader::create(std::string const& name, std::unordered_map<ShaderType, std::string> const& shaderSrcs) {
+    switch (Renderer::getApi()) {
+        case RendererApi::Api::OpenGl:
+            return makeRef<OpenGlShader>(name, shaderSrcs);
         default:
             LY_CORE_ASSERT(false, "Invalid API Type is currently not supported!");
             return nullptr;
     }
 }
 
-std::string Shader::ReadFile(const std::filesystem::path& shaderFilePath) {
+std::string Shader::readFile(std::filesystem::path const& shaderFilePath) {
     // Open file in binary, and point the pointer to end of file.
     std::ifstream file(shaderFilePath, std::ios::binary | std::ios::ate);
     if (!file) {
@@ -33,7 +33,7 @@ std::string Shader::ReadFile(const std::filesystem::path& shaderFilePath) {
     }
 
     // Get size of file by reading the current position of the file pointer(at the end)
-    const std::streamsize size = file.tellg();
+    std::streamsize const size = file.tellg();
     // Move the file pointer to the beginning and create a string with exact size
     file.seekg(0, std::ios::beg);
     std::string content(size, '\0');

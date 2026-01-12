@@ -7,44 +7,43 @@ namespace ly {
 
 class LIGHTYEAR_API KeyEvent {
 public:
-    int GetKeyCode() const { return m_KeyCode; }
+    int getKeyCode() const { return m_keyCode; }
 
 protected:
-    explicit KeyEvent(int keyCode) : m_KeyCode(keyCode) {}
+    explicit KeyEvent(int keyCode) : m_keyCode(keyCode) {}
 
-    int m_KeyCode;
+    int m_keyCode;
 };
 
-class LIGHTYEAR_API KeyPressedEvent : public EventBase<KeyPressedEvent, EventType::KeyPressed, EC_KEYBOARD | EC_INPUT>,
+class LIGHTYEAR_API KeyPressedEvent : public EventBase<KeyPressedEvent, EventType::KeyPressed, EcKeyboard | EcInput>,
                                       public KeyEvent {
 public:
-    KeyPressedEvent(int keycode, int repeatCount) : KeyEvent(keycode), m_RepeatCount(repeatCount) {}
+    KeyPressedEvent(int keycode, int repeatCount) : KeyEvent(keycode), m_repeatCount(repeatCount) {}
 
-    int GetRepeatCount() const { return m_RepeatCount; }
+    int getRepeatCount() const { return m_repeatCount; }
 
-    std::string ToString() const override {
-        return std::format("KeyPressedEvent: {} ({} repeats)", m_KeyCode, m_RepeatCount);
+    std::string toString() const override {
+        return std::format("KeyPressedEvent: {} ({} repeats)", m_keyCode, m_repeatCount);
     }
 
 protected:
-    int m_RepeatCount{ 0 };
+    int m_repeatCount{ 0 };
 };
 
-class LIGHTYEAR_API KeyReleasedEvent
-    : public EventBase<KeyReleasedEvent, EventType::KeyReleased, EC_KEYBOARD | EC_INPUT>,
-      public KeyEvent {
+class LIGHTYEAR_API KeyReleasedEvent : public EventBase<KeyReleasedEvent, EventType::KeyReleased, EcKeyboard | EcInput>,
+                                       public KeyEvent {
 public:
     KeyReleasedEvent(int keycode) : KeyEvent(keycode) {}
 
-    std::string ToString() const override { return std::format("KeyReleasedEvent: {}", m_KeyCode); }
+    std::string toString() const override { return std::format("KeyReleasedEvent: {}", m_keyCode); }
 };
 
-class LIGHTYEAR_API KeyTypedEvent : public EventBase<KeyTypedEvent, EventType::KeyTyped, EC_KEYBOARD | EC_INPUT>,
+class LIGHTYEAR_API KeyTypedEvent : public EventBase<KeyTypedEvent, EventType::KeyTyped, EcKeyboard | EcInput>,
                                     public KeyEvent {
 public:
     KeyTypedEvent(int keycode) : KeyEvent(keycode) {}
 
-    std::string ToString() const override { return std::format("KeyTypedEvent: {}", m_KeyCode); }
+    std::string toString() const override { return std::format("KeyTypedEvent: {}", m_keyCode); }
 };
 
 }  // namespace ly

@@ -11,16 +11,16 @@ class LIGHTYEAR_API VertexArray {
 public:
     virtual ~VertexArray() = default;
 
-    static Ref<VertexArray> Create();
+    static ref<VertexArray> create();
 
-    virtual void Bind() const   = 0;
-    virtual void Unbind() const = 0;
+    virtual void bind() const = 0;
+    virtual void unbind() const;
 
-    virtual void AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer) = 0;
-    virtual void SetIndexBuffer(const Ref<IndexBuffer>& indexBuffer)    = 0;
+    virtual void addVertexBuffer(ref<VertexBuffer> const& vertexBuffer);
+    virtual void setIndexBuffer(ref<IndexBuffer> const& indexBuffer);
 
-    [[nodiscard]] virtual const std::vector<Ref<VertexBuffer>>& GetVertexBuffers() const = 0;
-    [[nodiscard]] virtual const IndexBuffer& GetIndexBuffer() const                      = 0;
+    [[nodiscard]] virtual std::vector<ref<VertexBuffer>> const& getVertexBuffers() const = 0;
+    [[nodiscard]] virtual IndexBuffer const& getIndexBuffer() const                      = 0;
 };
 
 }  // namespace ly::renderer

@@ -4,10 +4,10 @@ namespace ly::scene {
 
 MovementSystem::MovementSystem() : ISystem("MovementSystemV1", SystemLayer::Gameplay) {}
 
-void MovementSystem::Init(entt::registry& registry) {}
+void MovementSystem::execute(entt::registry& registry) {}
 
-void MovementSystem::Shutdown(entt::registry& registry) {}
+void MovementSystem::init(entt::registry& registry) {}
 
-void MovementSystem::Execute(entt::registry& registry) {}
+void MovementSystem::shutdown(entt::registry& registry) {}
 
 }  // namespace ly::scene

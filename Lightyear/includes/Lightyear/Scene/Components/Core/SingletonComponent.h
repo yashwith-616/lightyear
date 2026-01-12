@@ -22,12 +22,12 @@ template <typename T>
 struct SingletonComponent {};
 
 template <typename T>
-struct is_singleton_component : std::false_type {};
+struct IsSingletonComponent : std::false_type {};
 
 template <typename T>
-struct is_singleton_component<SingletonComponent<T>> : std::true_type {};
+struct IsSingletonComponent<SingletonComponent<T>> : std::true_type {};
 
 template <typename T>
-inline constexpr bool is_singleton_tag_v = is_singleton_component<T>::value;
+inline constexpr bool k_isSingletonTagV = IsSingletonComponent<T>::value;
 
 }  // namespace ly::scene

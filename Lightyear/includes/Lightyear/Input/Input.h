@@ -9,10 +9,10 @@ namespace ly {
 
 class LIGHTYEAR_API Input {
 public:
-    static bool IsKeyPressed(KeyCode key);
-    static bool IsMouseButtonPressed(MouseCode button);
-    static glm::vec2 GetMousePosition();
-    static float GetMouseX();
-    static float GetMouseY();
+    static bool isKeyPressed(keyCode key);
+    static bool isMouseButtonPressed(mouseCode button);
+    static glm::vec2 getMousePosition();
+    static float getMouseX();
+    static float getMouseY();
 };
 }  // namespace ly

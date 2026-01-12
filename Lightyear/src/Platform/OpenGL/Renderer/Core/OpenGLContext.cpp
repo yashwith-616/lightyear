@@ -12,7 +12,7 @@ namespace {
  * @param source the source
  * @return
  */
-constexpr std::string_view GetOpenGLSourceString(GLenum source) {
+constexpr std::string_view getOpenGlSourceString(GLenum source) {
     switch (source) {
         case GL_DEBUG_SOURCE_API:
             return "API";
@@ -37,7 +37,7 @@ constexpr std::string_view GetOpenGLSourceString(GLenum source) {
  * @param type the IssueType
  * @return the openGL mapped Issue
  */
-constexpr std::string_view GetOpenGLTypeString(GLenum type) {
+constexpr std::string_view getOpenGlTypeString(GLenum type) {
     switch (type) {
         case GL_DEBUG_TYPE_ERROR:
             return "Error";
@@ -68,32 +68,32 @@ constexpr std::string_view GetOpenGLTypeString(GLenum type) {
  * @param severity OpenGL severity level
  * @return The lightyear log level
  */
-ly::LogType GetLogLevelFromOpenGLSeverity(GLenum severity) {
+ly::LogType getLogLevelFromOpenGlSeverity(GLenum severity) {
     switch (severity) {
         case GL_DEBUG_SEVERITY_HIGH:
-            return ly::LogType::FATAL;
+            return ly::LogType::Fatal;
         case GL_DEBUG_SEVERITY_MEDIUM:
             return ly::LogType::Error;
         case GL_DEBUG_SEVERITY_LOW:
-            return ly::LogType::WARN;
+            return ly::LogType::Warn;
         case GL_DEBUG_SEVERITY_NOTIFICATION:
-            return ly::LogType::TRACE;
+            return ly::LogType::Trace;
         default:
-            return ly::LogType::INFO;
+            return ly::LogType::Info;
     }
 }
 
-constexpr std::string_view LogTypeToString(ly::LogType type) {
+constexpr std::string_view logTypeToString(ly::LogType type) {
     switch (type) {
-        case ly::LogType::TRACE:
+        case ly::LogType::Trace:
             return "Trace";
-        case ly::LogType::INFO:
+        case ly::LogType::Info:
             return "Info";
-        case ly::LogType::WARN:
+        case ly::LogType::Warn:
             return "Warn";
         case ly::LogType::Error:
             return "Error";
-        case ly::LogType::FATAL:
+        case ly::LogType::Fatal:
             return "Fatal";
         default:
             return "Unknown";
@@ -108,42 +108,42 @@ constexpr std::string_view LogTypeToString(ly::LogType type) {
  * @param severity the severity of the issue
  * @param message the error message
  */
-void APIENTRY GLDebugCallback(GLenum source,
+void APIENTRY glDebugCallback(GLenum source,
                               GLenum type,
                               GLuint id,
                               GLenum severity,
                               GLsizei /*length*/,
-                              const GLchar* message,
-                              const void* /*userParam*/) {
-    const ly::LogType logLevel = GetLogLevelFromOpenGLSeverity(severity);
+                              GLchar const* message,
+                              void const* /*userParam*/) {
+    ly::LogType const logLevel = getLogLevelFromOpenGlSeverity(severity);
     LY_CORE_LOG(logLevel,
                 "[OpenGL Debug - {0} - {1} - ID {2} - Severity {3}]: {4}",
-                GetOpenGLSourceString(source),
-                GetOpenGLTypeString(type),
+                getOpenGlSourceString(source),
+                getOpenGlTypeString(type),
                 id,
-                LogTypeToString(logLevel),
+                logTypeToString(logLevel),
                 message);
 }
 }  // namespace
 
 namespace ly::renderer {
 
-OpenGLContext::OpenGLContext(GLFWwindow* windowHandle) : m_WindowHandle(windowHandle) {
+OpenGlContext::OpenGlContext(GLFWwindow* windowHandle) : m_windowHandle(windowHandle) {
     LY_CORE_ASSERT(windowHandle, "Window Handle is null!");
 }
 
-void OpenGLContext::Init() {
-    glfwMakeContextCurrent(m_WindowHandle);
-    const int status = gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress));
+void OpenGlContext::init() {
+    glfwMakeContextCurrent(m_windowHandle);
+    int const status = gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress));
     LY_CORE_ASSERT(status, "Failed to initialize GLAD");
 
     // Log System Metrics
-    std::string_view glVendor        = reinterpret_cast<const char*>(glGetString(GL_VENDOR));
-    std::string_view glRenderer      = reinterpret_cast<const char*>(glGetString(GL_RENDERER));
-    std::string_view glVersion       = reinterpret_cast<const char*>(glGetString(GL_VERSION));
-    std::string_view glShaderVersion = reinterpret_cast<const char*>(glGetString(GL_SHADING_LANGUAGE_VERSION));
+    std::string_view glVendor        = reinterpret_cast<char const*>(glGetString(GL_VENDOR));
+    std::string_view glRenderer      = reinterpret_cast<char const*>(glGetString(GL_RENDERER));
+    std::string_view glVersion       = reinterpret_cast<char const*>(glGetString(GL_VERSION));
+    std::string_view glShaderVersion = reinterpret_cast<char const*>(glGetString(GL_SHADING_LANGUAGE_VERSION));
 
-    LY_CORE_LOG(LogType::INFO,
+    LY_CORE_LOG(LogType::Info,
                 "OpenGL Renderer:\n"
                 "\tVendor   : {}\n"
                 "\tRenderer : {}\n"
@@ -160,7 +160,7 @@ void OpenGLContext::Init() {
     if ((flags & GL_CONTEXT_FLAG_DEBUG_BIT) != 0) {
         glEnable(GL_DEBUG_OUTPUT);
         glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-        glDebugMessageCallback(GLDebugCallback, nullptr);
+        glDebugMessageCallback(glDebugCallback, nullptr);
         glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
     }
 #endif
@@ -168,13 +168,13 @@ void OpenGLContext::Init() {
     int profile{};
     glGetIntegerv(GL_CONTEXT_PROFILE_MASK, &profile);
 
-    const bool isCoreProfileSet = (profile & GL_CONTEXT_CORE_PROFILE_BIT) != 0;
+    bool const isCoreProfileSet = (profile & GL_CONTEXT_CORE_PROFILE_BIT) != 0;
     std::string_view glProfile  = isCoreProfileSet ? "Core" : "Compatibility";
-    LY_CORE_LOG(LogType::INFO, "OpenGL Context: {} profile is active", glProfile);
+    LY_CORE_LOG(LogType::Info, "OpenGL Context: {} profile is active", glProfile);
 }
 
-void OpenGLContext::SwapBuffers() {
-    glfwSwapBuffers(m_WindowHandle);
+void OpenGlContext::swapBuffers() {
+    glfwSwapBuffers(m_windowHandle);
 }
 
 }  // namespace ly::renderer

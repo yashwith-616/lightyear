@@ -1,11 +1,11 @@
 #include "Sandbox/Core/SandboxApp.h"
 #include "Sandbox/Editor/EditorLayer.h"
 
-void SandboxApp::Init() {
-    Application::Init();
-    PushLayer(ly::MakeScope<EditorLayer>());
+void SandboxApp::init() {
+    Application::init();
+    pushLayer(ly::makeScope<EditorLayer>());
 }
 
-void SandboxApp::Run() {
-    super::Run();
+void SandboxApp::run() {
+    super::run();
 }

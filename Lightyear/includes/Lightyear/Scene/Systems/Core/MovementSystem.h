@@ -7,11 +7,11 @@ class LIGHTYEAR_API MovementSystem : public ISystem {
 public:
     MovementSystem();
 
-    void Execute(entt::registry& registry) override;
+    void execute(entt::registry& registry) override;
 
-    void Init(entt::registry& registry) override;
+    void init(entt::registry& registry) override;
 
-    void Shutdown(entt::registry& registry) override;
+    void shutdown(entt::registry& registry) override;
 };
 
 }  // namespace ly::scene

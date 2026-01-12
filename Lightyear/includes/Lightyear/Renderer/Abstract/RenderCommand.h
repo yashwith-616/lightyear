@@ -15,16 +15,16 @@ namespace ly::renderer {
  */
 class LIGHTYEAR_API RenderCommand {
 public:
-    static void Init() { s_RendererAPI->Init(); }
+    static void init() { m_rendererApi->init(); }
 
-    static void SetClearColor(const glm::vec4& color) { s_RendererAPI->SetClearColor(color); }
+    static void setClearColor(glm::vec4 const& color) { m_rendererApi->setClearColor(color); }
 
-    static void Clear() { s_RendererAPI->Clear(); }
+    static void clear() { m_rendererApi->clear(); }
 
-    static void DrawIndexed(const Ref<VertexArray>& vertexArray) { s_RendererAPI->DrawIndexed(vertexArray); }
+    static void drawIndexed(ref<VertexArray> const& vertexArray) { m_rendererApi->drawIndexed(vertexArray); }
 
 private:
-    static Scope<RendererAPI> s_RendererAPI;
+    static scope<RendererApi> m_rendererApi;
 };
 
 }  // namespace ly::renderer

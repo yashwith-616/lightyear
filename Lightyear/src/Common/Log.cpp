@@ -12,40 +12,40 @@ LY_DISABLE_WARNINGS_POP
 
 namespace ly {
 
-Ref<spdlog::logger> Log::s_CoreLogger;
-Ref<spdlog::logger> Log::s_ClientLogger;
+ref<spdlog::logger> Log::m_sCoreLogger;
+ref<spdlog::logger> Log::m_sClientLogger;
 
-constexpr std::string_view kLogRelativePath{ "log/lightyear.log" };
+constexpr std::string_view k_logRelativePath{ "log/lightyear.log" };
 
-void Log::Init() {
+void Log::init() {
     // std::filesystem::path savedDirectory = SettingsManager::Project().savedDirectory;
 
     std::vector<spdlog::sink_ptr> logSinks;
-    logSinks.emplace_back(MakeRef<spdlog::sinks::stdout_color_sink_mt>());
+    logSinks.emplace_back(makeRef<spdlog::sinks::stdout_color_sink_mt>());
     // logSinks.emplace_back(
     //     MakeRef<spdlog::sinks::basic_file_sink_mt>((savedDirectory / kLogRelativePath).string(), true));
 
     logSinks[0]->set_pattern("%^[%Y-%m-%d %H:%M:%S.%e %z] [%n] [%l] [thread %t] %v%$");
     // logSinks[1]->set_pattern("%^[%Y-%m-%d %H:%M:%S %z] [%n] [%l] [thread %t] %v%$");
 
-    s_CoreLogger = MakeRef<spdlog::logger>("LIGHTYEAR", logSinks.begin(), logSinks.end());
-    spdlog::register_logger(s_CoreLogger);
-    s_CoreLogger->set_level(spdlog::level::trace);
-    s_CoreLogger->flush_on(spdlog::level::trace);
+    m_sCoreLogger = makeRef<spdlog::logger>("LIGHTYEAR", logSinks.begin(), logSinks.end());
+    spdlog::register_logger(m_sCoreLogger);
+    m_sCoreLogger->set_level(spdlog::level::trace);
+    m_sCoreLogger->flush_on(spdlog::level::trace);
 
-    s_ClientLogger = MakeRef<spdlog::logger>("APP", logSinks.begin(), logSinks.end());
-    spdlog::register_logger(s_ClientLogger);
-    s_ClientLogger->set_level(spdlog::level::trace);
-    s_ClientLogger->flush_on(spdlog::level::trace);
+    m_sClientLogger = makeRef<spdlog::logger>("APP", logSinks.begin(), logSinks.end());
+    spdlog::register_logger(m_sClientLogger);
+    m_sClientLogger->set_level(spdlog::level::trace);
+    m_sClientLogger->flush_on(spdlog::level::trace);
 
-    spdlog::set_error_handler([](const std::string& msg) {
+    spdlog::set_error_handler([](std::string const& msg) {
         std::cerr << "[SPDLOG ERROR] " << msg << '\n';
         std::ofstream fallbackLog("log/error_fallback.log", std::ios::app);
         fallbackLog << "[SPDLOG ERROR] " << msg << '\n';
     });
 }
 
-void Log::Shutdown() {
+void Log::shutdown() {
     spdlog::shutdown();
 }
 

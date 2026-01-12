@@ -4,19 +4,19 @@
 
 namespace ly::renderer {
 
-RendererAPI::API RendererAPI::s_API = API::OpenGL;
-
-Scope<RendererAPI> RendererAPI::Create() {
-    switch (s_API) {
-        case API::None:
+scope<RendererApi> RendererApi::create() {
+    switch (m_api) {
+        case Api::None:
             LY_CORE_ASSERT(false, "RendererAPI::None is currently not supported!");
             break;
-        case API::OpenGL:
-            return Scope<OpenGLRendererAPI>();
+        case Api::OpenGl:
+            return scope<OpenGlRendererApi>();
     }
 
     LY_CORE_ASSERT(false, "Invalid RendererAPI!");
     return nullptr;
 }
+
+RendererApi::Api RendererApi::m_api = Api::OpenGl;
 
 }  // namespace ly::renderer

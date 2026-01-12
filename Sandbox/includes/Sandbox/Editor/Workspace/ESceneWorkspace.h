@@ -14,39 +14,39 @@ class ESceneWorkspace : IEditorWorkspace {
 public:
     explicit ESceneWorkspace(std::string name) : IEditorWorkspace(std::move(name)) {}
 
-    void OnAttach(ly::Ref<GlobalEditorContext> globalContext) override;
-    void OnEvent(ly::Event& event) override;
-    void OnUpdate(float deltaTime) override;
-    void OnEditorUpdate() override;
-    void OnImGuiRender() override;
+    void onAttach(ly::ref<GlobalEditorContext> globalContext) override;
+    void onEvent(ly::Event& event) override;
+    void onUpdate(float deltaTime) override;
+    void onEditorUpdate() override;
+    void onImGuiRender() override;
 
 protected:
-    enum class EEditorPanel : uint8_t { VIEWPORT = 1, SCENE_GRAPH, INSPECTOR, PLACE_ACTOR, MAX };
+    enum class EEditorPanel : uint8_t { Viewport = 1, SceneGraph, Inspector, PlaceActor, Max };
 
-    ImGuiID m_DockspaceID{};
+    ImGuiID m_dockspaceId{};
 
-    void DrawDockspace();
-    void SetupLayout() const;
-    void BuildSceneTree();
-    ly::Ref<SceneTreeNode> BuildSceneTreeRecursive(entt::entity entity);
+    void drawDockspace();
+    void setupLayout() const;
+    void buildSceneTree();
+    ly::ref<SceneTreeNode> buildSceneTreeRecursive(entt::entity entity);
 
-    [[nodiscard]] bool IsDockspaceInitialized() const { return m_bIsInitialized; }
+    [[nodiscard]] bool isDockspaceInitialized() const { return m_bIsInitialized; }
 
-    [[nodiscard]] const ly::scene::Scene& GetScene() const {
-        LY_CORE_ASSERT(m_GlobalContext && m_GlobalContext->ActiveScene, "Active Scene is null!");
-        return *(m_GlobalContext->ActiveScene);
+    [[nodiscard]] ly::scene::Scene const& getScene() const {
+        LY_CORE_ASSERT(m_globalContext && m_globalContext->activeScene, "Active Scene is null!");
+        return *(m_globalContext->activeScene);
     }
 
-    static std::string GetPanelTitle(EEditorPanel editorPanel);
+    static std::string getPanelTitle(EEditorPanel editorPanel);
 
 private:
     // Move all panels to a registry, along with what they need.
-    ly::Scope<EESceneGraphPanel> m_SceneGraphPanel;
-    ly::Scope<EViewportPanel> m_ViewportPanel;
-    ly::Scope<EEntityDetailsPanel> m_EntityDetailsPanel;
+    ly::scope<EeSceneGraphPanel> m_sceneGraphPanel;
+    ly::scope<EViewportPanel> m_viewportPanel;
+    ly::scope<EEntityDetailsPanel> m_entityDetailsPanel;
 
     bool m_bIsInitialized{ false };
-    ly::Ref<GlobalEditorContext> m_GlobalContext;
-    ly::Ref<SceneTreeNode> m_SceneTree;
-    ly::WeakRef<SceneTreeNode> m_SelectedNode;
+    ly::ref<GlobalEditorContext> m_globalContext;
+    ly::ref<SceneTreeNode> m_sceneTree;
+    ly::weakRef<SceneTreeNode> m_selectedNode;
 };

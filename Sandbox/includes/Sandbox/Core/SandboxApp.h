@@ -10,10 +10,10 @@ public:
     SandboxApp()           = default;
     ~SandboxApp() override = default;
 
-    void Init() override;
-    void Run() override;
+    void init() override;
+    void run() override;
 };
 
-inline ly::Scope<ly::Application> CreateApplication() {
-    return ly::MakeScope<SandboxApp>();
+inline ly::scope<ly::Application> createApplication() {
+    return ly::makeScope<SandboxApp>();
 }

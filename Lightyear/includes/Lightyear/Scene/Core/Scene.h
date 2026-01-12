@@ -13,44 +13,44 @@ class Entity;
 class LIGHTYEAR_API Scene {
 public:
     Scene();
-    Scene(const Scene&)            = delete;
+    Scene(Scene const&)            = delete;
     Scene(Scene&&) noexcept        = default;
-    Scene& operator=(const Scene&) = delete;
+    Scene& operator=(Scene const&) = delete;
     Scene& operator=(Scene&&)      = default;
 
-    Entity CreateEntity(const std::string& name);
-    Entity CreateEntity(const std::string& name, const Entity& parent);
-    void DestroyEntity(Entity entity);
-    Entity DuplicateEntity(Entity entity);
-    [[nodiscard]] Entity FindEntityByName(const std::string& name) const;
+    Entity createEntity(std::string const& name);
+    Entity createEntity(std::string const& name, Entity const& parent);
+    void destroyEntity(Entity entity);
+    Entity duplicateEntity(Entity entity);
+    [[nodiscard]] Entity findEntityByName(std::string const& name) const;
 
-    Entity CreateChildEntity(Entity parent, const std::string& name);
-    void AddChildNode(Entity childEntity, Entity newParent);
-    void RemoveChildNode(Entity childEntity, Entity parent);
+    Entity createChildEntity(Entity parent, std::string const& name);
+    void addChildNode(Entity childEntity, Entity newParent);
+    void removeChildNode(Entity childEntity, Entity parent);
 
-    [[nodiscard]] Entity GetPrimaryCameraEntity() const;
+    [[nodiscard]] Entity getPrimaryCameraEntity() const;
 
     template <typename... Components>
-    auto GetAllEntitiesWith() {
-        return m_Registry.view<Components...>();
+    auto getAllEntitiesWith() {
+        return m_registry.view<Components...>();
     }
 
-    [[nodiscard]] entt::registry& GetRegistry() { return m_Registry; }
-    [[nodiscard]] const entt::registry& GetRegistry() const { return m_Registry; }
+    [[nodiscard]] entt::registry& getRegistry() { return m_registry; }
+    [[nodiscard]] entt::registry const& getRegistry() const { return m_registry; }
 
 protected:
-    Entity CreateEntity(UUID UUID,
-                        const std::string& name                             = std::string(),
-                        std::optional<std::reference_wrapper<const Entity>> = std::nullopt);
+    Entity createEntity(Uuid uuid,
+                        std::string const& name                             = std::string(),
+                        std::optional<std::reference_wrapper<Entity const>> = std::nullopt);
 
 private:
-    entt::registry m_Registry;
-    std::unordered_map<std::string, uint32_t> m_EntityNameMap;
+    entt::registry m_registry;
+    std::unordered_map<std::string, uint32_t> m_entityNameMap;
 
-    std::string GenerateUniqueName(const std::string& baseName);
+    std::string generateUniqueName(std::string const& baseName);
 
-    static void OnTransformUpdated(entt::registry& registry, entt::entity entity);
-    static void OnCameraUpdated(entt::registry& registry, entt::entity entity);
+    static void onTransformUpdated(entt::registry& registry, entt::entity entity);
+    static void onCameraUpdated(entt::registry& registry, entt::entity entity);
 
     /*template <typename T>
     void Scene::OnComponentAdded(Entity /*entity#1#, T& /*component#1#) {

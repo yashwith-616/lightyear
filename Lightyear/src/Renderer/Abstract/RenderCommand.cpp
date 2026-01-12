@@ -3,6 +3,6 @@
 
 namespace ly::renderer {
 
-Scope<RendererAPI> RenderCommand::s_RendererAPI = MakeScope<OpenGLRendererAPI>();
+scope<RendererApi> RenderCommand::m_rendererApi = makeScope<OpenGlRendererApi>();
 
 }  // namespace ly::renderer

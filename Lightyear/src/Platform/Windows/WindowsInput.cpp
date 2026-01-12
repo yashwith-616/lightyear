@@ -8,20 +8,20 @@ LY_DISABLE_WARNINGS_POP
 
 namespace ly {
 
-bool Input::IsKeyPressed(KeyCode key) {
-    auto* window    = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
-    const int state = glfwGetKey(window, static_cast<int>(key));
+bool Input::isKeyPressed(keyCode key) {
+    auto* window    = static_cast<GLFWwindow*>(Application::get().getWindow().getNativeWindow());
+    int const state = glfwGetKey(window, static_cast<int>(key));
     return state == GLFW_PRESS;
 }
 
-bool Input::IsMouseButtonPressed(MouseCode button) {
-    auto* window    = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
-    const int state = glfwGetMouseButton(window, static_cast<int>(button));
+bool Input::isMouseButtonPressed(mouseCode button) {
+    auto* window    = static_cast<GLFWwindow*>(Application::get().getWindow().getNativeWindow());
+    int const state = glfwGetMouseButton(window, static_cast<int>(button));
     return state == GLFW_PRESS;
 }
 
-glm::vec2 Input::GetMousePosition() {
-    auto* window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
+glm::vec2 Input::getMousePosition() {
+    auto* window = static_cast<GLFWwindow*>(Application::get().getWindow().getNativeWindow());
     double xpos{};
     double ypos{};
     glfwGetCursorPos(window, &xpos, &ypos);
@@ -29,12 +29,12 @@ glm::vec2 Input::GetMousePosition() {
     return { static_cast<float>(xpos), static_cast<float>(ypos) };
 }
 
-float Input::GetMouseX() {
-    return GetMousePosition().x;
+float Input::getMouseX() {
+    return getMousePosition().x;
 }
 
-float Input::GetMouseY() {
-    return GetMousePosition().y;
+float Input::getMouseY() {
+    return getMousePosition().y;
 }
 
 }  // namespace ly

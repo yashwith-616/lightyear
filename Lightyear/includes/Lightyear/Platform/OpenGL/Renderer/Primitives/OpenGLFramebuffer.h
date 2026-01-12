@@ -5,27 +5,27 @@
 
 namespace ly::renderer {
 
-class LIGHTYEAR_API OpenGLFramebuffer : public Framebuffer {
+class LIGHTYEAR_API OpenGlFramebuffer : public Framebuffer {
 public:
-    OpenGLFramebuffer(const FramebufferSpecification& spec);
-    ~OpenGLFramebuffer() override;
+    OpenGlFramebuffer(FramebufferSpecification const& spec);
+    ~OpenGlFramebuffer() override;
 
-    void Invalidate();
-    void Resize(uint32_t width, uint32_t height) override;
+    void invalidate();
+    void resize(uint32_t width, uint32_t height) override;
 
-    void Bind() override;
-    void Unbind() override;
+    void bind() override;
+    void unbind() override;
 
-    [[nodiscard]] FramebufferSpecification& GetSpecification() override { return m_Specification; }
-    [[nodiscard]] const FramebufferSpecification& GetSpecification() const override { return m_Specification; };
-    [[nodiscard]] uint32_t GetColorAttachmentRenderID() const override { return m_ColorAttachment; };
+    [[nodiscard]] FramebufferSpecification& getSpecification() override { return m_specification; }
+    [[nodiscard]] FramebufferSpecification const& getSpecification() const override { return m_specification; };
+    [[nodiscard]] uint32_t getColorAttachmentRenderId() const override { return m_colorAttachment; };
 
 private:
-    TextureHandle m_RenderID{ 0 };
-    TextureHandle m_ColorAttachment{ 0 };
-    TextureHandle m_DepthAttachment{ 0 };
+    textureHandle m_renderId{ 0 };
+    textureHandle m_colorAttachment{ 0 };
+    textureHandle m_depthAttachment{ 0 };
 
-    FramebufferSpecification m_Specification{};
+    FramebufferSpecification m_specification{};
 };
 
 }  // namespace ly::renderer

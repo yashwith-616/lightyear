@@ -16,20 +16,20 @@ LY_DISABLE_WARNINGS_POP
 
 namespace ly {
 Level::Level(std::filesystem::path path, std::string name)
-    : m_FilePath(std::move(path)), m_LevelName(std::move(name)) {}
+    : m_filePath(std::move(path)), m_levelName(std::move(name)) {}
 
 /// \brief Load Serialized scene
-Ref<scene::Scene> Level::LoadScene() const {
-    auto scene          = MakeRef<scene::Scene>();
-    auto& sceneRegistry = scene->GetRegistry();
+ref<scene::Scene> Level::loadScene() const {
+    auto scene          = makeRef<scene::Scene>();
+    auto& sceneRegistry = scene->getRegistry();
 
-    std::ifstream is(m_FilePath);
+    std::ifstream is(m_filePath);
     if (!is.is_open()) {
-        LY_CORE_ASSERT(false, "Failed to open scene file {}", m_FilePath.string());
+        LY_CORE_ASSERT(false, "Failed to open scene file {}", m_filePath.string());
     }
 
     cereal::JSONInputArchive archive(is);
-    std::ifstream file(m_FilePath);
+    std::ifstream file(m_filePath);
     auto data = nlohmann::ordered_json::parse(file);
 
     std::string levelName;
@@ -45,17 +45,17 @@ Ref<scene::Scene> Level::LoadScene() const {
 
         archive.setNextName(entityKey.c_str());
         archive.startNode();
-        [[maybe_unused]] auto entityFinishNode = MakeScopeGuard([&]() { archive.finishNode(); });
+        [[maybe_unused]] auto entityFinishNode = makeScopeGuard([&]() { archive.finishNode(); });
 
         entt::entity entity = sceneRegistry.create();
         sceneRegistry.emplace_or_replace<scene::DirtyComponent>(entity, scene::DirtyComponent());
-        LY_CORE_LOG(LogType::INFO, "Created an entity {} with Id {}", entityKey, static_cast<uint32_t>(entity));
+        LY_CORE_LOG(LogType::Info, "Created an entity {} with Id {}", entityKey, static_cast<uint32_t>(entity));
 
         for (auto& [compName, compData] : entityData.items()) {
             archive.setNextName(compName.c_str());
             archive.startNode();
 
-            [[maybe_unused]] auto componentFinishNode = MakeScopeGuard([&]() { archive.finishNode(); });
+            [[maybe_unused]] auto componentFinishNode = makeScopeGuard([&]() { archive.finishNode(); });
 
             using namespace entt::literals;
             auto compType = entt::resolve(entt::hashed_string{ compName.c_str() });
@@ -67,7 +67,7 @@ Ref<scene::Scene> Level::LoadScene() const {
             // Check if entity can be loaded
             auto loadFunc = compType.func("enttLoad"_hs);
             if (!loadFunc) {
-                LY_CORE_LOG(LogType::WARN, "No enttLoad function registered for '{}'", compName);
+                LY_CORE_LOG(LogType::Warn, "No enttLoad function registered for '{}'", compName);
             }
 
             // construct instance of an entity
@@ -93,17 +93,17 @@ Ref<scene::Scene> Level::LoadScene() const {
             }
         }
     }
-    LY_CORE_LOG(LogType::INFO, "Loading scene successfully completed");
+    LY_CORE_LOG(LogType::Info, "Loading scene successfully completed");
     return std::move(scene);
 }
 
-void Level::SaveScene(scene::Scene& scene) const {
-    auto& sceneRegistry = scene.GetRegistry();
+void Level::saveScene(scene::Scene& scene) const {
+    auto& sceneRegistry = scene.getRegistry();
 
-    std::ofstream os(m_FilePath);
+    std::ofstream os(m_filePath);
     cereal::JSONOutputArchive archive(os);
 
-    archive(cereal::make_nvp("LevelName", m_LevelName));
+    archive(cereal::make_nvp("LevelName", m_levelName));
 
     int entityCount = 0;
     for (auto entity : sceneRegistry.view<entt::entity>()) {
@@ -117,7 +117,7 @@ void Level::SaveScene(scene::Scene& scene) const {
 
         archive.setNextName(entityKey.c_str());
         archive.startNode();
-        [[maybe_unused]] auto entityFinishNode = MakeScopeGuard([&]() { archive.finishNode(); });
+        [[maybe_unused]] auto entityFinishNode = makeScopeGuard([&]() { archive.finishNode(); });
 
         for (auto&& [typeId, storage] : sceneRegistry.storage()) {
             if (!storage.contains(entity)) continue;
@@ -127,33 +127,33 @@ void Level::SaveScene(scene::Scene& scene) const {
             auto currentType   = entt::resolve(storage.type());
             auto serializeFunc = currentType.func("enttSave"_hs);
             if (!serializeFunc) {
-                LY_CORE_LOG(LogType::INFO, "Serialize func does not exist for type {}", typeId);
+                LY_CORE_LOG(LogType::Info, "Serialize func does not exist for type {}", typeId);
             }
 
             auto instance = currentType.from_void(storage.value(entity));
             if (!instance) {
-                LY_CORE_LOG(LogType::INFO, "Type instance could not be created for type {}", typeId);
+                LY_CORE_LOG(LogType::Info, "Type instance could not be created for type {}", typeId);
                 continue;
             }
 
             auto nameData = currentType.data("name"_hs);
             if (!nameData) {
-                LY_CORE_LOG(ly::LogType::WARN, "Can't resolve component name of type {}", typeId);
+                LY_CORE_LOG(ly::LogType::Warn, "Can't resolve component name of type {}", typeId);
                 continue;
             }
 
             entt::meta_any compName = nameData.get(instance);
-            archive.setNextName(compName.cast<const char*>());
+            archive.setNextName(compName.cast<char const*>());
             archive.startNode();
-            [[maybe_unused]] auto componentFinishNode = MakeScopeGuard([&]() { archive.finishNode(); });
+            [[maybe_unused]] auto componentFinishNode = makeScopeGuard([&]() { archive.finishNode(); });
 
             if (!serializeFunc.invoke(instance, entt::forward_as_meta(archive))) {
-                LY_CORE_LOG(ly::LogType::WARN, "Serialize function invoke failed for type {}", typeId);
+                LY_CORE_LOG(ly::LogType::Warn, "Serialize function invoke failed for type {}", typeId);
             }
         }
         val++;
     }
-    LY_CORE_LOG(LogType::INFO, "Scene saved");
+    LY_CORE_LOG(LogType::Info, "Scene saved");
 }
 
 }  // namespace ly

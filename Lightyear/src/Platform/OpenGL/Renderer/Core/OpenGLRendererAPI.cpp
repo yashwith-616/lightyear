@@ -18,16 +18,16 @@ void OpenGLMessageCallback(unsigned source,
                            const void* userParam) {
     switch (severity) {
         case GL_DEBUG_SEVERITY_HIGH:
-            LY_CORE_LOG(ly::LogType::FATAL, "{0}", message);
+            LY_CORE_LOG(ly::LogType::Fatal, "{0}", message);
             return;
         case GL_DEBUG_SEVERITY_MEDIUM:
             LY_CORE_LOG(ly::LogType::Error, "{0}", message);
             return;
         case GL_DEBUG_SEVERITY_LOW:
-            LY_CORE_LOG(ly::LogType::WARN, "{0}", message);
+            LY_CORE_LOG(ly::LogType::Warn, "{0}", message);
             return;
         case GL_DEBUG_SEVERITY_NOTIFICATION:
-            LY_CORE_LOG(ly::LogType::TRACE, "{0}", message);
+            LY_CORE_LOG(ly::LogType::Trace, "{0}", message);
             return;
         default:
             LY_CORE_ASSERT(false, "Unknown severity level!");
@@ -67,7 +67,7 @@ void CheckOpenGLErrors() {
 
 namespace ly::renderer {
 
-void OpenGLRendererAPI::Init() {
+void OpenGlRendererApi::init() {
     InitDebugging();
 
     glEnable(GL_BLEND);
@@ -78,35 +78,35 @@ void OpenGLRendererAPI::Init() {
     CheckOpenGLErrors();
 }
 
-void OpenGLRendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCount) {
-    vertexArray->Bind();
-    const uint32_t count = indexCount != 0 ? indexCount : vertexArray->GetIndexBuffer().GetCount();
-    glDrawElements(GL_TRIANGLES, narrow_cast<GLsizei>(count), GL_UNSIGNED_INT, nullptr);
+void OpenGlRendererApi::drawIndexed(ref<VertexArray> const& vertexArray, uint32_t indexCount) {
+    vertexArray->bind();
+    uint32_t const count = indexCount != 0 ? indexCount : vertexArray->getIndexBuffer().getCount();
+    glDrawElements(GL_TRIANGLES, narrowCast<GLsizei>(count), GL_UNSIGNED_INT, nullptr);
 }
 
-void OpenGLRendererAPI::DrawLines(const VertexArray& vertexArray, uint32_t vertexCount) {
-    vertexArray.Bind();
-    glDrawArrays(GL_LINES, 0, narrow_cast<GLsizei>(vertexCount));
+void OpenGlRendererApi::drawLines(VertexArray const& vertexArray, uint32_t vertexCount) {
+    vertexArray.bind();
+    glDrawArrays(GL_LINES, 0, narrowCast<GLsizei>(vertexCount));
 }
 
 /**
  * @brief Clear any test buffers that is initialized by openGL
  * // TODO: May use Stencil Buffer in the future
  */
-void OpenGLRendererAPI::Clear() {
+void OpenGlRendererApi::clear() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 // NOLINTNEXTLINE
-void OpenGLRendererAPI::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
+void OpenGlRendererApi::setViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
     glViewport(x, y, width, height);  // NOLINT
 }
 
-void OpenGLRendererAPI::SetClearColor(const glm::vec4& color) {
+void OpenGlRendererApi::setClearColor(glm::vec4 const& color) {
     glClearColor(color.x, color.y, color.z, color.a);
 }
 
-void OpenGLRendererAPI::SetLineWidth(float width) {
+void OpenGlRendererApi::setLineWidth(float width) {
     glLineWidth(width);
 }
 

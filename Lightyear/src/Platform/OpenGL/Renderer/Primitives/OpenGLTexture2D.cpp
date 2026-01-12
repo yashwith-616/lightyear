@@ -1,17 +1,19 @@
 #include "Lightyear/Platform/OpenGL/Renderer/Primitives/OpenGLTexture2D.h"
+
 #include "Lightyear/Renderer/Primitives/Texture.h"
 
 LY_DISABLE_WARNINGS_PUSH
 #include <glad/glad.h>
-#include <stb_image.h>
+
+#include "stb_image.h"
 LY_DISABLE_WARNINGS_POP
 
 namespace ly::renderer {
 
-constexpr int g_STBIImageFlipOn = 1;
+constexpr int k_stbiImageFlipOn = 1;
 
-OpenGLTexture2D::OpenGLTexture2D(const std::filesystem::path& path) {
-    stbi_set_flip_vertically_on_load(g_STBIImageFlipOn);
+OpenGlTexture2D::OpenGlTexture2D(std::filesystem::path const& path) {
+    stbi_set_flip_vertically_on_load(k_stbiImageFlipOn);
 
     int width{};
     int height{};
@@ -20,29 +22,29 @@ OpenGLTexture2D::OpenGLTexture2D(const std::filesystem::path& path) {
     stbi_uc* rawData = stbi_load(path.string().c_str(), &width, &height, &channels, 0);
     LY_CORE_ASSERT(rawData, "Failed to load image");
 
-    m_Width  = width;
-    m_Height = height;
+    m_width  = width;
+    m_height = height;
 
-    glCreateTextures(GL_TEXTURE_2D, 1, &m_TextureHandle);
-    glTextureStorage2D(m_TextureHandle, 1, GetGLInternalFormat(channels), width, height);
+    glCreateTextures(GL_TEXTURE_2D, 1, &m_textureHandle);
+    glTextureStorage2D(m_textureHandle, 1, getGlInternalFormat(channels), width, height);
 
-    glTextureParameteri(m_TextureHandle, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTextureParameteri(m_TextureHandle, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTextureParameteri(m_textureHandle, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTextureParameteri(m_textureHandle, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    glTextureSubImage2D(m_TextureHandle, 0, 0, 0, width, height, GetGLDataFormat(channels), GL_UNSIGNED_BYTE, rawData);
+    glTextureSubImage2D(m_textureHandle, 0, 0, 0, width, height, getGlDataFormat(channels), GL_UNSIGNED_BYTE, rawData);
 
     stbi_image_free(rawData);
 }
 
-OpenGLTexture2D::~OpenGLTexture2D() {
-    glDeleteTextures(1, &m_TextureHandle);
+OpenGlTexture2D::~OpenGlTexture2D() {
+    glDeleteTextures(1, &m_textureHandle);
 }
 
-void OpenGLTexture2D::Bind(uint32_t slot) const {
-    glBindTextureUnit(slot, m_TextureHandle);
+void OpenGlTexture2D::bind(uint32_t slot) const {
+    glBindTextureUnit(slot, m_textureHandle);
 }
 
-uint32_t OpenGLTexture2D::GetGLDataFormat(int channels) {
+uint32_t OpenGlTexture2D::getGlDataFormat(int channels) {
     switch (channels) {
         case 1:
             return GL_RED;
@@ -58,7 +60,7 @@ uint32_t OpenGLTexture2D::GetGLDataFormat(int channels) {
     }
 }
 
-uint32_t OpenGLTexture2D::GetGLInternalFormat(int channels) {
+uint32_t OpenGlTexture2D::getGlInternalFormat(int channels) {
     switch (channels) {
         case 1:
             return GL_R8;

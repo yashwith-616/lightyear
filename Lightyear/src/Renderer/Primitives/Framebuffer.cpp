@@ -4,14 +4,15 @@
 
 namespace ly::renderer {
 
-Ref<Framebuffer> Framebuffer::Create(const FramebufferSpecification& spec) {
-    switch (Renderer::GetAPI()) {
-        case RendererAPI::API::OpenGL:
-            return MakeRef<OpenGLFramebuffer>(spec);
+ref<Framebuffer> Framebuffer::create(FramebufferSpecification const& spec) {
+    switch (Renderer::getApi()) {
+        case RendererApi::Api::OpenGl:
+            return makeRef<OpenGlFramebuffer>(spec);
         default:
             LY_CORE_ASSERT(false, "Invalid API Type is currently not supported!");
             return nullptr;
     }
 }
+void Framebuffer::resize(uint32_t width, uint32_t height) {}
 
 }  // namespace ly::renderer

@@ -4,7 +4,7 @@
 
 class GlobalEditorContext {
 public:
-    ly::Ref<ly::scene::Scene> ActiveScene;
-    ly::Ref<ly::renderer::Framebuffer> SceneFramebuffer;
-    ly::Ref<ly::scene::SceneRuntime> SceneRuntime;
+    ly::ref<ly::scene::Scene> activeScene;
+    ly::ref<ly::renderer::Framebuffer> sceneFramebuffer;
+    ly::ref<ly::scene::SceneRuntime> sceneRuntime;
 };

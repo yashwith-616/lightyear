@@ -4,8 +4,8 @@ namespace ly::scene {
 
 // TODO: Fix this
 struct LIGHTYEAR_API SceneData {
-    float DeltaTime{};
-    float Time{};
+    float deltaTime{};
+    float time{};
 };
 
 }  // namespace ly::scene

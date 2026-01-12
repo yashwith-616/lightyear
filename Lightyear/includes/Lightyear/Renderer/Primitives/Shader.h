@@ -9,24 +9,24 @@ class LIGHTYEAR_API Shader {
 public:
     virtual ~Shader() = default;
 
-    static Ref<Shader> Create(const std::string& name,
-                              const std::unordered_map<ShaderType, std::filesystem::path>& shaderFiles);
-    static Ref<Shader> Create(const std::string& name, const std::unordered_map<ShaderType, std::string>& shaderSrcs);
+    static ref<Shader> create(std::string const& name,
+                              std::unordered_map<ShaderType, std::filesystem::path> const& shaderFiles);
+    static ref<Shader> create(std::string const& name, std::unordered_map<ShaderType, std::string> const& shaderSrcs);
 
-    virtual void Use() const    = 0;
-    virtual void UnBind() const = 0;
+    virtual void use() const    = 0;
+    virtual void unBind() const = 0;
 
-    [[nodiscard]] virtual const std::string& GetName() const { return m_Name; }
+    [[nodiscard]] virtual std::string const& getName() const { return m_name; }
 
 protected:
-    std::string m_Name{};
+    std::string m_name{};
 
     /**
      * @brief Read file from path.
      * @param shaderFilePath the shader file path
      * @return string with the file data
      */
-    static std::string ReadFile(const std::filesystem::path& shaderFilePath);
+    static std::string readFile(std::filesystem::path const& shaderFilePath);
 };
 
 }  // namespace ly::renderer

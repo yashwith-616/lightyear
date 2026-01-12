@@ -4,26 +4,26 @@
 
 namespace ly::renderer {
 
-class OpenGLUniformBuffer : public UniformBuffer {
+class OpenGlUniformBuffer : public UniformBuffer {
 public:
-    OpenGLUniformBuffer(std::string name, uint32_t size, uint32_t bindingPoint);
-    ~OpenGLUniformBuffer() override;
+    OpenGlUniformBuffer(std::string name, uint32_t size, uint32_t bindingPoint);
+    ~OpenGlUniformBuffer() override;
 
-    OpenGLUniformBuffer(const OpenGLUniformBuffer&)                = delete;
-    OpenGLUniformBuffer& operator=(const OpenGLUniformBuffer&)     = delete;
-    OpenGLUniformBuffer(OpenGLUniformBuffer&&) noexcept            = default;
-    OpenGLUniformBuffer& operator=(OpenGLUniformBuffer&&) noexcept = default;
+    OpenGlUniformBuffer(OpenGlUniformBuffer const&)                = delete;
+    OpenGlUniformBuffer& operator=(OpenGlUniformBuffer const&)     = delete;
+    OpenGlUniformBuffer(OpenGlUniformBuffer&&) noexcept            = default;
+    OpenGlUniformBuffer& operator=(OpenGlUniformBuffer&&) noexcept = default;
 
-    void SetData(const void* data, uint32_t size, uint32_t offset = 0) override;
-    void Bind() const override;
-    void UnBind() const override;
+    void setData(void const* data, uint32_t size, uint32_t offset = 0) override;
+    void bind() const override;
+    void unBind() const override;
 
-    void Debug(uint32_t programID, const std::string& name) override;
+    void debug(uint32_t programId, std::string const& name) override;
 
 private:
-    uint32_t m_BufferID{ 0 };
-    uint32_t m_BindingPoint{ 0 };
-    uint32_t m_Size{ 0 };
+    uint32_t m_bufferId{ 0 };
+    uint32_t m_bindingPoint{ 0 };
+    uint32_t m_size{ 0 };
 };
 
 }  // namespace ly::renderer

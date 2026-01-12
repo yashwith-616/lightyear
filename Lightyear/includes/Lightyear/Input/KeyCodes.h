@@ -1,11 +1,11 @@
 #pragma once
 
 namespace ly {
-using KeyCode = uint16_t;
+using keyCode = uint16_t;
 
-namespace Key {
+namespace key {
 
-enum : KeyCode {
+enum : keyCode {
     // From glfw3.h
     Space      = 32,
     Apostrophe = 39, /* ' */
@@ -110,6 +110,7 @@ enum : KeyCode {
     F25         = 314,
 
     /* Keypad */
+    //NOLINTBEGIN
     KP0        = 320,
     KP1        = 321,
     KP2        = 322,
@@ -127,6 +128,7 @@ enum : KeyCode {
     KPAdd      = 334,
     KPEnter    = 335,
     KPEqual    = 336,
+    //NOLINTEND
 
     LeftShift    = 340,
     LeftControl  = 341,
@@ -139,10 +141,10 @@ enum : KeyCode {
     Menu         = 348
 };
 
-inline bool IsModifierKey(KeyCode code) {
-    return code == Key::LeftShift || code == Key::RightShift || code == Key::LeftControl || code == Key::RightControl ||
-           code == Key::LeftAlt || code == Key::RightAlt || code == Key::LeftSuper || code == Key::RightSuper;
+inline bool isModifierKey(keyCode code) {
+    return code == key::LeftShift || code == key::RightShift || code == key::LeftControl || code == key::RightControl ||
+           code == key::LeftAlt || code == key::RightAlt || code == key::LeftSuper || code == key::RightSuper;
 }
 
-}  // namespace Key
+}  // namespace key
 }  // namespace ly

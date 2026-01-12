@@ -1,51 +1,51 @@
 #include <Sandbox/Editor/Panel/ESceneGraphPanel.h>
 
-void EESceneGraphPanel::OnImGuiRender() {
+void EeSceneGraphPanel::onImGuiRender() {
     ImGui::Begin("Scene Graph");
-    AddEntityButton();
-    DrawSceneTree();
+    addEntityButton();
+    drawSceneTree();
     ImGui::End();
 }
 
-void EESceneGraphPanel::AddEntityButton() const {
+void EeSceneGraphPanel::drawSceneTree() {
+    ImGui::BeginChild("Scene Hierarchy", ImVec2(0, 0), true);
+    if (auto const shared = m_sceneTree.lock()) {
+        drawSceneTreeNode(shared);
+    }
+    ImGui::EndChild();
+}
+
+void EeSceneGraphPanel::addEntityButton() const {
     ImGui::BeginChild("Add Entity", ImVec2(0, 30), false);
     if (ImGui::Button("Add Entity", ImVec2(-FLT_MIN, 0))) {
-        m_Scene->CreateEntity(std::to_string(ly::UUID().Get()));
+        m_scene->createEntity(std::to_string(ly::Uuid().get()));
     }
     ImGui::EndChild();
 }
 
-void EESceneGraphPanel::DrawSceneTree() {
-    ImGui::BeginChild("Scene Hierarchy", ImVec2(0, 0), true);
-    if (const auto shared = m_SceneTree.lock()) {
-        DrawSceneTreeNode(shared);
-    }
-    ImGui::EndChild();
-}
-
-void EESceneGraphPanel::DrawSceneTreeNode(const ly::Ref<SceneTreeNode>& node) {
+void EeSceneGraphPanel::drawSceneTreeNode(ly::ref<SceneTreeNode> const& node) {
     ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow;
 
-    if (node->Children.empty()) {
+    if (node->children.empty()) {
         flags |= ImGuiTreeNodeFlags_Leaf;
     }
 
-    if (m_SelectedNode == node) {
+    if (m_selectedNode == node) {
         flags |= ImGuiTreeNodeFlags_Selected;
     }
 
     // NOLINTNEXTLINE
-    const bool hasOpened = ImGui::TreeNodeEx(reinterpret_cast<void*>(node->Id.Get()), flags, "%s", node->Name.c_str());
+    const bool hasOpened = ImGui::TreeNodeEx(reinterpret_cast<void*>(node->id.get()), flags, "%s", node->name.c_str());
 
     // Handle selection
     if (ImGui::IsItemClicked()) {
-        m_SelectedNode = node;
+        m_selectedNode = node;
     }
 
     // Draw children recursively
     if (hasOpened) {
-        for (const ly::Ref<SceneTreeNode>& child : node->Children) {
-            DrawSceneTreeNode(child);
+        for (ly::ref<SceneTreeNode> const& child : node->children) {
+            drawSceneTreeNode(child);
         }
         ImGui::TreePop();
     }

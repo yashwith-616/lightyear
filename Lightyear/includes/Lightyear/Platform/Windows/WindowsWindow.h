@@ -1,36 +1,39 @@
 #pragma once
 
+#include <GLFW/glfw3.h>
+#include <Lightyear/LightyearCore.h>
+
 #include "Lightyear/Core/Window.h"
-#include "Lightyear/LightyearCore.h"
+#include "Lightyear/Platform/OpenGL/Renderer/Core/OpenGLContext.h"
 #include "Lightyear/Renderer/Abstract/RendererContext.h"
 
-struct GLFWwindow;
+struct GlfWwindow;
 
 namespace ly {
 
 class LIGHTYEAR_API WindowsWindow : public Window {
 public:
-    explicit WindowsWindow(const WindowProps& props) : m_Data({ props.Title, props.Size }) {}
+    explicit WindowsWindow(WindowProps const& props) : m_data({ props.title, props.size }) {}
     ~WindowsWindow() override = default;
 
-    void OnUpdate() override;
+    void onUpdate() override;
 
-    void SetVSync(bool enable) override;
-    void SetEventCallback(const EventCallbackFn& callback) override { m_Data.EventCallback = callback; }
+    void setVSync(bool enable) override;
+    void setEventCallback(eventCallbackFn const& callback) override { m_data.eventCallback = callback; }
 
-    [[nodiscard]] float GetTime() const override;
-    [[nodiscard]] bool IsVSync() const override { return m_Data.IsVSyncEnabled; }
-    [[nodiscard]] glm::uvec2 GetSize() const override { return m_Data.WindowSize; }
-    [[nodiscard]] void* GetNativeWindow() const override { return m_Window; }
+    [[nodiscard]] float getTime() const override;
+    [[nodiscard]] bool isVSync() const override { return m_data.isVSyncEnabled; }
+    [[nodiscard]] glm::uvec2 getSize() const override { return m_data.windowSize; }
+    [[nodiscard]] void* getNativeWindow() const override { return m_window; }
 
 protected:
-    bool m_IsGLFWInitialized{ false };
+    bool m_isGlfwInitialized{ false };
 
     /**
      * @brief Initializes GLFW window with the given properties such as context, title, width,
      * height, and other related settings.
      */
-    void Init() override;
+    void init() override;
 
     /**
      * @brief Closes the GLFW window context and terminates GLFW. Called in the destructor.
@@ -38,7 +41,7 @@ protected:
      * Override this function to perform any additional cleanup operations.
      */
 
-    void ShutDown() override;
+    void shutDown() override;
 
     /**
      * @brief Sets up all GLFW window callbacks (e.g., window resize, close, key/button presses).
@@ -46,7 +49,7 @@ protected:
      * This class handles the registration and binding of all necessary GLFW callbacks
      * related to window and input events.
      */
-    virtual void SetupWindowCallbacks();
+    virtual void setupWindowCallbacks();
 
 private:
     /**
@@ -56,20 +59,20 @@ private:
      * It is used within GLFW callbacks to access and update window data, and to dispatch events.
      */
     struct WindowsData {
-        std::string Title{ kNOTSET };
-        glm::uvec2 WindowSize{ kDefaultWindowSize };
-        bool IsVSyncEnabled{ true };
+        std::string title{ k_kNotset };
+        glm::uvec2 windowSize{ k_kDefaultWindowSize };
+        bool isVSyncEnabled{ true };
 
-        EventCallbackFn EventCallback;
+        eventCallbackFn eventCallback;
 
-        WindowsData(std::string title, glm::uvec2 windowSize) : Title(std::move(title)), WindowSize(windowSize) {}
+        WindowsData(std::string title, glm::uvec2 windowSize) : title(std::move(title)), windowSize(windowSize) {}
     };
 
-    GLFWwindow* m_Window{ nullptr };
-    Scope<renderer::RendererContext> m_Context{};
-    WindowsData m_Data;
+    GLFWwindow* m_window{ nullptr };
+    scope<renderer::RendererContext> m_context{};
+    WindowsData m_data;
 
-    static void SetupGLFWWindowHints();
+    static void setupGlfwWindowHints();
 };
 
 }  // namespace ly

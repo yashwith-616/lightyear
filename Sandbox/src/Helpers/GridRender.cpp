@@ -13,25 +13,25 @@ constexpr float quadVertices[] = {
 constexpr uint32_t quadIndices[] = { 0, 1, 2, 2, 3, 0 };
 }  // namespace
 
-constexpr std::span<const float> g_QuadVertexSpan   = quadVertices;
-constexpr std::span<const uint32_t> g_QuadIndexSpan = quadIndices;
+constexpr std::span<float const> k_quadVertexSpan   = quadVertices;
+constexpr std::span<uint32_t const> k_quadIndexSpan = quadIndices;
 
 GridRender::GridRender() {
-    const ly::renderer::BufferElement bufferElement(ly::renderer::ShaderDataType::FLOAT2, "Positions", false);
-    const ly::renderer::BufferLayout bufferLayout = { bufferElement };
+    ly::renderer::BufferElement const bufferElement(ly::renderer::ShaderDataType::Float2, "Positions", false);
+    ly::renderer::BufferLayout const bufferLayout = { bufferElement };
 
-    const auto vertexBuffer = ly::renderer::VertexBuffer::Create(g_QuadVertexSpan);
-    vertexBuffer->SetLayout(bufferLayout);
+    auto const vertexBuffer = ly::renderer::VertexBuffer::create(k_quadVertexSpan);
+    vertexBuffer->setLayout(bufferLayout);
 
-    const auto indexBuffer = ly::renderer::IndexBuffer::Create(g_QuadIndexSpan);
+    auto const indexBuffer = ly::renderer::IndexBuffer::create(k_quadIndexSpan);
 
-    m_GridVAO = ly::renderer::VertexArray::Create();
-    m_GridVAO->AddVertexBuffer(vertexBuffer);
-    m_GridVAO->SetIndexBuffer(indexBuffer);
+    m_gridVao = ly::renderer::VertexArray::create();
+    m_gridVao->addVertexBuffer(vertexBuffer);
+    m_gridVao->setIndexBuffer(indexBuffer);
 
-    m_GridShader = ly::renderer::Shader::Create("GridShader", g_GridShader);
+    m_gridShader = ly::renderer::Shader::create("GridShader", k_gridShader);
 }
 
-void GridRender::Render() const {
-    ly::renderer::Renderer::Submit(ly::renderer::RenderSubmission(m_GridShader, m_GridVAO, nullptr, glm::mat4(1.f)));
+void GridRender::render() const {
+    ly::renderer::Renderer::submit(ly::renderer::RenderSubmission(m_gridShader, m_gridVao, nullptr, glm::mat4(1.f)));
 }

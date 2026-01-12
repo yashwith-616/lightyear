@@ -6,15 +6,15 @@
 namespace ly::scene {
 
 /// \brief Attaches a UUID to the component. All entity present in scene will have this component.
-struct LIGHTYEAR_API IDComponent {
-    UUID ID;
+struct LIGHTYEAR_API IdComponent {
+    Uuid id;
 
-    IDComponent() : ID(UUID()) {}
-    explicit IDComponent(const UUID& id) : ID(id) {}
+    IdComponent() : id(Uuid()) {}
+    explicit IdComponent(Uuid const& id) : id(id) {}
 
     template <class Archive>
     void save(Archive& archive) {
-        uint64_t value = ID.Get();
+        uint64_t value = id.get();
         archive(cereal::make_nvp("ID", value));
     }
 
@@ -22,21 +22,21 @@ struct LIGHTYEAR_API IDComponent {
     void load(Archive& archive) {
         uint64_t value{};
         archive(cereal::make_nvp("ID", value));
-        ID = UUID(value);
+        id = Uuid(value);
     }
 
-    SERIALIZE_BODY(IDComponent)
+    SERIALIZE_BODY(IdComponent)
 };
 
 }  // namespace ly::scene
 
-REGISTER_COMPONENT(ly::scene::IDComponent, "IDComponent");
+REGISTER_COMPONENT(ly::scene::IdComponent, "IDComponent");
 
 LY_DISABLE_WARNINGS_PUSH
 #include <refl.hpp>
 LY_DISABLE_WARNINGS_POP
 
 // Will be removed
-REFL_TYPE(ly::scene::IDComponent)
-REFL_FIELD(ID)
+REFL_TYPE(ly::scene::IdComponent)
+REFL_FIELD(id)
 REFL_END

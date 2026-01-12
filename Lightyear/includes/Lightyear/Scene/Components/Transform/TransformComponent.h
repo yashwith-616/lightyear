@@ -6,30 +6,30 @@
 namespace ly::scene {
 
 struct LIGHTYEAR_API TransformComponent {
-    glm::vec3 Translation{ glm::vec3(0.0f) };
-    glm::vec3 Rotation{ glm::vec3(0.0f) };
-    glm::vec3 Scale{ glm::vec3(1.0f) };
+    glm::vec3 translation{ glm::vec3(0.0f) };
+    glm::vec3 rotation{ glm::vec3(0.0f) };
+    glm::vec3 scale{ glm::vec3(1.0f) };
 
     TransformComponent() = default;
-    explicit TransformComponent(const glm::vec3& translation) : Translation(translation) {}
+    explicit TransformComponent(glm::vec3 const& translation) : translation(translation) {}
 
-    [[nodiscard]] glm::mat4 GetTransform() const {
-        glm::mat4 const rotation = glm::toMat4(glm::quat(Rotation));
-        return glm::translate(glm::mat4(1.0f), Translation) * rotation * glm::scale(glm::mat4(1.0f), Scale);
+    [[nodiscard]] glm::mat4 getTransform() const {
+        glm::mat4 const rot = glm::toMat4(glm::quat(rotation));
+        return glm::translate(glm::mat4(1.0f), translation) * rot * glm::scale(glm::mat4(1.0f), scale);
     }
 
     template <class Archive>
     void save(Archive& archive) const {
-        archive(cereal::make_nvp("Translation", Translation),
-                cereal::make_nvp("Rotation", Rotation),
-                cereal::make_nvp("Scale", Scale));
+        archive(cereal::make_nvp("Translation", translation),
+                cereal::make_nvp("Rotation", rotation),
+                cereal::make_nvp("Scale", scale));
     }
 
     template <class Archive>
     void load(Archive& archive) {
-        archive(cereal::make_nvp("Translation", Translation),
-                cereal::make_nvp("Rotation", Rotation),
-                cereal::make_nvp("Scale", Scale));
+        archive(cereal::make_nvp("Translation", translation),
+                cereal::make_nvp("Rotation", rotation),
+                cereal::make_nvp("Scale", scale));
     }
 
     SERIALIZE_BODY(TransformComponent)
@@ -44,7 +44,7 @@ LY_DISABLE_WARNINGS_PUSH
 LY_DISABLE_WARNINGS_POP
 
 REFL_TYPE(ly::scene::TransformComponent)
-REFL_FIELD(Translation)
-REFL_FIELD(Rotation)
-REFL_FIELD(Scale)
+REFL_FIELD(translation)
+REFL_FIELD(rotation)
+REFL_FIELD(scale)
 REFL_END

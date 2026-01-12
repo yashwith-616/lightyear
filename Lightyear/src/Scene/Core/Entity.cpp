@@ -2,6 +2,8 @@
 
 namespace ly::scene {
 
-Entity::Entity(entt::entity handle, Scene* scene) : m_EntityHandle(handle), m_Scene(scene) {}
+Entity::Entity(entt::entity handle, Scene* scene) : m_entityHandle(handle), m_scene(scene) {}
+Entity::Entity(Entity const& other) {}
+Entity& Entity::operator=(Entity const& other) {}
 
 }  // namespace ly::scene

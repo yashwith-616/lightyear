@@ -13,18 +13,18 @@ class LIGHTYEAR_API Event {
 public:
     virtual ~Event() = default;
 
-    virtual EventType GetEventType() const   = 0;
-    virtual std::string_view GetName() const = 0;
-    virtual int GetCategoryFlags() const     = 0;
-    virtual std::string ToString() const { return std::format("String: {}", GetName()); }
+    virtual EventType getEventType() const   = 0;
+    virtual std::string_view getName() const = 0;
+    virtual int getCategoryFlags() const     = 0;
+    virtual std::string toString() const { return std::format("String: {}", getName()); }
 
-    bool IsInCategory(EventCategory category) const noexcept { return GetCategoryFlags() & category; }
+    bool isInCategory(EventCategory category) const noexcept { return getCategoryFlags() & category; }
 
-    bool IsHandled() const { return m_Handled; }
-    void SetHandled(bool isHandled) noexcept { m_Handled = isHandled; }
+    bool isHandled() const { return m_handled; }
+    void setHandled(bool isHandled) noexcept { m_handled = isHandled; }
 
 protected:
-    bool m_Handled{ false };
+    bool m_handled{ false };
 };
 
 /**
@@ -32,21 +32,21 @@ protected:
  */
 class EventDispatcher {
 public:
-    EventDispatcher(Event& event) : m_Event(event) {}
+    EventDispatcher(Event& event) : m_event(event) {}
 
     template <typename T, typename F>
-    bool Dispatch(F&& func) {
+    bool dispatch(F&& func) {
         static_assert(std::is_base_of_v<Event, T>, "T must inherit from Event");
 
-        if (m_Event.GetEventType() == T::StaticType) {
-            m_Event.m_Handled = func(static_cast<T&>(m_Event));
+        if (m_event.getEventType() == T::StaticType) {
+            m_event.m_handled = func(static_cast<T&>(m_event));
             return true;
         }
         return false;
     }
 
 private:
-    Event& m_Event;
+    Event& m_event;
 };
 
 /**
@@ -60,13 +60,13 @@ private:
 template <typename Derived, EventType Type, int CategoryFlags>
 class EventBase : public Event {
 public:
-    static constexpr EventType StaticType = Type;
+    static constexpr EventType k_staticType = Type;
 
-    EventType GetEventType() const override { return StaticType; }
+    EventType getEventType() const override { return k_staticType; }
 
-    std::string_view GetName() const override { return typeid(Derived).name(); }
+    std::string_view getName() const override { return typeid(Derived).name(); }
 
-    int GetCategoryFlags() const override { return CategoryFlags; }
+    int getCategoryFlags() const override { return CategoryFlags; }
 };
 
 }  // namespace ly
