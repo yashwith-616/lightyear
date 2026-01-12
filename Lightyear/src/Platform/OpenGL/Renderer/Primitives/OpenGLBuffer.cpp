@@ -9,35 +9,35 @@ LY_DISABLE_WARNINGS_POP
 /////////////////////////////////////////////////////////
 namespace ly::renderer {
 
-OpenGLVertexBuffer::OpenGLVertexBuffer(uint32_t size) {
-    glCreateBuffers(1, &m_RenderID);
-    glBindBuffer(GL_ARRAY_BUFFER, m_RenderID);
+OpenGlVertexBuffer::OpenGlVertexBuffer(uint32_t size) {
+    glCreateBuffers(1, &m_renderId);
+    glBindBuffer(GL_ARRAY_BUFFER, m_renderId);
     glBufferData(GL_ARRAY_BUFFER, size, nullptr, GL_DYNAMIC_DRAW);
 }
 
-OpenGLVertexBuffer::OpenGLVertexBuffer(std::span<const float> vertices) {
-    const auto verticesSize = narrow_cast<GLsizeiptr>(vertices.size_bytes());
+OpenGlVertexBuffer::OpenGlVertexBuffer(std::span<float const> vertices) {
+    auto const verticesSize = narrowCast<GLsizeiptr>(vertices.size_bytes());
 
-    glCreateBuffers(1, &m_RenderID);
-    LY_CORE_ASSERT(m_RenderID > 0, "VertexBuffer render ID is not initialized");
-    glBindBuffer(GL_ARRAY_BUFFER, m_RenderID);
+    glCreateBuffers(1, &m_renderId);
+    LY_CORE_ASSERT(m_renderId > 0, "VertexBuffer render ID is not initialized");
+    glBindBuffer(GL_ARRAY_BUFFER, m_renderId);
     glBufferData(GL_ARRAY_BUFFER, verticesSize, vertices.data(), GL_STATIC_DRAW);
 }
 
-OpenGLVertexBuffer::~OpenGLVertexBuffer() {
-    glDeleteBuffers(1, &m_RenderID);
+OpenGlVertexBuffer::~OpenGlVertexBuffer() {
+    glDeleteBuffers(1, &m_renderId);
 }
 
-void OpenGLVertexBuffer::Bind() const {
-    glBindBuffer(GL_ARRAY_BUFFER, m_RenderID);
+void OpenGlVertexBuffer::bind() const {
+    glBindBuffer(GL_ARRAY_BUFFER, m_renderId);
 }
 
-void OpenGLVertexBuffer::UnBind() const {
+void OpenGlVertexBuffer::unBind() const {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void OpenGLVertexBuffer::SetData(const void* data, uint32_t size) {
-    glBindBuffer(GL_ARRAY_BUFFER, m_RenderID);
+void OpenGlVertexBuffer::setData(void const* data, uint32_t size) {
+    glBindBuffer(GL_ARRAY_BUFFER, m_renderId);
     glBufferSubData(GL_ARRAY_BUFFER, 0, size, data);
 }
 
@@ -48,23 +48,23 @@ void OpenGLVertexBuffer::SetData(const void* data, uint32_t size) {
 /////////////////////////////////////////////////////////
 namespace ly::renderer {
 
-OpenGLIndexBuffer::OpenGLIndexBuffer(std::span<const uint32_t> indices) : m_Count(indices.size()) {
-    glCreateBuffers(1, &m_RenderID);
-    glBindBuffer(GL_ARRAY_BUFFER, m_RenderID);
+OpenGlIndexBuffer::OpenGlIndexBuffer(std::span<uint32_t const> indices) : m_count(indices.size()) {
+    glCreateBuffers(1, &m_renderId);
+    glBindBuffer(GL_ARRAY_BUFFER, m_renderId);
 
-    const auto bufferSize = narrow_cast<GLsizeiptr>(indices.size_bytes());
+    auto const bufferSize = narrowCast<GLsizeiptr>(indices.size_bytes());
     glBufferData(GL_ARRAY_BUFFER, bufferSize, indices.data(), GL_STATIC_DRAW);
 }
 
-OpenGLIndexBuffer::~OpenGLIndexBuffer() {
-    glDeleteBuffers(1, &m_RenderID);
+OpenGlIndexBuffer::~OpenGlIndexBuffer() {
+    glDeleteBuffers(1, &m_renderId);
 }
 
-void OpenGLIndexBuffer::Bind() const {
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RenderID);
+void OpenGlIndexBuffer::bind() const {
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_renderId);
 }
 
-void OpenGLIndexBuffer::UnBind() const {
+void OpenGlIndexBuffer::unBind() const {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 

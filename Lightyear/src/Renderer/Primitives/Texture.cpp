@@ -4,10 +4,10 @@
 
 namespace ly::renderer {
 
-Ref<Texture2D> Texture2D::Create(const CPath& path) {
-    switch (Renderer::GetAPI()) {
-        case RendererAPI::API::OpenGL:
-            return MakeRef<OpenGLTexture2D>(path);
+ref<Texture2D> Texture2D::create(cPath const& path) {
+    switch (Renderer::getApi()) {
+        case RendererApi::Api::OpenGl:
+            return makeRef<OpenGlTexture2D>(path);
         default:
             LY_CORE_ASSERT(false, "RendererAPI is invalid not supported!");
             return nullptr;

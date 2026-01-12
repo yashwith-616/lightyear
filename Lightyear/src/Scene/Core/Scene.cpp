@@ -8,12 +8,12 @@ namespace {
 template <typename... Component>
 void CopyComponent(entt::registry& dst,
                    entt::registry& src,
-                   const std::unordered_map<ly::UUID, entt::entity>& enttMap) {
+                   const std::unordered_map<ly::Uuid, entt::entity>& enttMap) {
     (
         [&]() {
             auto view = src.view<Component>();
             for (auto srcEntity : view) {
-                entt::entity dstEntity = enttMap.at(src.get<ly::scene::IDComponent>(srcEntity).ID);
+                entt::entity dstEntity = enttMap.at(src.get<ly::scene::IdComponent>(srcEntity).ID);
 
                 auto& srcComponent = src.get<Component>(srcEntity);
                 dst.emplace_or_replace<Component>(dstEntity, srcComponent);
@@ -26,7 +26,7 @@ template <typename... Component>
 void CopyComponent(ly::scene::ComponentGroup<Component...>,
                    entt::registry& dst,
                    entt::registry& src,
-                   const std::unordered_map<ly::UUID, entt::entity>& enttMap) {
+                   const std::unordered_map<ly::Uuid, entt::entity>& enttMap) {
     CopyComponent<Component...>(dst, src, enttMap);
 }
 
@@ -34,8 +34,8 @@ template <typename... Component>
 void CopyComponentIfExists(ly::scene::Entity dst, ly::scene::Entity src) {
     (
         [&]() {
-            if (src.HasComponent<Component>()) {
-                dst.AddOrReplaceComponent<Component>(src.GetComponent<Component>());
+            if (src.hasComponent<Component>()) {
+                dst.addOrReplaceComponent<Component>(src.getComponent<Component>());
             }
         }(),
         ...);
@@ -51,22 +51,75 @@ void CopyComponentIfExists(ly::scene::ComponentGroup<Component...>, ly::scene::E
 namespace ly::scene {
 
 Scene::Scene() {
-    m_Registry.on_update<TransformComponent>().connect<&Scene::OnTransformUpdated>();
-    m_Registry.on_update<CameraComponent>().connect<&Scene::OnCameraUpdated>();
+    m_registry.on_update<TransformComponent>().connect<&Scene::onTransformUpdated>();
+    m_registry.on_update<CameraComponent>().connect<&Scene::onCameraUpdated>();
 }
 
 #pragma region Entity Management
-Entity Scene::CreateEntity(const std::string& name) {
-    return CreateEntity(UUID(), name);
+Entity Scene::createEntity(std::string const& name) {
+    return createEntity(Uuid(), name);
 }
 
-Entity Scene::CreateEntity(const std::string& name, const Entity& parent) {
-    return CreateEntity(UUID(), name, std::cref(parent));
+Entity Scene::createEntity(std::string const& name, Entity const& parent) {
+    return createEntity(Uuid(), name, std::cref(parent));
 }
 
-Entity Scene::CreateChildEntity(Entity parent, const std::string& name) {
-    const Entity entity = CreateEntity(name, parent);
-    AddChildNode(entity, parent);
+/**
+ * @brief Traverse all the relationship component and delete them recursively
+ * @param entity the entity that is supposed to be destroyed
+ */
+void Scene::destroyEntity(Entity entity) {
+    LY_CORE_ASSERT(m_registry.valid(entity), "Invalid entity");
+
+    if (!m_registry.any_of<RelationshipComponent>(entity)) {
+        m_registry.destroy(entity);
+        return;
+    }
+
+    auto& entityRelation = m_registry.get<RelationshipComponent>(entity);
+
+    auto curr = entityRelation.firstChild;
+    entt::entity prev{};
+    for (std::size_t i{}; i < entityRelation.childrenCount; i++) {
+        prev = curr;
+        curr = m_registry.get<RelationshipComponent>(curr).nextSibling;
+        destroyEntity(Entity(prev, this));
+    }
+
+    if (entityRelation.parent != entt::null) {
+        auto& parentRelation = m_registry.get<RelationshipComponent>(entityRelation.parent);
+        removeChildNode(entity, Entity(entityRelation.parent, this));
+        parentRelation.childrenCount--;
+    }
+
+    m_registry.destroy(entity);
+}
+
+Entity Scene::duplicateEntity(Entity entity) {
+    LY_CORE_ASSERT(m_registry.valid(entity), "Entity is invalid");
+
+    // Recursively need to duplicate child entities.
+    std::string const name = entity.getName();
+    Entity newEntity       = createEntity(name);
+    CopyComponentIfExists(allComponents{}, newEntity, entity);
+    return newEntity;
+}
+
+Entity Scene::findEntityByName(std::string const& name) const {
+    auto view = m_registry.view<TagComponent>();
+    for (auto const entity : view) {
+        TagComponent const& tagComponent = view.get<TagComponent>(entity);
+        if (tagComponent.tag == name) {
+            return Entity{ entity, const_cast<Scene*>(this) };
+        }
+    }
+
+    return {};
+}
+
+Entity Scene::createChildEntity(Entity parent, std::string const& name) {
+    Entity const entity = createEntity(name, parent);
+    addChildNode(entity, parent);
     return entity;
 }
 
@@ -87,34 +140,34 @@ Entity Scene::CreateChildEntity(Entity parent, const std::string& name) {
  * @param newParent the parent node to which this child is added
  * @param childEntity the name of the parent node
  */
-void Scene::AddChildNode(Entity childEntity, Entity newParent) {
-    LY_CORE_ASSERT(m_Registry.valid(childEntity), "Child Entity is invalid");
-    LY_CORE_ASSERT(m_Registry.valid(newParent), "New Parent Entity is invalid");
+void Scene::addChildNode(Entity childEntity, Entity newParent) {
+    LY_CORE_ASSERT(m_registry.valid(childEntity), "Child Entity is invalid");
+    LY_CORE_ASSERT(m_registry.valid(newParent), "New Parent Entity is invalid");
 
-    auto& childRelation  = childEntity.GetComponent<RelationshipComponent>();
-    auto& parentRelation = newParent.GetComponent<RelationshipComponent>();
+    auto& childRelation  = childEntity.getComponent<RelationshipComponent>();
+    auto& parentRelation = newParent.getComponent<RelationshipComponent>();
 
-    if (parentRelation.ChildrenCount == 0) {
-        parentRelation.FirstChild = childEntity;
+    if (parentRelation.childrenCount == 0) {
+        parentRelation.firstChild = childEntity;
         return;
     }
 
     // When multiple child exists
-    auto& fistChildRelation = m_Registry.get<RelationshipComponent>(parentRelation.FirstChild);
+    auto& fistChildRelation = m_registry.get<RelationshipComponent>(parentRelation.firstChild);
 
-    auto lastSibling = parentRelation.FirstChild;
-    for (std::size_t i{}; i < parentRelation.ChildrenCount - 1; i++) {
-        lastSibling = m_Registry.get<RelationshipComponent>(lastSibling).NextSibling;
+    auto lastSibling = parentRelation.firstChild;
+    for (std::size_t i{}; i < parentRelation.childrenCount - 1; i++) {
+        lastSibling = m_registry.get<RelationshipComponent>(lastSibling).nextSibling;
     }
 
-    auto& lastSiblingRelation = m_Registry.get<RelationshipComponent>(lastSibling);
-    childRelation.PrevSibling = lastSibling;
-    childRelation.NextSibling = lastSiblingRelation.NextSibling;
+    auto& lastSiblingRelation = m_registry.get<RelationshipComponent>(lastSibling);
+    childRelation.prevSibling = lastSibling;
+    childRelation.nextSibling = lastSiblingRelation.nextSibling;
 
-    lastSiblingRelation.NextSibling = childEntity;
-    fistChildRelation.PrevSibling   = childEntity;
+    lastSiblingRelation.nextSibling = childEntity;
+    fistChildRelation.prevSibling   = childEntity;
 
-    parentRelation.ChildrenCount++;
+    parentRelation.childrenCount++;
 }
 
 /**
@@ -123,89 +176,36 @@ void Scene::AddChildNode(Entity childEntity, Entity newParent) {
  * @param childEntity
  * @param parent
  */
-void Scene::RemoveChildNode(Entity childEntity, Entity parent) {
-    LY_CORE_ASSERT(m_Registry.valid(childEntity), "Child Entity is invalid");
-    LY_CORE_ASSERT(m_Registry.valid(parent), "Parent Entity is invalid");
+void Scene::removeChildNode(Entity childEntity, Entity parent) {
+    LY_CORE_ASSERT(m_registry.valid(childEntity), "Child Entity is invalid");
+    LY_CORE_ASSERT(m_registry.valid(parent), "Parent Entity is invalid");
 
-    auto& childRelation  = m_Registry.get<RelationshipComponent>(childEntity);
-    auto& parentRelation = m_Registry.get<RelationshipComponent>(parent);
+    auto& childRelation  = m_registry.get<RelationshipComponent>(childEntity);
+    auto& parentRelation = m_registry.get<RelationshipComponent>(parent);
 
-    LY_CORE_ASSERT(childRelation.Parent != parent, "Child Entity is not related to parent");
+    LY_CORE_ASSERT(childRelation.parent != parent, "Child Entity is not related to parent");
 
     // If multiple child
-    if (parentRelation.ChildrenCount != 1) {
-        auto& prevRelation = m_Registry.get<RelationshipComponent>(childRelation.PrevSibling);
-        auto& nextRelation = m_Registry.get<RelationshipComponent>(childRelation.NextSibling);
+    if (parentRelation.childrenCount != 1) {
+        auto& prevRelation = m_registry.get<RelationshipComponent>(childRelation.prevSibling);
+        auto& nextRelation = m_registry.get<RelationshipComponent>(childRelation.nextSibling);
 
-        prevRelation.NextSibling = childRelation.NextSibling;
-        nextRelation.PrevSibling = childRelation.PrevSibling;
+        prevRelation.nextSibling = childRelation.nextSibling;
+        nextRelation.prevSibling = childRelation.prevSibling;
     }
 
-    childRelation.Parent      = entt::null;
-    childRelation.PrevSibling = entt::null;
-    childRelation.NextSibling = entt::null;
-    parentRelation.ChildrenCount--;
-}
-
-/**
- * @brief Traverse all the relationship component and delete them recursively
- * @param entity the entity that is supposed to be destroyed
- */
-void Scene::DestroyEntity(Entity entity) {
-    LY_CORE_ASSERT(m_Registry.valid(entity), "Invalid entity");
-
-    if (!m_Registry.any_of<RelationshipComponent>(entity)) {
-        m_Registry.destroy(entity);
-        return;
-    }
-
-    auto& entityRelation = m_Registry.get<RelationshipComponent>(entity);
-
-    auto curr = entityRelation.FirstChild;
-    entt::entity prev{};
-    for (std::size_t i{}; i < entityRelation.ChildrenCount; i++) {
-        prev = curr;
-        curr = m_Registry.get<RelationshipComponent>(curr).NextSibling;
-        DestroyEntity(Entity(prev, this));
-    }
-
-    if (entityRelation.Parent != entt::null) {
-        auto& parentRelation = m_Registry.get<RelationshipComponent>(entityRelation.Parent);
-        RemoveChildNode(entity, Entity(entityRelation.Parent, this));
-        parentRelation.ChildrenCount--;
-    }
-
-    m_Registry.destroy(entity);
-}
-
-Entity Scene::DuplicateEntity(Entity entity) {
-    LY_CORE_ASSERT(m_Registry.valid(entity), "Entity is invalid");
-
-    // Recursively need to duplicate child entities.
-    const std::string name = entity.GetName();
-    Entity newEntity       = CreateEntity(name);
-    CopyComponentIfExists(AllComponents{}, newEntity, entity);
-    return newEntity;
-}
-
-Entity Scene::FindEntityByName(const std::string& name) const {
-    auto view = m_Registry.view<TagComponent>();
-    for (const auto entity : view) {
-        const TagComponent& tagComponent = view.get<TagComponent>(entity);
-        if (tagComponent.Tag == name) {
-            return Entity{ entity, const_cast<Scene*>(this) };
-        }
-    }
-
-    return {};
+    childRelation.parent      = entt::null;
+    childRelation.prevSibling = entt::null;
+    childRelation.nextSibling = entt::null;
+    parentRelation.childrenCount--;
 }
 
 /**
  * Primary camera is game camera in runtime. Else, it is the editor camera present in the scene.
  * @return The camera entity
  */
-Entity Scene::GetPrimaryCameraEntity() const {
-    auto view = m_Registry.view<MainCameraTag>();
+Entity Scene::getPrimaryCameraEntity() const {
+    auto view = m_registry.view<MainCameraTag>();
     for (auto entity : view) {
         return Entity{ entity, const_cast<Scene*>(this) };
     }
@@ -214,22 +214,22 @@ Entity Scene::GetPrimaryCameraEntity() const {
 
 #pragma endregion
 
-Entity Scene::CreateEntity(UUID UUID,
-                           const std::string& name,
-                           std::optional<std::reference_wrapper<const Entity>> parent) {
-    Entity entity{ m_Registry.create(), this };
-    entity.AddComponent<IDComponent>(UUID);
-    entity.AddComponent<TagComponent>(GenerateUniqueName(name));
-    entity.AddComponent<TransformComponent>();
-    entity.AddComponent<DirtyComponent>();
+Entity Scene::createEntity(Uuid uuid,
+                           std::string const& name,
+                           std::optional<std::reference_wrapper<Entity const>> parent) {
+    Entity entity{ m_registry.create(), this };
+    entity.addComponent<IdComponent>(uuid);
+    entity.addComponent<TagComponent>(generateUniqueName(name));
+    entity.addComponent<TransformComponent>();
+    entity.addComponent<DirtyComponent>();
 
     if (!parent.has_value()) {
-        entity.AddComponent<RelationshipComponent>();
+        entity.addComponent<RelationshipComponent>();
     } else {
-        entity.AddComponent<RelationshipComponent>(parent.value().get(), entity, entity);
+        entity.addComponent<RelationshipComponent>(parent.value().get(), entity, entity);
     }
 
-    m_EntityNameMap[entity.GetComponent<TagComponent>().Tag] = static_cast<uint32_t>(entity);
+    m_entityNameMap[entity.getComponent<TagComponent>().tag] = static_cast<uint32_t>(entity);
     return entity;
 }
 
@@ -240,27 +240,27 @@ Entity Scene::CreateEntity(UUID UUID,
  * 2. Can attach the editorial names to the SceneNode. Makes it heavy and may cause issue when
  * converting SceneGraph to SceneTree.
  */
-std::string Scene::GenerateUniqueName(const std::string& baseName) {
-    auto& count = m_EntityNameMap[baseName];
+std::string Scene::generateUniqueName(std::string const& baseName) {
+    auto& count = m_entityNameMap[baseName];
     if (count++ > 0) {
         return std::format("{}{}", baseName, count);
     }
     return baseName;
 }
 
-void Scene::OnTransformUpdated(entt::registry& registry, entt::entity entity) {
+void Scene::onTransformUpdated(entt::registry& registry, entt::entity entity) {
     LY_CORE_ASSERT(registry.any_of<DirtyComponent>(entity), "Transform does not have a dirty component");
 
     auto& dirty     = registry.get<DirtyComponent>(entity);
-    dirty.Transform = true;
+    dirty.transform = true;
 }
 
-void Scene::OnCameraUpdated(entt::registry& registry, entt::entity entity) {
+void Scene::onCameraUpdated(entt::registry& registry, entt::entity entity) {
     LY_CORE_ASSERT(registry.any_of<DirtyComponent>(entity), "Camera does not have a dirty component");
 
-    auto& dirty             = registry.get<DirtyComponent>(entity);
-    dirty.Camera_View       = true;
-    dirty.Camera_Projection = true;
+    auto& dirty            = registry.get<DirtyComponent>(entity);
+    dirty.cameraView       = true;
+    dirty.cameraProjection = true;
 }
 
 }  // namespace ly::scene

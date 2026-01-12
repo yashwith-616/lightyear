@@ -5,17 +5,17 @@
 
 namespace ly::renderer {
 
-class OpenGLRendererAPI : public RendererAPI {
+class OpenGlRendererApi : public RendererApi {
 public:
-    void Init() override;
+    void init() override;
 
-    void DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCount = 0) override;
-    void DrawLines(const VertexArray& vertexArray, uint32_t vertexCount = 0) override;
+    void drawIndexed(ref<VertexArray> const& vertexArray, uint32_t indexCount = 0) override;
+    void drawLines(VertexArray const& vertexArray, uint32_t vertexCount = 0) override;
 
-    void Clear() override;
-    void SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) override;
-    void SetClearColor(const glm::vec4& color) override;
-    void SetLineWidth(float width) override;
+    void clear() override;
+    void setViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) override;
+    void setClearColor(glm::vec4 const& color) override;
+    void setLineWidth(float width) override;
 };
 
 }  // namespace ly::renderer

@@ -5,19 +5,19 @@
 namespace ly {
 
 class LIGHTYEAR_API EditorUpdateBeginEvent
-    : public EventBase<EditorUpdateBeginEvent, EventType::EditorUpdateBegin, EC_EDITOR> {
+    : public EventBase<EditorUpdateBeginEvent, EventType::EditorUpdateBegin, EcEditor> {
 public:
     EditorUpdateBeginEvent() = default;
 
-    std::string ToString() const override { return std::format("EditorUpdateBeginEvent"); }
+    std::string toString() const override { return std::format("EditorUpdateBeginEvent"); }
 };
 
 class LIGHTYEAR_API EditorUpdateEndEvent
-    : public EventBase<EditorUpdateEndEvent, EventType::EditorUpdateBegin, EC_EDITOR> {
+    : public EventBase<EditorUpdateEndEvent, EventType::EditorUpdateBegin, EcEditor> {
 public:
     EditorUpdateEndEvent() = default;
 
-    std::string ToString() const override { return std::format("EditorUpdateEndEvent"); }
+    std::string toString() const override { return std::format("EditorUpdateEndEvent"); }
 };
 
 }  // namespace ly

@@ -14,82 +14,82 @@ class Entity {
 public:
     Entity() = default;
     Entity(entt::entity handle, Scene* scene);
-    Entity(const Entity& other)            = default;
+    Entity(Entity const& other)            = default;
     Entity(Entity&& other)                 = default;
-    Entity& operator=(const Entity& other) = default;
+    Entity& operator=(Entity const& other) = default;
 
     ~Entity() = default;
 
     template <typename T, typename... Args>
-    T& AddComponent(Args&&... args) {
-        LY_CORE_ASSERT(!HasComponent<T>(), "Entity already has component!");
-        T& component = GetRegistry().emplace<T>(m_EntityHandle, std::forward<Args>(args)...);
+    T& addComponent(Args&&... args) {
+        LY_CORE_ASSERT(!hasComponent<T>(), "Entity already has component!");
+        T& component = getRegistry().emplace<T>(m_entityHandle, std::forward<Args>(args)...);
         // m_Scene->OnComponentAdded<T>(*this, component);
         return component;
     }
 
     template <typename T>
-    void AddSingletonComponent() {
-        LY_CORE_ASSERT(!HasComponent<T>(), "Entity already has component!");
-        auto view = GetRegistry().view<T>();
+    void addSingletonComponent() {
+        LY_CORE_ASSERT(!hasComponent<T>(), "Entity already has component!");
+        auto view = getRegistry().view<T>();
         LY_ASSERT(view.size() <= 1, "More than one SINGLETON COMPONENT exists!");
         for (entt::entity entity : view) {
-            if (entity != m_EntityHandle) {
-                GetRegistry().remove<T>(entity);
+            if (entity != m_entityHandle) {
+                getRegistry().remove<T>(entity);
             }
         }
 
-        if (!GetRegistry().all_of<T>(m_EntityHandle)) {
-            GetRegistry().emplace<T>(m_EntityHandle);
+        if (!getRegistry().all_of<T>(m_entityHandle)) {
+            getRegistry().emplace<T>(m_entityHandle);
         }
     }
 
     template <typename T, typename... Args>
-    T& AddOrReplaceComponent(Args&&... args) {
-        T& component = m_Scene->m_Registry.emplace_or_replace<T>(m_EntityHandle, std::forward<Args>(args)...);
+    T& addOrReplaceComponent(Args&&... args) {
+        T& component = m_scene->m_registry.emplace_or_replace<T>(m_entityHandle, std::forward<Args>(args)...);
         // m_Scene->OnComponentAdded<T>(*this, component);
         return component;
     }
 
     template <typename T>
-    T& GetComponent() {
-        LY_CORE_ASSERT(HasComponent<T>(), "Entity does not have component!");
-        return GetRegistry().get<T>(m_EntityHandle);
+    T& getComponent() {
+        LY_CORE_ASSERT(hasComponent<T>(), "Entity does not have component!");
+        return getRegistry().get<T>(m_entityHandle);
     }
 
     template <typename T>
-    [[nodiscard]] bool HasComponent() const {
-        return GetRegistry().all_of<T>(m_EntityHandle);
+    [[nodiscard]] bool hasComponent() const {
+        return getRegistry().all_of<T>(m_entityHandle);
     }
 
     template <typename T>
-    void RemoveComponent() const {
-        LY_CORE_ASSERT(HasComponent<T>(), "Entity does not have component!");
-        GetRegistry().remove<T>(m_EntityHandle);
+    void removeComponent() const {
+        LY_CORE_ASSERT(hasComponent<T>(), "Entity does not have component!");
+        getRegistry().remove<T>(m_entityHandle);
     }
 
     template <typename T>
-    void SendUpdateSignal() const {
-        LY_CORE_ASSERT(HasComponent<T>(), "Entity does not have component!");
-        GetRegistry().patch<T>(m_EntityHandle, [](auto&) {});
+    void sendUpdateSignal() const {
+        LY_CORE_ASSERT(hasComponent<T>(), "Entity does not have component!");
+        getRegistry().patch<T>(m_entityHandle, [](auto&) {});
     }
 
-    operator bool() const { return m_EntityHandle != entt::null; }
-    operator entt::entity() const { return m_EntityHandle; }
-    operator uint32_t() const { return static_cast<uint32_t>(m_EntityHandle); }
+    operator bool() const { return m_entityHandle != entt::null; }
+    operator entt::entity() const { return m_entityHandle; }
+    operator uint32_t() const { return static_cast<uint32_t>(m_entityHandle); }
 
-    UUID GetUUID() { return GetComponent<IDComponent>().ID; }
-    const std::string& GetName() { return GetComponent<TagComponent>().Tag; }
+    Uuid getUuid() { return getComponent<IdComponent>().id; }
+    std::string const& getName() { return getComponent<TagComponent>().tag; }
 
-    bool operator!=(const Entity& other) const { return !(*this == other); }
-    bool operator==(const Entity& other) const {
-        return m_EntityHandle == other.m_EntityHandle && m_Scene == other.m_Scene;
+    bool operator!=(Entity const& other) const { return !(*this == other); }
+    bool operator==(Entity const& other) const {
+        return m_entityHandle == other.m_entityHandle && m_scene == other.m_scene;
     }
 
 private:
-    entt::entity m_EntityHandle{ entt::null };
-    Scene* m_Scene{ nullptr };
+    entt::entity m_entityHandle{ entt::null };
+    Scene* m_scene{ nullptr };
 
-    FORCEINLINE entt::registry& GetRegistry() const { return m_Scene->m_Registry; }
+    FORCEINLINE entt::registry& getRegistry() const { return m_scene->m_registry; }
 };
 }  // namespace ly::scene

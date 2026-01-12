@@ -11,30 +11,30 @@ class EditorLayer : public ly::Layer {
 public:
     EditorLayer();
 
-    void OnAttach() override;
-    void OnDetach() override;
-    void OnEvent(ly::Event& event) override {}
-    void OnEditorRender() override;
-    void OnUpdate(float deltaTime) override;
+    void onAttach() override;
+    void onDetach() override;
+    void onEvent(ly::Event& event) override {}
+    void onEditorRender() override;
+    void onUpdate(float deltaTime) override;
 
 private:
     // TO BE REMOVED
-    ly::Ref<ly::scene::Scene> m_Scene;
-    ly::Ref<ly::scene::SceneRuntime> m_SceneRuntime;
+    ly::ref<ly::scene::Scene> m_scene;
+    ly::ref<ly::scene::SceneRuntime> m_sceneRuntime;
 
     // TO BE REMOVED
-    ly::Ref<ly::renderer::Framebuffer> m_Framebuffer;
-    ly::Ref<ly::renderer::Shader> m_Shader;
-    ly::Ref<ly::renderer::Texture2D> m_Texture;
+    ly::ref<ly::renderer::Framebuffer> m_framebuffer;
+    ly::ref<ly::renderer::Shader> m_shader;
+    ly::ref<ly::renderer::Texture2D> m_texture;
 
     // Will be present
-    ly::Scope<ESceneWorkspace> m_SceneWorkspace;
-    ly::Ref<GlobalEditorContext> m_EditorContext;
+    ly::scope<ESceneWorkspace> m_sceneWorkspace;
+    ly::ref<GlobalEditorContext> m_editorContext;
 
-    float m_PrevMouseY{ 0.f };
-    float m_PrevMouseX{ 0.f };
-    float m_MouseSensitivity{ 0.1f };
+    float m_prevMouseY{ 0.f };
+    float m_prevMouseX{ 0.f };
+    float m_mouseSensitivity{ 0.1f };
 
-    void SaveScene() const;
-    void LoadScene();
+    void saveScene() const;
+    void loadScene();
 };

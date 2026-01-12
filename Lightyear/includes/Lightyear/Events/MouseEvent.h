@@ -4,62 +4,62 @@
 
 namespace ly {
 
-class LIGHTYEAR_API MouseMovedEvent : public EventBase<MouseMovedEvent, EventType::MouseMoved, EC_INPUT | EC_MOUSE> {
+class LIGHTYEAR_API MouseMovedEvent : public EventBase<MouseMovedEvent, EventType::MouseMoved, EcInput | EcMouse> {
 public:
-    MouseMovedEvent(float x, float y) : m_MouseX(x), m_MouseY(y) {}
+    MouseMovedEvent(float x, float y) : m_mouseX(x), m_mouseY(y) {}
 
-    float GetX() const { return m_MouseX; }
-    float GetY() const { return m_MouseY; }
+    float getX() const { return m_mouseX; }
+    float getY() const { return m_mouseY; }
 
-    std::string ToString() const override { return std::format("MouseMovedEvent: {}, {}", m_MouseX, m_MouseY); }
+    std::string toString() const override { return std::format("MouseMovedEvent: {}, {}", m_mouseX, m_mouseY); }
 
 private:
-    float m_MouseX{ 0.f };
-    float m_MouseY{ 0.f };
+    float m_mouseX{ 0.f };
+    float m_mouseY{ 0.f };
 };
 
 class LIGHTYEAR_API MouseScrolledEvent
-    : public EventBase<MouseScrolledEvent, EventType::MouseScrolled, EC_INPUT | EC_MOUSE> {
+    : public EventBase<MouseScrolledEvent, EventType::MouseScrolled, EcInput | EcMouse> {
 public:
-    MouseScrolledEvent(float xOffset, float yOffset) : m_XOffset(xOffset), m_YOffset(yOffset) {}
+    MouseScrolledEvent(float xOffset, float yOffset) : m_xOffset(xOffset), m_yOffset(yOffset) {}
 
-    float GetXOffset() const { return m_XOffset; }
-    float GetYOffset() const { return m_YOffset; }
+    float getXOffset() const { return m_xOffset; }
+    float getYOffset() const { return m_yOffset; }
 
-    std::string ToString() const override { return std::format("MouseScrolledEvent: {}, {}", m_XOffset, m_YOffset); }
+    std::string toString() const override { return std::format("MouseScrolledEvent: {}, {}", m_xOffset, m_yOffset); }
 
 private:
-    float m_XOffset{ 0.f };
-    float m_YOffset{ 0.f };
+    float m_xOffset{ 0.f };
+    float m_yOffset{ 0.f };
 };
 
 // --------------------------- Mouse Button Events ------------------------------------
 class LIGHTYEAR_API MouseButtonEvent {
 public:
-    int GetMouseButton() const { return m_Button; }
+    int getMouseButton() const { return m_button; }
 
 protected:
-    MouseButtonEvent(int button) : m_Button(button) {}
+    MouseButtonEvent(int button) : m_button(button) {}
 
-    int m_Button;
+    int m_button;
 };
 
 class LIGHTYEAR_API MouseButtonPressedEvent
-    : public EventBase<MouseButtonPressedEvent, EventType::MouseButtonPressed, EC_INPUT | EC_MOUSE>,
+    : public EventBase<MouseButtonPressedEvent, EventType::MouseButtonPressed, EcInput | EcMouse>,
       public MouseButtonEvent {
 public:
     MouseButtonPressedEvent(int button) : MouseButtonEvent(button) {}
 
-    std::string ToString() const override { return std::format("MouseButtonPressedEvent: {}", m_Button); }
+    std::string toString() const override { return std::format("MouseButtonPressedEvent: {}", m_button); }
 };
 
 class LIGHTYEAR_API MouseButtonReleasedEvent
-    : public EventBase<MouseButtonReleasedEvent, EventType::MouseButtonReleased, EC_INPUT | EC_MOUSE>,
+    : public EventBase<MouseButtonReleasedEvent, EventType::MouseButtonReleased, EcInput | EcMouse>,
       public MouseButtonEvent {
 public:
     MouseButtonReleasedEvent(int button) : MouseButtonEvent(button) {}
 
-    std::string ToString() const override { return std::format("MouseButtonReleasedEvent: {}", m_Button); }
+    std::string toString() const override { return std::format("MouseButtonReleasedEvent: {}", m_button); }
 };
 
 }  // namespace ly

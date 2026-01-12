@@ -10,7 +10,7 @@ namespace ly::scene {
  */
 template <typename... Component>
 struct ComponentGroup {
-    using Types = std::tuple<Component...>;
+    using types = std::tuple<Component...>;
 };
 
 template <typename Group>
@@ -48,8 +48,8 @@ struct ComponentGroupGet<ComponentGroup<Components...>> {
 /**
  * @brief All Components present in Lightyear
  */
-using AllComponents = ComponentGroup<DirtyComponent,
-                                     IDComponent,
+using allComponents = ComponentGroup<DirtyComponent,
+                                     IdComponent,
                                      RelationshipComponent,
                                      TagComponent,
                                      CameraComponent,

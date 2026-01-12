@@ -9,29 +9,29 @@ LY_DISABLE_WARNINGS_POP
 
 namespace ly::scene {
 
-enum class CameraProjectionType : uint8_t { PERSPECTIVE = 0, ORTHOGRAPHIC = 1 };
+enum class CameraProjectionType : uint8_t { Perspective = 0, Orthographic = 1 };
 
 struct LIGHTYEAR_API CameraComponent {
-    glm::mat4 ProjectionMatrix;
-    glm::mat4 ViewMatrix;
-    glm::mat4 Cache_ViewProjectionMatrix;
+    glm::mat4 projectionMatrix;
+    glm::mat4 viewMatrix;
+    glm::mat4 cacheViewProjectionMatrix;
 
-    float OrthographicSize{ kOrthographicCameraSize };  // Only Used in orthographic camera
-    float AspectRatio{ kDefaultAspectRatio };
-    float FOVRadians{ kDefaultFOVRadians };
-    float NearClip{ kDefaultNearClip };
-    float FarClip{ kDefaultFarClip };
-    CameraProjectionType ProjectionType{ CameraProjectionType::PERSPECTIVE };
+    float orthographicSize{ k_kOrthographicCameraSize };  // Only Used in orthographic camera
+    float aspectRatio{ k_kDefaultAspectRatio };
+    float fovRadians{ k_kDefaultFovRadians };
+    float nearClip{ k_kDefaultNearClip };
+    float farClip{ k_kDefaultFarClip };
+    CameraProjectionType projectionType{ CameraProjectionType::Perspective };
 
     template <class Archive>
     void save(Archive& archive) const {
-        uint8_t kProjectionType = static_cast<uint8_t>(ProjectionType);
+        uint8_t kProjectionType = static_cast<uint8_t>(projectionType);
 
-        archive(cereal::make_nvp("OrthographicSize", OrthographicSize),
-                cereal::make_nvp("AspectRatio", AspectRatio),
-                cereal::make_nvp("FOVRadians", FOVRadians),
-                cereal::make_nvp("NearClip", NearClip),
-                cereal::make_nvp("FarClip", FarClip),
+        archive(cereal::make_nvp("OrthographicSize", orthographicSize),
+                cereal::make_nvp("AspectRatio", aspectRatio),
+                cereal::make_nvp("FOVRadians", fovRadians),
+                cereal::make_nvp("NearClip", nearClip),
+                cereal::make_nvp("FarClip", farClip),
                 cereal::make_nvp("ProjectionType", kProjectionType));
     }
 
@@ -39,14 +39,14 @@ struct LIGHTYEAR_API CameraComponent {
     void load(Archive& archive) {
         uint8_t kProjectionType{};
 
-        archive(cereal::make_nvp("OrthographicSize", OrthographicSize),
-                cereal::make_nvp("AspectRatio", AspectRatio),
-                cereal::make_nvp("FOVRadians", FOVRadians),
-                cereal::make_nvp("NearClip", NearClip),
-                cereal::make_nvp("FarClip", FarClip),
+        archive(cereal::make_nvp("OrthographicSize", orthographicSize),
+                cereal::make_nvp("AspectRatio", aspectRatio),
+                cereal::make_nvp("FOVRadians", fovRadians),
+                cereal::make_nvp("NearClip", nearClip),
+                cereal::make_nvp("FarClip", farClip),
                 cereal::make_nvp("ProjectionType", kProjectionType));
 
-        ProjectionType = static_cast<CameraProjectionType>(kProjectionType);
+        projectionType = static_cast<CameraProjectionType>(kProjectionType);
     }
 
     SERIALIZE_BODY(CameraComponent)
@@ -61,9 +61,9 @@ LY_DISABLE_WARNINGS_PUSH
 LY_DISABLE_WARNINGS_POP
 
 REFL_TYPE(ly::scene::CameraComponent)
-REFL_FIELD(AspectRatio)
-REFL_FIELD(FOVRadians)
-REFL_FIELD(NearClip)
-REFL_FIELD(FarClip)
-REFL_FIELD(ProjectionType)
+REFL_FIELD(aspectRatio)
+REFL_FIELD(fovRadians)
+REFL_FIELD(nearClip)
+REFL_FIELD(farClip)
+REFL_FIELD(projectionType)
 REFL_END

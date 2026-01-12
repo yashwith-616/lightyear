@@ -3,6 +3,6 @@
 
 namespace ly::scene {
 
-enum class SceneRuntimeMode : uint8_t { NONE = 0, PAUSE, PLAY, SIMULATION, EDIT, MAX };
+enum class SceneRuntimeMode : uint8_t { None = 0, Pause, Play, Simulation, Edit, Max };
 
 }  // namespace ly::scene

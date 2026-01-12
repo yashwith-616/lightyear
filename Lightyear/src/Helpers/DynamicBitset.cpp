@@ -4,48 +4,48 @@
 namespace ly {
 
 DynamicBitset::DynamicBitset(size_t size) {
-    Resize(size);
+    resize(size);
 }
 
-void DynamicBitset::Resize(size_t size) {
-    const size_t blocks = BlockCount(size);
-    if (blocks > m_Bits.size()) {
-        m_Bits.resize(blocks, 0);
+void DynamicBitset::resize(size_t size) {
+    size_t blocks = blockCount(size);
+    if (blocks > m_bits.size()) {
+        m_bits.resize(blocks, 0);
     }
-    m_Size = size;
+    m_size = size;
 }
 
-void DynamicBitset::Set(size_t index, bool value) {
-    LY_CORE_ASSERT(m_Size > index, "DynamicBitset::Set - Index out of range");
+void DynamicBitset::set(size_t index, bool value) {
+    LY_CORE_ASSERT(m_size > index, "DynamicBitset::Set - Index out of range");
 
-    const size_t block = index / kBitsPerBlock;
-    const size_t bit   = index % kBitsPerBlock;
+    size_t block = index / k_bitsPerBlock;
+    size_t bit   = index % k_bitsPerBlock;
 
     if (value) {
-        m_Bits[block] |= (1ULL << bit);
+        m_bits[block] |= (1ULL << bit);
     } else {
-        m_Bits[block] &= ~(1ULL << bit);
+        m_bits[block] &= ~(1ULL << bit);
     }
 }
 
-void DynamicBitset::Reset(size_t index) {
-    Set(index, false);
+void DynamicBitset::reset(size_t index) {
+    set(index, false);
 }
 
-void DynamicBitset::Flip(size_t index) {
-    LY_CORE_ASSERT(m_Size > index, "DynamicBitset::Flip - Index out of range");
+void DynamicBitset::flip(size_t index) {
+    LY_CORE_ASSERT(m_size > index, "DynamicBitset::Flip - Index out of range");
 
-    const size_t block = index / kBitsPerBlock;
-    const size_t bit   = index % kBitsPerBlock;
-    m_Bits[block] ^= (1ULL << bit);
+    size_t block = index / k_bitsPerBlock;
+    size_t bit   = index % k_bitsPerBlock;
+    m_bits[block] ^= (1ULL << bit);
 }
 
-bool DynamicBitset::Test(size_t index) const {
-    LY_CORE_ASSERT(m_Size > index, "DynamicBitset::Test - Index out of range");
+bool DynamicBitset::test(size_t index) const {
+    LY_CORE_ASSERT(m_size > index, "DynamicBitset::Test - Index out of range");
 
-    const size_t block = index / kBitsPerBlock;
-    const size_t bit   = index % kBitsPerBlock;
-    return static_cast<bool>((m_Bits[block] >> bit) & 1ULL);
+    size_t block = index / k_bitsPerBlock;
+    size_t bit   = index % k_bitsPerBlock;
+    return static_cast<bool>((m_bits[block] >> bit) & 1ULL);
 }
 
 }  // namespace ly

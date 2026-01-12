@@ -5,14 +5,17 @@
 
 namespace ly::renderer {
 
-Ref<VertexArray> VertexArray::Create() {
-    switch (Renderer::GetAPI()) {
-        case RendererAPI::API::OpenGL:
-            return MakeRef<OpenGLVertexArray>();
+ref<VertexArray> VertexArray::create() {
+    switch (Renderer::getApi()) {
+        case RendererApi::Api::OpenGl:
+            return makeRef<OpenGlVertexArray>();
         default:
             LY_CORE_ASSERT(false, "Invalid API Type is currently not supported!");
             return nullptr;
     }
 }
+void VertexArray::unbind() const {}
+void VertexArray::addVertexBuffer(ref<VertexBuffer> const& vertexBuffer) {}
+void VertexArray::setIndexBuffer(ref<IndexBuffer> const& indexBuffer) {}
 
 }  // namespace ly::renderer

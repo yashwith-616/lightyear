@@ -11,22 +11,22 @@ LY_DISABLE_WARNINGS_POP
 namespace ly::scene {
 
 struct LIGHTYEAR_API RelationshipComponent {
-    std::size_t ChildrenCount{};
-    entt::entity Parent{ entt::null };
-    entt::entity FirstChild{ entt::null };
-    entt::entity NextSibling{ entt::null };
-    entt::entity PrevSibling{ entt::null };
+    std::size_t childrenCount{};
+    entt::entity parent{ entt::null };
+    entt::entity firstChild{ entt::null };
+    entt::entity nextSibling{ entt::null };
+    entt::entity prevSibling{ entt::null };
 
     RelationshipComponent() = default;
-    explicit RelationshipComponent(entt::entity parent) : Parent(parent) {}
+    explicit RelationshipComponent(entt::entity parent) : parent(parent) {}
     RelationshipComponent(entt::entity parent, entt::entity nextSibling, entt::entity prevSibling)
-        : Parent(parent), NextSibling(nextSibling), PrevSibling(prevSibling) {}
+        : parent(parent), nextSibling(nextSibling), prevSibling(prevSibling) {}
 
-    void SetChild(entt::entity child) { FirstChild = child; }
+    void setChild(entt::entity child) { firstChild = child; }
 
     template <class Archive>
     void save(Archive& archive) const {
-        archive(cereal::make_nvp("ChildrenCount", ChildrenCount)
+        archive(cereal::make_nvp("ChildrenCount", childrenCount)
                 // Save entities as raw IDs (uint32_t or uint64_t), not entt::entity directly
                 /*cereal::make_nvp("Parent", static_cast<uint32_t>(Parent)),
                 cereal::make_nvp("FirstChild", static_cast<uint32_t>(FirstChild)),
@@ -39,7 +39,7 @@ struct LIGHTYEAR_API RelationshipComponent {
     void load(Archive& archive) {
         // uint32_t parent{}, firstChild{}, nextSibling{}, prevSibling{};
 
-        archive(cereal::make_nvp("ChildrenCount", ChildrenCount)
+        archive(cereal::make_nvp("ChildrenCount", childrenCount)
                 /*cereal::make_nvp("Parent", parent),
                 cereal::make_nvp("FirstChild", firstChild),
                 cereal::make_nvp("NextSibling", nextSibling),

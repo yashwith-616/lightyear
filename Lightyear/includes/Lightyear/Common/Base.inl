@@ -11,7 +11,7 @@ namespace ly {
  * @tparam T the type
  */
 template <typename T>
-using Scope = std::unique_ptr<T>;
+using scope = std::unique_ptr<T>;
 
 /**
  * Wrapper around make_unique
@@ -21,7 +21,7 @@ using Scope = std::unique_ptr<T>;
  * @return unique pointer
  */
 template <typename T, typename... Args>
-constexpr std::unique_ptr<T> MakeScope(Args&&... args) {
+constexpr std::unique_ptr<T> makeScope(Args&&... args) {
     return std::make_unique<T>(std::forward<Args>(args)...);
 }
 
@@ -30,7 +30,7 @@ constexpr std::unique_ptr<T> MakeScope(Args&&... args) {
  * @tparam T the type
  */
 template <typename T>
-using Ref = std::shared_ptr<T>;
+using ref = std::shared_ptr<T>;
 
 /**
  * Wrapper around make_shared.
@@ -40,7 +40,7 @@ using Ref = std::shared_ptr<T>;
  * @return shared pointer
  */
 template <typename T, typename... Args>
-constexpr std::shared_ptr<T> MakeRef(Args&&... args) {
+constexpr std::shared_ptr<T> makeRef(Args&&... args) {
     return std::make_shared<T>(std::forward<Args>(args)...);
 }
 
@@ -49,14 +49,14 @@ constexpr std::shared_ptr<T> MakeRef(Args&&... args) {
  * @tparam T the type
  */
 template <typename T>
-using WeakRef = std::weak_ptr<T>;
+using weakRef = std::weak_ptr<T>;
 
 /**
  * Acquire lock on a weak pointer. Converts weak pointer to shared
  * @tparam T the type
  */
 template <typename T>
-Ref<T> TryLock(const WeakRef<T>& weak) {
+ref<T> tryLock(weakRef<T> const& weak) {
     return weak.lock();
 }
 
@@ -72,7 +72,7 @@ Ref<T> TryLock(const WeakRef<T>& weak) {
  * @return value after cast
  */
 template <typename T, typename U>
-constexpr T narrow_cast(U value) {
+constexpr T narrowCast(U value) {
     return static_cast<T>(value);
 }
 
@@ -84,12 +84,12 @@ struct Version {
 
     constexpr explicit Version(int16_t version) : version(version) {}
 
-    bool operator==(const Version& other) const noexcept { return this->version == other.version; }
-    bool operator!=(const Version& other) const noexcept { return this->version != other.version; }
-    bool operator<(const Version& other) const noexcept { return this->version < other.version; }
-    bool operator>(const Version& other) const noexcept { return this->version > other.version; }
-    bool operator<=(const Version& other) const noexcept { return this->version <= other.version; }
-    bool operator>=(const Version& other) const noexcept { return this->version >= other.version; }
+    bool operator==(Version const& other) const noexcept { return this->version == other.version; }
+    bool operator!=(Version const& other) const noexcept { return this->version != other.version; }
+    bool operator<(Version const& other) const noexcept { return this->version < other.version; }
+    bool operator>(Version const& other) const noexcept { return this->version > other.version; }
+    bool operator<=(Version const& other) const noexcept { return this->version <= other.version; }
+    bool operator>=(Version const& other) const noexcept { return this->version >= other.version; }
 
     [[nodiscard]] constexpr int16_t get() const noexcept { return version; }
 };
@@ -107,7 +107,7 @@ struct GraphicContextVersion {
 };
 
 template <typename T>
-constexpr std::string_view type_name() {
+constexpr std::string_view typeName() {
 #ifdef __clang__
     constexpr std::string_view p = __PRETTY_FUNCTION__;
     return p.substr(31, p.size() - 32);
@@ -130,7 +130,7 @@ struct ScopeGuard {
 
 /// \brief Provides an easier way to implement RAII guards
 template <typename F>
-ScopeGuard<F> MakeScopeGuard(F f) {
+ScopeGuard<F> makeScopeGuard(F f) {
     return ScopeGuard<F>(f);
 }
 

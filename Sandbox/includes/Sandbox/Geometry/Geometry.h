@@ -4,26 +4,26 @@
 
 class Geometry {
 public:
-    ly::Ref<ly::renderer::VertexArray> CubeVertexArray;
-    ly::Ref<ly::renderer::VertexArray> SphereVertexArray;
-    ly::Ref<ly::renderer::VertexArray> CylinderVertexArray;
-    ly::Ref<ly::renderer::VertexArray> TeapotVertexArray;
-    ly::Ref<ly::renderer::VertexArray> PlaneVertexArray;
+    ly::ref<ly::renderer::VertexArray> cubeVertexArray;
+    ly::ref<ly::renderer::VertexArray> sphereVertexArray;
+    ly::ref<ly::renderer::VertexArray> cylinderVertexArray;
+    ly::ref<ly::renderer::VertexArray> teapotVertexArray;
+    ly::ref<ly::renderer::VertexArray> planeVertexArray;
 
     Geometry();
 
-    static ly::Ref<ly::renderer::VertexArray> GetPlane();
+    static ly::ref<ly::renderer::VertexArray> getPlane();
 
-    static ly::Ref<ly::renderer::VertexArray> GetCube();
+    static ly::ref<ly::renderer::VertexArray> getCube();
 
-    static ly::Ref<ly::renderer::VertexArray> GetSphere();
+    static ly::ref<ly::renderer::VertexArray> getSphere();
 
-    static ly::Ref<ly::renderer::VertexArray> GetCylinder();
+    static ly::ref<ly::renderer::VertexArray> getCylinder();
 
     /**
      * @brief This is an OpenGL only function
      */
-    static ly::Ref<ly::renderer::VertexArray> GetTeapot();
+    static ly::ref<ly::renderer::VertexArray> getTeapot();
 
-    static Geometry* s_Geometry;
+    static Geometry* geometry;
 };

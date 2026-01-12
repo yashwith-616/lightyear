@@ -15,34 +15,34 @@ LY_DISABLE_WARNINGS_POP
 
 namespace ly {
 
-class UUIDGenerator {
+class UuidGenerator {
 public:
-    UUIDGenerator() : m_Engine(m_RandomDevice()) {}
+    UuidGenerator() : m_engine(m_randomDevice()) {}
 
-    uint64_t Generate() { return m_Distribution(m_Engine); }
+    uint64_t generate() { return m_distribution(m_engine); }
 
 private:
-    std::random_device m_RandomDevice;
-    std::mt19937_64 m_Engine;
-    std::uniform_int_distribution<uint64_t> m_Distribution;
+    std::random_device m_randomDevice;
+    std::mt19937_64 m_engine;
+    std::uniform_int_distribution<uint64_t> m_distribution;
 };
 
-class UUID {
+class Uuid {
 public:
-    UUID();
-    explicit UUID(uint64_t UUID);
+    Uuid();
+    explicit Uuid(uint64_t uuid);
 
-    bool operator==(const UUID& other) const { return m_UUID == other.m_UUID; }
-    bool operator!=(const UUID& other) const { return !(*this == other); }
+    bool operator==(Uuid const& other) const { return m_uuid == other.m_uuid; }
+    bool operator!=(Uuid const& other) const { return !(*this == other); }
 
-    [[nodiscard]] uint64_t Get() const { return m_UUID; }
+    [[nodiscard]] uint64_t get() const { return m_uuid; }
 
 private:
-    uint64_t m_UUID;
+    uint64_t m_uuid;
 };
 
-static UUIDGenerator& GetUUIDGenerator() {
-    static UUIDGenerator generator;
+static UuidGenerator& getUuidGenerator() {
+    static UuidGenerator generator;
     return generator;
 }
 

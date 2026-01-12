@@ -6,30 +6,30 @@
 
 namespace ly::renderer {
 
-class OpenGLVertexArray : public VertexArray {
+class OpenGlVertexArray : public VertexArray {
 public:
-    OpenGLVertexArray();
-    ~OpenGLVertexArray() override;
+    OpenGlVertexArray();
+    ~OpenGlVertexArray() override;
 
-    void Bind() const override;
-    void Unbind() const override;
+    void bind() const override;
+    void unbind() const override;
 
-    void AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer) override;
-    void SetIndexBuffer(const Ref<IndexBuffer>& indexBuffer) override;
+    void addVertexBuffer(ref<VertexBuffer> const& vertexBuffer) override;
+    void setIndexBuffer(ref<IndexBuffer> const& indexBuffer) override;
 
-    [[nodiscard]] const std::vector<Ref<VertexBuffer>>& GetVertexBuffers() const override { return m_Vertexbuffers; }
+    [[nodiscard]] std::vector<ref<VertexBuffer>> const& getVertexBuffers() const override { return m_vertexbuffers; }
 
-    [[nodiscard]] const IndexBuffer& GetIndexBuffer() const override {
-        LY_CORE_ASSERT(m_IndexBuffer, "IndexBuffer is null");
-        return *m_IndexBuffer;
+    [[nodiscard]] IndexBuffer const& getIndexBuffer() const override {
+        LY_CORE_ASSERT(m_indexBuffer, "IndexBuffer is null");
+        return *m_indexBuffer;
     }
 
 private:
-    VertexArrayHandle m_RenderID{};
-    uint32_t m_VertexBufferIndex{ 0 };
+    vertexArrayHandle m_renderId{};
+    uint32_t m_vertexBufferIndex{ 0 };
 
-    Ref<IndexBuffer> m_IndexBuffer;
-    std::vector<Ref<VertexBuffer>> m_Vertexbuffers;
+    ref<IndexBuffer> m_indexBuffer;
+    std::vector<ref<VertexBuffer>> m_vertexbuffers;
 };
 
 }  // namespace ly::renderer

@@ -4,20 +4,20 @@
 namespace {
 using ly::renderer::ShaderType;
 
-GLenum GetGLShaderType(ShaderType shaderType) {
+GLenum getGlShaderType(ShaderType shaderType) {
     switch (shaderType) {
-        case ShaderType::VERTEX:
+        case ShaderType::Vertex:
             return GL_VERTEX_SHADER;
-        case ShaderType::PIXEL:
-        case ShaderType::FRAGMENT:
+        case ShaderType::Pixel:
+        case ShaderType::Fragment:
             return GL_FRAGMENT_SHADER;
-        case ShaderType::COMPUTE:
+        case ShaderType::Compute:
             return GL_COMPUTE_SHADER;
-        case ShaderType::GEOMETRY:
+        case ShaderType::Geometry:
             return GL_GEOMETRY_SHADER;
-        case ShaderType::TESS_CONTROL:
+        case ShaderType::TessControl:
             return GL_TESS_CONTROL_SHADER;
-        case ShaderType::TESS_EVALUATION:
+        case ShaderType::TessEvaluation:
             return GL_TESS_EVALUATION_SHADER;
         default:
             LY_CORE_ASSERT(false, "Invalid Shader Type!");
@@ -28,104 +28,104 @@ GLenum GetGLShaderType(ShaderType shaderType) {
 
 namespace ly::renderer {
 
-OpenGLShader::OpenGLShader(std::string name, const std::unordered_map<ShaderType, CPath>& shaderFiles)
-    : m_ShaderHandle(glCreateProgram()), m_Name(std::move(name)) {
-    std::array<ShaderHandle, g_ShaderTypeCount> shaderHandles = {};
-    for (const auto& [shaderType, path] : shaderFiles) {
-        std::string shaderSrc = ReadFile(path);
-        const auto index      = static_cast<size_t>(shaderType);
-        shaderHandles[index]  = CompileShader(shaderSrc.data(), GetGLShaderType(shaderType));
+OpenGlShader::OpenGlShader(std::string name, std::unordered_map<ShaderType, cPath> const& shaderFiles)
+    : m_shaderHandle(glCreateProgram()), m_name(std::move(name)) {
+    std::array<shaderHandle, k_shaderTypeCount> shaderHandles = {};
+    for (auto const& [shaderType, path] : shaderFiles) {
+        std::string shaderSrc = readFile(path);
+        auto const index      = static_cast<size_t>(shaderType);
+        shaderHandles[index]  = compileShader(shaderSrc.data(), getGlShaderType(shaderType));
     }
 
-    for (const ShaderHandle shaderHandle : shaderHandles) {
+    for (shaderHandle const shaderHandle : shaderHandles) {
         if (shaderHandle != 0) {
-            glAttachShader(m_ShaderHandle, shaderHandle);
+            glAttachShader(m_shaderHandle, shaderHandle);
         }
     }
 
-    glLinkProgram(m_ShaderHandle);
-    CheckCompilerErrors(m_ShaderHandle, GL_PROGRAM);
+    glLinkProgram(m_shaderHandle);
+    checkCompilerErrors(m_shaderHandle, GL_PROGRAM);
 
-    for (const ShaderHandle shaderHandle : shaderHandles) {
-        if (shaderHandle != 0) {
-            glDeleteShader(shaderHandle);
-        }
-    }
-    BindUniformBufferBlock();
-}
-
-OpenGLShader::OpenGLShader(std::string name, const std::unordered_map<ShaderType, std::string>& shaderSrcs)
-    : m_ShaderHandle(glCreateProgram()), m_Name(std::move(name)) {
-    std::array<ShaderHandle, g_ShaderTypeCount> shaderHandles = {};
-    for (const auto& [shaderType, shaderSrc] : shaderSrcs) {
-        const auto index     = static_cast<size_t>(shaderType);
-        shaderHandles[index] = CompileShader(shaderSrc.data(), GetGLShaderType(shaderType));
-    }
-
-    for (const ShaderHandle shaderHandle : shaderHandles) {
-        if (shaderHandle != 0) {
-            glAttachShader(m_ShaderHandle, shaderHandle);
-        }
-    }
-
-    glLinkProgram(m_ShaderHandle);
-    CheckCompilerErrors(m_ShaderHandle, GL_PROGRAM);
-
-    for (const ShaderHandle shaderHandle : shaderHandles) {
+    for (shaderHandle const shaderHandle : shaderHandles) {
         if (shaderHandle != 0) {
             glDeleteShader(shaderHandle);
         }
     }
-    BindUniformBufferBlock();
+    bindUniformBufferBlock();
 }
 
-void OpenGLShader::Use() const {
-    glUseProgram(m_ShaderHandle);
+OpenGlShader::OpenGlShader(std::string name, std::unordered_map<ShaderType, std::string> const& shaderSrcs)
+    : m_shaderHandle(glCreateProgram()), m_name(std::move(name)) {
+    std::array<shaderHandle, k_shaderTypeCount> shaderHandles = {};
+    for (auto const& [shaderType, shaderSrc] : shaderSrcs) {
+        auto const index     = static_cast<size_t>(shaderType);
+        shaderHandles[index] = compileShader(shaderSrc.data(), getGlShaderType(shaderType));
+    }
+
+    for (shaderHandle const shaderHandle : shaderHandles) {
+        if (shaderHandle != 0) {
+            glAttachShader(m_shaderHandle, shaderHandle);
+        }
+    }
+
+    glLinkProgram(m_shaderHandle);
+    checkCompilerErrors(m_shaderHandle, GL_PROGRAM);
+
+    for (shaderHandle const shaderHandle : shaderHandles) {
+        if (shaderHandle != 0) {
+            glDeleteShader(shaderHandle);
+        }
+    }
+    bindUniformBufferBlock();
 }
 
-void OpenGLShader::UnBind() const {
+void OpenGlShader::use() const {
+    glUseProgram(m_shaderHandle);
+}
+
+void OpenGlShader::unBind() const {
     glUseProgram(0);
 }
 
-ShaderHandle OpenGLShader::CompileShader(const char* shaderCode, GLenum shaderType) {
-    const ShaderHandle shaderHandle = glCreateShader(shaderType);
+shaderHandle OpenGlShader::compileShader(char const* shaderCode, GLenum shaderType) {
+    shaderHandle const shaderHandle = glCreateShader(shaderType);
     glShaderSource(shaderHandle, 1, &shaderCode, nullptr);
     glCompileShader(shaderHandle);
-    CheckCompilerErrors(shaderHandle, shaderType);
+    checkCompilerErrors(shaderHandle, shaderType);
     return shaderHandle;
 }
 
-GLint OpenGLShader::GetUniformLocation(const std::string& name) const {
-    if (m_UniformLocationCache.contains(name)) {
-        return m_UniformLocationCache[name];
+GLint OpenGlShader::getUniformLocation(std::string const& name) const {
+    if (m_uniformLocationCache.contains(name)) {
+        return m_uniformLocationCache[name];
     }
 
-    const GLint location         = glGetUniformLocation(m_ShaderHandle, name.c_str());
-    m_UniformLocationCache[name] = location;
+    GLint const location         = glGetUniformLocation(m_shaderHandle, name.c_str());
+    m_uniformLocationCache[name] = location;
     return location;
 }
 
-GLint OpenGLShader::GetUniformBufferBlockIndex(const std::string& name) const {
-    if (m_UniformLocationCache.contains(name)) {
-        return m_UniformLocationCache[name];
+GLint OpenGlShader::getUniformBufferBlockIndex(std::string const& name) const {
+    if (m_uniformLocationCache.contains(name)) {
+        return m_uniformLocationCache[name];
     }
 
-    const GLint blockIndex = glGetUniformBlockIndex(m_ShaderHandle, name.data());
+    GLint const blockIndex = glGetUniformBlockIndex(m_shaderHandle, name.data());
     LY_CORE_ASSERT(blockIndex >= 0, "Uniform buffer block is not yet initialized!");
-    m_UniformLocationCache[name] = blockIndex;
+    m_uniformLocationCache[name] = blockIndex;
     return blockIndex;
 }
 
-void OpenGLShader::BindUniformBufferBlock() const {
-    OpenGLShader::Use();
-    SetUniformBlock("Camera", UniformBufferBlockBinding::CAMERA);
-    SetUniformBlock("Scene", UniformBufferBlockBinding::SCENE);
-    SetUniformBlock("Material", UniformBufferBlockBinding::MATERIAL);
-    SetUniformBlock("Object", UniformBufferBlockBinding::OBJECT);
-    OpenGLShader::UnBind();
+void OpenGlShader::bindUniformBufferBlock() const {
+    OpenGlShader::use();
+    setUniformBlock("Camera", UniformBufferBlockBinding::Camera);
+    setUniformBlock("Scene", UniformBufferBlockBinding::Scene);
+    setUniformBlock("Material", UniformBufferBlockBinding::Material);
+    setUniformBlock("Object", UniformBufferBlockBinding::Object);
+    OpenGlShader::unBind();
 }
 
-void OpenGLShader::CheckCompilerErrors(ShaderHandle shaderHandle, GLenum shaderType) {
+void OpenGlShader::checkCompilerErrors(shaderHandle shaderHandle, GLenum shaderType) {
     constexpr int bufferSize = 1024;
     GLint success            = 0;
     std::array<GLchar, bufferSize> infoLog{};

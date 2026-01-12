@@ -14,25 +14,25 @@
  */
 class SceneTreeNode : public std::enable_shared_from_this<SceneTreeNode> {
 public:
-    std::string Name{ "none" };
-    ly::UUID Id{};
-    entt::entity Entity{};
+    std::string name{ "none" };
+    ly::Uuid id{};
+    entt::entity entity{};
 
-    ly::WeakRef<SceneTreeNode> Parent{};
-    std::vector<ly::Ref<SceneTreeNode>> Children{};
+    ly::weakRef<SceneTreeNode> parent{};
+    std::vector<ly::ref<SceneTreeNode>> children{};
 
-    SceneTreeNode(std::string name, ly::UUID uid, entt::entity entity)
-        : Name(std::move(name)), Id(uid), Entity(entity) {}
+    SceneTreeNode(std::string name, ly::Uuid uid, entt::entity entity)
+        : name(std::move(name)), id(uid), entity(entity) {}
 
-    void AddChild(ly::Ref<SceneTreeNode> child) {
-        child->Parent = shared_from_this();
-        Children.push_back(std::move(child));
+    void addChild(ly::ref<SceneTreeNode> child) {
+        child->parent = shared_from_this();
+        children.push_back(std::move(child));
     }
 
-    void RemoveChild(const ly::UUID& id) {
-        const auto it = std::ranges::remove_if(Children, [&](const ly::Ref<SceneTreeNode>& child) {
-                            return child->Id == id;
+    void removeChild(ly::Uuid const& id) {
+        auto const it = std::ranges::remove_if(children, [&](ly::ref<SceneTreeNode> const& child) {
+                            return child->id == id;
                         }).begin();
-        Children.erase(it, Children.end());
+        children.erase(it, children.end());
     }
 };

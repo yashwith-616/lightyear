@@ -12,15 +12,15 @@ class LIGHTYEAR_API CameraSystem : public ISystem {
 public:
     CameraSystem();
 
-    void Init(entt::registry& registry) override;
+    void init(entt::registry& registry) override;
 
-    void Execute(entt::registry& registry) override;
+    void execute(entt::registry& registry) override;
 
-    void Shutdown(entt::registry& registry) override;
+    void shutdown(entt::registry& registry) override;
 
 private:
-    static void RecalculateViewMatrix(CameraComponent& camera, const TransformComponent& transform);
-    static void RecalculateProjectionMatrix(CameraComponent& camera);
+    static void recalculateViewMatrix(CameraComponent& camera, TransformComponent const& transform);
+    static void recalculateProjectionMatrix(CameraComponent& camera);
 };
 
 }  // namespace ly::scene

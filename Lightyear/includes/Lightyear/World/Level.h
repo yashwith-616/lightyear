@@ -8,17 +8,17 @@ namespace ly {
 class LIGHTYEAR_API Level {
 public:
     explicit Level(std::filesystem::path path, std::string name);
-    Level(const Level&)            = delete;
-    Level& operator=(const Level&) = delete;
+    Level(Level const&)            = delete;
+    Level& operator=(Level const&) = delete;
     Level(Level&&)                 = delete;
     Level& operator=(Level&&)      = delete;
 
-    Ref<scene::Scene> LoadScene() const;
-    void SaveScene(scene::Scene& scene) const;
+    ref<scene::Scene> loadScene() const;
+    void saveScene(scene::Scene& scene) const;
 
 private:
-    std::filesystem::path m_FilePath;
-    std::string m_LevelName;
+    std::filesystem::path m_filePath;
+    std::string m_levelName;
 };
 
 }  // namespace ly

@@ -9,11 +9,11 @@ class LIGHTYEAR_API RenderSystem : public ISystem {
 public:
     RenderSystem();
 
-    void Init(entt::registry& registry) override;
+    void init(entt::registry& registry) override;
 
-    void Execute(entt::registry& registry) override;
+    void execute(entt::registry& registry) override;
 
-    void Shutdown(entt::registry& registry) override;
+    void shutdown(entt::registry& registry) override;
 };
 
 }  // namespace ly::scene

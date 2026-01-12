@@ -1,5 +1,5 @@
 #pragma once
 #include <string_view>
 
-static constexpr std::string_view kFileHeaderMagic = "@FILE_HEADER_MAGIC@";
-static constexpr int kFileVersion = @FILE_VERSION@;
+static constexpr std::string_view k_fileHeaderMagic = "@FILE_HEADER_MAGIC@";
+static constexpr int k_fileVersion = @FILE_VERSION@;

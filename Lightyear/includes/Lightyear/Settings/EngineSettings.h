@@ -2,18 +2,18 @@
 
 #include <Lightyear/LightyearCore.h>
 
-enum class BackendRendererAPI : uint8_t { OpenGL, Vulkan };
+enum class BackendRendererApi : uint8_t { OpenGl, Vulkan };
 
-enum class OpenGLVersion : uint8_t {
+enum class OpenGlVersion : uint8_t {
     OpenGLv46,
     OpenGLv45,
 };
 
-static ly::GraphicContextVersion GetOpenGLVersion(OpenGLVersion version) {
+static ly::GraphicContextVersion getOpenGlVersion(OpenGlVersion version) {
     switch (version) {
-        case OpenGLVersion::OpenGLv45:
+        case OpenGlVersion::OpenGLv45:
             return { 4, 5 };
-        case OpenGLVersion::OpenGLv46:
+        case OpenGlVersion::OpenGLv46:
             return { 6, 7 };
         default:
             return { -1, -1 };
@@ -26,10 +26,10 @@ namespace ly {
 /// resource search and other details
 struct EngineSettings {
     // Renderer API
-    BackendRendererAPI rendererAPI;
+    BackendRendererApi rendererApi;
 
     // The current openGL version
-    OpenGLVersion openGLVersion;
+    OpenGlVersion openGlVersion;
 };
 
 }  // namespace ly

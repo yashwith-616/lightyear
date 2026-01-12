@@ -10,10 +10,10 @@ class LIGHTYEAR_API Material {
 public:
     virtual ~Material() = default;
 
-    static Ref<Material> Create(Ref<Shader> shader);
+    static ref<Material> create(ref<Shader> shader);
 
 private:
-    Ref<Shader> m_Shader;
+    ref<Shader> m_shader;
 };
 
 }  // namespace ly::renderer

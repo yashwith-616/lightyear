@@ -6,19 +6,19 @@
 namespace ly::scene {
 
 struct LIGHTYEAR_API TagComponent {
-    std::string Tag{ kNOTSET };
+    std::string tag{ k_kNotset };
 
     TagComponent() = default;
-    explicit TagComponent(std::string tag) : Tag(std::move(tag)) {}
+    explicit TagComponent(std::string tag) : tag(std::move(tag)) {}
 
     template <class Archive>
     void save(Archive& archive) const {
-        archive(cereal::make_nvp("Tag", Tag));
+        archive(cereal::make_nvp("Tag", tag));
     }
 
     template <class Archive>
     void load(Archive& archive) {
-        archive(cereal::make_nvp("Tag", Tag));
+        archive(cereal::make_nvp("Tag", tag));
     }
 
     SERIALIZE_BODY(TagComponent)
@@ -33,5 +33,5 @@ LY_DISABLE_WARNINGS_PUSH
 LY_DISABLE_WARNINGS_POP
 
 REFL_TYPE(ly::scene::TagComponent)
-REFL_FIELD(Tag)
+REFL_FIELD(tag)
 REFL_END

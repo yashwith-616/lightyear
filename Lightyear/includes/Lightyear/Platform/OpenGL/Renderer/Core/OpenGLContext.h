@@ -3,19 +3,20 @@
 #include "Lightyear/LightyearCore.h"
 #include "Lightyear/Renderer/Abstract/RendererContext.h"
 
+// NOLINTNEXTLINE
 struct GLFWwindow;
 
 namespace ly::renderer {
 
-class LIGHTYEAR_API OpenGLContext : public RendererContext {
+class LIGHTYEAR_API OpenGlContext : public RendererContext {
 public:
-    OpenGLContext(GLFWwindow* windowHandle);
+    OpenGlContext(GLFWwindow* windowHandle);
 
-    void Init() override;
-    void SwapBuffers() override;
+    void init() override;
+    void swapBuffers() override;
 
 private:
-    GLFWwindow* m_WindowHandle;
+    GLFWwindow* m_windowHandle;
 };
 
 }  // namespace ly::renderer

@@ -24,7 +24,7 @@ public:
      * @param name The human-readable name of the layer, useful for debugging and identification.
      * Defaults to "None" if not provided.
      */
-    explicit Layer(std::string name) : m_Name(std::move(name)), m_ID(UUID()) {}
+    explicit Layer(std::string name) : m_name(std::move(name)), m_id(Uuid()) {}
 
     /**
      * @brief Virtual destructor to ensure proper cleanup of derived Layer types.
@@ -34,8 +34,8 @@ public:
      */
     virtual ~Layer() = default;
 
-    Layer(const Layer&)                      = delete;
-    Layer& operator=(const Layer&)           = delete;
+    Layer(Layer const&)                      = delete;
+    Layer& operator=(Layer const&)           = delete;
     Layer(Layer&& other) noexcept            = default;
     Layer& operator=(Layer&& other) noexcept = default;
 
@@ -46,7 +46,7 @@ public:
      * being active in the application's context (e.g., setting up rendering resources,
      * registering callbacks, loading assets).
      */
-    virtual void OnAttach() = 0;
+    virtual void onAttach() = 0;
 
     /**
      * @brief Called when the layer is detached from a LayerStack.
@@ -54,7 +54,7 @@ public:
      * @details Use this method for cleanup tasks when the layer is no longer active
      * (e.g., releasing resources, unregistering callbacks, saving state).
      */
-    virtual void OnDetach() = 0;
+    virtual void onDetach() = 0;
 
     /**
      * @brief Called every frame to update the layer's state.
@@ -64,7 +64,7 @@ public:
      *
      * @param deltaTime The time elapsed since the last frame, in seconds.
      */
-    virtual void OnUpdate(float deltaTime) = 0;
+    virtual void onUpdate(float deltaTime) = 0;
 
     /**
      * @brief Called every frame for editor-specific rendering.
@@ -73,7 +73,7 @@ public:
      * or other visuals that should only appear in an editor context and not
      * in a standalone runtime build.
      */
-    virtual void OnEditorRender() = 0;
+    virtual void onEditorRender() = 0;
 
     /**
      * @brief Called when an event is dispatched to this layer.
@@ -83,14 +83,14 @@ public:
      *
      * @param event The event to be processed by the layer.
      */
-    virtual void OnEvent(Event& event) = 0;
+    virtual void onEvent(Event& event) = 0;
 
-    [[nodiscard]] const std::string& GetName() const { return m_Name; }
-    [[nodiscard]] UUID GetID() const { return m_ID; }
+    [[nodiscard]] std::string const& getName() const { return m_name; }
+    [[nodiscard]] Uuid getId() const { return m_id; }
 
 private:
-    std::string m_Name{ "None" };
-    UUID m_ID;
+    std::string m_name{ "None" };
+    Uuid m_id;
 };
 
 }  // namespace ly

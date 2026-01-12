@@ -31,12 +31,12 @@ enum class EventType : uint8_t {
 };
 
 enum EventCategory {
-    EC_APPLICATION = BIT(0),
-    EC_INPUT       = BIT(1),
-    EC_KEYBOARD    = BIT(2),
-    EC_MOUSE       = BIT(3),
-    EC_MOUSEBUTTON = BIT(4),
-    EC_EDITOR      = BIT(5)
+    EcApplication = bit(0),
+    EcInput       = bit(1),
+    EcKeyboard    = bit(2),
+    EcMouse       = bit(3),
+    EcMousebutton = bit(4),
+    EcEditor      = bit(5)
 };
 
 }  // namespace ly

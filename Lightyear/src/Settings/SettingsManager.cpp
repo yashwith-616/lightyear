@@ -5,10 +5,10 @@
 
 namespace ly {
 
-void SettingsManager::LoadConfigs() {
+void SettingsManager::loadConfigs() {
     // load JSON/INI/etc. into g_project, g_engine, g_editor
 }
-void SettingsManager::SaveConfigs() {
+void SettingsManager::saveConfigs() {
     // dump settings back to file
 }
 

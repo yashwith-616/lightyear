@@ -12,10 +12,10 @@ class EngineSettings;
 class LIGHTYEAR_API SettingsManager {
 public:
     /// \brief Load all configuration files into memory
-    static void LoadConfigs();
+    static void loadConfigs();
 
     /// \brief Save all configuration files into save directory
-    static void SaveConfigs();
+    static void saveConfigs();
 };
 
 }  // namespace ly

@@ -7,40 +7,40 @@
 class EEntityDetailsPanel : public IEditorPanel {
 public:
     EEntityDetailsPanel(std::string name)
-        : IEditorPanel(std::move(name)), m_WidgetDrawer(ly::MakeScope<WidgetDrawer>()) {}
+        : IEditorPanel(std::move(name)), m_widgetDrawer(ly::makeScope<WidgetDrawer>()) {}
 
-    void OnImGuiRender() override;
+    void onImGuiRender() override;
 
-    void SetSelectedEntity(ly::Ref<ly::scene::Entity> selectedEntity) { m_SelectedEntity = selectedEntity; }
+    void setSelectedEntity(ly::ref<ly::scene::Entity> selectedEntity) { m_selectedEntity = selectedEntity; }
 
 protected:
-    void AddComponent() const;
-    void DrawComponentPanel();
+    void addComponent() const;
+    void drawComponentPanel();
 
 private:
-    ly::Ref<ly::scene::Entity> m_SelectedEntity;
-    ly::Scope<WidgetDrawer> m_WidgetDrawer;
+    ly::ref<ly::scene::Entity> m_selectedEntity;
+    ly::scope<WidgetDrawer> m_widgetDrawer;
 
     template <typename T>
-    void DrawComponent() {
-        T& component = m_SelectedEntity->GetComponent<T>();
+    void drawComponent() {
+        T& component = m_selectedEntity->getComponent<T>();
         ImGui::SeparatorText(typeid(T).name());
-        if (m_WidgetDrawer->Draw(component)) {
-            m_SelectedEntity->SendUpdateSignal<T>();
+        if (m_widgetDrawer->draw(component)) {
+            m_selectedEntity->sendUpdateSignal<T>();
         }
     }
 
     template <typename Tuple, typename Entity, std::size_t... Is>
-    void DrawAllComponentsImpl(Entity& entity, std::index_sequence<Is...>) {
-        ((entity.template HasComponent<std::tuple_element_t<Is, Tuple>>()
-              ? DrawComponent<std::tuple_element_t<Is, Tuple>>()
+    void drawAllComponentsImpl(Entity& entity, std::index_sequence<Is...>) {
+        ((entity.template hasComponent<std::tuple_element_t<Is, Tuple>>()
+              ? drawComponent<std::tuple_element_t<Is, Tuple>>()
               : (void)0),
          ...);
     }
 
     template <typename Group, typename Entity>
-    void DrawAllComponents(Entity& entity) {
-        using Tuple = typename Group::Types;
-        DrawAllComponentsImpl<Tuple>(entity, std::make_index_sequence<std::tuple_size_v<Tuple>>{});
+    void drawAllComponents(Entity& entity) {
+        using tuple = typename Group::types;
+        drawAllComponentsImpl<tuple>(entity, std::make_index_sequence<std::tuple_size_v<tuple>>{});
     }
 };

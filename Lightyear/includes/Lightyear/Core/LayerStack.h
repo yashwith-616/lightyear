@@ -25,26 +25,26 @@ class LIGHTYEAR_API LayerStack final {
 public:
     LayerStack()                                       = default;
     ~LayerStack()                                      = default;
-    LayerStack(const LayerStack&)                      = delete;
-    LayerStack& operator=(const LayerStack&)           = delete;
+    LayerStack(LayerStack const&)                      = delete;
+    LayerStack& operator=(LayerStack const&)           = delete;
     LayerStack(LayerStack&& other) noexcept            = default;
     LayerStack& operator=(LayerStack&& other) noexcept = default;
 
-    void PushLayer(Scope<Layer> layer);
-    void PushOverlay(Scope<Layer> overlay);
-    void PopLayer(Layer* layer);
-    void PopOverlay(Layer* overlay);
+    void pushLayer(scope<Layer> layer);
+    void pushOverlay(scope<Layer> overlay);
+    void popLayer(Layer* layer);
+    void popOverlay(Layer* overlay);
 
     // NOLINTBEGIN
-    [[nodiscard]] std::vector<Scope<Layer>>::iterator begin() { return m_Layers.begin(); }
-    [[nodiscard]] std::vector<Scope<Layer>>::iterator end() { return m_Layers.end(); }
-    [[nodiscard]] std::vector<Scope<Layer>>::const_iterator begin() const { return m_Layers.begin(); }
-    [[nodiscard]] std::vector<Scope<Layer>>::const_iterator end() const { return m_Layers.end(); }
+    [[nodiscard]] std::vector<scope<Layer>>::iterator begin() { return m_layers.begin(); }
+    [[nodiscard]] std::vector<scope<Layer>>::iterator end() { return m_layers.end(); }
+    [[nodiscard]] std::vector<scope<Layer>>::const_iterator begin() const { return m_layers.begin(); }
+    [[nodiscard]] std::vector<scope<Layer>>::const_iterator end() const { return m_layers.end(); }
     // NOLINTEND
 
 private:
-    std::vector<Scope<Layer>> m_Layers;
-    int m_LayerInsertIndex{ 0 };
+    std::vector<scope<Layer>> m_layers;
+    int m_layerInsertIndex{ 0 };
 };
 
 }  // namespace ly

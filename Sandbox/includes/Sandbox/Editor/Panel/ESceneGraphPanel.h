@@ -4,26 +4,24 @@
 #include "Lightyear.h"
 #include "Sandbox/Editor/Comman/SceneTreeNode.h"
 
-class EESceneGraphPanel : public IEditorPanel {
+class EeSceneGraphPanel : public IEditorPanel {
 public:
-    explicit EESceneGraphPanel(std::string name) : IEditorPanel(std::move(name)) {}
-    ~EESceneGraphPanel() override = default;
+    explicit EeSceneGraphPanel(std::string name) : IEditorPanel(std::move(name)) {}
+    ~EeSceneGraphPanel() override = default;
 
-    void OnImGuiRender() override;
+    void onImGuiRender() override;
 
-    ly::WeakRef<SceneTreeNode> GetSelectedNode() { return m_SelectedNode; }
-    void SetSceneTree(const ly::Ref<SceneTreeNode>& sceneTree) { m_SceneTree = sceneTree; }
-    void SetScene(const ly::Ref<ly::scene::Scene>& scene) {
-        m_Scene = scene;
-    }
+    ly::weakRef<SceneTreeNode> getSelectedNode() { return m_selectedNode; }
+    void setSceneTree(ly::ref<SceneTreeNode> const& sceneTree) { m_sceneTree = sceneTree; }
+    void setScene(ly::ref<ly::scene::Scene> const& scene) { m_scene = scene; }
 
 protected:
-    void DrawSceneTree();
-    void AddEntityButton() const;
-    void DrawSceneTreeNode(const ly::Ref<SceneTreeNode>& node);
+    void drawSceneTree();
+    void addEntityButton() const;
+    void drawSceneTreeNode(ly::ref<SceneTreeNode> const& node);
 
 private:
-    ly::WeakRef<SceneTreeNode> m_SceneTree;
-    ly::Ref<SceneTreeNode> m_SelectedNode;
-    ly::Ref<ly::scene::Scene> m_Scene;
+    ly::weakRef<SceneTreeNode> m_sceneTree;
+    ly::ref<SceneTreeNode> m_selectedNode;
+    ly::ref<ly::scene::Scene> m_scene;
 };

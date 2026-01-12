@@ -6,19 +6,19 @@
 
 class IEditorWorkspace {
 public:
-    IEditorWorkspace(std::string name) : m_Name(std::move(name)) {}
+    IEditorWorkspace(std::string name) : m_name(std::move(name)) {}
     virtual ~IEditorWorkspace() = default;
 
-    virtual void OnAttach(ly::Ref<GlobalEditorContext> globalContext) = 0;
-    virtual void OnEvent(ly::Event& event)                            = 0;
-    virtual void OnUpdate(float deltaTime)                            = 0;
-    virtual void OnEditorUpdate()                                     = 0;
-    virtual void OnImGuiRender()                                      = 0;
+    virtual void onAttach(ly::ref<GlobalEditorContext> globalContext) = 0;
+    virtual void onEvent(ly::Event& event)                            = 0;
+    virtual void onUpdate(float deltaTime)                            = 0;
+    virtual void onEditorUpdate()                                     = 0;
+    virtual void onImGuiRender()                                      = 0;
 
 protected:
-    std::string m_Name{ "NONE" };
-    std::vector<IEditorPanel> m_EditorPanels{};
-    ly::Ref<GlobalEditorContext> m_GlobalEditorContext;
+    std::string m_name{ "NONE" };
+    std::vector<IEditorPanel> m_editorPanels{};
+    ly::ref<GlobalEditorContext> m_globalEditorContext;
 
-    bool m_bIsMinimized{ false };
+    bool m_isMinimized{ false };
 };

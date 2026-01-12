@@ -6,21 +6,21 @@ namespace ly::renderer {
 
 class LIGHTYEAR_API UniformBuffer {
 public:
-    explicit UniformBuffer(std::string name) : m_Name{ std::move(name) } {}
+    explicit UniformBuffer(std::string name) : m_name{ std::move(name) } {}
     virtual ~UniformBuffer() = default;
 
-    static Ref<UniformBuffer> Create(std::string name, uint32_t size, uint32_t bindingPoint);
+    static ref<UniformBuffer> create(std::string name, uint32_t size, uint32_t bindingPoint);
 
-    virtual void Bind() const   = 0;
-    virtual void UnBind() const = 0;
+    virtual void bind() const   = 0;
+    virtual void unBind() const = 0;
 
-    virtual void SetData(const void* data, uint32_t size, uint32_t offset = 0) = 0;
+    virtual void setData(void const* data, uint32_t size, uint32_t offset = 0) = 0;
 
-    virtual void Debug(uint32_t programID, const std::string& name) = 0;
-    [[nodiscard]] virtual const std::string& GetName() const { return m_Name; }
+    virtual void debug(uint32_t programId, std::string const& name) = 0;
+    [[nodiscard]] virtual std::string const& getName() const { return m_name; }
 
 protected:
-    std::string m_Name{ kNOTSET };
+    std::string m_name{ k_kNotset };
 };
 
 }  // namespace ly::renderer

@@ -43,12 +43,12 @@ static constexpr uint32_t g_PlaneIndices[] = {
 };
 
 
-constexpr std::span g_CubeVerticesSpan{ g_CubeVertices };
+constexpr std::span k_cubeVerticesSpan{ g_CubeVertices };
 
-constexpr auto g_CubeIndicesSpan  = std::span{g_CubeIndices};
+constexpr auto k_cubeIndicesSpan  = std::span{g_CubeIndices};
 
-constexpr std::span g_PlaneVerticesSpan { g_PlaneVertices };
+constexpr std::span k_planeVerticesSpan { g_PlaneVertices };
 
-constexpr auto g_PlaneIndicesSpan  = std::span{g_PlaneIndices};
+constexpr auto k_planeIndicesSpan  = std::span{g_PlaneIndices};
 
 // clang-format on

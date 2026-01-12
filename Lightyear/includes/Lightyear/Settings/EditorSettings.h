@@ -15,18 +15,18 @@ struct LIGHTYEAR_API EditorSettings : SerializableContract {
     std::string windowTitle{ "Lightyear" };
 
     // Aspect ratio of the window
-    float aspectRatio{ kDefaultAspectRatio };
+    float aspectRatio{ k_kDefaultAspectRatio };
 
     // The default FOV
-    float fovRadians{ kDefaultFOVRadians };
+    float fovRadians{ k_kDefaultFovRadians };
 
     // Near clip of the scene
-    float nearClip{ kDefaultNearClip };
+    float nearClip{ k_kDefaultNearClip };
 
     // Far clip of the scene
-    float farClip{ kDefaultFarClip };
+    float farClip{ k_kDefaultFarClip };
 
-    float defaultFrameTime{ kDefaultFrametime };
+    float defaultFrameTime{ k_kDefaultFrametime };
 
     static void Serialize(BinarySerializer& serializer, const EditorSettings& settings) {
         serializer.WriteRaw(settings.startupWindowSize.width);

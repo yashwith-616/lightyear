@@ -10,55 +10,56 @@
 
 LY_DISABLE_WARNINGS_PUSH
 #include <spdlog/fmt/ostr.h>
-#include <spdlog/spdlog.h>
+
+#include "spdlog/spdlog.h"
 LY_DISABLE_WARNINGS_POP
 
 namespace ly {
 
-enum class LogType { TRACE, INFO, WARN, Error, FATAL };
+enum class LogType { Trace, Info, Warn, Error, Fatal };
 
 class LIGHTYEAR_API Log {
 public:
-    static void Init();
-    static void Shutdown();
+    static void init();
+    static void shutdown();
 
-    static Ref<spdlog::logger>& GetCoreLogger() { return s_CoreLogger; }
-    static Ref<spdlog::logger>& GetClientLogger() { return s_ClientLogger; }
+    static ref<spdlog::logger>& getCoreLogger() { return m_sCoreLogger; }
+    static ref<spdlog::logger>& getClientLogger() { return m_sClientLogger; }
 
     // Template specialization for compile-time format strings (fmt::format_string)
     template <typename... Args>
-    static void LogMessage(LogType type, Ref<spdlog::logger> logger, fmt::format_string<Args...> fmt, Args&&... args) {
+    static void logMessage(LogType type, ref<spdlog::logger> logger, fmt::format_string<Args...> fmt, Args&&... args) {
         switch (type) {
-            case LogType::TRACE:
+            case LogType::Trace:
                 logger->trace(fmt, std::forward<Args>(args)...);
                 break;
-            case LogType::INFO:
+            case LogType::Info:
                 logger->info(fmt, std::forward<Args>(args)...);
                 break;
-            case LogType::WARN:
+            case LogType::Warn:
                 logger->warn(fmt, std::forward<Args>(args)...);
                 break;
             case LogType::Error:
                 logger->error(fmt, std::forward<Args>(args)...);
                 break;
-            case LogType::FATAL:
+            case LogType::Fatal:
                 logger->critical(fmt, std::forward<Args>(args)...);
                 break;
         }
     }
 
 private:
-    static Ref<spdlog::logger> s_CoreLogger;
-    static Ref<spdlog::logger> s_ClientLogger;
+    static ref<spdlog::logger> m_sCoreLogger;
+    static ref<spdlog::logger> m_sClientLogger;
 };
 
 template <typename OStream, glm::length_t L, typename T, glm::qualifier Q>
-OStream& operator<<(OStream& os, const glm::vec<L, T, Q>& vector) {
+OStream& operator<<(OStream& os, glm::vec<L, T, Q> const& vector) {
     return os << glm::to_string(vector);
 }
 
 template <typename OStream, glm::length_t C, glm::length_t R, typename T, glm::qualifier Q>
-OStream& operator<<(OStream& os, const glm::mat<C, R, T, Q>& matrix) {
+OStream& operator<<(OStream& os, glm::mat<C, R, T, Q> const& matrix) {
     return os << glm::to_string(matrix);
 }
 
@@ -71,8 +72,8 @@ OStream& operator<<(OStream& os, glm::qua<T, Q> quaternion) {
 
 // ===== Log Macros =====
 #ifdef LY_DEBUG
-    #define LY_LOG(type, ...) ::ly::Log::LogMessage(type, ::ly::Log::GetClientLogger(), __VA_ARGS__)
-    #define LY_CORE_LOG(type, ...) ::ly::Log::LogMessage(type, ::ly::Log::GetCoreLogger(), __VA_ARGS__)
+    #define LY_LOG(type, ...) ::ly::Log::logMessage(type, ::ly::Log::getClientLogger(), __VA_ARGS__)
+    #define LY_CORE_LOG(type, ...) ::ly::Log::logMessage(type, ::ly::Log::getCoreLogger(), __VA_ARGS__)
 #else
     #define LY_LOG(type, ...)
     #define LY_CORE_LOG(type, ...)

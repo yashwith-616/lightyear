@@ -12,9 +12,9 @@ namespace ly::scene {
 
 CameraSystem::CameraSystem() : ISystem("Singleton Camera", SystemLayer::Gameplay) {}
 
-void CameraSystem::Init(entt::registry& registry) {}
+void CameraSystem::init(entt::registry& registry) {}
 
-void CameraSystem::Execute(entt::registry& registry) {
+void CameraSystem::execute(entt::registry& registry) {
     auto view = registry.view<CameraComponent, TransformComponent, DirtyComponent>();
 
     for (auto&& [entity, camera, transform, dirty] : view.each()) {
@@ -22,20 +22,20 @@ void CameraSystem::Execute(entt::registry& registry) {
             continue;
         }
 
-        if (dirty.Camera_Projection) {
-            RecalculateProjectionMatrix(camera);
-            dirty.Camera_Projection = false;
+        if (dirty.cameraProjection) {
+            recalculateProjectionMatrix(camera);
+            dirty.cameraProjection = false;
         }
 
-        if (dirty.Camera_View || dirty.Transform) {
-            RecalculateViewMatrix(camera, transform);
-            dirty.Camera_View = false;
-            dirty.Transform   = false;
+        if (dirty.cameraView || dirty.transform) {
+            recalculateViewMatrix(camera, transform);
+            dirty.cameraView = false;
+            dirty.transform  = false;
         }
     }
 }
 
-void CameraSystem::Shutdown(entt::registry& registry) {}
+void CameraSystem::shutdown(entt::registry& registry) {}
 
 /**
  * Recalculate ViewMatrix and cached matrix
@@ -43,12 +43,12 @@ void CameraSystem::Shutdown(entt::registry& registry) {}
  * @param camera the camera
  * @param transform the transform
  */
-void CameraSystem::RecalculateViewMatrix(CameraComponent& camera, const TransformComponent& transform) {
-    const glm::mat4 rotationMat  = glm::toMat4(glm::quat(transform.Rotation));
-    const glm::mat4 newTransform = glm::translate(glm::mat4(1.0f), transform.Translation) * rotationMat;
+void CameraSystem::recalculateViewMatrix(CameraComponent& camera, TransformComponent const& transform) {
+    glm::mat4 const rotationMat  = glm::toMat4(glm::quat(transform.rotation));
+    glm::mat4 const newTransform = glm::translate(glm::mat4(1.0f), transform.translation) * rotationMat;
 
-    camera.ViewMatrix                 = glm::inverse(newTransform);
-    camera.Cache_ViewProjectionMatrix = camera.ProjectionMatrix * camera.ViewMatrix;
+    camera.viewMatrix                = glm::inverse(newTransform);
+    camera.cacheViewProjectionMatrix = camera.projectionMatrix * camera.viewMatrix;
 }
 
 /**
@@ -56,23 +56,23 @@ void CameraSystem::RecalculateViewMatrix(CameraComponent& camera, const Transfor
  *
  * @param camera the camera component
  */
-void CameraSystem::RecalculateProjectionMatrix(CameraComponent& camera) {
-    const float kOrthoHalfHeight = camera.OrthographicSize * 0.5f;
-    const float kOrthoHalfWidth  = kOrthoHalfHeight * camera.AspectRatio;
+void CameraSystem::recalculateProjectionMatrix(CameraComponent& camera) {
+    float const kOrthoHalfHeight = camera.orthographicSize * 0.5f;
+    float const kOrthoHalfWidth  = kOrthoHalfHeight * camera.aspectRatio;
 
-    switch (camera.ProjectionType) {
-        case CameraProjectionType::ORTHOGRAPHIC: {
-            camera.ProjectionMatrix = glm::ortho(-kOrthoHalfWidth,
+    switch (camera.projectionType) {
+        case CameraProjectionType::Orthographic: {
+            camera.projectionMatrix = glm::ortho(-kOrthoHalfWidth,
                                                  kOrthoHalfWidth,
                                                  -kOrthoHalfHeight,
                                                  kOrthoHalfHeight,
-                                                 camera.NearClip,
-                                                 camera.FarClip);
+                                                 camera.nearClip,
+                                                 camera.farClip);
             break;
         }
-        case CameraProjectionType::PERSPECTIVE: {
-            camera.ProjectionMatrix =
-                glm::perspective(camera.FOVRadians, camera.AspectRatio, camera.NearClip, camera.FarClip);
+        case CameraProjectionType::Perspective: {
+            camera.projectionMatrix =
+                glm::perspective(camera.fovRadians, camera.aspectRatio, camera.nearClip, camera.farClip);
 
             /*
               TODO: Depth buffer precision[Need checking]: camera.ProjectionMatrix[1][1] *= -1;
@@ -84,7 +84,7 @@ void CameraSystem::RecalculateProjectionMatrix(CameraComponent& camera) {
             LY_CORE_ASSERT(false, "Unsupported projection type!");
     }
 
-    camera.Cache_ViewProjectionMatrix = camera.ProjectionMatrix * camera.ViewMatrix;
+    camera.cacheViewProjectionMatrix = camera.projectionMatrix * camera.viewMatrix;
 }
 
 }  // namespace ly::scene

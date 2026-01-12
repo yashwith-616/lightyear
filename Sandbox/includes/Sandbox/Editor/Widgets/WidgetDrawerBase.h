@@ -6,7 +6,7 @@ template <typename Derived>
 class WidgetDrawerBase {
 public:
     template <typename T>
-    void Draw(T& object) {
+    void draw(T& object) {
         static_cast<Derived*>(this)->Draw(object);
     }
 

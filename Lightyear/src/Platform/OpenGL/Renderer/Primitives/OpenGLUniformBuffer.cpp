@@ -6,65 +6,65 @@ LY_DISABLE_WARNINGS_POP
 
 namespace ly::renderer {
 
-OpenGLUniformBuffer::OpenGLUniformBuffer(std::string name, uint32_t size, uint32_t bindingPoint)
-    : UniformBuffer(std::move(name)), m_BindingPoint(bindingPoint), m_Size(size) {
-    glCreateBuffers(1, &m_BufferID);
-    glNamedBufferData(m_BufferID, size, nullptr, GL_DYNAMIC_DRAW);
-    glBindBufferBase(GL_UNIFORM_BUFFER, bindingPoint, m_BufferID);
+OpenGlUniformBuffer::OpenGlUniformBuffer(std::string name, uint32_t size, uint32_t bindingPoint)
+    : UniformBuffer(std::move(name)), m_bindingPoint(bindingPoint), m_size(size) {
+    glCreateBuffers(1, &m_bufferId);
+    glNamedBufferData(m_bufferId, size, nullptr, GL_DYNAMIC_DRAW);
+    glBindBufferBase(GL_UNIFORM_BUFFER, bindingPoint, m_bufferId);
 }
 
-OpenGLUniformBuffer::~OpenGLUniformBuffer() {
-    glDeleteBuffers(1, &m_BufferID);
+OpenGlUniformBuffer::~OpenGlUniformBuffer() {
+    glDeleteBuffers(1, &m_bufferId);
 }
 
-void OpenGLUniformBuffer::Bind() const {
-    glBindBuffer(GL_UNIFORM_BUFFER, m_BufferID);
+void OpenGlUniformBuffer::setData(void const* data, uint32_t size, uint32_t offset) {
+    LY_ASSERT(offset + size <= m_size, "UniformBuffer overflow!");
+    glNamedBufferSubData(m_bufferId, offset, size, data);
 }
 
-void OpenGLUniformBuffer::UnBind() const {
+void OpenGlUniformBuffer::bind() const {
+    glBindBuffer(GL_UNIFORM_BUFFER, m_bufferId);
+}
+
+void OpenGlUniformBuffer::unBind() const {
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
-void OpenGLUniformBuffer::SetData(const void* data, uint32_t size, uint32_t offset) {
-    LY_ASSERT(offset + size <= m_Size, "UniformBuffer overflow!");
-    glNamedBufferSubData(m_BufferID, offset, size, data);
-}
-
-void OpenGLUniformBuffer::Debug(uint32_t programID, const std::string& blockName) {
-    const GLuint blockIndex = glGetUniformBlockIndex(programID, blockName.c_str());
+void OpenGlUniformBuffer::debug(uint32_t programId, std::string const& blockName) {
+    GLuint const blockIndex = glGetUniformBlockIndex(programId, blockName.c_str());
     if (blockIndex == GL_INVALID_INDEX) {
         LY_CORE_LOG(LogType::Error, "UBO block '{}' not found in shader program", blockName);
         return;
     }
 
     GLint blockSize = 0;
-    glGetActiveUniformBlockiv(programID, blockIndex, GL_UNIFORM_BLOCK_DATA_SIZE, &blockSize);
-    LY_CORE_LOG(LogType::INFO, "UBO '{}' block Size: {} bytes", blockName, blockSize);
+    glGetActiveUniformBlockiv(programId, blockIndex, GL_UNIFORM_BLOCK_DATA_SIZE, &blockSize);
+    LY_CORE_LOG(LogType::Info, "UBO '{}' block Size: {} bytes", blockName, blockSize);
 
     GLint activeUniforms = 0;
-    glGetActiveUniformBlockiv(programID, blockIndex, GL_UNIFORM_BLOCK_ACTIVE_UNIFORMS, &activeUniforms);
+    glGetActiveUniformBlockiv(programId, blockIndex, GL_UNIFORM_BLOCK_ACTIVE_UNIFORMS, &activeUniforms);
 
     std::vector<GLint> uniformIndices(activeUniforms);
-    glGetActiveUniformBlockiv(programID, blockIndex, GL_UNIFORM_BLOCK_ACTIVE_UNIFORM_INDICES, uniformIndices.data());
+    glGetActiveUniformBlockiv(programId, blockIndex, GL_UNIFORM_BLOCK_ACTIVE_UNIFORM_INDICES, uniformIndices.data());
 
     std::vector<GLint> offsets(activeUniforms);
-    glGetActiveUniformsiv(programID,
+    glGetActiveUniformsiv(programId,
                           activeUniforms,
-                          reinterpret_cast<const GLuint*>(uniformIndices.data()),
+                          reinterpret_cast<GLuint const*>(uniformIndices.data()),
                           GL_UNIFORM_OFFSET,
                           offsets.data());
 
     std::vector<GLint> types(activeUniforms);
-    glGetActiveUniformsiv(programID,
+    glGetActiveUniformsiv(programId,
                           activeUniforms,
-                          reinterpret_cast<const GLuint*>(uniformIndices.data()),
+                          reinterpret_cast<GLuint const*>(uniformIndices.data()),
                           GL_UNIFORM_TYPE,
                           types.data());
 
     std::vector<GLint> sizes(activeUniforms);
-    glGetActiveUniformsiv(programID,
+    glGetActiveUniformsiv(programId,
                           activeUniforms,
-                          reinterpret_cast<const GLuint*>(uniformIndices.data()),
+                          reinterpret_cast<GLuint const*>(uniformIndices.data()),
                           GL_UNIFORM_SIZE,
                           sizes.data());
 
@@ -72,16 +72,16 @@ void OpenGLUniformBuffer::Debug(uint32_t programID, const std::string& blockName
     std::vector<char> nameBuffer(bufferSize);
     std::vector<uint8_t> bufferData(blockSize);
 
-    glBindBuffer(GL_UNIFORM_BUFFER, m_BufferID);
+    glBindBuffer(GL_UNIFORM_BUFFER, m_bufferId);
     glGetBufferSubData(GL_UNIFORM_BUFFER, 0, blockSize, bufferData.data());
 
-    LY_CORE_LOG(LogType::INFO, "UBO '{}' has {} active uniforms:", blockName, activeUniforms);
+    LY_CORE_LOG(LogType::Info, "UBO '{}' has {} active uniforms:", blockName, activeUniforms);
 
     for (GLint i = 0; i < activeUniforms; ++i) {
         GLsizei nameLength = 0;
         GLenum uniformType = types[i];
 
-        glGetActiveUniform(programID,
+        glGetActiveUniform(programId,
                            uniformIndices[i],
                            static_cast<GLsizei>(nameBuffer.size()),
                            &nameLength,
@@ -89,17 +89,17 @@ void OpenGLUniformBuffer::Debug(uint32_t programID, const std::string& blockName
                            &uniformType,
                            nameBuffer.data());
 
-        const char* name = nameBuffer.data();
+        char const* name = nameBuffer.data();
         GLint offset     = offsets[i];
         GLenum type      = types[i];
 
-        LY_CORE_LOG(LogType::INFO, "  Name: {}, Offset: {}, Type: 0x{:X}", name, offset, type);
+        LY_CORE_LOG(LogType::Info, "  Name: {}, Offset: {}, Type: 0x{:X}", name, offset, type);
 
         constexpr int maxPreviewBytes = 4 * 4 * 4;
 
-        const float* floatData = reinterpret_cast<const float*>(&bufferData[offset]);
+        auto floatData = reinterpret_cast<float const*>(&bufferData[offset]);
         if (uniformType == GL_FLOAT_MAT4) {
-            const float* mat = reinterpret_cast<const float*>(&bufferData[offset]);
+            auto mat = reinterpret_cast<float const*>(&bufferData[offset]);
 
             // std140 stores mat4 column-major by default
             for (int row = 0; row < 4; ++row) {
@@ -108,7 +108,7 @@ void OpenGLUniformBuffer::Debug(uint32_t programID, const std::string& blockName
                     float value = mat[col * 4 + row];  // column-major indexing
                     std::format_to(std::back_inserter(rowStr), "{: .6f} ", value);
                 }
-                LY_CORE_LOG(LogType::INFO, "Row {}: {}", row, rowStr);
+                LY_CORE_LOG(LogType::Info, "Row {}: {}", row, rowStr);
             }
         }
     }

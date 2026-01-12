@@ -3,38 +3,38 @@
 #include "Lightyear/Common/Math.h"
 #include "Lightyear/pch/lypch.h"
 
-constexpr int OPENGL_MAJOR_VERSION{ 4 };
-constexpr int OPENGL_MINOR_VERSION{ 6 };
+constexpr int k_openglMajorVersion{ 4 };
+constexpr int k_openglMinorVersion{ 6 };
 
 namespace ly {
 
 // ----------------------- Constants ---------------------------
 // TO BE MOVED: Windows properties
-constexpr glm::uvec2 kDefaultWindowSize{ 1280, 720 };
-constexpr float kDefaultFrametime{ 1 / 60.f };
-constexpr std::string_view kDefaultWindowTitle{ "LightYear" };
-constexpr std::string_view kGLSLVersion = "#version 460 core";
-constexpr std::string_view kNOTSET{ "NOT_SET" };
+constexpr glm::uvec2 k_defaultWindowSize{ 1280, 720 };
+constexpr float k_kDefaultFrametime{ 1 / 60.f };
+constexpr std::string_view k_defaultWindowTitle{ "LightYear" };
+constexpr std::string_view k_kGlslVersion = "#version 460 core";
+constexpr std::string_view k_kNotset{ "NOT_SET" };
 
-constexpr float kDefaultAspectRatio{ 1.7777777778f };
-constexpr float kDefaultFOVRadians{ glm::radians(45.f) };
-constexpr float kDefaultNearClip{ 0.1f };
-constexpr float kDefaultFarClip{ 100.f };
-constexpr float kOrthographicCameraSize{ 10.f };
+constexpr float k_kDefaultAspectRatio{ 1.7777777778f };
+constexpr float k_kDefaultFovRadians{ glm::radians(45.f) };
+constexpr float k_kDefaultNearClip{ 0.1f };
+constexpr float k_kDefaultFarClip{ 100.f };
+constexpr float k_kOrthographicCameraSize{ 10.f };
 
 // ----------------------- Custom ------------------------------
-constexpr uint8_t BIT(const uint8_t x) {
+constexpr uint8_t bit(uint8_t const x) {
     return 1u << x;
 }
 
-inline const void* AsVoidPtr(const uint32_t value) {
+inline void const* asVoidPtr(uint32_t const value) {
     return reinterpret_cast<const void*>(static_cast<uintptr_t>(value));  // NOLINT
 }
 
 // ----------------------- Callbacks ---------------------------
-using EventCallbackFn = std::function<void(class Event&)>;
+using eventCallbackFn = std::function<void(class Event&)>;
 
-using CPath = std::filesystem::path;
+using cPath = std::filesystem::path;
 
 }  // namespace ly
 

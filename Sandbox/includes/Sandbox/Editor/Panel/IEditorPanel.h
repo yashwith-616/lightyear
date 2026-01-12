@@ -9,11 +9,11 @@ LY_DISABLE_WARNINGS_POP
 
 class IEditorPanel {
 public:
-    IEditorPanel(std::string name) : m_Name(std::move(name)) {}
+    IEditorPanel(std::string name) : m_name(std::move(name)) {}
     virtual ~IEditorPanel()      = default;
-    virtual void OnImGuiRender() = 0;
+    virtual void onImGuiRender() = 0;
 
 protected:
-    std::string m_Name{ "NULL" };
+    std::string m_name{ "NULL" };
     bool m_bIsVisible{ false };
 };

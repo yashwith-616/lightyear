@@ -17,41 +17,41 @@ public:
     explicit SceneRuntime(Scene* scene);
     ~SceneRuntime() = default;
 
-    SceneRuntime(const SceneRuntime&)            = delete;
-    SceneRuntime& operator=(const SceneRuntime&) = delete;
+    SceneRuntime(SceneRuntime const&)            = delete;
+    SceneRuntime& operator=(SceneRuntime const&) = delete;
 
     SceneRuntime(SceneRuntime&&)            = default;
     SceneRuntime& operator=(SceneRuntime&&) = default;
 
-    void Initialize();
-    void OnBegin();
-    void OnUpdate(float deltaTime);
-    void OnEnd();
+    void initialize();
+    void onBegin();
+    void onUpdate(float deltaTime);
+    void onEnd();
 
-    void OnViewportResize(glm::uvec2 size);
+    void onViewportResize(glm::uvec2 size);
 
-    void SetSceneExecState(SceneRuntimeMode state) { m_SceneMode = state; }
-    [[nodiscard]] bool IsRunning() const { return m_SceneMode == SceneRuntimeMode::PLAY; }
-    [[nodiscard]] bool IsPaused() const { return m_SceneMode == SceneRuntimeMode::PAUSE; }
+    void setSceneExecState(SceneRuntimeMode state) { m_sceneMode = state; }
+    [[nodiscard]] bool isRunning() const { return m_sceneMode == SceneRuntimeMode::Play; }
+    [[nodiscard]] bool isPaused() const { return m_sceneMode == SceneRuntimeMode::Pause; }
 
 private:
-    void OnRuntimeBegin();
-    void OnRuntimeUpdate(Timestep deltaTime);
-    void OnRuntimeEnd();
+    void onRuntimeBegin();
+    void onRuntimeUpdate(Timestep deltaTime);
+    void onRuntimeEnd();
 
-    void OnSimulationBegin();
-    void OnSimulationUpdate(Timestep deltaTime);
-    void OnSimulationEnd();
+    void onSimulationBegin();
+    void onSimulationUpdate(Timestep deltaTime);
+    void onSimulationEnd();
 
-    void OnEditBegin();
-    void OnEditUpdate(Timestep deltaTime);
-    void OnEditEnd();
+    void onEditBegin();
+    void onEditUpdate(Timestep deltaTime);
+    void onEditEnd();
 
-    Scene* m_WPtrScene{};
-    glm::uvec2 m_ViewportSize{};
-    SceneRuntimeMode m_SceneMode{ SceneRuntimeMode::PAUSE };
-    SceneData m_SceneData{};
-    std::vector<Scope<ISystem>> m_SceneSystems;
+    Scene* m_wPtrScene{};
+    glm::uvec2 m_viewportSize{};
+    SceneRuntimeMode m_sceneMode{ SceneRuntimeMode::Pause };
+    SceneData m_sceneData{};
+    std::vector<scope<ISystem>> m_sceneSystems;
 };
 
 }  // namespace ly::scene

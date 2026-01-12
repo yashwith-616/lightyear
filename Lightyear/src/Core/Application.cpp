@@ -9,86 +9,86 @@
 
 namespace ly {
 
-Scope<Application> Application::s_Instance = nullptr;
-
-void Application::Create(Scope<Application> app) {
-    LY_CORE_ASSERT(!s_Instance, "Application already created!");
-    s_Instance = std::move(app);
-    s_Instance->Init();
-}
-
-Application& Application::Get() {
-    LY_CORE_ASSERT(s_Instance, "Application is not initiated");
-    return *s_Instance;
-}
-
-Application::Application() {
-    LY_CORE_ASSERT(!s_Instance, "Application already exists!");
-    m_Window = Window::Create();
-    m_Window->Init();
-    m_Window->SetEventCallback([this](Event& event) { OnEvent(event); });
-}
-
 Application::~Application() {
-    renderer::Renderer::Shutdown();
+    renderer::Renderer::shutdown();
 }
 
-void Application::Init() {
-    Application::PushOverlay(MakeScope<ImGUILayer>());
-    renderer::Renderer::Init();
+void Application::create(scope<Application> app) {
+    LY_CORE_ASSERT(!m_instance, "Application already created!");
+    m_instance = std::move(app);
+    m_instance->init();
 }
 
-void Application::Run() {
-    m_LastFrameTime = m_Window->GetTime();
+Application& Application::get() {
+    LY_CORE_ASSERT(m_instance, "Application is not initiated");
+    return *m_instance;
+}
 
-    while (m_IsRunning) {
-        const float currentTime = m_Window->GetTime();
-        const Timestep timestep(currentTime - m_LastFrameTime);
-        m_LastFrameTime = currentTime;
+void Application::init() {
+    Application::pushOverlay(makeScope<ImGuiLayer>());
+    renderer::Renderer::init();
+}
 
-        for (const Scope<Layer>& layer : m_LayerStack) {
-            layer->OnUpdate(timestep);
+void Application::run() {
+    m_lastFrameTime = m_window->getTime();
+
+    while (m_isRunning) {
+        float const currentTime = m_window->getTime();
+        Timestep const timestep(currentTime - m_lastFrameTime);
+        m_lastFrameTime = currentTime;
+
+        for (scope<Layer> const& layer : m_layerStack) {
+            layer->onUpdate(timestep);
         }
 
         //---- Update Game Engine Editor
-        ImGUILayer::BeginFrame();
-        for (const Scope<Layer>& layer : m_LayerStack) {
-            layer->OnEditorRender();
+        ImGuiLayer::beginFrame();
+        for (scope<Layer> const& layer : m_layerStack) {
+            layer->onEditorRender();
         }
-        ImGUILayer::EndFrame();
-        m_Window->OnUpdate();
+        ImGuiLayer::endFrame();
+        m_window->onUpdate();
     }
 
-    for (const Scope<Layer>& layer : m_LayerStack) {
-        layer->OnDetach();
+    for (scope<Layer> const& layer : m_layerStack) {
+        layer->onDetach();
     }
 }
 
-void Application::OnEvent(Event& event) {
+void Application::onEvent(Event& event) {
     EventDispatcher dispatcher(event);
-    dispatcher.Dispatch<WindowCloseEvent>([this](WindowCloseEvent& closeEvent) { return OnWindowClose(closeEvent); });
+    dispatcher.dispatch<WindowCloseEvent>([this](WindowCloseEvent& closeEvent) { return onWindowClose(closeEvent); });
 
-    for (auto it = m_LayerStack.end(); it != m_LayerStack.begin();) {
-        (*--it)->OnEvent(event);
-        if (event.IsHandled()) {
+    for (auto it = m_layerStack.end(); it != m_layerStack.begin();) {
+        (*--it)->onEvent(event);
+        if (event.isHandled()) {
             break;
         }
     }
 }
 
-bool Application::OnWindowClose(WindowCloseEvent& /*event*/) {
-    m_IsRunning = false;
+void Application::pushLayer(scope<Layer> layer) {
+    layer->onAttach();
+    m_layerStack.pushLayer(std::move(layer));
+}
+
+void Application::pushOverlay(scope<Layer> overlay) {
+    overlay->onAttach();
+    m_layerStack.pushOverlay(std::move(overlay));
+}
+
+Application::Application() {
+    LY_CORE_ASSERT(!m_instance, "Application already exists!");
+    m_window = Window::create();
+    m_window->init();
+    m_window->setEventCallback([this](Event& event) { onEvent(event); });
+}
+
+bool Application::onWindowClose(WindowCloseEvent& /*event*/) {
+    m_isRunning = false;
     return true;
 }
 
-void Application::PushLayer(Scope<Layer> layer) {
-    layer->OnAttach();
-    m_LayerStack.PushLayer(std::move(layer));
-}
-
-void Application::PushOverlay(Scope<Layer> overlay) {
-    overlay->OnAttach();
-    m_LayerStack.PushOverlay(std::move(overlay));
-}
+scope<Application> Application::m_instance = nullptr;
 
 }  // namespace ly

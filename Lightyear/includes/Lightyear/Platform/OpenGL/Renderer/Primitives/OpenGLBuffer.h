@@ -4,35 +4,35 @@
 
 namespace ly::renderer {
 
-class LIGHTYEAR_API OpenGLVertexBuffer : public VertexBuffer {
+class LIGHTYEAR_API OpenGlVertexBuffer : public VertexBuffer {
 public:
-    explicit OpenGLVertexBuffer(uint32_t size);
-    explicit OpenGLVertexBuffer(std::span<const float> vertices);
-    ~OpenGLVertexBuffer() override;
+    explicit OpenGlVertexBuffer(uint32_t size);
+    explicit OpenGlVertexBuffer(std::span<float const> vertices);
+    ~OpenGlVertexBuffer() override;
 
-    void Bind() const override;
-    void UnBind() const override;
-    void SetData(const void* data, uint32_t size) override;
+    void bind() const override;
+    void unBind() const override;
+    void setData(void const* data, uint32_t size) override;
 
-    [[nodiscard]] const BufferLayout& GetLayout() const override { return m_Layout; }
-    void SetLayout(const BufferLayout& layout) override { m_Layout = layout; }
+    [[nodiscard]] BufferLayout const& getLayout() const override { return m_layout; }
+    void setLayout(BufferLayout const& layout) override { m_layout = layout; }
 
 private:
-    VertexBufferHandle m_RenderID{ 0 };
-    BufferLayout m_Layout;
+    vertexBufferHandle m_renderId{ 0 };
+    BufferLayout m_layout;
 };
 
-class LIGHTYEAR_API OpenGLIndexBuffer : public IndexBuffer {
+class LIGHTYEAR_API OpenGlIndexBuffer : public IndexBuffer {
 public:
-    explicit OpenGLIndexBuffer(std::span<const uint32_t> indices);
-    ~OpenGLIndexBuffer() override;
+    explicit OpenGlIndexBuffer(std::span<uint32_t const> indices);
+    ~OpenGlIndexBuffer() override;
 
-    void Bind() const override;
-    void UnBind() const override;
-    [[nodiscard]] uint32_t GetCount() const override { return m_Count; }
+    void bind() const override;
+    void unBind() const override;
+    [[nodiscard]] uint32_t getCount() const override { return m_count; }
 
 private:
-    IndexBufferHandle m_RenderID{ 0 };
-    uint32_t m_Count{ 0 };
+    indexBufferHandle m_renderId{ 0 };
+    uint32_t m_count{ 0 };
 };
 }  // namespace ly::renderer

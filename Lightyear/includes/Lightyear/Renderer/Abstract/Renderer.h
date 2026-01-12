@@ -1,8 +1,8 @@
 #pragma once
 
+#include <Lightyear/Renderer/Abstract/RendererAPI.h>
+#include <Lightyear/Renderer/Abstract/RendererUBO.h>
 #include "Lightyear/LightyearCore.h"
-#include "RendererAPI.h"
-#include "RendererUBO.h"
 
 namespace ly::scene {
 struct SceneData;
@@ -21,50 +21,50 @@ class Texture;
  *
  */
 struct LIGHTYEAR_API RenderSubmission {
-    Ref<Shader> RSShader{};
-    Ref<VertexArray> RSVertexArray{};
-    Ref<Texture> RSTexture{};
-    glm::mat4 RSTransform{};
+    ref<Shader> rsShader{};
+    ref<VertexArray> rsVertexArray{};
+    ref<Texture> rsTexture{};
+    glm::mat4 rsTransform{};
 
-    RenderSubmission(const Ref<Shader>& shader,
-                     const Ref<VertexArray>& vertexArray,
-                     const Ref<Texture>& texture,
-                     const glm::mat4& transform);
+    RenderSubmission(ref<Shader> const& shader,
+                     ref<VertexArray> const& vertexArray,
+                     ref<Texture> const& texture,
+                     glm::mat4 const& transform);
 };
 
 class LIGHTYEAR_API Renderer {
 public:
-    static void Init();
-    static void Shutdown();
+    static void init();
+    static void shutdown();
 
-    static void OnWindowResize(glm::uvec2 size);
+    static void onWindowResize(glm::uvec2 size);
 
-    static void BeginScene(const scene::CameraComponent& camera,
-                           const scene::TransformComponent& cameraTransform,
-                           const scene::SceneData& sceneData);
-    static void EndScene();
+    static void beginScene(scene::CameraComponent const& camera,
+                           scene::TransformComponent const& cameraTransform,
+                           scene::SceneData const& sceneData);
+    static void endScene();
 
     /**
      * @brief Submit the RenderSubmission to Queue to be processed later
      * @param submission The render submission
      */
-    static void Submit(const RenderSubmission& submission);
+    static void submit(RenderSubmission const& submission);
 
     /**
      * @brief Issues all the commands to GPU
      */
-    static void Flush();
+    static void flush();
 
-    static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
+    static RendererApi::Api getApi() { return RendererApi::getApi(); }
 
 private:
-    static std::vector<RenderSubmission> s_RenderQueue;
-    static GlobalUniforms s_GlobalUniforms;
+    static std::vector<RenderSubmission> m_sRenderQueue;
+    static GlobalUniforms m_sGlobalUniforms;
 
-    static UBO_Camera s_CameraUBO;
-    static UBO_Material s_MaterialUBO;
-    static UBO_Object s_ObjectUBO;
-    static UBO_Scene s_SceneUBO;
+    static UboCamera m_sCameraUbo;
+    static UboMaterial m_sMaterialUbo;
+    static UboObject m_sObjectUbo;
+    static UboScene m_sSceneUbo;
 };
 
 }  // namespace ly::renderer

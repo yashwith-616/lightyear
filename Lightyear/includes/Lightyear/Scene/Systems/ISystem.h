@@ -1,7 +1,7 @@
 #pragma once
 
+#include <Lightyear/LightyearCore.h>
 #include "Lightyear/Core/SystemLayer.h"
-#include "Lightyear/LightyearCore.h"
 
 LY_DISABLE_WARNINGS_PUSH
 #include <entt/entt.hpp>
@@ -11,7 +11,7 @@ namespace ly::scene {
 
 class LIGHTYEAR_API ISystem {
 public:
-    ISystem(std::string name, SystemLayer layer) : m_Name(std::move(name)), m_SystemLayer(layer) {}
+    ISystem(std::string name, SystemLayer layer) : m_name(std::move(name)), m_systemLayer(layer) {}
     virtual ~ISystem() = default;
 
     /**
@@ -23,22 +23,23 @@ public:
      *
      * TODO: Pass the World instead. Require to abstract Scene inside a World. World object will be passed around.
      */
-    virtual void Execute(entt::registry& registry) = 0;
+    virtual void execute(entt::registry& registry);
 
-    virtual void Init(entt::registry& registry)     = 0;
-    virtual void Shutdown(entt::registry& registry) = 0;
+    virtual void init(entt::registry& registry)     = 0;
+    virtual void shutdown(entt::registry& registry) = 0;
 
-    [[nodiscard]] SystemLayer GetSystemLayer() const { return m_SystemLayer; }
-    [[nodiscard]] bool IsEnabled() const { return m_IsEnabled; }
-    [[nodiscard]] std::string GetName() const { return m_Name; }
+    [[nodiscard]] SystemLayer getSystemLayer() const { return m_systemLayer; }
+    [[nodiscard]] bool isEnabled() const { return m_isEnabled; }
+    [[nodiscard]] std::string getName() const { return m_name; }
 
-    void SetEnabled(bool enable) { m_IsEnabled = enable; }
+    void setEnabled(bool enable) { m_isEnabled = enable; }
 
 private:
-    std::string m_Name{ kNOTSET };
-    UUID m_ID{ UUID() };
-    bool m_IsEnabled{ true };
-    SystemLayer m_SystemLayer{ SystemLayer::Gameplay };
+    std::string m_name{ k_kNotset };
+    Uuid m_id{ Uuid() };
+    bool m_isEnabled{ true };
+    SystemLayer m_systemLayer{ SystemLayer::Gameplay };
 };
+inline void ISystem::execute(entt::registry& registry) {}
 
 }  // namespace ly::scene

@@ -1,8 +1,8 @@
 #pragma once
 
+#include <Lightyear/LightyearCore.h>
 #include "Lightyear/Core/LayerStack.h"
 #include "Lightyear/Core/Window.h"
-#include "Lightyear/LightyearCore.h"
 
 namespace ly {
 
@@ -30,8 +30,8 @@ class LIGHTYEAR_API Application {
 public:
     virtual ~Application();
 
-    Application(const Application&)            = delete;
-    Application& operator=(const Application&) = delete;
+    Application(Application const&)            = delete;
+    Application& operator=(Application const&) = delete;
     Application(Application&&)                 = delete;
     Application& operator=(Application&&)      = delete;
 
@@ -40,14 +40,14 @@ public:
      *
      * @param app the application ownership
      */
-    static void Create(Scope<Application> app);
+    static void create(scope<Application> app);
 
     /**
      * Get Reference to Application that has been initialized
      *
      * @return the singleton Application
      */
-    static Application& Get();
+    static Application& get();
 
     /**
      * @brief Initializes the application's core subsystems.
@@ -56,7 +56,7 @@ public:
      * instance has been created and before the main game loop begins.
      * Override this to perform custom, one-time application initialization.
      */
-    virtual void Init();
+    virtual void init();
 
     /**
      * @brief Starts and manages the main application loop.
@@ -65,7 +65,7 @@ public:
      * application is requested to shut down (e.g., window closed).
      * Override this to implement a custom application loop.
      */
-    virtual void Run();
+    virtual void run();
 
     /**
      * @brief Handles incoming application events.
@@ -76,39 +76,39 @@ public:
      *
      * @param event The event that occurred. Derived classes can modify this event.
      */
-    virtual void OnEvent(Event& event);
+    virtual void onEvent(Event& event);
 
     /**
      * Adds a layer to the application's layer stack.
      *
      * @param layer The layer to add. Ownership is transferred.
      */
-    virtual void PushLayer(Scope<Layer> layer);
+    virtual void pushLayer(scope<Layer> layer);
 
     /**
      * Adds an overlay to the application's layer stack.
      *
      * @param overlay The overlay to add. Ownership is transferred.
      */
-    virtual void PushOverlay(Scope<Layer> overlay);
+    virtual void pushOverlay(scope<Layer> overlay);
 
-    [[nodiscard]] Window& GetWindow() { return *m_Window; }
-    [[nodiscard]] const Window& GetWindow() const { return *m_Window; }
+    [[nodiscard]] Window& getWindow() { return *m_window; }
+    [[nodiscard]] Window const& getWindow() const { return *m_window; }
 
 protected:
     Application();
 
-    virtual bool OnWindowClose(WindowCloseEvent& event);
+    virtual bool onWindowClose(WindowCloseEvent& event);
 
 private:
-    static Scope<Application> s_Instance;
+    static scope<Application> m_instance;
 
-    Scope<Window> m_Window;
-    LayerStack m_LayerStack;
+    scope<Window> m_window;
+    LayerStack m_layerStack;
 
-    bool m_IsRunning{ true };
-    float m_Frametime{ kDefaultFrametime };
-    float m_LastFrameTime{ 0.f };
+    bool m_isRunning{ true };
+    float m_frametime{ k_kDefaultFrametime };
+    float m_lastFrameTime{ 0.f };
 };
 
 }  // namespace ly
