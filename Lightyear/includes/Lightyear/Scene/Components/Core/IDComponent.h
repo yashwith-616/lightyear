@@ -30,7 +30,7 @@ struct LIGHTYEAR_API IdComponent {
 
 }  // namespace ly::scene
 
-REGISTER_COMPONENT(ly::scene::IdComponent, "IDComponent");
+REGISTER_COMPONENT(ly::scene::IdComponent, "IdComponent");
 
 LY_DISABLE_WARNINGS_PUSH
 #include <refl.hpp>

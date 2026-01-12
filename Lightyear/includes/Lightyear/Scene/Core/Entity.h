@@ -14,9 +14,9 @@ class Entity {
 public:
     Entity() = default;
     Entity(entt::entity handle, Scene* scene);
-    Entity(Entity const& other);
-    Entity(Entity&& other) = default;
-    Entity& operator=(Entity const& other);
+    Entity(Entity const& other)            = default;
+    Entity(Entity&& other)                 = default;
+    Entity& operator=(Entity const& other) = default;
 
     ~Entity() = default;
 

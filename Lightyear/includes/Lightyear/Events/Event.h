@@ -38,7 +38,7 @@ public:
     bool dispatch(F&& func) {
         static_assert(std::is_base_of_v<Event, T>, "T must inherit from Event");
 
-        if (m_event.getEventType() == T::StaticType) {
+        if (m_event.getEventType() == T::k_staticType) {
             m_event.m_handled = func(static_cast<T&>(m_event));
             return true;
         }

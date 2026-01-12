@@ -10,9 +10,9 @@ namespace ly {
 
 // ----------------------- Constants ---------------------------
 // TO BE MOVED: Windows properties
-constexpr glm::uvec2 k_kDefaultWindowSize{ 1280, 720 };
+constexpr glm::uvec2 k_defaultWindowSize{ 1280, 720 };
 constexpr float k_kDefaultFrametime{ 1 / 60.f };
-constexpr std::string_view k_kDefaultWindowTitle{ "LightYear" };
+constexpr std::string_view k_defaultWindowTitle{ "LightYear" };
 constexpr std::string_view k_kGlslVersion = "#version 460 core";
 constexpr std::string_view k_kNotset{ "NOT_SET" };
 

@@ -23,16 +23,16 @@ private:
 
     template <typename T>
     void drawComponent() {
-        T& component = m_selectedEntity->GetComponent<T>();
+        T& component = m_selectedEntity->getComponent<T>();
         ImGui::SeparatorText(typeid(T).name());
-        if (m_widgetDrawer->Draw(component)) {
-            m_selectedEntity->SendUpdateSignal<T>();
+        if (m_widgetDrawer->draw(component)) {
+            m_selectedEntity->sendUpdateSignal<T>();
         }
     }
 
     template <typename Tuple, typename Entity, std::size_t... Is>
     void drawAllComponentsImpl(Entity& entity, std::index_sequence<Is...>) {
-        ((entity.template HasComponent<std::tuple_element_t<Is, Tuple>>()
+        ((entity.template hasComponent<std::tuple_element_t<Is, Tuple>>()
               ? drawComponent<std::tuple_element_t<Is, Tuple>>()
               : (void)0),
          ...);
@@ -40,7 +40,7 @@ private:
 
     template <typename Group, typename Entity>
     void drawAllComponents(Entity& entity) {
-        using tuple = typename Group::Types;
-        DrawAllComponentsImpl<tuple>(entity, std::make_index_sequence<std::tuple_size_v<tuple>>{});
+        using tuple = typename Group::types;
+        drawAllComponentsImpl<tuple>(entity, std::make_index_sequence<std::tuple_size_v<tuple>>{});
     }
 };

@@ -16,7 +16,7 @@ public:
             auto members = refl::reflect<T>().members;
             auto fields  = filter(members, [](auto member) { return is_field(member); });
 
-            for_each(fields, [&](auto member) { changed |= DrawWidget(member.name.c_str(), member(object)); });
+            for_each(fields, [&](auto member) { changed |= drawWidget(member.name.c_str(), member(object)); });
         }
 
         return changed;

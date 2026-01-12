@@ -7,7 +7,8 @@
 #include "Lightyear/Platform/OpenGL/Renderer/Core/OpenGLContext.h"
 #include "Lightyear/Renderer/Abstract/RendererContext.h"
 
-struct GlfWwindow;
+// NOLINTNEXTLINE
+struct GLFWwindow;
 
 namespace ly {
 
@@ -60,7 +61,7 @@ private:
      */
     struct WindowsData {
         std::string title{ k_kNotset };
-        glm::uvec2 windowSize{ k_kDefaultWindowSize };
+        glm::uvec2 windowSize{ k_defaultWindowSize };
         bool isVSyncEnabled{ true };
 
         eventCallbackFn eventCallback;

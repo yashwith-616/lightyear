@@ -11,7 +11,7 @@ scope<RendererContext> RendererContext::create(void* windowHandle) {
             LY_CORE_ASSERT(false, "RendererAPI::None is currently not supported!");
             return nullptr;
         case RendererApi::Api::OpenGl:
-            return makeScope<OpenGlContext>(static_cast<GlfWwindow*>(windowHandle));
+            return makeScope<OpenGlContext>(static_cast<GLFWwindow*>(windowHandle));
     }
 
     LY_CORE_ASSERT(false, "Invalid RendererAPI!");

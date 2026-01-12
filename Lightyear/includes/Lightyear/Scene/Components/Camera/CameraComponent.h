@@ -27,24 +27,24 @@ struct LIGHTYEAR_API CameraComponent {
     void save(Archive& archive) const {
         uint8_t kProjectionType = static_cast<uint8_t>(projectionType);
 
-        archive(cereal::make_nvp("orthographicSize", orthographicSize),
-                cereal::make_nvp("aspectRatio", aspectRatio),
-                cereal::make_nvp("fovRadians", fovRadians),
-                cereal::make_nvp("nearClip", nearClip),
-                cereal::make_nvp("farClip", farClip),
-                cereal::make_nvp("projectionType", kProjectionType));
+        archive(cereal::make_nvp("OrthographicSize", orthographicSize),
+                cereal::make_nvp("AspectRatio", aspectRatio),
+                cereal::make_nvp("FOVRadians", fovRadians),
+                cereal::make_nvp("NearClip", nearClip),
+                cereal::make_nvp("FarClip", farClip),
+                cereal::make_nvp("ProjectionType", kProjectionType));
     }
 
     template <class Archive>
     void load(Archive& archive) {
         uint8_t kProjectionType{};
 
-        archive(cereal::make_nvp("orthographicSize", orthographicSize),
-                cereal::make_nvp("aspectRatio", aspectRatio),
-                cereal::make_nvp("fovRadians", fovRadians),
-                cereal::make_nvp("nearClip", nearClip),
-                cereal::make_nvp("farClip", farClip),
-                cereal::make_nvp("projectionType", kProjectionType));
+        archive(cereal::make_nvp("OrthographicSize", orthographicSize),
+                cereal::make_nvp("AspectRatio", aspectRatio),
+                cereal::make_nvp("FOVRadians", fovRadians),
+                cereal::make_nvp("NearClip", nearClip),
+                cereal::make_nvp("FarClip", farClip),
+                cereal::make_nvp("ProjectionType", kProjectionType));
 
         projectionType = static_cast<CameraProjectionType>(kProjectionType);
     }
