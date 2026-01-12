@@ -15,8 +15,8 @@ OpenGlVertexBuffer::OpenGlVertexBuffer(uint32_t size) {
     glBufferData(GL_ARRAY_BUFFER, size, nullptr, GL_DYNAMIC_DRAW);
 }
 
-OpenGlVertexBuffer::OpenGlVertexBuffer(std::span<const float> vertices) {
-    const auto verticesSize = narrowCast<GLsizeiptr>(vertices.size_bytes());
+OpenGlVertexBuffer::OpenGlVertexBuffer(std::span<float const> vertices) {
+    auto const verticesSize = narrowCast<GLsizeiptr>(vertices.size_bytes());
 
     glCreateBuffers(1, &m_renderId);
     LY_CORE_ASSERT(m_renderId > 0, "VertexBuffer render ID is not initialized");
@@ -36,7 +36,7 @@ void OpenGlVertexBuffer::unBind() const {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void OpenGlVertexBuffer::setData(const void* data, uint32_t size) {
+void OpenGlVertexBuffer::setData(void const* data, uint32_t size) {
     glBindBuffer(GL_ARRAY_BUFFER, m_renderId);
     glBufferSubData(GL_ARRAY_BUFFER, 0, size, data);
 }
@@ -48,11 +48,11 @@ void OpenGlVertexBuffer::setData(const void* data, uint32_t size) {
 /////////////////////////////////////////////////////////
 namespace ly::renderer {
 
-OpenGlIndexBuffer::OpenGlIndexBuffer(std::span<const uint32_t> indices) : m_count(indices.size()) {
+OpenGlIndexBuffer::OpenGlIndexBuffer(std::span<uint32_t const> indices) : m_count(indices.size()) {
     glCreateBuffers(1, &m_renderId);
     glBindBuffer(GL_ARRAY_BUFFER, m_renderId);
 
-    const auto bufferSize = narrowCast<GLsizeiptr>(indices.size_bytes());
+    auto const bufferSize = narrowCast<GLsizeiptr>(indices.size_bytes());
     glBufferData(GL_ARRAY_BUFFER, bufferSize, indices.data(), GL_STATIC_DRAW);
 }
 

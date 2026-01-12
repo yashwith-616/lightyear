@@ -34,8 +34,8 @@ public:
      */
     virtual ~Layer() = default;
 
-    Layer(const Layer&)                      = delete;
-    Layer& operator=(const Layer&)           = delete;
+    Layer(Layer const&)                      = delete;
+    Layer& operator=(Layer const&)           = delete;
     Layer(Layer&& other) noexcept            = default;
     Layer& operator=(Layer&& other) noexcept = default;
 
