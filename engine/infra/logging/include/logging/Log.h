@@ -2,8 +2,8 @@
 
 #include <spdlog/async.h>
 
-#include <logging/Config.h>
 #include <common/Visibility.h>
+#include <logging/Config.h>
 
 namespace ly::log {
 
