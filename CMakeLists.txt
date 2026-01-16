@@ -1,16 +1,26 @@
 ﻿cmake_minimum_required(VERSION 3.20)
-project(LightyearWorkspace)
+project(lightyear)
 
 
-##################################################
+#-------------------------------------------------
 # Add the subprojects
-##################################################
+#-------------------------------------------------
 add_subdirectory(Lightyear)
 add_subdirectory(Sandbox)
+add_subdirectory(engine)
 
-##################################################
+#-------------------------------------------------
+# Example
+#-------------------------------------------------
+option(LIGHTYEAR_BUILD_EXAMPLES "Build engine examples" ON)
+
+if (LIGHTYEAR_BUILD_EXAMPLES)
+    add_subdirectory(examples)
+endif()
+
+#-------------------------------------------------
 # Clang Tidy Setup
-##################################################
+#-------------------------------------------------
 
 option(LY_TIDY "Perform clang tidy analysis on lightyear on build" OFF)
 
@@ -29,9 +39,9 @@ if (LY_TIDY)
 endif ()
 
 
-##################################################
+#-------------------------------------------------
 # Clang Format Setup
-##################################################
+#-------------------------------------------------
 find_program(CLANG_FORMAT "clang-format")
 if (CLANG_FORMAT)
         message(STATUS "Found clang-format: ${CLANG_FORMAT}")
@@ -43,4 +53,3 @@ if (CLANG_FORMAT)
 else ()
         message(STATUS "clang-format not found, skipping clang-format target creation")
 endif ()
-
