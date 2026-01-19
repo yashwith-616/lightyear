@@ -2,15 +2,17 @@
 
 #include <memory>
 
-int main() {
-    ly::log::FileSinkConfig fileConfig{ .fileNamePattern = "lightyear-%Y-%m-%d.log", .maxFiles = 7 };
-    ly::log::MemorySinkConfig memoryConfig{ .bufferSize = 4096, .logFormatPattern = "[%H:%M:%S.%e] [%^%l%$] %v" };
-    ly::log::LoggerConfig loggerConfig{ .loggerName              = "example_basic",
-                                        .asyncQueueSize          = 8192,
-                                        .loggerThreadCount       = 1,
-                                        .memSinkInfo             = memoryConfig,
-                                        .fileSinkInfo            = fileConfig,
-                                        .isConsoleLoggingEnabled = true };
+int main()
+{
+    ly::log::FileSinkConfig fileConfig{.fileNamePattern = "lightyear-%Y-%m-%d.log", .maxFiles = 7};
+    ly::log::MemorySinkConfig memoryConfig{.bufferSize = 4096, .logFormatPattern = "[%H:%M:%S.%e] [%^%l%$] %v"};
+    ly::log::LoggerConfig loggerConfig{
+        .loggerName = "example_basic",
+        .asyncQueueSize = 8192,
+        .loggerThreadCount = 1,
+        .memSinkInfo = memoryConfig,
+        .fileSinkInfo = fileConfig,
+        .isConsoleLoggingEnabled = true};
 
     namespace logger = ly::log;
 

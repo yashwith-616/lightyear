@@ -5,12 +5,14 @@
 #include <common/Visibility.h>
 #include <logging/Config.h>
 
-namespace ly::log {
+namespace ly::log
+{
 
 /**
  * API Responsible for lifecycle of the logger
  */
-class LOG_API Log {
+class LOG_API Log
+{
 public:
     static std::shared_ptr<spdlog::logger> logger;
 
@@ -25,7 +27,8 @@ public:
      * \param log  the log message
      */
     template <typename Level, typename... Args>
-    static void log(fmt::format_string<Args...> fmt, Args&&... args) {
+    static void log(fmt::format_string<Args...> fmt, Args&&... args)
+    {
         if constexpr (std::is_same_v<Level, Info>)
             logger->log(spdlog::level::info, fmt, std::forward<Args>(args)...);
         else if constexpr (std::is_same_v<Level, Debug>)
@@ -39,4 +42,4 @@ public:
     }
 };
 
-}  // namespace ly::log
+} // namespace ly::log

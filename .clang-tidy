@@ -18,12 +18,13 @@ Checks: >
   modernize-*,
   -modernize-use-trailing-return-type,
   performance-*,
-  portability-*,
+  -portability-*,
   -portability-avoid-pragma-once,
   readability-*,
   -readability-function-cognitive-complexity,
   -readability-named-parameter,
   -readability-uppercase-literal-suffix,
+  -misc-non-private-member-variables-in-classes
    
 
 CheckOptions:

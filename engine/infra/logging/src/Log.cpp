@@ -5,25 +5,29 @@
 #include <spdlog/sinks/stdout_sinks.h>
 #include <spdlog/spdlog.h>
 
-namespace ly::log {
+namespace ly::log
+{
 
 std::shared_ptr<spdlog::logger> Log::logger = nullptr;
 
-void Log::init(LoggerConfig const& loggerConfig) {
+void Log::init(LoggerConfig const& loggerConfig)
+{
     spdlog::init_thread_pool(loggerConfig.asyncQueueSize, loggerConfig.loggerThreadCount);
 
     std::vector<spdlog::sink_ptr> sinks{};
 
     // configure memory sink
-    if (loggerConfig.memSinkInfo.has_value()) {
+    if (loggerConfig.memSinkInfo.has_value())
+    {
         auto const& memSinkInfo = *loggerConfig.memSinkInfo;
-        auto ringbufferSink     = std::make_shared<spdlog::sinks::ringbuffer_sink_mt>(memSinkInfo.bufferSize);
+        auto ringbufferSink = std::make_shared<spdlog::sinks::ringbuffer_sink_mt>(memSinkInfo.bufferSize);
         ringbufferSink->set_pattern(memSinkInfo.logFormatPattern);
         sinks.push_back(ringbufferSink);
     }
 
     // configure file sink
-    if (loggerConfig.fileSinkInfo.has_value()) {
+    if (loggerConfig.fileSinkInfo.has_value())
+    {
         auto const& fileSinkInfo = *loggerConfig.fileSinkInfo;
         assert(fileSinkInfo.maxFiles > 0 && "FileSink max files must be greater than 0");
 
@@ -33,17 +37,19 @@ void Log::init(LoggerConfig const& loggerConfig) {
     }
 
     // configure console appender
-    if (loggerConfig.isConsoleLoggingEnabled) {
-        auto console     = spdlog::stderr_logger_mt("console");
+    if (loggerConfig.isConsoleLoggingEnabled)
+    {
+        auto console = spdlog::stderr_logger_mt("console");
         auto consoleSink = std::make_shared<spdlog::sinks::stderr_sink_mt>();
         sinks.push_back(consoleSink);
     }
 
-    logger = std::make_shared<spdlog::async_logger>(loggerConfig.loggerName,
-                                                    sinks.begin(),
-                                                    sinks.end(),
-                                                    spdlog::thread_pool(),
-                                                    spdlog::async_overflow_policy::overrun_oldest);
+    logger = std::make_shared<spdlog::async_logger>(
+        loggerConfig.loggerName,
+        sinks.begin(),
+        sinks.end(),
+        spdlog::thread_pool(),
+        spdlog::async_overflow_policy::overrun_oldest);
 
     logger->set_level(spdlog::level::info);
     logger->flush_on(spdlog::level::err);
@@ -53,8 +59,10 @@ void Log::init(LoggerConfig const& loggerConfig) {
     spdlog::set_default_logger(logger);
 }
 
-void Log::shutdown() {
-    if (!logger) {
+void Log::shutdown()
+{
+    if (!logger)
+    {
         return;
     }
 
@@ -64,4 +72,4 @@ void Log::shutdown() {
     spdlog::shutdown();
 }
 
-}  // namespace ly::log
+} // namespace ly::log
