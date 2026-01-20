@@ -1,10 +1,6 @@
 #-------------------------------------------------
 # Configure files and directory
 #-------------------------------------------------
-set(VK_SRCS
-        src/Queue.cpp
-        src/Queue.h)
-
 set(VK_PRIVATE
         private/bootstrap/Instance.cpp
         private/bootstrap/Instance.h
@@ -13,7 +9,9 @@ set(VK_PRIVATE
         private/device/PhysicalDevice.cpp
         private/device/PhysicalDevice.h
         private/device/LogicalDevice.cpp
-        private/device/LogicalDevice.h)
+        private/device/LogicalDevice.h
+        private/swapchain/Swapchain.cpp
+        private/swapchain/Swapchain.h)
 
 #-------------------------------------------------
 # Dependencies
@@ -25,8 +23,6 @@ find_package(VulkanHeaders CONFIG)
 # Target configuration
 #-------------------------------------------------
 add_library(VulkanRenderer SHARED
-        ${VK_HDRS}
-        ${VK_SRCS}
         ${VK_PRIVATE}
 )
 

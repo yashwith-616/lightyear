@@ -22,8 +22,9 @@ struct QueueFamilyIndices
 class LogicalDevice
 {
 public:
-    // Should ideally be optional; But as of now it is required and have added asserts if not present
-    LogicalDevice(PhysicalDevice const& physicalDevice, std::optional<vk::SurfaceKHR> surfaceOpt);
+    LogicalDevice(PhysicalDevice const& physicalDevice, vk::SurfaceKHR surface);
+
+    vk::raii::Device const& getHandle() const { return m_device; }
 
     vk::raii::Queue getGraphicQueue() const { return m_graphicsQueue; }
 
@@ -34,22 +35,24 @@ public:
     vk::raii::Queue getTransferQueue() const { return m_transferQueue; }
 
 private:
-    vk::raii::Device createLogicalDevice(PhysicalDevice const& physicalDevice, std::optional<vk::SurfaceKHR> surface);
+    vk::raii::Device createLogicalDevice(vk::SurfaceKHR surface);
 
-    void resolveQueueFamilies(PhysicalDevice const& physicalDevice, vk::SurfaceKHR surface);
+    void resolveQueueFamilies(vk::SurfaceKHR surface);
 
     std::vector<vk::DeviceQueueCreateInfo> prepareQueueCreateInfos();
 
 private:
-    vk::raii::Device m_device;
+    PhysicalDevice const& m_physicalDevice;
+
+    vk::raii::Device m_device{nullptr};
     QueueFamilyIndices m_queueFamilyIndices{};
     float m_queuePriority{1.f};
 
     // All queues
-    vk::raii::Queue m_graphicsQueue{nullptr};
-    vk::raii::Queue m_computeQueue{nullptr};
-    vk::raii::Queue m_transferQueue{nullptr};
-    vk::raii::Queue m_presentQueue{nullptr};
+    vk::raii::Queue m_graphicsQueue;
+    vk::raii::Queue m_computeQueue;
+    vk::raii::Queue m_transferQueue;
+    vk::raii::Queue m_presentQueue;
 };
 
 } // namespace ly::renderer

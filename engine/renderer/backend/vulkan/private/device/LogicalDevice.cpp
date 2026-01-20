@@ -6,24 +6,21 @@
 namespace ly::renderer
 {
 
-LogicalDevice::LogicalDevice(PhysicalDevice const& physicalDevice, std::optional<vk::SurfaceKHR> surface) :
-    m_device(createLogicalDevice(physicalDevice, std::move(surface)))
+LogicalDevice::LogicalDevice(PhysicalDevice const& physicalDevice, vk::SurfaceKHR surface) :
+    m_physicalDevice(physicalDevice),
+    m_device(createLogicalDevice(std::move(surface))),
+    m_graphicsQueue(m_device.getQueue(m_queueFamilyIndices.graphics.value(), 0)),
+    m_computeQueue(m_device.getQueue(m_queueFamilyIndices.compute.value(), 0)),
+    m_transferQueue(m_device.getQueue(m_queueFamilyIndices.transfer.value(), 0)),
+    m_presentQueue(m_device.getQueue(m_queueFamilyIndices.present.value(), 0))
+{}
+
+
+vk::raii::Device LogicalDevice::createLogicalDevice(vk::SurfaceKHR surface)
 {
-    m_graphicsQueue = vk::raii::Queue(m_device, m_queueFamilyIndices.graphics.value(), 0);
-    m_computeQueue = vk::raii::Queue(m_device, m_queueFamilyIndices.compute.value(), 0);
-    m_transferQueue = vk::raii::Queue(m_device, m_queueFamilyIndices.transfer.value(), 0);
-    m_presentQueue = vk::raii::Queue(m_device, m_queueFamilyIndices.present.value(), 0);
-}
-
-
-vk::raii::Device
-    LogicalDevice::createLogicalDevice(PhysicalDevice const& physicalDevice, std::optional<vk::SurfaceKHR> surface)
-{
-    assert(surface.has_value() && "Surface has not been provided");
-    resolveQueueFamilies(physicalDevice, std::move(surface.value()));
-
-    FeatureStorage deviceFeatures = physicalDevice.getRequiredDeviceFeatures();
-    auto const& deviceExtensions = physicalDevice.getRequiredDeviceExtensions();
+    resolveQueueFamilies(std::move(surface));
+    FeatureStorage deviceFeatures = m_physicalDevice.getRequiredDeviceFeatures();
+    auto const& deviceExtensions = m_physicalDevice.getRequiredDeviceExtensions();
     auto queueInfos = prepareQueueCreateInfos();
 
     vk::DeviceCreateInfo deviceCreateInfo{
@@ -32,18 +29,18 @@ vk::raii::Device
         .pQueueCreateInfos = queueInfos.data(),
         .enabledExtensionCount = static_cast<uint32_t>(deviceExtensions.size()),
         .ppEnabledExtensionNames = deviceExtensions.data()};
-    return vk::raii::Device(physicalDevice.getHandle(), deviceCreateInfo);
+    return std::move(vk::raii::Device(m_physicalDevice.getHandle(), deviceCreateInfo));
 }
 
 /// Search for all queue families and resolve the indexes for each queue
 ///
 /// \param physicalDevice physical device
 /// \param surface the surface
-void LogicalDevice::resolveQueueFamilies(PhysicalDevice const& physicalDevice, vk::SurfaceKHR surface)
+void LogicalDevice::resolveQueueFamilies(vk::SurfaceKHR surface)
 {
-    auto const& queueProps = physicalDevice.getQueueFamilyProperties();
+    auto const& queueProps = m_physicalDevice.getQueueFamilyProperties();
     auto hasSurfaceSupport = [&](uint32_t queueFamilyIndex) {
-        return physicalDevice.getHandle().getSurfaceSupportKHR(queueFamilyIndex, std::move(surface));
+        return m_physicalDevice.getHandle().getSurfaceSupportKHR(queueFamilyIndex, std::move(surface));
     };
 
     auto hasGraphicSupport = [&](uint32_t queueFamilyIndex) {

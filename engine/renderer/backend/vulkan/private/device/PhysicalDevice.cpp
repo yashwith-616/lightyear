@@ -5,12 +5,13 @@
 namespace ly::renderer
 {
 
-PhysicalDevice::PhysicalDevice(vk::raii::Instance const& vulkanInstance) : m_device(pickPhysicalDevice(vulkanInstance))
-{}
-
-std::vector<vk::QueueFamilyProperties2> PhysicalDevice::getQueueFamilyProperties() const
+PhysicalDevice::PhysicalDevice(vk::raii::Instance const& vulkanInstance, vk::raii::SurfaceKHR surface) :
+    m_device(pickPhysicalDevice(vulkanInstance)), m_surface(std::move(surface))
 {
-    return m_device.getQueueFamilyProperties2();
+    m_cacheQueueProperties = m_device.getQueueFamilyProperties2();
+    m_cachedSurfaceFormatsKhr = m_device.getSurfaceFormatsKHR(*m_surface);
+    m_cachedPresentModesKhr = m_device.getSurfacePresentModesKHR(*m_surface);
+    m_cachedSurfaceCapabilities = m_device.getSurfaceCapabilities2KHR(*m_surface);
 }
 
 FeatureStorage PhysicalDevice::getRequiredDeviceFeatures() const
@@ -55,13 +56,14 @@ std::vector<char const*> PhysicalDevice::getRequiredDeviceExtensions() const
 vk::raii::PhysicalDevice PhysicalDevice::pickPhysicalDevice(vk::raii::Instance const& vulkanInstance)
 {
     auto devices = vk::raii::PhysicalDevices(vulkanInstance);
+
     // TODO: Need to change the below code to make sure debugbreak and crash is performed.
     assert(!devices.empty() && "Physical device is not available");
 
     // Move to a better scoring pattern going forward.
     std::multimap<int, vk::raii::PhysicalDevice> candidates;
 
-    for (auto const& device : devices)
+    for (auto& device : devices)
     {
         vk::PhysicalDeviceProperties2 props = device.getProperties2();
         vk::PhysicalDeviceFeatures2 features = device.getFeatures2();
@@ -74,7 +76,7 @@ vk::raii::PhysicalDevice PhysicalDevice::pickPhysicalDevice(vk::raii::Instance c
     }
 
     assert(candidates.rbegin()->first <= 0 && "Physical device candidates did not score abo");
-    return candidates.rbegin()->second;
+    return std::move(candidates.rbegin()->second);
 }
 
 uint32_t PhysicalDevice::getDeviceTypeScore(vk::PhysicalDeviceType deviceType)
