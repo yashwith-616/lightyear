@@ -49,10 +49,10 @@ private:
     float m_queuePriority{1.f};
 
     // All queues
-    vk::raii::Queue m_graphicsQueue;
-    vk::raii::Queue m_computeQueue;
-    vk::raii::Queue m_transferQueue;
-    vk::raii::Queue m_presentQueue;
+    vk::raii::Queue m_graphicsQueue{nullptr};
+    vk::raii::Queue m_computeQueue{nullptr};
+    vk::raii::Queue m_transferQueue{nullptr};
+    vk::raii::Queue m_presentQueue{nullptr};
 };
 
 } // namespace ly::renderer

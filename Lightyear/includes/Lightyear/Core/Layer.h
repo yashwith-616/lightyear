@@ -3,7 +3,8 @@
 #include "Lightyear/Events/Event.h"
 #include "Lightyear/LightyearCore.h"
 
-namespace ly {
+namespace ly
+{
 
 /**
  * @brief Base class for all application layers and overlays.
@@ -16,7 +17,8 @@ namespace ly {
  * Derived classes should inherit from `Layer` and override its virtual methods
  * to implement custom behavior specific to their role (e.g., game scene, UI element, debug overlay).
  */
-class LIGHTYEAR_API Layer {
+class LIGHTYEAR_API Layer
+{
 public:
     /**
      * @brief Constructs a Layer with an optional name and assigns a unique ID.
@@ -34,9 +36,9 @@ public:
      */
     virtual ~Layer() = default;
 
-    Layer(Layer const&)                      = delete;
-    Layer& operator=(Layer const&)           = delete;
-    Layer(Layer&& other) noexcept            = default;
+    Layer(Layer const&) = delete;
+    Layer& operator=(Layer const&) = delete;
+    Layer(Layer&& other) noexcept = default;
     Layer& operator=(Layer&& other) noexcept = default;
 
     /**
@@ -89,8 +91,8 @@ public:
     [[nodiscard]] Uuid getId() const { return m_id; }
 
 private:
-    std::string m_name{ "None" };
+    std::string m_name{"None"};
     Uuid m_id;
 };
 
-}  // namespace ly
+} // namespace ly

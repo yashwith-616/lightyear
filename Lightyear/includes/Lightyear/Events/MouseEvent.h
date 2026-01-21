@@ -2,9 +2,11 @@
 
 #include "Event.h"
 
-namespace ly {
+namespace ly
+{
 
-class LIGHTYEAR_API MouseMovedEvent : public EventBase<MouseMovedEvent, EventType::MouseMoved, EcInput | EcMouse> {
+class LIGHTYEAR_API MouseMovedEvent : public EventBase<MouseMovedEvent, EventType::MouseMoved, EcInput | EcMouse>
+{
 public:
     MouseMovedEvent(float x, float y) : m_mouseX(x), m_mouseY(y) {}
 
@@ -14,12 +16,13 @@ public:
     std::string toString() const override { return std::format("MouseMovedEvent: {}, {}", m_mouseX, m_mouseY); }
 
 private:
-    float m_mouseX{ 0.f };
-    float m_mouseY{ 0.f };
+    float m_mouseX{0.f};
+    float m_mouseY{0.f};
 };
 
 class LIGHTYEAR_API MouseScrolledEvent
-    : public EventBase<MouseScrolledEvent, EventType::MouseScrolled, EcInput | EcMouse> {
+    : public EventBase<MouseScrolledEvent, EventType::MouseScrolled, EcInput | EcMouse>
+{
 public:
     MouseScrolledEvent(float xOffset, float yOffset) : m_xOffset(xOffset), m_yOffset(yOffset) {}
 
@@ -29,12 +32,13 @@ public:
     std::string toString() const override { return std::format("MouseScrolledEvent: {}, {}", m_xOffset, m_yOffset); }
 
 private:
-    float m_xOffset{ 0.f };
-    float m_yOffset{ 0.f };
+    float m_xOffset{0.f};
+    float m_yOffset{0.f};
 };
 
 // --------------------------- Mouse Button Events ------------------------------------
-class LIGHTYEAR_API MouseButtonEvent {
+class LIGHTYEAR_API MouseButtonEvent
+{
 public:
     int getMouseButton() const { return m_button; }
 
@@ -46,7 +50,8 @@ protected:
 
 class LIGHTYEAR_API MouseButtonPressedEvent
     : public EventBase<MouseButtonPressedEvent, EventType::MouseButtonPressed, EcInput | EcMouse>,
-      public MouseButtonEvent {
+      public MouseButtonEvent
+{
 public:
     MouseButtonPressedEvent(int button) : MouseButtonEvent(button) {}
 
@@ -55,11 +60,12 @@ public:
 
 class LIGHTYEAR_API MouseButtonReleasedEvent
     : public EventBase<MouseButtonReleasedEvent, EventType::MouseButtonReleased, EcInput | EcMouse>,
-      public MouseButtonEvent {
+      public MouseButtonEvent
+{
 public:
     MouseButtonReleasedEvent(int button) : MouseButtonEvent(button) {}
 
     std::string toString() const override { return std::format("MouseButtonReleasedEvent: {}", m_button); }
 };
 
-}  // namespace ly
+} // namespace ly

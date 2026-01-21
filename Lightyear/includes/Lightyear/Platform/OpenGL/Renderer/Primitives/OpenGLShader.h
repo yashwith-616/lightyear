@@ -7,9 +7,11 @@ LY_DISABLE_WARNINGS_PUSH
 #include <glad/glad.h>
 LY_DISABLE_WARNINGS_POP
 
-namespace ly::renderer {
+namespace ly::renderer
+{
 
-class OpenGlShader : public Shader {
+class OpenGlShader : public Shader
+{
 public:
     /**
      * @brief Create OpenGL shaders from file.
@@ -31,29 +33,34 @@ public:
 
     template <typename T>
         requires(!std::is_arithmetic_v<T>)
-    void setUniform(std::string const& /*name*/, T const& /*value*/) const {
+    void setUniform(std::string const& /*name*/, T const& /*value*/) const
+    {
         static_assert(sizeof(T) == 0, "Unsupported uniform type! Specialize setUniform<T> for this type");
     }
 
     // Overload for integer (int, long, etc.)
     template <std::integral T>
-    void setUniform(std::string const& name, T const value) const {
+    void setUniform(std::string const& name, T const value) const
+    {
         glUniform1i(getUniformLocation(name), static_cast<int>(value));
     }
 
     // Overload for floating types (float, double, etc.)
     template <std::floating_point T>
-    void setUniform(std::string const& name, T const value) const {
+    void setUniform(std::string const& name, T const value) const
+    {
         glUniform1f(getUniformLocation(name), static_cast<float>(value));
     }
 
     // Overload for boolean type
     template <std::same_as<bool> T>
-    void setUniform(std::string const& name, T const value) const {
+    void setUniform(std::string const& name, T const value) const
+    {
         glUniform1i(getUniformLocation(name), static_cast<bool>(value));
     }
 
-    void setUniformBlock(std::string const& name, UniformBufferBlockBinding const& bindingPoint) const {
+    void setUniformBlock(std::string const& name, UniformBufferBlockBinding const& bindingPoint) const
+    {
         glUniformBlockBinding(m_shaderHandle, getUniformBufferBlockIndex(name), static_cast<uint32_t>(bindingPoint));
     }
 
@@ -61,7 +68,7 @@ public:
 
 private:
     shaderHandle m_shaderHandle{};
-    std::string m_name{ "NULL" };
+    std::string m_name{"NULL"};
     mutable std::unordered_map<std::string, GLint> m_uniformLocationCache;
 
     /**
@@ -90,40 +97,46 @@ private:
 
 // Specialization for glm::vec2
 template <>
-inline void OpenGlShader::setUniform<glm::vec2>(std::string const& name, glm::vec2 const& value) const {
+inline void OpenGlShader::setUniform<glm::vec2>(std::string const& name, glm::vec2 const& value) const
+{
     glUniform2fv(getUniformLocation(name), 1, &value[0]);
 }
 
 // Specialization for glm::vec3
 template <>
-inline void OpenGlShader::setUniform<glm::vec3>(std::string const& name, glm::vec3 const& value) const {
+inline void OpenGlShader::setUniform<glm::vec3>(std::string const& name, glm::vec3 const& value) const
+{
     glUniform3fv(getUniformLocation(name), 1, &value[0]);
 }
 
 // Specialization for glm::vec4
 template <>
-inline void OpenGlShader::setUniform<glm::vec4>(std::string const& name, glm::vec4 const& value) const {
+inline void OpenGlShader::setUniform<glm::vec4>(std::string const& name, glm::vec4 const& value) const
+{
     glUniform4fv(getUniformLocation(name), 1, &value[0]);
 }
 
 // Specialization for glm::mat2
 template <>
-inline void OpenGlShader::setUniform<glm::mat2>(std::string const& name, glm::mat2 const& value) const {
+inline void OpenGlShader::setUniform<glm::mat2>(std::string const& name, glm::mat2 const& value) const
+{
     glUniformMatrix2fv(getUniformLocation(name), 1, GL_FALSE, &value[0][0]);
 }
 
 // Specialization for glm::mat3
 template <>
-inline void OpenGlShader::setUniform<glm::mat3>(std::string const& name, glm::mat3 const& value) const {
+inline void OpenGlShader::setUniform<glm::mat3>(std::string const& name, glm::mat3 const& value) const
+{
     glUniformMatrix3fv(getUniformLocation(name), 1, GL_FALSE, &value[0][0]);
 }
 
 // Specialization for glm::mat4
 template <>
-inline void OpenGlShader::setUniform<glm::mat4>(std::string const& name, glm::mat4 const& value) const {
+inline void OpenGlShader::setUniform<glm::mat4>(std::string const& name, glm::mat4 const& value) const
+{
     glUniformMatrix4fv(getUniformLocation(name), 1, GL_FALSE, &value[0][0]);
 }
 
 #pragma endregion
 
-}  // namespace ly::renderer
+} // namespace ly::renderer

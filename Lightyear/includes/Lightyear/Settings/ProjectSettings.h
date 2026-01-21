@@ -2,11 +2,13 @@
 
 #include <Lightyear/LightyearCore.h>
 
-namespace ly {
+namespace ly
+{
 
 /// @brief Project specific properties are placed in following class. Will be added to
 /// in UI for easier access to these properties
-struct LIGHTYEAR_API ProjectSettings {
+struct LIGHTYEAR_API ProjectSettings
+{
     // Name of the project
     std::string name;
 
@@ -29,4 +31,4 @@ struct LIGHTYEAR_API ProjectSettings {
     std::filesystem::path savedDirectory;
 };
 
-}  // namespace ly
+} // namespace ly

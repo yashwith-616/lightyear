@@ -6,7 +6,7 @@
       "description": "Common settings for all configurations.",
       "hidden": true,
       "cacheVariables": {
-        "CMAKE_CXX_STANDARD": "20",
+        "CMAKE_CXX_STANDARD": "23",
         "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/extern/vcpkg/scripts/buildsystems/vcpkg.cmake",
         "VCPKG_FEATURE_FLAGS": "manifests",
         "LY_TIDY": "OFF",
@@ -167,7 +167,7 @@
       "name": "msvc-base",
       "inherits": ["windows-base"],
       "hidden": true,
-      "generator": "Visual Studio 17 2022",
+      "generator": "Visual Studio 18 2026",
       "cacheVariables": {
         "CMAKE_GENERATOR_PLATFORM": "x64"
       },

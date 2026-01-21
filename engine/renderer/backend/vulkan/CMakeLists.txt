@@ -27,14 +27,14 @@ add_library(VulkanRenderer SHARED
 )
 
 set_target_properties(VulkanRenderer PROPERTIES
-        CXX_STANDARD 20
+        CXX_STANDARD 23
         CXX_STANDARD_REQUIRED YES
         CXX_EXTENSIONS NO
 )
 
 target_include_directories(VulkanRenderer
         PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/include)
+        ${CMAKE_CURRENT_SOURCE_DIR}/private)
 
 target_link_libraries(VulkanRenderer
         PRIVATE
@@ -47,7 +47,7 @@ target_link_libraries(VulkanRenderer
 target_compile_definitions(VulkanRenderer
         PRIVATE
             VULKAN_HPP_NO_STRUCT_CONSTRUCTORS
-            VULKAN_HPP_NOEXCEPT
+            VULKAN_HPP_NO_EXCEPTIONS
 )
 
 #-------------------------------------------------

@@ -1,5 +1,7 @@
 #include "Instance.h"
 
+#include <expected>
+
 namespace
 {
 
@@ -34,11 +36,11 @@ void setupVkValidationEnvironment()
 namespace ly::renderer
 {
 
-VkInstance::VkInstance(InstanceCreateInfo const& instanceCreateInfo) : m_instance(createInstance(instanceCreateInfo)) {}
+Instance::Instance(InstanceCreateInfo const& instanceCreateInfo) : m_instance(createInstance(instanceCreateInfo)) {}
 
-vk::raii::Instance const& VkInstance::getInstance() const { return m_instance; }
+vk::raii::Instance const& Instance::getInstance() const { return m_instance; }
 
-vk::raii::Instance VkInstance::createInstance(InstanceCreateInfo const& instanceCreateInfo)
+vk::raii::Instance Instance::createInstance(InstanceCreateInfo const& instanceCreateInfo)
 {
     vk::ApplicationInfo appInfo{
         .pApplicationName = instanceCreateInfo.appName.c_str(),
@@ -64,14 +66,18 @@ vk::raii::Instance VkInstance::createInstance(InstanceCreateInfo const& instance
         .ppEnabledLayerNames = rawValidationLayers.data(),
         .enabledExtensionCount = extensionsCount,
         .ppEnabledExtensionNames = rawExtensions.data()};
-    return vk::raii::Instance(m_context, createInfo);
+
+    std::expected<vk::raii::Instance, vk::Result> instanceExpected = m_context.createInstance(createInfo);
+    assert(instanceExpected.has_value() && "Instance could not be created");
+
+    return std::move(instanceExpected.value());
 }
 
 /// \brief Validate if required validation layers are available in the vulkan context
 ///
 /// \param requestedLayers All vulkan validation layers to be enabled
 std::vector<std::string_view>
-    VkInstance::resolveAllValidationLayers(std::vector<std::string> const& requestedLayers) const
+    Instance::resolveAllValidationLayers(std::vector<std::string> const& requestedLayers) const
 {
     std::vector<std::string_view> validationLayers{};
 #if ENABLE_VK_VALIDATION
@@ -84,9 +90,9 @@ std::vector<std::string_view>
 #endif
 
     auto availableLayers = m_context.enumerateInstanceLayerProperties();
-    bool isAnyRequiredLayerMissing = std::ranges::any_of(requestedLayers, [&](auto& requestedLayer) {
+    bool isAnyRequiredLayerMissing = std::ranges::any_of(requestedLayers, [&](std::string const& requestedLayer) {
         return std::ranges::none_of(availableLayers, [&](vk::LayerProperties const& layer) {
-            return strcmp(layer.layerName, requestedLayer) == 0;
+            return std::strcmp(layer.layerName, requestedLayer.c_str()) == 0;
         });
     });
 
@@ -98,10 +104,9 @@ std::vector<std::string_view>
 ///
 /// \param requestedExtensions the requested extensions
 /// \return All vulkan extensions
-std::vector<std::string_view>
-    VkInstance::resolveAllExtensions(std::vector<std::string> const& requestedExtensions) const
+std::vector<std::string_view> Instance::resolveAllExtensions(std::vector<std::string> const& requestedExtensions) const
 {
-    std::vector<std::string_view> extensions(requestedExtensions.size(), nullptr);
+    std::vector<std::string_view> extensions(requestedExtensions.size(), "");
     std::ranges::transform(
         requestedExtensions, std::back_inserter(extensions), [](auto const& s) { return s.c_str(); });
 

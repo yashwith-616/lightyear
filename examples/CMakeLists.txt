@@ -38,3 +38,4 @@ endfunction()
 # Add all example subdirectory
 #------------------------------------------------------------
 add_subdirectory(logging)
+add_subdirectory(renderer)

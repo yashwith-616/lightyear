@@ -7,7 +7,8 @@
 
 extern ly::scope<ly::Application> createApplication();
 
-int main(int argc, char** argv) {
+int main(int argc, char** argv)
+{
     ly::Log::init();
     {
         ly::Application::create(createApplication());

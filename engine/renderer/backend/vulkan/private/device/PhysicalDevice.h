@@ -37,7 +37,7 @@ public:
 
     std::vector<vk::PresentModeKHR> const& getPresentModesKhr() const { return m_cachedPresentModesKhr; }
 
-    vk::SurfaceCapabilities2KHR const& getSurfaceCapabilities() const { return m_cachedSurfaceCapabilities; }
+    vk::SurfaceCapabilitiesKHR const& getSurfaceCapabilities() const { return m_cachedSurfaceCapabilities; }
 
 private:
     vk::raii::PhysicalDevice pickPhysicalDevice(vk::raii::Instance const& vulkanInstance);
@@ -52,7 +52,7 @@ private:
     std::vector<vk::QueueFamilyProperties2> m_cacheQueueProperties{};
     std::vector<vk::SurfaceFormatKHR> m_cachedSurfaceFormatsKhr{};
     std::vector<vk::PresentModeKHR> m_cachedPresentModesKhr{};
-    vk::SurfaceCapabilities2KHR m_cachedSurfaceCapabilities{};
+    vk::SurfaceCapabilitiesKHR m_cachedSurfaceCapabilities{};
 };
 
 } // namespace ly::renderer

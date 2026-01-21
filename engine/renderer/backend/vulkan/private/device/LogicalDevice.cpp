@@ -1,5 +1,3 @@
-#pragma once
-
 #include "LogicalDevice.h"
 #include <cassert>
 
@@ -7,13 +5,14 @@ namespace ly::renderer
 {
 
 LogicalDevice::LogicalDevice(PhysicalDevice const& physicalDevice, vk::SurfaceKHR surface) :
-    m_physicalDevice(physicalDevice),
-    m_device(createLogicalDevice(std::move(surface))),
-    m_graphicsQueue(m_device.getQueue(m_queueFamilyIndices.graphics.value(), 0)),
-    m_computeQueue(m_device.getQueue(m_queueFamilyIndices.compute.value(), 0)),
-    m_transferQueue(m_device.getQueue(m_queueFamilyIndices.transfer.value(), 0)),
-    m_presentQueue(m_device.getQueue(m_queueFamilyIndices.present.value(), 0))
-{}
+    m_physicalDevice(physicalDevice), m_device(createLogicalDevice(std::move(surface)))
+{
+    // TODO: Need fix
+    m_graphicsQueue = std::move(m_device.getQueue(m_queueFamilyIndices.graphics.value(), 0).value_or(nullptr));
+    m_computeQueue = std::move(m_device.getQueue(m_queueFamilyIndices.compute.value(), 0).value_or(nullptr));
+    m_presentQueue = std::move(m_device.getQueue(m_queueFamilyIndices.present.value(), 0).value_or(nullptr));
+    m_transferQueue = std::move(m_device.getQueue(m_queueFamilyIndices.transfer.value(), 0).value_or(nullptr));
+}
 
 
 vk::raii::Device LogicalDevice::createLogicalDevice(vk::SurfaceKHR surface)
@@ -29,7 +28,10 @@ vk::raii::Device LogicalDevice::createLogicalDevice(vk::SurfaceKHR surface)
         .pQueueCreateInfos = queueInfos.data(),
         .enabledExtensionCount = static_cast<uint32_t>(deviceExtensions.size()),
         .ppEnabledExtensionNames = deviceExtensions.data()};
-    return std::move(vk::raii::Device(m_physicalDevice.getHandle(), deviceCreateInfo));
+    auto deviceExpected = m_physicalDevice.getHandle().createDevice(deviceCreateInfo);
+    assert(deviceExpected.has_value() && "Device was not successfully created");
+
+    return std::move(deviceExpected.value());
 }
 
 /// Search for all queue families and resolve the indexes for each queue

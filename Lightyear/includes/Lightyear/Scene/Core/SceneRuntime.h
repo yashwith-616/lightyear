@@ -6,21 +6,24 @@
 #include "Lightyear/Scene/SceneData.h"
 #include "Lightyear/Scene/Systems/ISystem.h"
 
-namespace ly::renderer {
+namespace ly::renderer
+{
 class SceneCamera;
 }
 
-namespace ly::scene {
+namespace ly::scene
+{
 
-class LIGHTYEAR_API SceneRuntime {
+class LIGHTYEAR_API SceneRuntime
+{
 public:
     explicit SceneRuntime(Scene* scene);
     ~SceneRuntime() = default;
 
-    SceneRuntime(SceneRuntime const&)            = delete;
+    SceneRuntime(SceneRuntime const&) = delete;
     SceneRuntime& operator=(SceneRuntime const&) = delete;
 
-    SceneRuntime(SceneRuntime&&)            = default;
+    SceneRuntime(SceneRuntime&&) = default;
     SceneRuntime& operator=(SceneRuntime&&) = default;
 
     void initialize();
@@ -49,9 +52,9 @@ private:
 
     Scene* m_wPtrScene{};
     glm::uvec2 m_viewportSize{};
-    SceneRuntimeMode m_sceneMode{ SceneRuntimeMode::Pause };
+    SceneRuntimeMode m_sceneMode{SceneRuntimeMode::Pause};
     SceneData m_sceneData{};
     std::vector<scope<ISystem>> m_sceneSystems;
 };
 
-}  // namespace ly::scene
+} // namespace ly::scene

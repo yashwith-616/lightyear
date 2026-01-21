@@ -7,7 +7,7 @@ Swapchain::Swapchain(
     PhysicalDevice const& physicalDevice, LogicalDevice const& device, vk::SurfaceKHR surface, int width, int height) :
     m_physicalDevice(physicalDevice), m_device(device)
 {
-    auto const& surfaceCapabilities = m_physicalDevice.getSurfaceCapabilities().surfaceCapabilities;
+    auto const& surfaceCapabilities = m_physicalDevice.getSurfaceCapabilities();
 
     m_surfaceFormat = chooseSurfaceFormat();
     m_presentMode = choosePresentMode();
@@ -19,7 +19,7 @@ Swapchain::Swapchain(
         minImageCount = std::min<uint32_t>(minImageCount, surfaceCapabilities.maxImageCount);
     }
 
-    vk::SwapchainCreateInfoKHR swapChainCreateInfo{
+    vk::SwapchainCreateInfoKHR swapchainCreateInfo{
         .flags = vk::SwapchainCreateFlagsKHR(),
         .surface = std::move(surface),
         .minImageCount = minImageCount,
@@ -35,7 +35,9 @@ Swapchain::Swapchain(
         .clipped = true,
         .oldSwapchain = nullptr};
 
-    m_swapchain = vk::raii::SwapchainKHR(m_device.getHandle(), swapChainCreateInfo);
+    auto swapchainExpected = m_device.getHandle().createSwapchainKHR(swapchainCreateInfo);
+    assert(swapchainExpected.has_value() && "Swapchain hasn't been created");
+    m_swapchain = std::move(swapchainExpected.value());
 }
 
 vk::SurfaceFormatKHR Swapchain::chooseSurfaceFormat()

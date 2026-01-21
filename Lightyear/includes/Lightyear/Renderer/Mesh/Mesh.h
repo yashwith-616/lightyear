@@ -4,9 +4,11 @@
 #include "Lightyear/Renderer/Primitives/Shader.h"
 #include "Lightyear/Renderer/Primitives/VertexArray.h"
 
-namespace ly::renderer {
+namespace ly::renderer
+{
 
-class LIGHTYEAR_API Mesh {
+class LIGHTYEAR_API Mesh
+{
 public:
     explicit Mesh(ref<VertexArray> vertexArray) : m_vertexArray(std::move(vertexArray)) {}
 
@@ -17,7 +19,8 @@ private:
     // TODO: Add material here
 };
 
-class LIGHTYEAR_API MeshObject {
+class LIGHTYEAR_API MeshObject
+{
 public:
     explicit MeshObject(ref<Mesh> mesh) : m_mesh(std::move(mesh)) {}
 
@@ -28,7 +31,8 @@ private:
     glm::mat4 m_localTransform{};
 };
 
-class LIGHTYEAR_API MeshAsset {
+class LIGHTYEAR_API MeshAsset
+{
 public:
     explicit MeshAsset(std::vector<ref<MeshObject>> meshObjects) : m_meshObjects(std::move(meshObjects)) {}
 
@@ -38,4 +42,4 @@ private:
     std::vector<ref<MeshObject>> m_meshObjects;
 };
 
-}  // namespace ly::renderer
+} // namespace ly::renderer

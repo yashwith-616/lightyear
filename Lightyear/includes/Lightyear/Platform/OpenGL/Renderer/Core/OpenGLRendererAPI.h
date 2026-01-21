@@ -3,9 +3,11 @@
 #include "Lightyear/LightyearCore.h"
 #include "Lightyear/Renderer/Abstract/RendererAPI.h"
 
-namespace ly::renderer {
+namespace ly::renderer
+{
 
-class OpenGlRendererApi : public RendererApi {
+class OpenGlRendererApi : public RendererApi
+{
 public:
     void init() override;
 
@@ -18,4 +20,4 @@ public:
     void setLineWidth(float width) override;
 };
 
-}  // namespace ly::renderer
+} // namespace ly::renderer

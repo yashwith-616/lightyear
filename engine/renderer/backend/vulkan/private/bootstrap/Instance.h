@@ -34,11 +34,11 @@ struct InstanceCreateInfo
     Version engineVersion;
 };
 
-class VkInstance
+class Instance
 {
 public:
-    VkInstance(InstanceCreateInfo const& instanceCreateInfo);
-    ~VkInstance() = default;
+    Instance(InstanceCreateInfo const& instanceCreateInfo);
+    ~Instance() = default;
 
     vk::raii::Instance const& getInstance() const;
 
