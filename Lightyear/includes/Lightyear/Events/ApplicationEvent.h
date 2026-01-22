@@ -2,9 +2,11 @@
 
 #include "Event.h"
 
-namespace ly {
+namespace ly
+{
 
-class LIGHTYEAR_API WindowResizeEvent : public EventBase<WindowResizeEvent, EventType::WindowResize, EcApplication> {
+class LIGHTYEAR_API WindowResizeEvent : public EventBase<WindowResizeEvent, EventType::WindowResize, EcApplication>
+{
 public:
     WindowResizeEvent(uint32_t width, uint32_t height) : m_width(width), m_height(height) {}
 
@@ -18,9 +20,10 @@ private:
     unsigned int m_height{};
 };
 
-class LIGHTYEAR_API WindowCloseEvent : public EventBase<WindowCloseEvent, EventType::WindowClose, EcApplication> {
+class LIGHTYEAR_API WindowCloseEvent : public EventBase<WindowCloseEvent, EventType::WindowClose, EcApplication>
+{
 public:
     WindowCloseEvent() = default;
 };
 
-}  // namespace ly
+} // namespace ly

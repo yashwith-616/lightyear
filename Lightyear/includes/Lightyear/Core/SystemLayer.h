@@ -2,11 +2,21 @@
 
 #include "Lightyear/LightyearCore.h"
 
-namespace ly {
+namespace ly
+{
 
 /**
  * All the different layers present in the system
  */
-enum class SystemLayer : uint8_t { PrePhysics, Physics, PostPhysics, Gameplay, Rendering, Ui, EditorOnly };
+enum class SystemLayer : uint8_t
+{
+    PrePhysics,
+    Physics,
+    PostPhysics,
+    Gameplay,
+    Rendering,
+    Ui,
+    EditorOnly
+};
 
-}  // namespace ly
+} // namespace ly

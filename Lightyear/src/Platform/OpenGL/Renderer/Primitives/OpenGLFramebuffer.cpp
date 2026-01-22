@@ -4,26 +4,28 @@ LY_DISABLE_WARNINGS_PUSH
 #include <glad/glad.h>
 LY_DISABLE_WARNINGS_POP
 
-namespace ly::renderer {
+namespace ly::renderer
+{
 
-OpenGlFramebuffer::OpenGlFramebuffer(FramebufferSpecification const& spec) : m_specification(spec) {
-    invalidate();
-}
+OpenGlFramebuffer::OpenGlFramebuffer(FramebufferSpecification const& spec) : m_specification(spec) { invalidate(); }
 
-OpenGlFramebuffer::~OpenGlFramebuffer() {
+OpenGlFramebuffer::~OpenGlFramebuffer()
+{
     glDeleteFramebuffers(1, &m_renderId);
     glDeleteTextures(1, &m_colorAttachment);
     glDeleteTextures(1, &m_depthAttachment);
 }
 
-void OpenGlFramebuffer::invalidate() {
-    if (m_renderId > 0) {
+void OpenGlFramebuffer::invalidate()
+{
+    if (m_renderId > 0)
+    {
         glDeleteFramebuffers(1, &m_renderId);
         glDeleteTextures(1, &m_colorAttachment);
         glDeleteTextures(1, &m_depthAttachment);
     }
 
-    GLsizei const& width  = narrowCast<GLsizei>(m_specification.width);
+    GLsizei const& width = narrowCast<GLsizei>(m_specification.width);
     GLsizei const& height = narrowCast<GLsizei>(m_specification.height);
 
     glViewport(0, 0, width, height);
@@ -51,19 +53,16 @@ void OpenGlFramebuffer::invalidate() {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void OpenGlFramebuffer::resize(uint32_t width, uint32_t height) {
+void OpenGlFramebuffer::resize(uint32_t width, uint32_t height)
+{
     LY_CORE_ASSERT((width > 0 && height > 0), "Invalid Framebuffer resize width {} & height {}", width, height);
 
-    m_specification.width  = width;
+    m_specification.width = width;
     m_specification.height = height;
-    invalidate();  // Recreate framebuffer with new size
+    invalidate(); // Recreate framebuffer with new size
 }
 
-void OpenGlFramebuffer::bind() {
-    glBindFramebuffer(GL_FRAMEBUFFER, m_renderId);
-}
+void OpenGlFramebuffer::bind() { glBindFramebuffer(GL_FRAMEBUFFER, m_renderId); }
 
-void OpenGlFramebuffer::unbind() {
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-}
-}  // namespace ly::renderer
+void OpenGlFramebuffer::unbind() { glBindFramebuffer(GL_FRAMEBUFFER, 0); }
+} // namespace ly::renderer

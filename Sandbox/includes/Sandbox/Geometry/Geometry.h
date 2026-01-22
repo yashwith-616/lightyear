@@ -2,7 +2,8 @@
 
 #include "Lightyear.h"
 
-class Geometry {
+class Geometry
+{
 public:
     ly::ref<ly::renderer::VertexArray> cubeVertexArray;
     ly::ref<ly::renderer::VertexArray> sphereVertexArray;

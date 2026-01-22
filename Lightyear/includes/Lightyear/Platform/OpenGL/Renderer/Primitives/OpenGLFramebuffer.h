@@ -3,9 +3,11 @@
 #include "Lightyear/Renderer/Primitives/Framebuffer.h"
 #include "Lightyear/Renderer/Primitives/RenderTypes.h"
 
-namespace ly::renderer {
+namespace ly::renderer
+{
 
-class LIGHTYEAR_API OpenGlFramebuffer : public Framebuffer {
+class LIGHTYEAR_API OpenGlFramebuffer : public Framebuffer
+{
 public:
     OpenGlFramebuffer(FramebufferSpecification const& spec);
     ~OpenGlFramebuffer() override;
@@ -21,11 +23,11 @@ public:
     [[nodiscard]] uint32_t getColorAttachmentRenderId() const override { return m_colorAttachment; };
 
 private:
-    textureHandle m_renderId{ 0 };
-    textureHandle m_colorAttachment{ 0 };
-    textureHandle m_depthAttachment{ 0 };
+    textureHandle m_renderId{0};
+    textureHandle m_colorAttachment{0};
+    textureHandle m_depthAttachment{0};
 
     FramebufferSpecification m_specification{};
 };
 
-}  // namespace ly::renderer
+} // namespace ly::renderer

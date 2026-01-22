@@ -2,7 +2,8 @@
 
 #include "Lightyear/pch/lypch.h"
 
-namespace ly {
+namespace ly
+{
 
 // ----------------------- Custom Memory -----------------------
 
@@ -21,7 +22,8 @@ using scope = std::unique_ptr<T>;
  * @return unique pointer
  */
 template <typename T, typename... Args>
-constexpr std::unique_ptr<T> makeScope(Args&&... args) {
+constexpr std::unique_ptr<T> makeScope(Args&&... args)
+{
     return std::make_unique<T>(std::forward<Args>(args)...);
 }
 
@@ -40,7 +42,8 @@ using ref = std::shared_ptr<T>;
  * @return shared pointer
  */
 template <typename T, typename... Args>
-constexpr std::shared_ptr<T> makeRef(Args&&... args) {
+constexpr std::shared_ptr<T> makeRef(Args&&... args)
+{
     return std::make_shared<T>(std::forward<Args>(args)...);
 }
 
@@ -56,7 +59,8 @@ using weakRef = std::weak_ptr<T>;
  * @tparam T the type
  */
 template <typename T>
-ref<T> tryLock(weakRef<T> const& weak) {
+ref<T> tryLock(weakRef<T> const& weak)
+{
     return weak.lock();
 }
 
@@ -72,15 +76,17 @@ ref<T> tryLock(weakRef<T> const& weak) {
  * @return value after cast
  */
 template <typename T, typename U>
-constexpr T narrowCast(U value) {
+constexpr T narrowCast(U value)
+{
     return static_cast<T>(value);
 }
 
 // ----------------------- Types -----------------------
 /// @brief The following type is used across engine for identifying versions
 ///
-struct Version {
-    int16_t version{ 0 };
+struct Version
+{
+    int16_t version{0};
 
     constexpr explicit Version(int16_t version) : version(version) {}
 
@@ -95,19 +101,22 @@ struct Version {
 };
 
 /// \brief The window size in lightyear
-struct WindowSize {
-    int32_t width{ 0 };
-    int32_t height{ 0 };
+struct WindowSize
+{
+    int32_t width{0};
+    int32_t height{0};
 };
 
 /// \brief The graphic context version
-struct GraphicContextVersion {
-    int majorVersion{ 0 };
-    int minorVersion{ 0 };
+struct GraphicContextVersion
+{
+    int majorVersion{0};
+    int minorVersion{0};
 };
 
 template <typename T>
-constexpr std::string_view typeName() {
+constexpr std::string_view typeName()
+{
 #ifdef __clang__
     constexpr std::string_view p = __PRETTY_FUNCTION__;
     return p.substr(31, p.size() - 32);
@@ -122,7 +131,8 @@ constexpr std::string_view typeName() {
 
 /// \brief Enables easy use of RAII wrappers using lambda
 template <typename F>
-struct ScopeGuard {
+struct ScopeGuard
+{
     F func;
     explicit ScopeGuard(F f) : func(f) {}
     ~ScopeGuard() { func(); }
@@ -130,8 +140,9 @@ struct ScopeGuard {
 
 /// \brief Provides an easier way to implement RAII guards
 template <typename F>
-ScopeGuard<F> makeScopeGuard(F f) {
+ScopeGuard<F> makeScopeGuard(F f)
+{
     return ScopeGuard<F>(f);
 }
 
-}  // namespace ly
+} // namespace ly
