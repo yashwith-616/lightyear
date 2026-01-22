@@ -1,9 +1,11 @@
 #pragma once
 #include "Lightyear/Scene/Systems/ISystem.h"
 
-namespace ly::scene {
+namespace ly::scene
+{
 
-class LIGHTYEAR_API MovementSystem : public ISystem {
+class LIGHTYEAR_API MovementSystem : public ISystem
+{
 public:
     MovementSystem();
 
@@ -14,4 +16,4 @@ public:
     void shutdown(entt::registry& registry) override;
 };
 
-}  // namespace ly::scene
+} // namespace ly::scene

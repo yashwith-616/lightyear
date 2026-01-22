@@ -6,16 +6,18 @@ LY_DISABLE_WARNINGS_PUSH
 #include <random>
 
 #ifdef _MSC_VER
-    #include <xhash>
+#include <xhash>
 #else
-    #include <unordered_map>
+#include <unordered_map>
 #endif
 
 LY_DISABLE_WARNINGS_POP
 
-namespace ly {
+namespace ly
+{
 
-class UuidGenerator {
+class UuidGenerator
+{
 public:
     UuidGenerator() : m_engine(m_randomDevice()) {}
 
@@ -27,7 +29,8 @@ private:
     std::uniform_int_distribution<uint64_t> m_distribution;
 };
 
-class Uuid {
+class Uuid
+{
 public:
     Uuid();
     explicit Uuid(uint64_t uuid);
@@ -41,9 +44,10 @@ private:
     uint64_t m_uuid;
 };
 
-static UuidGenerator& getUuidGenerator() {
+static UuidGenerator& getUuidGenerator()
+{
     static UuidGenerator generator;
     return generator;
 }
 
-}  // namespace ly
+} // namespace ly

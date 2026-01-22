@@ -6,9 +6,11 @@
 // NOLINTNEXTLINE
 struct GLFWwindow;
 
-namespace ly::renderer {
+namespace ly::renderer
+{
 
-class LIGHTYEAR_API OpenGlContext : public RendererContext {
+class LIGHTYEAR_API OpenGlContext : public RendererContext
+{
 public:
     OpenGlContext(GLFWwindow* windowHandle);
 
@@ -19,4 +21,4 @@ private:
     GLFWwindow* m_windowHandle;
 };
 
-}  // namespace ly::renderer
+} // namespace ly::renderer

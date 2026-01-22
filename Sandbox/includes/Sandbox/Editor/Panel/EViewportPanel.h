@@ -3,7 +3,8 @@
 #include "Lightyear.h"
 #include "Sandbox/Editor/Panel/IEditorPanel.h"
 
-class EViewportPanel : public IEditorPanel {
+class EViewportPanel : public IEditorPanel
+{
 public:
     explicit EViewportPanel(std::string name) : IEditorPanel(std::move(name)) {}
     ~EViewportPanel() override = default;

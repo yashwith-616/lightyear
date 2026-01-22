@@ -1,7 +1,9 @@
 #pragma once
 
-namespace ly {
+namespace ly
+{
 
-class WorldManager {};
+class WorldManager
+{};
 
-}  // namespace ly
+} // namespace ly

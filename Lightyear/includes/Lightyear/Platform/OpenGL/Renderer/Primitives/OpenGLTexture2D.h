@@ -2,9 +2,11 @@
 
 #include "Lightyear/Renderer/Primitives/Texture.h"
 
-namespace ly::renderer {
+namespace ly::renderer
+{
 
-class LIGHTYEAR_API OpenGlTexture2D : public Texture2D {
+class LIGHTYEAR_API OpenGlTexture2D : public Texture2D
+{
 public:
     explicit OpenGlTexture2D(std::filesystem::path const& path);
     ~OpenGlTexture2D() override;
@@ -19,10 +21,10 @@ private:
     uint32_t m_width{};
     uint32_t m_height{};
 
-    textureHandle m_textureHandle{ 0 };
+    textureHandle m_textureHandle{0};
 
     [[nodiscard]] static uint32_t getGlDataFormat(int channels);
     [[nodiscard]] static uint32_t getGlInternalFormat(int channels);
 };
 
-}  // namespace ly::renderer
+} // namespace ly::renderer

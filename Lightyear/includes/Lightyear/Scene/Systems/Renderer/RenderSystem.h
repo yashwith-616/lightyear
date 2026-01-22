@@ -3,9 +3,11 @@
 #include "Lightyear/LightyearCore.h"
 #include "Lightyear/Scene/Systems/ISystem.h"
 
-namespace ly::scene {
+namespace ly::scene
+{
 
-class LIGHTYEAR_API RenderSystem : public ISystem {
+class LIGHTYEAR_API RenderSystem : public ISystem
+{
 public:
     RenderSystem();
 
@@ -16,4 +18,4 @@ public:
     void shutdown(entt::registry& registry) override;
 };
 
-}  // namespace ly::scene
+} // namespace ly::scene

@@ -12,28 +12,34 @@
 
 #include "Lightyear/Platform/OpenGL/Renderer/Primitives/OpenGLShader.h"
 
-namespace ly::renderer {
+namespace ly::renderer
+{
 
-RenderSubmission::RenderSubmission(ref<Shader> const& shader,
-                                   ref<VertexArray> const& vertexArray,
-                                   ref<Texture> const& texture,
-                                   glm::mat4 const& transform)
-    : rsShader(shader), rsVertexArray(vertexArray), rsTexture(texture), rsTransform(transform) {}
-void Renderer::init() {
+RenderSubmission::RenderSubmission(
+    ref<Shader> const& shader,
+    ref<VertexArray> const& vertexArray,
+    ref<Texture> const& texture,
+    glm::mat4 const& transform) :
+    rsShader(shader), rsVertexArray(vertexArray), rsTexture(texture), rsTransform(transform)
+{}
+void Renderer::init()
+{
     RenderCommand::init();
     m_sGlobalUniforms.init();
     m_sGlobalUniforms.bind();
 }
 void Renderer::shutdown() {}
 void Renderer::onWindowResize(glm::uvec2 size) {}
-void Renderer::beginScene(scene::CameraComponent const& camera,
-                          scene::TransformComponent const& cameraTransform,
-                          scene::SceneData const& sceneData) {
+void Renderer::beginScene(
+    scene::CameraComponent const& camera,
+    scene::TransformComponent const& cameraTransform,
+    scene::SceneData const& sceneData)
+{
     // Camera UBO
     m_sCameraUbo.uViewProjection = camera.cacheViewProjectionMatrix;
-    m_sCameraUbo.uView           = camera.viewMatrix;
+    m_sCameraUbo.uView = camera.viewMatrix;
     m_sCameraUbo.uCameraPosition = cameraTransform.translation;
-    m_sCameraUbo.uZoomLevel      = 1.0f;
+    m_sCameraUbo.uZoomLevel = 1.0f;
     m_sGlobalUniforms.uploadCamera(m_sCameraUbo);
 
     // Scene UBO
@@ -41,7 +47,7 @@ void Renderer::beginScene(scene::CameraComponent const& camera,
     m_sGlobalUniforms.uploadScene(m_sSceneUbo);
 
     // Material UBO
-    m_sMaterialUbo.uBaseColor  = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+    m_sMaterialUbo.uBaseColor = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
     m_sMaterialUbo.uProperties = glm::vec4(0.0f);
     m_sGlobalUniforms.uploadMaterial(m_sMaterialUbo);
 
@@ -49,23 +55,22 @@ void Renderer::beginScene(scene::CameraComponent const& camera,
     m_sRenderQueue.clear();
 }
 
-void Renderer::endScene() {
-    flush();
-}
+void Renderer::endScene() { flush(); }
 
-void Renderer::submit(RenderSubmission const& submission) {
-    m_sRenderQueue.push_back(submission);
-}
+void Renderer::submit(RenderSubmission const& submission) { m_sRenderQueue.push_back(submission); }
 
-void Renderer::flush() {
-    for (auto const& submission : m_sRenderQueue) {
+void Renderer::flush()
+{
+    for (auto const& submission : m_sRenderQueue)
+    {
         m_sObjectUbo.uModelMatrix = submission.rsTransform;
         m_sGlobalUniforms.uploadObject(m_sObjectUbo);
 
         ref<OpenGlShader> const openGlShader = std::dynamic_pointer_cast<OpenGlShader>(submission.rsShader);
         openGlShader->use();
 
-        if (submission.rsTexture != nullptr) {
+        if (submission.rsTexture != nullptr)
+        {
             submission.rsTexture->bind(1);
             openGlShader->setUniform("u_Color", 1);
         }
@@ -87,4 +92,4 @@ UboObject Renderer::m_sObjectUbo;
 
 UboScene Renderer::m_sSceneUbo;
 
-}  // namespace ly::renderer
+} // namespace ly::renderer

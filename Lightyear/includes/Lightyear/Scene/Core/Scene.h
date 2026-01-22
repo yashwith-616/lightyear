@@ -6,17 +6,19 @@ LY_DISABLE_WARNINGS_PUSH
 #include "entt/entt.hpp"
 LY_DISABLE_WARNINGS_POP
 
-namespace ly::scene {
+namespace ly::scene
+{
 
 class Entity;
 
-class LIGHTYEAR_API Scene {
+class LIGHTYEAR_API Scene
+{
 public:
     Scene();
-    Scene(Scene const&)            = delete;
-    Scene(Scene&&) noexcept        = default;
+    Scene(Scene const&) = delete;
+    Scene(Scene&&) noexcept = default;
     Scene& operator=(Scene const&) = delete;
-    Scene& operator=(Scene&&)      = default;
+    Scene& operator=(Scene&&) = default;
 
     Entity createEntity(std::string const& name);
     Entity createEntity(std::string const& name, Entity const& parent);
@@ -31,7 +33,8 @@ public:
     [[nodiscard]] Entity getPrimaryCameraEntity() const;
 
     template <typename... Components>
-    auto getAllEntitiesWith() {
+    auto getAllEntitiesWith()
+    {
         return m_registry.view<Components...>();
     }
 
@@ -39,9 +42,10 @@ public:
     [[nodiscard]] entt::registry const& getRegistry() const { return m_registry; }
 
 protected:
-    Entity createEntity(Uuid uuid,
-                        std::string const& name                             = std::string(),
-                        std::optional<std::reference_wrapper<Entity const>> = std::nullopt);
+    Entity createEntity(
+        Uuid uuid,
+        std::string const& name = std::string(),
+        std::optional<std::reference_wrapper<Entity const>> = std::nullopt);
 
 private:
     entt::registry m_registry;
@@ -65,4 +69,4 @@ private:
     friend class Entity;
 };
 
-}  // namespace ly::scene
+} // namespace ly::scene

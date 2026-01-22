@@ -10,11 +10,13 @@
 // NOLINTNEXTLINE
 struct GLFWwindow;
 
-namespace ly {
+namespace ly
+{
 
-class LIGHTYEAR_API WindowsWindow : public Window {
+class LIGHTYEAR_API WindowsWindow : public Window
+{
 public:
-    explicit WindowsWindow(WindowProps const& props) : m_data({ props.title, props.size }) {}
+    explicit WindowsWindow(WindowProps const& props) : m_data({props.title, props.size}) {}
     ~WindowsWindow() override = default;
 
     void onUpdate() override;
@@ -28,7 +30,7 @@ public:
     [[nodiscard]] void* getNativeWindow() const override { return m_window; }
 
 protected:
-    bool m_isGlfwInitialized{ false };
+    bool m_isGlfwInitialized{false};
 
     /**
      * @brief Initializes GLFW window with the given properties such as context, title, width,
@@ -59,21 +61,22 @@ private:
      * This struct is set as the `glfwSetWindowUserPointer` and stores window state.
      * It is used within GLFW callbacks to access and update window data, and to dispatch events.
      */
-    struct WindowsData {
-        std::string title{ k_kNotset };
-        glm::uvec2 windowSize{ k_defaultWindowSize };
-        bool isVSyncEnabled{ true };
+    struct WindowsData
+    {
+        std::string title{k_kNotset};
+        glm::uvec2 windowSize{k_defaultWindowSize};
+        bool isVSyncEnabled{true};
 
         eventCallbackFn eventCallback;
 
         WindowsData(std::string title, glm::uvec2 windowSize) : title(std::move(title)), windowSize(windowSize) {}
     };
 
-    GLFWwindow* m_window{ nullptr };
+    GLFWwindow* m_window{nullptr};
     scope<renderer::RendererContext> m_context{};
     WindowsData m_data;
 
     static void setupGlfwWindowHints();
 };
 
-}  // namespace ly
+} // namespace ly

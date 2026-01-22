@@ -1,9 +1,11 @@
 #pragma once
 #include <vector>
 
-namespace ly {
+namespace ly
+{
 
-class DynamicBitset {
+class DynamicBitset
+{
 public:
     DynamicBitset() = default;
     explicit DynamicBitset(size_t size);
@@ -23,4 +25,4 @@ private:
     static constexpr size_t blockCount(size_t size) { return (size + k_bitsPerBlock - 1) / k_bitsPerBlock; }
 };
 
-}  // namespace ly
+} // namespace ly

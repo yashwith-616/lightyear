@@ -2,7 +2,8 @@
 
 #include "Lightyear/LightyearCore.h"
 
-namespace ly::renderer {
+namespace ly::renderer
+{
 
 class VertexArray;
 
@@ -16,19 +17,24 @@ class VertexArray;
  * This class will receive direct calls from RenderCommand and will
  * not be called by any other class
  */
-class LIGHTYEAR_API RendererApi {
+class LIGHTYEAR_API RendererApi
+{
 public:
-    enum class Api { None = 0, OpenGl };
+    enum class Api
+    {
+        None = 0,
+        OpenGl
+    };
 
     virtual ~RendererApi() = default;
 
-    virtual void init()                                                               = 0;
+    virtual void init() = 0;
     virtual void setViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) = 0;
-    virtual void setClearColor(glm::vec4 const& color)                                = 0;
-    virtual void clear()                                                              = 0;
+    virtual void setClearColor(glm::vec4 const& color) = 0;
+    virtual void clear() = 0;
 
     virtual void drawIndexed(ref<VertexArray> const& vertexArray, uint32_t indexCount = 0) = 0;
-    virtual void drawLines(VertexArray const& vertexArray, uint32_t vertexCount = 0)       = 0;
+    virtual void drawLines(VertexArray const& vertexArray, uint32_t vertexCount = 0) = 0;
 
     virtual void setLineWidth(float width) = 0;
 
@@ -39,4 +45,4 @@ private:
     static Api m_api;
 };
 
-}  // namespace ly::renderer
+} // namespace ly::renderer
