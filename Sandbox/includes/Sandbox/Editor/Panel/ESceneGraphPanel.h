@@ -4,7 +4,8 @@
 #include "Lightyear.h"
 #include "Sandbox/Editor/Comman/SceneTreeNode.h"
 
-class EeSceneGraphPanel : public IEditorPanel {
+class EeSceneGraphPanel : public IEditorPanel
+{
 public:
     explicit EeSceneGraphPanel(std::string name) : IEditorPanel(std::move(name)) {}
     ~EeSceneGraphPanel() override = default;

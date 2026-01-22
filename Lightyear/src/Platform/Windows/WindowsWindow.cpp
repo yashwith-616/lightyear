@@ -9,34 +9,37 @@ LY_DISABLE_WARNINGS_PUSH
 #include <GLFW/glfw3.h>
 LY_DISABLE_WARNINGS_PUSH
 
-namespace {
-void glfwErrorCallback(int error, char const* description) {
+namespace
+{
+void glfwErrorCallback(int error, char const* description)
+{
     LY_CORE_LOG(ly::LogType::Error, "GLFW Error ({0}): {1}", error, description);
 }
-}  // namespace
+} // namespace
 
-namespace ly {
+namespace ly
+{
 
-scope<Window> Window::create(WindowProps const& props) {
-    return makeScope<WindowsWindow>(props);
-}
+scope<Window> Window::create(WindowProps const& props) { return makeScope<WindowsWindow>(props); }
 
-void WindowsWindow::onUpdate() {
+void WindowsWindow::onUpdate()
+{
     glfwPollEvents();
     m_context->swapBuffers();
 }
 
-void WindowsWindow::setVSync(bool enable) {
+void WindowsWindow::setVSync(bool enable)
+{
     glfwSwapInterval(enable ? GLFW_TRUE : GLFW_FALSE);
     m_data.isVSyncEnabled = enable;
 }
 
-float WindowsWindow::getTime() const {
-    return static_cast<float>(glfwGetTime());
-}
+float WindowsWindow::getTime() const { return static_cast<float>(glfwGetTime()); }
 
-void WindowsWindow::init() {
-    if (!m_isGlfwInitialized) {
+void WindowsWindow::init()
+{
+    if (!m_isGlfwInitialized)
+    {
         int const success = glfwInit();
         LY_CORE_ASSERT(success, "Failed to initialize GLFW");
         m_isGlfwInitialized = true;
@@ -46,11 +49,12 @@ void WindowsWindow::init() {
     setupGlfwWindowHints();
 
     // NOLINTNEXTLINE
-    m_window = glfwCreateWindow(narrowCast<int>(m_data.windowSize.x),
-                                narrowCast<int>(m_data.windowSize.y),
-                                m_data.title.c_str(),
-                                nullptr,
-                                nullptr);
+    m_window = glfwCreateWindow(
+        narrowCast<int>(m_data.windowSize.x),
+        narrowCast<int>(m_data.windowSize.y),
+        m_data.title.c_str(),
+        nullptr,
+        nullptr);
     LY_CORE_ASSERT(m_window != nullptr, "GLFW window initialization failed!");
 
     m_context = renderer::RendererContext::create(m_window);
@@ -62,7 +66,8 @@ void WindowsWindow::init() {
     setupWindowCallbacks();
 }
 
-void WindowsWindow::shutDown() {
+void WindowsWindow::shutDown()
+{
     LY_CORE_ASSERT(m_window != nullptr, "GLFWWindow is nullptr");
 
     glfwDestroyWindow(m_window);
@@ -70,11 +75,12 @@ void WindowsWindow::shutDown() {
 }
 
 // NOLINTBEGIN
-void WindowsWindow::setupWindowCallbacks() {
+void WindowsWindow::setupWindowCallbacks()
+{
     // Set windows callback
     glfwSetWindowSizeCallback(m_window, [](GLFWwindow* window, int width, int height) {
         WindowsData& data = *static_cast<WindowsData*>(glfwGetWindowUserPointer(window));
-        data.windowSize   = glm::uvec2(width, height);
+        data.windowSize = glm::uvec2(width, height);
 
         WindowResizeEvent resizeEvent(data.windowSize.x, data.windowSize.y);
         data.eventCallback(resizeEvent);
@@ -90,19 +96,22 @@ void WindowsWindow::setupWindowCallbacks() {
     glfwSetMouseButtonCallback(m_window, [](GLFWwindow* window, int button, int action, int mods) {
         const WindowsData& data = *static_cast<WindowsData*>(glfwGetWindowUserPointer(window));
 
-        switch (action) {
-            case GLFW_PRESS: {
+        switch (action)
+        {
+        case GLFW_PRESS:
+            {
                 MouseButtonPressedEvent pressedEvent(button);
                 data.eventCallback(pressedEvent);
                 break;
             }
-            case GLFW_RELEASE: {
+        case GLFW_RELEASE:
+            {
                 MouseButtonReleasedEvent releasedEvent(button);
                 data.eventCallback(releasedEvent);
                 break;
             }
-            default:
-                break;
+        default:
+            break;
         }
     });
 
@@ -122,24 +131,28 @@ void WindowsWindow::setupWindowCallbacks() {
     glfwSetKeyCallback(m_window, [](GLFWwindow* window, int key, int /*scancode*/, int action, int /*mods*/) {
         const WindowsData& data = *static_cast<WindowsData*>(glfwGetWindowUserPointer(window));
 
-        switch (action) {
-            case GLFW_PRESS: {
+        switch (action)
+        {
+        case GLFW_PRESS:
+            {
                 KeyPressedEvent pressedEvent(key, 0);
                 data.eventCallback(pressedEvent);
                 break;
             }
-            case GLFW_RELEASE: {
+        case GLFW_RELEASE:
+            {
                 KeyReleasedEvent releasedEvent(key);
                 data.eventCallback(releasedEvent);
                 break;
             }
-            case GLFW_REPEAT: {
+        case GLFW_REPEAT:
+            {
                 KeyPressedEvent repeatEvent(key, 1);
                 data.eventCallback(repeatEvent);
                 break;
             }
-            default:
-                break;
+        default:
+            break;
         }
     });
 
@@ -155,25 +168,28 @@ void WindowsWindow::setupWindowCallbacks() {
  * GLFW window hints (glfwWindowHint) must be set *before* calling glfwCreateWindow. This function applies the
  * necessary hints to ensure the created GLFW window is compatible with the selected rendering API backend.
  */
-void WindowsWindow::setupGlfwWindowHints() {
+void WindowsWindow::setupGlfwWindowHints()
+{
     using API = renderer::RendererApi::Api;
 
-    switch (renderer::Renderer::getApi()) {
-        case API::OpenGl:
-            [[likely]] {
-                glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, k_openglMajorVersion);
-                glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, k_openglMinorVersion);
-                glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    switch (renderer::Renderer::getApi())
+    {
+    case API::OpenGl:
+        [[likely]]
+        {
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, k_openglMajorVersion);
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, k_openglMinorVersion);
+            glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 #ifdef LY_OPENGL_DEBUG
-                glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
+            glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
 #endif
-                return;
-            }
-        default:
-            [[unlikely]] LY_CORE_ASSERT(false, "Unknown renderer API");
+            return;
+        }
+    default:
+        [[unlikely]] LY_CORE_ASSERT(false, "Unknown renderer API");
     }
 }
 // NOLINTEND
 
-}  // namespace ly
+} // namespace ly

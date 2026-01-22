@@ -3,11 +3,13 @@
 #include "Lightyear.h"
 #include "Sandbox/Editor/Workspace/ESceneWorkspace.h"
 
-namespace ly::scene {
+namespace ly::scene
+{
 class Entity;
 }
 
-class EditorLayer : public ly::Layer {
+class EditorLayer : public ly::Layer
+{
 public:
     EditorLayer();
 
@@ -31,9 +33,9 @@ private:
     ly::scope<ESceneWorkspace> m_sceneWorkspace;
     ly::ref<GlobalEditorContext> m_editorContext;
 
-    float m_prevMouseY{ 0.f };
-    float m_prevMouseX{ 0.f };
-    float m_mouseSensitivity{ 0.1f };
+    float m_prevMouseY{0.f};
+    float m_prevMouseX{0.f};
+    float m_mouseSensitivity{0.1f};
 
     void saveScene() const;
     void loadScene();

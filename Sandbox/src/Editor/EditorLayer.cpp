@@ -8,17 +8,18 @@ LY_DISABLE_WARNINGS_PUSH
 #include <imgui_internal.h>
 LY_DISABLE_WARNINGS_POP
 
-constexpr auto k_clearColor        = glm::vec4(0.13, 0.13, 0.13, 1.0);
-auto const k_cameraSavePath        = std::filesystem::path(SAVED_DIR "/camera.yaml");
-auto const k_sceneSavePath         = std::filesystem::path(SAVED_DIR "/scene.yaml");
-auto const k_sceneSavePathJson     = std::filesystem::path(SAVED_DIR "/scene.json");
+constexpr auto k_clearColor = glm::vec4(0.13, 0.13, 0.13, 1.0);
+auto const k_cameraSavePath = std::filesystem::path(SAVED_DIR "/camera.yaml");
+auto const k_sceneSavePath = std::filesystem::path(SAVED_DIR "/scene.yaml");
+auto const k_sceneSavePathJson = std::filesystem::path(SAVED_DIR "/scene.json");
 auto const k_sceneSavePathJsonTest = std::filesystem::path(SAVED_DIR "/scene_test.json");
 
 namespace renderer = ly::renderer;
 
 EditorLayer::EditorLayer() : Layer("Editor") {}
 
-void EditorLayer::onAttach() {
+void EditorLayer::onAttach()
+{
     loadScene();
     m_sceneRuntime = ly::makeRef<ly::scene::SceneRuntime>(m_scene.get());
     m_sceneRuntime->initialize();
@@ -28,8 +29,8 @@ void EditorLayer::onAttach() {
     // world. The world needs to be responsible for rendering.
 
     renderer::FramebufferSpecification spec;
-    spec.width    = ly::k_defaultWindowSize.x;
-    spec.height   = ly::k_defaultWindowSize.y;
+    spec.width = ly::k_defaultWindowSize.x;
+    spec.height = ly::k_defaultWindowSize.y;
     m_framebuffer = renderer::Framebuffer::create(spec);
 #pragma endregion
 
@@ -38,7 +39,7 @@ void EditorLayer::onAttach() {
     // Will be removed from here in the future implementation
 
     m_texture = renderer::Texture2D::create(ASSET_DIR "/Textures/T_Grid.png");
-    m_shader  = renderer::Shader::create("ShaderBg", k_defaultShader);
+    m_shader = renderer::Shader::create("ShaderBg", k_defaultShader);
 #pragma endregion
 
     /// TODO: Remove when asset-registry is done. Add mesh and render component to cube.
@@ -50,25 +51,25 @@ void EditorLayer::onAttach() {
     m_sceneRuntime->setSceneExecState(ly::scene::SceneRuntimeMode::Play);
 
 #pragma region Inti Scene and Panels
-    m_sceneWorkspace                  = ly::makeScope<ESceneWorkspace>("SceneWorkspace");
-    m_editorContext                   = ly::makeRef<GlobalEditorContext>();
-    m_editorContext->activeScene      = m_scene;
+    m_sceneWorkspace = ly::makeScope<ESceneWorkspace>("SceneWorkspace");
+    m_editorContext = ly::makeRef<GlobalEditorContext>();
+    m_editorContext->activeScene = m_scene;
     m_editorContext->sceneFramebuffer = m_framebuffer;
-    m_editorContext->sceneRuntime     = m_sceneRuntime;
+    m_editorContext->sceneRuntime = m_sceneRuntime;
     m_sceneWorkspace->onAttach(m_editorContext);
 #pragma endregion
 }
 
-void EditorLayer::onDetach() {
-    saveScene();
-}
+void EditorLayer::onDetach() { saveScene(); }
 
-void EditorLayer::onEditorRender() {
+void EditorLayer::onEditorRender()
+{
     m_sceneWorkspace->onEditorUpdate();
     m_sceneWorkspace->onImGuiRender();
 
-    ImGui::SetNextWindowBgAlpha(0.35f);  // Transparent background
-    if (ImGui::Begin("Example: Simple overlay")) {
+    ImGui::SetNextWindowBgAlpha(0.35f); // Transparent background
+    if (ImGui::Begin("Example: Simple overlay"))
+    {
         ImGui::Text("IsRunning: %s", m_sceneRuntime->isRunning() ? "true" : "false");
         ImGui::Text("IsPaused: %s", m_sceneRuntime->isPaused() ? "true" : "false");
     }
@@ -77,7 +78,8 @@ void EditorLayer::onEditorRender() {
     ImGui::ShowDemoWindow();
 }
 
-void EditorLayer::onUpdate(float deltaTime) {
+void EditorLayer::onUpdate(float deltaTime)
+{
     m_framebuffer->bind();
     renderer::RenderCommand::clear();
     renderer::RenderCommand::setClearColor(k_clearColor);
@@ -89,12 +91,14 @@ void EditorLayer::onUpdate(float deltaTime) {
     m_framebuffer->unbind();
 }
 
-void EditorLayer::saveScene() const {
+void EditorLayer::saveScene() const
+{
     LY_LOG(ly::LogType::Info, "Saving scene");
     auto* level = new ly::Level(k_sceneSavePathJson, "ALevel");
     level->saveScene(*m_scene);
 }
-void EditorLayer::loadScene() {
+void EditorLayer::loadScene()
+{
     auto* level = new ly::Level(k_sceneSavePathJson, "ALevel");
-    m_scene     = level->loadScene();
+    m_scene = level->loadScene();
 }
