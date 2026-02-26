@@ -1,5 +1,26 @@
 #include "Shader.h"
 
+#include <fstream>
+
+namespace
+{
+
+std::vector<std::byte> readFile(std::filesystem::path const& filePath)
+{
+    std::ifstream file(filePath, std::ios::ate | std::ios::binary);
+    assert(file.is_open() && "failed to open file");
+
+    size_t fileSize = static_cast<size_t>(file.tellg());
+    std::vector<std::byte> buffer(fileSize);
+
+    file.seekg(0, std::ios::beg);
+    file.read(reinterpret_cast<char*>(buffer.data()), fileSize);
+    file.close();
+    return buffer;
+}
+
+} // namespace
+
 namespace ly::renderer
 {
 
@@ -15,11 +36,15 @@ Shader::Shader(LogicalDevice const& device, std::vector<std::byte> const& shader
     m_shaderModule = std::move(shaderModuleExpect.value());
 }
 
-vk::PipelineShaderStageCreateInfo const&
+Shader::Shader(LogicalDevice const& device, std::filesystem::path const& shaderPath) :
+    Shader(device, readFile(shaderPath))
+{}
+
+vk::PipelineShaderStageCreateInfo
     Shader::createSubShader(vk::ShaderStageFlagBits type, std::string_view entrypointFuncName)
 {
     return vk::PipelineShaderStageCreateInfo{
-        .stage = type, .module = m_shaderModule, .pName = entrypointFuncName.data()};
+        .stage = type, .module = *m_shaderModule, .pName = entrypointFuncName.data()};
 }
 
 } // namespace ly::renderer

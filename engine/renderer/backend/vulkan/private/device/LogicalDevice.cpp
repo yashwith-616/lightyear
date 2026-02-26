@@ -88,12 +88,21 @@ vk::raii::Device LogicalDevice::createLogicalDevice(Surface const& surface)
         });
     assert(queueCreateInfos.size() > 0 && "Device queue create info is empty");
 
+    std::vector<char const*> vkDeviceExtensions;
+    {
+        vkDeviceExtensions.reserve(deviceExtensions.size());
+        for (auto const& str : deviceExtensions)
+        {
+            vkDeviceExtensions.push_back(str.c_str());
+        }
+    }
+
     vk::DeviceCreateInfo deviceCreateInfo{
         .pNext = &deviceFeatures.core,
         .queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size()),
         .pQueueCreateInfos = queueCreateInfos.data(),
         .enabledExtensionCount = static_cast<uint32_t>(deviceExtensions.size()),
-        .ppEnabledExtensionNames = deviceExtensions.data()};
+        .ppEnabledExtensionNames = vkDeviceExtensions.data()};
 
     auto deviceExpected = m_physicalDevice.getHandle().createDevice(deviceCreateInfo);
     assert(deviceExpected.has_value() && "Device was not successfully created");

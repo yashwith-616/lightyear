@@ -27,6 +27,8 @@ struct InstanceCreateInfo
     std::vector<std::string> vulkanValidationLayers;
     std::vector<std::string> vulkanExtensions;
 
+    std::vector<std::string> deviceExtensions;
+
     std::string appName;
     Version appVersion;
 
@@ -41,19 +43,20 @@ public:
     ~Instance() = default;
 
     vk::raii::Instance const& getInstance() const;
-    std::vector<char const*> const& getVulkanExtensions() const;
+    std::vector<std::string> const& getVulkanExtensions() const;
 
 private:
     vk::raii::Instance createInstance(InstanceCreateInfo const& instanceCreateInfo);
 
-    std::vector<std::string_view> resolveAllValidationLayers(std::vector<std::string> const& requestedLayers) const;
+    std::vector<std::string> resolveAllValidationLayers(std::vector<std::string> const& requestedLayers) const;
 
     void resolveAllExtensions(std::vector<std::string> const& requestedExtensions);
 
     vk::raii::Context m_context{};
-    vk::raii::Instance m_instance;
+    vk::raii::Instance m_instance{nullptr};
 
-    std::vector<std::string_view> m_vulkanExtensions{};
+    std::vector<std::string> m_vulkanExtensions{};
+    std::vector<std::string> m_deviceExtensions{};
 };
 
 } // namespace ly::renderer

@@ -39,9 +39,14 @@ find_package(Vulkan REQUIRED)
 find_package(VulkanHeaders CONFIG)
 
 #-------------------------------------------------
+# Options
+#-------------------------------------------------
+option(ENABLE_ASAN "enable address sanitizer" OFF)
+
+#-------------------------------------------------
 # Target configuration
 #-------------------------------------------------
-add_library(VulkanRenderer SHARED
+add_library(VulkanRenderer STATIC
         ${VK_PRIVATE}
 )
 
@@ -53,7 +58,8 @@ set_target_properties(VulkanRenderer PROPERTIES
 
 target_include_directories(VulkanRenderer
         PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/private)
+        ${CMAKE_CURRENT_SOURCE_DIR}/private
+        ${CMAKE_CURRENT_SOURCE_DIR}/public)
 
 target_link_libraries(VulkanRenderer
         PRIVATE

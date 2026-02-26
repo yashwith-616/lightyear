@@ -25,6 +25,9 @@ FeatureStorage PhysicalDevice::getRequiredDeviceFeatures() const
     storage.core.features.shaderInt64 = true;
     storage.core.features.multiDrawIndirect = true;
 
+    // Vulkan 1.1 Features
+    storage.v11.shaderDrawParameters = true;
+
     // Vulkan 1.2 Features (The "Bindless" Engine)
     storage.v12.bufferDeviceAddress = true;
     storage.v12.descriptorIndexing = true;
@@ -37,6 +40,10 @@ FeatureStorage PhysicalDevice::getRequiredDeviceFeatures() const
     storage.v13.dynamicRendering = true;
     storage.v13.synchronization2 = true;
     storage.v13.maintenance4 = true;
+
+    // Vulkan 1.4 Features
+    storage.v14.maintenance5 = true;
+
     storage.link();
 
     return storage;
@@ -69,7 +76,7 @@ vk::raii::PhysicalDevice PhysicalDevice::pickPhysicalDevice(Instance const& vulk
         candidates.insert(std::make_pair(score, device));
     }
 
-    assert(candidates.rbegin()->first <= 0 && "Physical device candidates did not score abo");
+    assert(candidates.rbegin()->first > 0 && "No suitable physical device found");
     return std::move(candidates.rbegin()->second);
 }
 

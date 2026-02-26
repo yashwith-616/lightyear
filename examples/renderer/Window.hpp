@@ -1,10 +1,12 @@
 #pragma once
 
-#include <bootstrap/Instance.h>
+
 #include <cassert>
 #include <glfw/glfw3.h>
 #include <string>
+
 #include "LogScope.hpp"
+#include "bootstrap/Instance.h"
 
 class Window
 {
@@ -39,27 +41,38 @@ public:
     ~Window()
     {
         if (!m_isInitialized)
+        {
             return;
+        }
+        glfwDestroyWindow(m_window);
         glfwTerminate();
     }
 
     GLFWwindow* getHandle() { return m_window; }
 
-    std::vector<char const*> getVulkanExtensions()
+    std::vector<std::string> getVulkanExtensions()
     {
         uint32_t count = 0;
         char const** extensions = glfwGetRequiredInstanceExtensions(&count);
-        return std::vector(extensions, extensions + count);
+
+        if (extensions == nullptr || count == 0)
+        {
+            return {};
+        }
+        return std::vector<std::string>(extensions, extensions + count);
     }
 
     VkSurfaceKHR createWindowSurface(ly::renderer::Instance const& instance)
     {
         VkSurfaceKHR surface;
-        glfwCreateWindowSurface(*instance.getInstance(), m_window, nullptr, &surface);
+        bool notValid = glfwCreateWindowSurface(*instance.getInstance(), m_window, nullptr, &surface);
+        assert(!notValid && "Window surface could not be fetched");
         return surface;
     }
 
     bool shouldWindowClose() { return glfwWindowShouldClose(m_window); }
+
+    void pollEvents() { return glfwPollEvents(); }
 
 private:
     static void debugCallback(int error, char const* errMsg) { LOG(logger::Debug, fmt::runtime(errMsg)); }

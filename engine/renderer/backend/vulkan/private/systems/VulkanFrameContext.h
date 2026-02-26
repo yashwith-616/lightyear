@@ -1,6 +1,7 @@
 #pragma once
 #include <complex.h>
 
+#include <components/FrameContext.h>
 #include "SwapchainSystem.h"
 #include "command/CommandRegistry.h"
 
@@ -21,8 +22,7 @@ public:
 
     ~VulkanFrameContext() = default;
 
-    std::unique_ptr<FrameContext> const&
-        createFrameContext(uint32_t concurrency, uint32_t maxFrameFlights, ImageExtent imageExtent);
+    void init(uint32_t maxFrameFlights, ImageExtent imageExtent);
 
     std::unique_ptr<CommandStream> createQueueSubmissionPipeline(QueueSlot slot);
 
@@ -32,17 +32,18 @@ public:
 
     void beginFrame();
 
-    vk::CommandBuffer const&
-        recordWork(std::unique_ptr<CommandStream> const& cmdStream, std::optional<uint32_t> workerId);
+    vk::CommandBuffer recordWork(std::unique_ptr<CommandStream> const& cmdStream, std::optional<uint32_t> workerId);
 
     void endFrame();
 
     void submit();
 
-    FrameData const& getCurrentFrame();
+    vk::SurfaceFormatKHR const& getSurfaceFormat() const;
 
 private:
-    FrameData createPerFrameData(uint32_t concurrency);
+    std::unique_ptr<FrameData> createPerFrameData();
+
+    std::unique_ptr<FrameData> const& getCurrentFrame();
 
     PhysicalDevice const& m_physicalDevice;
     LogicalDevice const& m_device;

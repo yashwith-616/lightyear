@@ -5,6 +5,11 @@
 #include <optional>
 #include <shared_mutex>
 
+namespace vk
+{
+struct SurfaceFormatKHR;
+}
+
 namespace ly::renderer
 {
 
@@ -42,6 +47,8 @@ public:
      * This method allows to refresh this cache by refetching the same properties from the driver again.
      */
     void refreshCapabilities();
+
+    vk::SurfaceFormatKHR const& getSurfaceFormat() const;
 
 private:
     void cacheCapabilities();

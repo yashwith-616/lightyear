@@ -41,7 +41,8 @@ public:
 
     std::expected<uint32_t, RegistryError> createCommandPool(uint32_t qfIndex, CommandType type);
     std::expected<uint32_t, RegistryError> allocateCommandBuffer(std::unique_ptr<CommandStream> const& stream);
-    std::expected<CommandData const*, RegistryError> getCommandData(std::unique_ptr<CommandStream> const& streamKey) const;
+    std::expected<CommandData const*, RegistryError>
+        getCommandData(std::unique_ptr<CommandStream> const& streamKey) const;
 
     /**
      * The command registry entries will be cloned and the existing key will be used for mapping the new vulkan buffers
@@ -88,7 +89,7 @@ public:
         return m_registry
             | std::views::values
             | std::views::transform([](auto const& queuePool) -> auto& { return queuePool.primary; })
-            | std::views::transform([](auto const& cmdData) -> auto& {return cmdData.commandBuffers})
+            | std::views::transform([](auto const& cmdData) -> auto& {return cmdData.commandBuffers; })
             | std::views::join;
         // clang-format on
     }

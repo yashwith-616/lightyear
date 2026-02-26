@@ -13,7 +13,7 @@ struct SwapchainData
 
     // color
     std::vector<vk::Image> images;
-    std::vector<vk::ImageView> imageViews;
+    std::vector<vk::raii::ImageView> imageViews;
     vk::Format colorFormat{};
 
     // depth + stencil

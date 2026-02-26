@@ -42,7 +42,7 @@
       "description": "Shared settings for GCC toolchains.",
       "hidden": true,
       "cacheVariables": {
-        "CMAKE_CXX_STANDARD": "20"
+        "CMAKE_CXX_STANDARD": "23"
       },
       "vendor": {
         "jetbrains.com/clion": {

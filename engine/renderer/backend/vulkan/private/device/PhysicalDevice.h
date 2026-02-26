@@ -11,14 +11,18 @@ namespace ly::renderer
 struct FeatureStorage
 {
     vk::PhysicalDeviceFeatures2 core;
+    vk::PhysicalDeviceVulkan11Features v11;
     vk::PhysicalDeviceVulkan12Features v12;
     vk::PhysicalDeviceVulkan13Features v13;
+    vk::PhysicalDeviceVulkan14Features v14;
 
     void link()
     {
-        core.pNext = &v12;
+        core.pNext = &v11;
+        v11.pNext = &v12;
         v12.pNext = &v13;
-        v13.pNext = nullptr;
+        v13.pNext = &v14;
+        v14.pNext = nullptr;
     }
 };
 
@@ -30,7 +34,10 @@ public:
 
     FeatureStorage getRequiredDeviceFeatures() const;
 
-    std::vector<char const*> getRequiredDeviceExtensions() const { return m_vulkanInstance.getVulkanExtensions(); }
+    std::vector<std::string> const& getRequiredDeviceExtensions() const
+    {
+        return m_vulkanInstance.getVulkanExtensions();
+    }
 
     vk::raii::PhysicalDevice const& getHandle() const { return m_device; }
 

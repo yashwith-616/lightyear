@@ -9,7 +9,7 @@ namespace ly::renderer
 struct FrameContext
 {
     SwapchainData swapchain;
-    std::vector<FrameData> frames{};
+    std::vector<std::unique_ptr<FrameData>> frames{};
 
     uint32_t currentFrameIndex{};
 };

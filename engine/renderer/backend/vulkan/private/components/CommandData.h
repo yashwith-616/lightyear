@@ -30,9 +30,9 @@ struct CommandStream
     CommandType type{CommandType::Primary};
     uint32_t workerId{0};
 
-    CommandStream();
+    CommandStream() = default;
     virtual ~CommandStream() = default;
-    
+
     CommandStream(CommandStream const&) = delete;
     CommandStream& operator=(CommandStream const&) = delete;
 

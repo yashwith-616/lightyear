@@ -104,7 +104,7 @@ std::expected<uint32_t, RegistryError>
             assert(primaryCmd.commandBuffers.empty() && "Cannot allocate more than one primary command buffer");
             auto newBuffers =
                 ::allocateCommandBuffers(m_device.getHandle(), primaryCmd.commandPool, CommandType::Primary);
-            assert(newBuffers.size() > 1 && "Multiple buffers cannot be allocated at the same time");
+            assert(newBuffers.size() <= 1 && "Multiple buffers cannot be allocated at the same time");
             std::ranges::move(newBuffers, std::back_inserter(primaryCmd.commandBuffers));
             return primaryCmd.commandBuffers.size() - 1;
         }

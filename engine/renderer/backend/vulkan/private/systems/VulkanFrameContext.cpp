@@ -1,7 +1,6 @@
 #include "VulkanFrameContext.h"
 
 #include <bootstrap/Surface.h>
-#include <components/FrameContext.h>
 #include <components/FrameData.h>
 #include <components/SwapchainData.h>
 #include <device/LogicalDevice.h>
@@ -12,7 +11,8 @@
 namespace
 {
 
-vk::DependencyInfo transitionImageLayout(
+void transitionImageLayout(
+    vk::raii::CommandBuffer const& commandBuffer,
     vk::Image swapchainImage,
     vk::ImageLayout oldLayout,
     vk::ImageLayout newLayout,
@@ -21,7 +21,7 @@ vk::DependencyInfo transitionImageLayout(
     vk::PipelineStageFlags2 srcStageMask,
     vk::PipelineStageFlags2 dstStageMask)
 {
-    vk::ImageMemoryBarrier2 imgBarrier = {
+    auto imgBarrier = vk::ImageMemoryBarrier2{
         .srcStageMask = srcStageMask,
         .srcAccessMask = srcAccessMask,
         .dstStageMask = dstStageMask,
@@ -36,7 +36,8 @@ vk::DependencyInfo transitionImageLayout(
             .baseArrayLayer = 0,
             .layerCount = 1}};
 
-    return {.dependencyFlags = {}, .imageMemoryBarrierCount = 1, .pImageMemoryBarriers = &imgBarrier};
+    commandBuffer.pipelineBarrier2(
+        {.dependencyFlags = {}, .imageMemoryBarrierCount = 1, .pImageMemoryBarriers = &imgBarrier});
 }
 
 vk::raii::CommandBuffer&
@@ -63,8 +64,7 @@ VulkanFrameContext::VulkanFrameContext(
 
 #pragma region Command Contracts
 
-std::unique_ptr<FrameContext> const&
-    VulkanFrameContext::createFrameContext(uint32_t concurrency, uint32_t maxFrameFlights, ImageExtent imageExtent)
+void VulkanFrameContext::init(uint32_t maxFrameFlights, ImageExtent imageExtent)
 {
     m_frameContext = std::make_unique<FrameContext>();
     m_frameContext->currentFrameIndex = 0;
@@ -72,14 +72,11 @@ std::unique_ptr<FrameContext> const&
     SwapchainData swapchainData = m_swapchainSystem->create(imageExtent, std::nullopt);
     m_frameContext->swapchain = std::move(swapchainData);
 
-    std::vector<FrameData>& frames = m_frameContext->frames;
+    std::vector<std::unique_ptr<FrameData>>& frames = m_frameContext->frames;
     frames.reserve(maxFrameFlights);
 
-    std::ranges::for_each(std::views::iota(0u, maxFrameFlights), [&](uint32_t frameIndex) {
-        frames.emplace_back(createPerFrameData(concurrency));
-    });
-
-    return m_frameContext;
+    std::ranges::for_each(
+        std::views::iota(0u, maxFrameFlights), [&](uint32_t frameIndex) { frames.emplace_back(createPerFrameData()); });
 }
 
 std::unique_ptr<CommandStream> VulkanFrameContext::createQueueSubmissionPipeline(QueueSlot slot)
@@ -89,7 +86,7 @@ std::unique_ptr<CommandStream> VulkanFrameContext::createQueueSubmissionPipeline
     std::optional<uint32_t> key;
     for (auto& frame : m_frameContext->frames)
     {
-        auto expect = frame.commandRegistry->createCommandPool(qfIndex, CommandType::Primary);
+        auto expect = frame->commandRegistry->createCommandPool(qfIndex, CommandType::Primary);
         assert(expect.has_value() && "Pool creation failed");
         key = key.value_or(*expect);
         assert(key == *expect && "key mismatch between registers");
@@ -111,7 +108,7 @@ std::unique_ptr<CommandStream>
     std::optional<uint32_t> key;
     for (auto& frame : m_frameContext->frames)
     {
-        auto expect = frame.commandRegistry->createCommandPool(primaryStream->qfIndex, CommandType::Secondary);
+        auto expect = frame->commandRegistry->createCommandPool(primaryStream->qfIndex, CommandType::Secondary);
         assert(expect.has_value() && "worker pool creation failed");
         key = key.value_or(*expect);
         assert(key == *expect && "key mismatch between registers");
@@ -132,7 +129,7 @@ uint32_t VulkanFrameContext::allocateSubmissionRegion(std::unique_ptr<CommandStr
     std::optional<uint32_t> key;
     for (auto& frame : m_frameContext->frames)
     {
-        auto expect = frame.commandRegistry->allocateCommandBuffer(cmdStream);
+        auto expect = frame->commandRegistry->allocateCommandBuffer(cmdStream);
         assert(expect.has_value() && "Pool creation failed");
         key = key.value_or(*expect);
         assert(key == *expect && "key mismatch between registers");
@@ -149,17 +146,17 @@ uint32_t VulkanFrameContext::allocateSubmissionRegion(std::unique_ptr<CommandStr
 void VulkanFrameContext::beginFrame()
 {
     uint32_t qfIndex = m_device.getQueue(QueueSlot::Graphic).qfIndex;
-    auto const& registry = getCurrentFrame().commandRegistry;
+    auto const& registry = getCurrentFrame()->commandRegistry;
     auto& primaryBuffer = getPrimaryCmdBuffer(registry, qfIndex);
 
     // Wait for graphicsQueue
-    auto fenceExpect = m_device.getHandle().waitForFences(*getCurrentFrame().drawFence, vk::True, limitUint64::max());
+    auto fenceExpect = m_device.getHandle().waitForFences(*getCurrentFrame()->drawFence, vk::True, limitUint64::max());
     assert(fenceExpect == vk::Result::eSuccess && "fence captured successfully");
-    m_device.getHandle().resetFences(*getCurrentFrame().drawFence);
+    m_device.getHandle().resetFences(*getCurrentFrame()->drawFence);
 
     // Acquire next semaphore
     auto swapchainExpect = m_frameContext->swapchain.swapchain.acquireNextImage(
-        limitUint64::max(), getCurrentFrame().presentCompleteSemaphore, nullptr);
+        limitUint64::max(), getCurrentFrame()->presentCompleteSemaphore, nullptr);
     m_currSwapChainImageIndex = swapchainExpect.second;
     auto const& currImage = m_frameContext->swapchain.images[m_currSwapChainImageIndex];
     auto const& currImageView = m_frameContext->swapchain.imageViews[m_currSwapChainImageIndex];
@@ -184,6 +181,7 @@ void VulkanFrameContext::beginFrame()
 
         // secondary buffer begin
         vk::CommandBufferInheritanceRenderingInfo renderingInheritance{
+            .flags = {},
             .viewMask = 0,
             .colorAttachmentCount = 1,
             .pColorAttachmentFormats = &m_frameContext->swapchain.colorFormat,
@@ -204,7 +202,8 @@ void VulkanFrameContext::beginFrame()
     // Graphic queue command buffer transition
     {
         // transition from undefined -> colorAttachmentOptimal
-        vk::DependencyInfo dependencyInfo = transitionImageLayout(
+        transitionImageLayout(
+            primaryBuffer,
             currImage,
             vk::ImageLayout::eUndefined,
             vk::ImageLayout::eColorAttachmentOptimal,
@@ -212,7 +211,6 @@ void VulkanFrameContext::beginFrame()
             vk::AccessFlagBits2::eColorAttachmentWrite,
             vk::PipelineStageFlagBits2::eColorAttachmentOutput,
             vk::PipelineStageFlagBits2::eColorAttachmentOutput);
-        primaryBuffer.pipelineBarrier2(dependencyInfo);
 
         vk::ClearValue clearColor = vk::ClearColorValue(0.0f, 0.0f, 0.0f, 1.0f);
 
@@ -224,7 +222,6 @@ void VulkanFrameContext::beginFrame()
             .clearValue = clearColor};
 
         vk::RenderingInfo renderingInfo{
-            .flags = vk::RenderingFlagBits::eContentsSecondaryCommandBuffers,
             .renderArea = {.offset = {0, 0}, .extent = m_frameContext->swapchain.extent},
             .layerCount = 1,
             .viewMask = 0,
@@ -237,20 +234,22 @@ void VulkanFrameContext::beginFrame()
     }
 }
 
-vk::CommandBuffer const&
+vk::CommandBuffer
     VulkanFrameContext::recordWork(std::unique_ptr<CommandStream> const& cmdStream, std::optional<uint32_t> workerId)
 {
-    auto cmdDataExpect = getCurrentFrame().commandRegistry->getCommandData(cmdStream);
+    auto cmdDataExpect = getCurrentFrame()->commandRegistry->getCommandData(cmdStream);
     assert(cmdDataExpect.has_value() && "Command data query is invalid");
+
     auto cmdData = cmdDataExpect.value();
 
-    return cmdData->commandBuffers[workerId.value_or(0)];
+    uint32_t index = workerId.value_or(0);
+    return cmdData->commandBuffers.at(index);
 }
 
 void VulkanFrameContext::endFrame()
 {
     uint32_t qfIndex = m_device.getQueue(QueueSlot::Graphic).qfIndex;
-    auto const& registry = getCurrentFrame().commandRegistry;
+    auto const& registry = getCurrentFrame()->commandRegistry;
     auto& primaryBuffer = getPrimaryCmdBuffer(registry, qfIndex);
 
     std::ranges::for_each(registry->secondaryCmdBuffers(qfIndex), [](auto& buffer) { buffer.end(); });
@@ -258,14 +257,18 @@ void VulkanFrameContext::endFrame()
     // EXECUTE SECONDARY BUFFERS
     // May need caching at registry to save performance
     auto secondaryBuffers = registry->secondaryCmdBuffers() | std::ranges::to<std::vector<vk::CommandBuffer>>();
-    primaryBuffer.executeCommands(secondaryBuffers);
+    if (!secondaryBuffers.empty())
+    {
+        primaryBuffer.executeCommands(secondaryBuffers);
+    }
     primaryBuffer.endRendering();
 
     // pass the swapchain image to present layer
     vk::Image const& currentImage = m_frameContext->swapchain.images[m_currSwapChainImageIndex];
 
     // transition from colorAttachment -> presentSrc
-    vk::DependencyInfo presentDependency = transitionImageLayout(
+    transitionImageLayout(
+        primaryBuffer,
         currentImage,
         vk::ImageLayout::eColorAttachmentOptimal,
         vk::ImageLayout::ePresentSrcKHR,
@@ -273,7 +276,7 @@ void VulkanFrameContext::endFrame()
         vk::AccessFlagBits2::eNone,
         vk::PipelineStageFlagBits2::eColorAttachmentOutput,
         vk::PipelineStageFlagBits2::eBottomOfPipe);
-    primaryBuffer.pipelineBarrier2(presentDependency);
+
     primaryBuffer.end();
 }
 
@@ -283,25 +286,25 @@ void VulkanFrameContext::submit()
 
     // Submit task to GPU
     auto& primaryBuffer =
-        getPrimaryCmdBuffer(getCurrentFrame().commandRegistry, m_device.getQueue(QueueSlot::Graphic).qfIndex);
+        getPrimaryCmdBuffer(getCurrentFrame()->commandRegistry, m_device.getQueue(QueueSlot::Graphic).qfIndex);
 
     // submit graphics queue
     vk::PipelineStageFlags waitDestinationStageMask(vk::PipelineStageFlagBits::eColorAttachmentOutput);
     vk::SubmitInfo submitInfo = {
         .waitSemaphoreCount = 1,
-        .pWaitSemaphores = &*frameData.presentCompleteSemaphore,
+        .pWaitSemaphores = &*frameData->presentCompleteSemaphore,
         .pWaitDstStageMask = &waitDestinationStageMask,
         .commandBufferCount = 1,
         .pCommandBuffers = &*primaryBuffer,
         .signalSemaphoreCount = 1,
-        .pSignalSemaphores = &*frameData.renderCompleteSemaphore,
+        .pSignalSemaphores = &*frameData->renderCompleteSemaphore,
     };
-    m_device.getQueue(QueueSlot::Graphic).handle.submit(submitInfo, *frameData.drawFence);
+    m_device.getQueue(QueueSlot::Graphic).handle.submit(submitInfo, *frameData->drawFence);
 
     // Submit to present queue
     vk::PresentInfoKHR presentInfo = {
         .waitSemaphoreCount = 1,
-        .pWaitSemaphores = &*frameData.renderCompleteSemaphore,
+        .pWaitSemaphores = &*frameData->renderCompleteSemaphore,
         .swapchainCount = 1,
         .pSwapchains = &*m_frameContext->swapchain.swapchain,
         .pImageIndices = &m_currSwapChainImageIndex,
@@ -313,29 +316,35 @@ void VulkanFrameContext::submit()
 
 #pragma endregion
 
-FrameData const& VulkanFrameContext::getCurrentFrame()
+vk::SurfaceFormatKHR const& VulkanFrameContext::getSurfaceFormat() const
 {
-    uint32_t frameIndex = m_frameContext->currentFrameIndex % m_maxFlightFrames;
-    return m_frameContext->frames[frameIndex];
+    return m_swapchainSystem->getSurfaceFormat();
 }
 
-FrameData VulkanFrameContext::createPerFrameData(uint32_t concurrency)
+
+std::unique_ptr<FrameData> VulkanFrameContext::createPerFrameData()
 {
-    FrameData frameData;
-    frameData.commandRegistry = std::make_unique<CommandRegistry>(m_physicalDevice, m_device);
+    auto frameData = std::make_unique<FrameData>();
+    frameData->commandRegistry = std::make_unique<CommandRegistry>(m_physicalDevice, m_device);
 
     auto semaphoreExpect = m_device.getHandle().createSemaphore(vk::SemaphoreCreateInfo());
     assert(semaphoreExpect.has_value() && "semaphore couldn't be created");
-    frameData.renderCompleteSemaphore = std::move(semaphoreExpect.value());
+    frameData->renderCompleteSemaphore = std::move(semaphoreExpect.value());
 
     semaphoreExpect = m_device.getHandle().createSemaphore(vk::SemaphoreCreateInfo());
     assert(semaphoreExpect.has_value() && "semaphore couldn't be created");
-    frameData.presentCompleteSemaphore = std::move(semaphoreExpect.value());
+    frameData->presentCompleteSemaphore = std::move(semaphoreExpect.value());
 
     auto fenceExpect = m_device.getHandle().createFence({.flags = vk::FenceCreateFlagBits::eSignaled});
     assert(fenceExpect.has_value() && "fence couldn't be created");
-    frameData.drawFence = std::move(fenceExpect.value());
+    frameData->drawFence = std::move(fenceExpect.value());
     return frameData;
+}
+
+std::unique_ptr<FrameData> const& VulkanFrameContext::getCurrentFrame()
+{
+    uint32_t frameIndex = m_frameContext->currentFrameIndex % m_maxFlightFrames;
+    return m_frameContext->frames[frameIndex];
 }
 
 } // namespace ly::renderer

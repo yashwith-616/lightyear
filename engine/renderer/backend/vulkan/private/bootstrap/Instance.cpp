@@ -1,6 +1,7 @@
 #include "Instance.h"
 
 #include <expected>
+#include <iostream>
 
 namespace
 {
@@ -8,16 +9,6 @@ namespace
 uint32_t makeVersion(ly::renderer::Version version)
 {
     return VK_MAKE_VERSION(version.major, version.minor, version.patch);
-}
-
-std::vector<char const*> toCArray(std::span<std::string_view const> views)
-{
-    std::vector<char const*> result(views.size(), nullptr);
-    std::ranges::transform(views, std::back_inserter(result), [](std::string_view sv) {
-        return sv.data(); // NOT c_str()
-    });
-
-    return result;
 }
 
 void setupVkValidationEnvironment()
@@ -31,16 +22,48 @@ void setupVkValidationEnvironment()
 #endif
 }
 
+void validateExtensions(
+    std::vector<std::string> const& requested, std::vector<vk::ExtensionProperties> const& available)
+{
+    std::vector<std::string> missingExtensions;
+
+    for (auto const& req : requested)
+    {
+        // Look for the requested string in the list of available properties
+        auto it = std::ranges::find_if(available, [&](const vk::ExtensionProperties& prop) {
+            return std::string_view(prop.extensionName) == req;
+        });
+
+        if (it == available.end())
+        {
+            missingExtensions.push_back(req);
+        }
+    }
+
+    if (!missingExtensions.empty())
+    {
+        std::cerr << "\n--- VULKAN EXTENSION ERROR ---\n";
+        for (auto const& missing : missingExtensions)
+        {
+            std::cerr << "[!] Not Supported: " << missing << "\n";
+        }
+        std::cerr << "------------------------------\n" << std::endl;
+        assert(
+            missingExtensions.empty() &&
+            "One or more requested Vulkan extensions are not supported by the driver/hardware.");
+    }
+}
+
 } // namespace
 
 namespace ly::renderer
 {
 
-Instance::Instance(InstanceCreateInfo const& instanceCreateInfo) : m_instance(createInstance(instanceCreateInfo)) {}
+Instance::Instance(InstanceCreateInfo const& instanceCreateInfo) { m_instance = createInstance(instanceCreateInfo); }
 
 vk::raii::Instance const& Instance::getInstance() const { return m_instance; }
 
-std::vector<char const*> const& Instance::getVulkanExtensions() const { return toCArray(m_vulkanExtensions); }
+std::vector<std::string> const& Instance::getVulkanExtensions() const { return m_deviceExtensions; }
 
 vk::raii::Instance Instance::createInstance(InstanceCreateInfo const& instanceCreateInfo)
 {
@@ -51,37 +74,44 @@ vk::raii::Instance Instance::createInstance(InstanceCreateInfo const& instanceCr
         .engineVersion = makeVersion(instanceCreateInfo.engineVersion),
         .apiVersion = vk::ApiVersion14};
 
-    std::vector<std::string_view> validationLayers =
-        resolveAllValidationLayers(instanceCreateInfo.vulkanValidationLayers);
+    m_deviceExtensions = instanceCreateInfo.deviceExtensions;
+
+    std::vector<char const*> vkValidationLayers;
+    std::vector<std::string> validationLayers = resolveAllValidationLayers(instanceCreateInfo.vulkanValidationLayers);
+    vkValidationLayers.reserve(validationLayers.size());
+    for (auto const& str : validationLayers)
+    {
+        vkValidationLayers.push_back(str.c_str());
+    }
+
+    std::vector<char const*> rawExtensions;
     resolveAllExtensions(instanceCreateInfo.vulkanExtensions);
+    rawExtensions.reserve(m_vulkanExtensions.size());
+    for (auto const& str : m_vulkanExtensions)
+    {
+        rawExtensions.push_back(str.c_str());
+    }
 
-
-    auto rawValidationLayers = toCArray(validationLayers);
-    auto layerCount = static_cast<uint32_t>(validationLayers.size());
-
-    auto rawExtensions = toCArray(m_vulkanExtensions);
-    auto extensionsCount = static_cast<uint32_t>(m_vulkanExtensions.size());
-
+    auto layerCount = static_cast<uint32_t>(vkValidationLayers.size());
+    auto extensionsCount = static_cast<uint32_t>(rawExtensions.size());
     vk::InstanceCreateInfo createInfo{
         .pApplicationInfo = &appInfo,
         .enabledLayerCount = layerCount,
-        .ppEnabledLayerNames = rawValidationLayers.data(),
+        .ppEnabledLayerNames = vkValidationLayers.data(),
         .enabledExtensionCount = extensionsCount,
         .ppEnabledExtensionNames = rawExtensions.data()};
 
     std::expected<vk::raii::Instance, vk::Result> instanceExpected = m_context.createInstance(createInfo);
     assert(instanceExpected.has_value() && "Instance could not be created");
-
     return std::move(instanceExpected.value());
 }
 
 /// \brief Validate if required validation layers are available in the vulkan context
 ///
 /// \param requestedLayers All vulkan validation layers to be enabled
-std::vector<std::string_view>
-    Instance::resolveAllValidationLayers(std::vector<std::string> const& requestedLayers) const
+std::vector<std::string> Instance::resolveAllValidationLayers(std::vector<std::string> const& requestedLayers) const
 {
-    std::vector<std::string_view> validationLayers{};
+    std::vector<std::string> validationLayers{};
 #if ENABLE_VK_VALIDATION
     for (auto& layers : requestedLayers)
     {
@@ -108,9 +138,9 @@ std::vector<std::string_view>
 /// \return All vulkan extensions
 void Instance::resolveAllExtensions(std::vector<std::string> const& requestedExtensions)
 {
-    m_vulkanExtensions.clear();
-    std::ranges::transform(
-        requestedExtensions, std::back_inserter(m_vulkanExtensions), [](auto const& s) { return s.c_str(); });
+    auto available = vk::enumerateInstanceExtensionProperties();
+    validateExtensions(requestedExtensions, available.value);
+    m_vulkanExtensions = requestedExtensions;
 
 #if ENABLE_VK_VALIDATION
     m_vulkanExtensions.push_back(vk::EXTDebugUtilsExtensionName);

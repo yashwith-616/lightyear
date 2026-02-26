@@ -150,7 +150,7 @@ SwapchainData
 
         auto expected = m_device.getHandle().createImageView(viewInfo);
         assert(expected.has_value() && "Swapchain ImageView has not been created");
-        return std::move(*expected);
+        return std::move(expected.value());
     };
 
     // Create and populate surface capabilities
@@ -173,11 +173,14 @@ SwapchainData
         .sampleCountFlagBits = vk::SampleCountFlagBits::e1};
 
     data.images = data.swapchain.getImages();
+    data.imageViews.reserve(data.images.size());
     std::ranges::transform(data.images, std::back_inserter(data.imageViews), createImageFactory);
     return data;
 }
 
 void SwapchainSystem::refreshCapabilities() { cacheCapabilities(); }
+
+vk::SurfaceFormatKHR const& SwapchainSystem::getSurfaceFormat() const { return m_swapchainCache->surfaceFormat; }
 
 /**
  * Cache hardware capabilities. Avoid unnecessary querying of hardware for swapchain re-creation. If
