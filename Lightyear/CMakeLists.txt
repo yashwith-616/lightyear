@@ -84,8 +84,8 @@ set(nlohmann-json_IMPLICIT_CONVERSIONS OFF)
 # Project Library
 #-------------------------------------------------
 add_library (Lightyear STATIC ${SOURCES} "${HEADERS}"
-        ../examples/renderer/LogScope.hpp
-        ../examples/renderer/Window.hpp)
+        ../examples/renderer/support/LogScope.hpp
+        ../examples/renderer/support/Window.hpp)
 target_include_directories(Lightyear
     PUBLIC
         "${HDRS_DIR}"

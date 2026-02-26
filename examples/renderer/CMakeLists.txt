@@ -1,23 +1,27 @@
 find_package(glfw3 CONFIG REQUIRED)
 
+set(SUPPORT_FILES
+        ${CMAKE_CURRENT_SOURCE_DIR}/support/LogScope.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/support/Window.hpp)
+
 ly_add_example(
-        NAME ExampleRendererTest
-        SOURCES ExampleRendererTest.cpp
+        NAME ExampleSimpleTest
+        SOURCES ExampleSimple.cpp ${SUPPORT_FILES}
         LIBS logging VulkanRenderer glfw
 )
 
-target_compile_definitions(ExampleRendererTest PRIVATE GLFW_INCLUDE_NONE)
+target_compile_definitions(ExampleSimpleTest PRIVATE GLFW_INCLUDE_NONE)
 
-add_custom_command(TARGET ExampleRendererTest POST_BUILD
+add_custom_command(TARGET ExampleSimpleTest POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
         $<TARGET_FILE:logging>
-        $<TARGET_FILE_DIR:ExampleRendererTest>
+        $<TARGET_FILE_DIR:ExampleSimpleTest>
 )
 
-add_custom_command(TARGET ExampleRendererTest POST_BUILD
+add_custom_command(TARGET ExampleSimpleTest POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
         $<TARGET_FILE:VulkanRenderer>
-        $<TARGET_FILE_DIR:ExampleRendererTest>
+        $<TARGET_FILE_DIR:ExampleSimpleTest>
 )
 
 #-------------------------------------------------
