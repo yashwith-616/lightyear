@@ -83,7 +83,9 @@ set(nlohmann-json_IMPLICIT_CONVERSIONS OFF)
 #-------------------------------------------------
 # Project Library
 #-------------------------------------------------
-add_library (Lightyear STATIC ${SOURCES} "${HEADERS}")
+add_library (Lightyear STATIC ${SOURCES} "${HEADERS}"
+        ../examples/renderer/LogScope.hpp
+        ../examples/renderer/Window.hpp)
 target_include_directories(Lightyear
     PUBLIC
         "${HDRS_DIR}"
@@ -105,8 +107,6 @@ target_link_libraries(Lightyear
         imgui::imgui
         spdlog::spdlog_header_only
         unordered_dense::unordered_dense
-    PRIVATE
-        glfw
 )
 
 #-------------------------------------------------

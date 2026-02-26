@@ -1,36 +1,102 @@
 #include "LogicalDevice.h"
+#include "QueueFamilyData.h"
+
 #include <cassert>
+
+namespace
+{
+
+ly::renderer::QueueTypeFlag
+    getQueueFamilyFlags(uint32_t queueIndex, std::vector<vk::QueueFamilyProperties2> const& queueProps)
+{
+    using ly::renderer::QueueTypeFlag;
+
+    auto vkFlags = queueProps[queueIndex].queueFamilyProperties.queueFlags;
+    auto result = QueueTypeFlag::None;
+
+    if (vkFlags & vk::QueueFlagBits::eGraphics)
+        result |= QueueTypeFlag::Graphic;
+    if (vkFlags & vk::QueueFlagBits::eCompute)
+        result |= QueueTypeFlag::Compute;
+    if (vkFlags & vk::QueueFlagBits::eTransfer)
+        result |= QueueTypeFlag::Transfer;
+
+    return result;
+}
+
+auto hasSurfaceSupport =
+    [](vk::raii::PhysicalDevice const& physicalDevice, uint32_t queueFamilyIndex, vk::SurfaceKHR const& surface) {
+        return physicalDevice.getSurfaceSupportKHR(queueFamilyIndex, surface);
+    };
+
+} // namespace
 
 namespace ly::renderer
 {
 
-LogicalDevice::LogicalDevice(PhysicalDevice const& physicalDevice, vk::SurfaceKHR surface) :
-    m_physicalDevice(physicalDevice), m_device(createLogicalDevice(std::move(surface)))
+static std::pair<QueueTypeFlag, QueueSlot> const k_mapping[] = {
+    {QueueTypeFlag::Graphic, QueueSlot::Graphic},
+    {QueueTypeFlag::Present, QueueSlot::Present},
+    {QueueTypeFlag::Compute, QueueSlot::Compute},
+    {QueueTypeFlag::Transfer, QueueSlot::Transfer}};
+
+LogicalDevice::LogicalDevice(PhysicalDevice const& physicalDevice, Surface const& surface) :
+    m_physicalDevice(physicalDevice)
 {
-    // TODO: Need fix
-    m_graphicsQueue = std::move(m_device.getQueue(m_queueFamilyIndices.graphics.value(), 0).value_or(nullptr));
-    m_computeQueue = std::move(m_device.getQueue(m_queueFamilyIndices.compute.value(), 0).value_or(nullptr));
-    m_presentQueue = std::move(m_device.getQueue(m_queueFamilyIndices.present.value(), 0).value_or(nullptr));
-    m_transferQueue = std::move(m_device.getQueue(m_queueFamilyIndices.transfer.value(), 0).value_or(nullptr));
+    m_device = std::move(createLogicalDevice(surface));
+
+    for (std::unique_ptr<QueueFamilyData> const& data : m_supportedQueues)
+    {
+        auto queueExpect = m_device.getQueue(data->familyIndex, data->internalIndex);
+        assert(queueExpect.has_value() && "Device queue could not be fetched");
+        auto queueHandle = std::make_shared<QueueHandle>(std::move(queueExpect.value()), data->internalIndex);
+
+        std::ranges::for_each(k_mapping, [&](auto const& map) {
+            auto [flag, slot] = map;
+            if (test(data->flags, flag))
+            {
+                m_allQueues[static_cast<size_t>(slot)] = queueHandle;
+            }
+        });
+    }
 }
 
-
-vk::raii::Device LogicalDevice::createLogicalDevice(vk::SurfaceKHR surface)
+std::deque<std::unique_ptr<QueueFamilyData>> const& LogicalDevice::getSupportedQueues() const
 {
-    resolveQueueFamilies(std::move(surface));
+    return m_supportedQueues;
+}
+
+QueueHandle const& LogicalDevice::getQueue(QueueSlot slot) const
+{
+    auto const& queue = m_allQueues[static_cast<size_t>(slot)];
+    assert(queue != nullptr && "Requested queue type is not supported by this device");
+    return *queue;
+}
+
+vk::raii::Device LogicalDevice::createLogicalDevice(Surface const& surface)
+{
+    resolveQueueFamilies(surface);
     FeatureStorage deviceFeatures = m_physicalDevice.getRequiredDeviceFeatures();
     auto const& deviceExtensions = m_physicalDevice.getRequiredDeviceExtensions();
-    auto queueInfos = prepareQueueCreateInfos();
+
+    std::vector<vk::DeviceQueueCreateInfo> queueCreateInfos;
+    std::ranges::transform(
+        m_supportedQueues, std::back_inserter(queueCreateInfos), [](std::unique_ptr<QueueFamilyData> const& data) {
+            vk::DeviceQueueCreateInfo createInfo{
+                .queueFamilyIndex = data->familyIndex, .queueCount = 1, .pQueuePriorities = &data->priority};
+            return createInfo;
+        });
+    assert(queueCreateInfos.size() > 0 && "Device queue create info is empty");
 
     vk::DeviceCreateInfo deviceCreateInfo{
         .pNext = &deviceFeatures.core,
-        .queueCreateInfoCount = static_cast<uint32_t>(queueInfos.size()),
-        .pQueueCreateInfos = queueInfos.data(),
+        .queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size()),
+        .pQueueCreateInfos = queueCreateInfos.data(),
         .enabledExtensionCount = static_cast<uint32_t>(deviceExtensions.size()),
         .ppEnabledExtensionNames = deviceExtensions.data()};
+
     auto deviceExpected = m_physicalDevice.getHandle().createDevice(deviceCreateInfo);
     assert(deviceExpected.has_value() && "Device was not successfully created");
-
     return std::move(deviceExpected.value());
 }
 
@@ -38,84 +104,56 @@ vk::raii::Device LogicalDevice::createLogicalDevice(vk::SurfaceKHR surface)
 ///
 /// \param physicalDevice physical device
 /// \param surface the surface
-void LogicalDevice::resolveQueueFamilies(vk::SurfaceKHR surface)
+void LogicalDevice::resolveQueueFamilies(Surface const& surface)
 {
-    auto const& queueProps = m_physicalDevice.getQueueFamilyProperties();
-    auto hasSurfaceSupport = [&](uint32_t queueFamilyIndex) {
-        return m_physicalDevice.getHandle().getSurfaceSupportKHR(queueFamilyIndex, std::move(surface));
-    };
+    auto totalFound = QueueTypeFlag::None;
+    auto queueProps = m_physicalDevice.getQueueFamilyProperties();
 
-    auto hasGraphicSupport = [&](uint32_t queueFamilyIndex) {
-        vk::QueueFlags qfIndexFlags = queueProps[queueFamilyIndex].queueFamilyProperties.queueFlags;
-        return static_cast<bool>(qfIndexFlags & vk::QueueFlagBits::eGraphics);
-    };
-
-    auto hasComputeSupport = [&](uint32_t queueFamilyIndex) {
-        vk::QueueFlags qfIndexFlags = queueProps[queueFamilyIndex].queueFamilyProperties.queueFlags;
-        return static_cast<bool>(qfIndexFlags & vk::QueueFlagBits::eCompute);
-    };
-
-    auto hasTransferSupport = [&](uint32_t queueFamilyIndex) {
-        vk::QueueFlags qfIndexFlags = queueProps[queueFamilyIndex].queueFamilyProperties.queueFlags;
-        return static_cast<bool>(qfIndexFlags & vk::QueueFlagBits::eTransfer);
-    };
-
-    uint32_t qFamilySize = queueProps.size();
-    for (uint32_t index{0}; index < qFamilySize; index++)
+    for (uint32_t index{0}; index < queueProps.size(); index++)
     {
-        bool presentFound = hasSurfaceSupport(index);
-        bool graphicFound = hasGraphicSupport(index);
-        bool computeFound = hasComputeSupport(index);
-        bool transferFound = hasTransferSupport(index);
-
-        if (presentFound && graphicFound)
+        QueueTypeFlag supported = getQueueFamilyFlags(index, queueProps);
+        if (hasSurfaceSupport(m_physicalDevice.getHandle(), index, surface.getHandle()))
         {
-            m_queueFamilyIndices.present = index;
-            m_queueFamilyIndices.graphics = index;
-        }
-        else if (graphicFound && !m_queueFamilyIndices.graphics.has_value())
-        {
-            m_queueFamilyIndices.graphics = index;
-        }
-        else if (presentFound && !m_queueFamilyIndices.present.has_value())
-        {
-            m_queueFamilyIndices.present = index;
+            supported |= QueueTypeFlag::Graphic;
         }
 
-        if (computeFound)
+        if (supported == QueueTypeFlag::None)
         {
-            if (!m_queueFamilyIndices.compute.has_value() || !graphicFound)
+            continue;
+        }
+
+        // Populate queue family data
+        auto data = std::make_unique<QueueFamilyData>();
+        data->familyIndex = index;
+
+        auto claimedByCurrentIndex = QueueTypeFlag::None;
+
+        if (!hasAny(totalFound, QueueTypeFlag::Graphic | QueueTypeFlag::Present))
+        {
+            if (hasAll(supported, QueueTypeFlag::Graphic | QueueTypeFlag::Present))
             {
-                m_queueFamilyIndices.compute = index;
+                data->addSupport(QueueTypeFlag::Graphic | QueueTypeFlag::Present);
+                claimedByCurrentIndex |= (QueueTypeFlag::Graphic | QueueTypeFlag::Present);
             }
         }
 
-        if (transferFound)
+        // If any flags in missing but are supported, add them to the data
+        QueueTypeFlag missing = QueueTypeFlag::All & ~(totalFound | claimedByCurrentIndex);
+        claimedByCurrentIndex |= (supported & missing);
+
+        if (claimedByCurrentIndex != QueueTypeFlag::None)
         {
-            if (!m_queueFamilyIndices.transfer.has_value() || (!graphicFound && !computeFound))
-            {
-                m_queueFamilyIndices.transfer = index;
-            }
+            data->addSupport(claimedByCurrentIndex);
+            totalFound |= claimedByCurrentIndex;
+
+            m_supportedQueues.push_back(std::move(data));
+        }
+
+        if (hasAll(totalFound, QueueTypeFlag::All))
+        {
+            break;
         }
     }
-}
-
-std::vector<vk::DeviceQueueCreateInfo> LogicalDevice::prepareQueueCreateInfos()
-{
-    std::vector<vk::DeviceQueueCreateInfo> queueCreateInfos;
-    auto uniqueIndices = m_queueFamilyIndices.getUniqueQueueIndexes();
-
-    for (uint32_t index : uniqueIndices)
-    {
-        // Use the member variable address so it stays alive
-        vk::DeviceQueueCreateInfo createInfo{
-            .queueFamilyIndex = index, .queueCount = 1, .pQueuePriorities = &m_queuePriority};
-
-        queueCreateInfos.push_back(createInfo);
-    }
-
-    assert(queueCreateInfos.size() > 0 && "Device queue create info is empty");
-    return queueCreateInfos;
 }
 
 } // namespace ly::renderer

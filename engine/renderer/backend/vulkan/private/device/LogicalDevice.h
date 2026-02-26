@@ -1,7 +1,8 @@
 #pragma once
+#include <array>
+#include <deque>
 #include <optional>
 #include <set>
-
 
 #include "PhysicalDevice.h"
 
@@ -9,50 +10,42 @@
 namespace ly::renderer
 {
 
-struct QueueFamilyIndices
-{
-    std::optional<uint32_t> graphics;
-    std::optional<uint32_t> present;
-    std::optional<uint32_t> transfer;
-    std::optional<uint32_t> compute;
+struct QueueFamilyData;
+enum class QueueTypeFlag : uint8_t;
+enum class QueueSlot : uint8_t;
 
-    std::set<uint32_t> getUniqueQueueIndexes() { return {*graphics, *present, *transfer, *compute}; }
+struct QueueHandle
+{
+    vk::raii::Queue handle;
+    uint32_t qfIndex;
 };
 
 class LogicalDevice
 {
 public:
-    LogicalDevice(PhysicalDevice const& physicalDevice, vk::SurfaceKHR surface);
+    LogicalDevice(PhysicalDevice const& physicalDevice, Surface const& surface);
 
     vk::raii::Device const& getHandle() const { return m_device; }
 
-    vk::raii::Queue getGraphicQueue() const { return m_graphicsQueue; }
+    std::deque<std::unique_ptr<QueueFamilyData>> const& getSupportedQueues() const;
 
-    vk::raii::Queue getPresentQueue() const { return m_presentQueue; }
-
-    vk::raii::Queue getComputeQueue() const { return m_computeQueue; }
-
-    vk::raii::Queue getTransferQueue() const { return m_transferQueue; }
+    [[nodiscard]] QueueHandle const& getQueue(QueueSlot slot) const;
 
 private:
-    vk::raii::Device createLogicalDevice(vk::SurfaceKHR surface);
+    vk::raii::Device createLogicalDevice(Surface const& surface);
 
-    void resolveQueueFamilies(vk::SurfaceKHR surface);
-
-    std::vector<vk::DeviceQueueCreateInfo> prepareQueueCreateInfos();
+    void resolveQueueFamilies(Surface const& surface);
 
 private:
     PhysicalDevice const& m_physicalDevice;
 
     vk::raii::Device m_device{nullptr};
-    QueueFamilyIndices m_queueFamilyIndices{};
-    float m_queuePriority{1.f};
+
+    // Switch to unique pointers
+    std::deque<std::unique_ptr<QueueFamilyData>> m_supportedQueues;
 
     // All queues
-    vk::raii::Queue m_graphicsQueue{nullptr};
-    vk::raii::Queue m_computeQueue{nullptr};
-    vk::raii::Queue m_transferQueue{nullptr};
-    vk::raii::Queue m_presentQueue{nullptr};
+    std::array<std::shared_ptr<QueueHandle>, 4> m_allQueues;
 };
 
 } // namespace ly::renderer

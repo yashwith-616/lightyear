@@ -41,16 +41,19 @@ public:
     ~Instance() = default;
 
     vk::raii::Instance const& getInstance() const;
+    std::vector<char const*> const& getVulkanExtensions() const;
 
 private:
     vk::raii::Instance createInstance(InstanceCreateInfo const& instanceCreateInfo);
 
     std::vector<std::string_view> resolveAllValidationLayers(std::vector<std::string> const& requestedLayers) const;
 
-    std::vector<std::string_view> resolveAllExtensions(std::vector<std::string> const& requestedExtensions) const;
+    void resolveAllExtensions(std::vector<std::string> const& requestedExtensions);
 
     vk::raii::Context m_context{};
     vk::raii::Instance m_instance;
+
+    std::vector<std::string_view> m_vulkanExtensions{};
 };
 
 } // namespace ly::renderer

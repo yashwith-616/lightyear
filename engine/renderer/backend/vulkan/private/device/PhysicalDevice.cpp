@@ -8,13 +8,13 @@
 namespace ly::renderer
 {
 
-PhysicalDevice::PhysicalDevice(vk::raii::Instance const& vulkanInstance, vk::raii::SurfaceKHR surface) :
-    m_device(pickPhysicalDevice(vulkanInstance)), m_surface(std::move(surface))
+PhysicalDevice::PhysicalDevice(Instance const& vulkanInstance, Surface const& surface) :
+    m_vulkanInstance(vulkanInstance), m_device(pickPhysicalDevice(vulkanInstance))
 {
     m_cacheQueueProperties = m_device.getQueueFamilyProperties2();
-    m_cachedSurfaceFormatsKhr = m_device.getSurfaceFormatsKHR(*m_surface);
-    m_cachedPresentModesKhr = m_device.getSurfacePresentModesKHR(*m_surface);
-    m_cachedSurfaceCapabilities = m_device.getSurfaceCapabilitiesKHR(*m_surface);
+    m_cachedSurfaceFormatsKhr = m_device.getSurfaceFormatsKHR(surface.getHandle());
+    m_cachedPresentModesKhr = m_device.getSurfacePresentModesKHR(surface.getHandle());
+    m_cachedSurfaceCapabilities = m_device.getSurfaceCapabilitiesKHR(surface.getHandle());
 }
 
 FeatureStorage PhysicalDevice::getRequiredDeviceFeatures() const
@@ -42,23 +42,14 @@ FeatureStorage PhysicalDevice::getRequiredDeviceFeatures() const
     return storage;
 }
 
-std::vector<char const*> PhysicalDevice::getRequiredDeviceExtensions() const
-{
-    return {
-        vk::KHRSwapchainExtensionName,
-        vk::KHRSpirv14ExtensionName,
-        vk::KHRSynchronization2ExtensionName,
-        vk::KHRCreateRenderpass2ExtensionName};
-}
-
 /// TODO: Required to use weighted average cost where different weight is added to each category to determine the final
 /// score. Each category itself gets a normalized score between 0-1
 ///
 /// \param vulkanInstance the vulkan instance
 /// \return the selected physical device
-vk::raii::PhysicalDevice PhysicalDevice::pickPhysicalDevice(vk::raii::Instance const& vulkanInstance)
+vk::raii::PhysicalDevice PhysicalDevice::pickPhysicalDevice(Instance const& vulkanInstance)
 {
-    auto devices = vulkanInstance.enumeratePhysicalDevices();
+    auto devices = vulkanInstance.getInstance().enumeratePhysicalDevices();
 
     // TODO: Need to change the below code to make sure debugbreak and crash is performed.
     assert(devices.has_value() && "Physical device is not available");

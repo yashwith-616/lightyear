@@ -1,8 +1,12 @@
+find_package(glfw3 CONFIG REQUIRED)
+
 ly_add_example(
         NAME ExampleRendererTest
         SOURCES ExampleRendererTest.cpp
-        LIBS logging VulkanRenderer
+        LIBS logging VulkanRenderer glfw
 )
+
+target_compile_definitions(ExampleRendererTest PRIVATE GLFW_INCLUDE_NONE)
 
 add_custom_command(TARGET ExampleRendererTest POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different

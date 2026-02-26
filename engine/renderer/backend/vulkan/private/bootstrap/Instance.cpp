@@ -40,6 +40,8 @@ Instance::Instance(InstanceCreateInfo const& instanceCreateInfo) : m_instance(cr
 
 vk::raii::Instance const& Instance::getInstance() const { return m_instance; }
 
+std::vector<char const*> const& Instance::getVulkanExtensions() const { return toCArray(m_vulkanExtensions); }
+
 vk::raii::Instance Instance::createInstance(InstanceCreateInfo const& instanceCreateInfo)
 {
     vk::ApplicationInfo appInfo{
@@ -51,14 +53,14 @@ vk::raii::Instance Instance::createInstance(InstanceCreateInfo const& instanceCr
 
     std::vector<std::string_view> validationLayers =
         resolveAllValidationLayers(instanceCreateInfo.vulkanValidationLayers);
-    std::vector<std::string_view> extensions = resolveAllExtensions(instanceCreateInfo.vulkanExtensions);
+    resolveAllExtensions(instanceCreateInfo.vulkanExtensions);
 
 
     auto rawValidationLayers = toCArray(validationLayers);
     auto layerCount = static_cast<uint32_t>(validationLayers.size());
 
-    auto rawExtensions = toCArray(extensions);
-    auto extensionsCount = static_cast<uint32_t>(extensions.size());
+    auto rawExtensions = toCArray(m_vulkanExtensions);
+    auto extensionsCount = static_cast<uint32_t>(m_vulkanExtensions.size());
 
     vk::InstanceCreateInfo createInfo{
         .pApplicationInfo = &appInfo,
@@ -104,17 +106,15 @@ std::vector<std::string_view>
 ///
 /// \param requestedExtensions the requested extensions
 /// \return All vulkan extensions
-std::vector<std::string_view> Instance::resolveAllExtensions(std::vector<std::string> const& requestedExtensions) const
+void Instance::resolveAllExtensions(std::vector<std::string> const& requestedExtensions)
 {
-    std::vector<std::string_view> extensions(requestedExtensions.size(), "");
+    m_vulkanExtensions.clear();
     std::ranges::transform(
-        requestedExtensions, std::back_inserter(extensions), [](auto const& s) { return s.c_str(); });
+        requestedExtensions, std::back_inserter(m_vulkanExtensions), [](auto const& s) { return s.c_str(); });
 
 #if ENABLE_VK_VALIDATION
-    extensions.push_back(vk::EXTDebugUtilsExtensionName);
+    m_vulkanExtensions.push_back(vk::EXTDebugUtilsExtensionName);
 #endif
-
-    return extensions;
 }
 
 } // namespace ly::renderer
