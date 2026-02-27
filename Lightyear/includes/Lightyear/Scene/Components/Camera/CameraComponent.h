@@ -29,6 +29,8 @@ struct LIGHTYEAR_API CameraComponent
     float farClip{k_kDefaultFarClip};
     CameraProjectionType projectionType{CameraProjectionType::Perspective};
 
+    glm::mat4 multiply() { return projectionMatrix * viewMatrix * cacheViewProjectionMatrix; }
+
     template <class Archive>
     void save(Archive& archive) const
     {
