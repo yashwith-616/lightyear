@@ -55,11 +55,9 @@ public:
 
     auto primaryCmdData()
     {
-        // clang-format off
         return m_registry
             | std::views::values
-            | std::views::transform([](auto const& queuePool) -> auto& { return queuePool.primary; });
-        // clang-format on
+            | std::views::transform([] (auto const& queuePool) -> auto& { return queuePool.primary; });
     }
 
     std::expected<std::reference_wrapper<CommandData>, RegistryError> getPrimaryCmdData(uint32_t qfIndex)
@@ -74,52 +72,49 @@ public:
 
     auto workerCmdData()
     {
-        // clang-format off
+
         return m_registry
             | std::views::values
-            | std::views::transform([](auto const& queuePool) -> auto& { return queuePool.workers; })
+            | std::views::transform([] (auto const& queuePool) -> auto& { return queuePool.workers; })
             | std::views::join;
-        // clang-format on
+
     }
 
     auto primaryCmdBuffers()
     {
-        // clang-format off
         return m_registry
             | std::views::values
-            | std::views::transform([](auto const& queuePool) -> auto& { return queuePool.primary; })
-            | std::views::transform([](auto const& cmdData) -> auto& {return cmdData.commandBuffers; })
+            | std::views::transform([] (auto const& queuePool) -> auto& { return queuePool.primary; })
+            | std::views::transform([] (auto const& cmdData) -> auto& { return cmdData.commandBuffers; })
             | std::views::join;
-        // clang-format on
     }
 
     auto secondaryCmdBuffers()
     {
-        // clang-format off
         return m_registry
             | std::views::values
-            | std::views::transform([](auto const& queuePool) -> auto& { return queuePool.workers; })
+            | std::views::transform([] (auto const& queuePool) -> auto& { return queuePool.workers; })
             | std::views::join
-            | std::views::transform([](auto const& workers) -> auto& { return workers.commandBuffers; })
+            | std::views::transform([] (auto const& workers) -> auto& { return workers.commandBuffers; })
             | std::views::join;
-        // clang-format on
     }
 
     auto secondaryCmdBuffers(uint32_t queueIndex)
     {
-        // clang-format off
         return m_registry
             | std::views::values
-            | std::views::filter([queueIndex](auto const& queuePool) -> bool {
-                return queuePool.qfIndex == queueIndex;
-            })
-            | std::views::transform([](auto const& queuePool) -> auto& {
-                return queuePool.workers;
-            })
+            | std::views::filter(
+                [queueIndex] (auto const& queuePool) -> bool {
+                    return queuePool.qfIndex == queueIndex;
+                })
+            | std::views::transform(
+                [] (auto const& queuePool) -> auto& {
+                    return queuePool.workers;
+                })
             | std::views::join
-            | std::views::transform([](auto const& workers) -> auto& { return workers.commandBuffers; })
+            | std::views::transform([] (auto const& workers) -> auto& { return workers.commandBuffers; })
             | std::views::join;
-        // clang-format on
+
     }
 
 private:
