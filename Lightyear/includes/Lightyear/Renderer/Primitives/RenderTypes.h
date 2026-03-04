@@ -46,7 +46,7 @@ enum class UniformBufferBlockBinding : uint8_t
     Max
 };
 
-enum class VertexAttributeType : uint8_t
+enum class VertexAttributeSlot : uint8_t
 {
     None = 0,
     Position,
@@ -56,17 +56,17 @@ enum class VertexAttributeType : uint8_t
 };
 
 // === Utility functions ===
-inline std::string_view getVertexAttribute(VertexAttributeType const type)
+inline std::string_view getVertexAttribute(VertexAttributeSlot const type)
 {
     switch (type)
     {
-    case VertexAttributeType::Position:
+    case VertexAttributeSlot::Position:
         return "Position";
-    case VertexAttributeType::Normal:
+    case VertexAttributeSlot::Normal:
         return "Normal";
-    case VertexAttributeType::TexCoord:
+    case VertexAttributeSlot::TexCoord:
         return "TexCoord";
-    case VertexAttributeType::None:
+    case VertexAttributeSlot::None:
     default:
         {
             LY_CORE_ASSERT(false, "Vertex attribute type not supported");

@@ -26,11 +26,13 @@ set(VK_PRIVATE
         private/components/FrameData.h
         private/components/CommandData.h
         private/components/FrameContext.h
-        private/command/CommandObject.cpp
-        private/command/CommandObject.h
         private/command/CommandRegistry.cpp
         private/command/CommandRegistry.h
-        private/command/CommandType.h)
+        private/command/CommandType.h
+        private/primitives/vertex/Buffer.h
+        private/primitives/vertex/Buffer.cpp
+        private/pipeline/PipelineBuilder.cpp
+        private/pipeline/PipelineBuilder.h)
 
 #-------------------------------------------------
 # Dependencies
