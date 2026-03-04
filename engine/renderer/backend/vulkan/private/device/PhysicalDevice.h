@@ -7,7 +7,6 @@
 
 namespace ly::renderer
 {
-
 struct FeatureStorage
 {
     vk::PhysicalDeviceFeatures2 core;
@@ -64,5 +63,4 @@ private:
     std::vector<vk::PresentModeKHR> m_cachedPresentModesKhr{};
     vk::SurfaceCapabilitiesKHR m_cachedSurfaceCapabilities{};
 };
-
 } // namespace ly::renderer

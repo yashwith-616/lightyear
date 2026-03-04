@@ -104,5 +104,4 @@ private:
     BufferLayout const& m_layout;
     vk::raii::Buffer m_bufferHandle{nullptr};
 };
-
 } // namespace ly::renderer

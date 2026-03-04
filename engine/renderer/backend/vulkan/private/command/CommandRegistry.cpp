@@ -6,7 +6,6 @@
 
 namespace
 {
-
 vk::CommandBufferLevel toVkLevel(ly::renderer::CommandType type)
 {
     using ct = ly::renderer::CommandType;
@@ -24,7 +23,9 @@ vk::CommandBufferLevel toVkLevel(ly::renderer::CommandType type)
 vk::raii::CommandPool createCommandPool(vk::raii::Device const& device, uint32_t qfIndex)
 {
     vk::CommandPoolCreateInfo cmdPoolCreateInfo{
-        .flags = vk::CommandPoolCreateFlagBits::eResetCommandBuffer, .queueFamilyIndex = qfIndex};
+        .flags            = vk::CommandPoolCreateFlagBits::eResetCommandBuffer,
+        .queueFamilyIndex = qfIndex
+    };
 
     auto expect = device.createCommandPool(cmdPoolCreateInfo);
     assert(expect.has_value() && "Pool creation failed");
@@ -32,22 +33,22 @@ vk::raii::CommandPool createCommandPool(vk::raii::Device const& device, uint32_t
 }
 
 std::vector<vk::raii::CommandBuffer> allocateCommandBuffers(
-    vk::raii::Device const& device, vk::raii::CommandPool const& pool, ly::renderer::CommandType type)
+    vk::raii::Device const& device,
+    vk::raii::CommandPool const& pool,
+    ly::renderer::CommandType type)
 {
     vk::CommandBufferAllocateInfo allocateInfo{.commandPool = *pool, .level = toVkLevel(type), .commandBufferCount = 1};
     auto expect = device.allocateCommandBuffers(allocateInfo);
     assert(expect.has_value() && "Command buffer allocation failed");
     return std::move(expect.value());
 }
-
 } // namespace
 
 namespace ly::renderer
 {
-
 CommandRegistry::CommandRegistry(PhysicalDevice const& physicalDevice, LogicalDevice const& device) :
-    m_physicalDevice(physicalDevice), m_device(device)
-{}
+    m_physicalDevice(physicalDevice),
+    m_device(device) {}
 
 CommandRegistry::~CommandRegistry() = default;
 
@@ -62,9 +63,10 @@ std::expected<uint32_t, RegistryError> CommandRegistry::createCommandPool(uint32
         {
             assert(!queuePoolOpt.has_value() && "Primary command data can be initialized only once");
             CommandData cmdData{
-                .qfIndex = qfIndex,
-                .type = type,
-                .commandPool = std::move(::createCommandPool(m_device.getHandle(), qfIndex))};
+                .qfIndex     = qfIndex,
+                .type        = type,
+                .commandPool = std::move(::createCommandPool(m_device.getHandle(), qfIndex))
+            };
             QueueCommandPool cmdPool{.qfIndex = qfIndex, .primary = std::move(cmdData)};
             m_registry[qfIndex] = std::move(cmdPool);
             return 0;
@@ -75,9 +77,10 @@ std::expected<uint32_t, RegistryError> CommandRegistry::createCommandPool(uint32
             auto& queueCmdPool = (*queuePoolOpt).get();
 
             CommandData workerCmdData{
-                .qfIndex = qfIndex,
-                .type = type,
-                .commandPool = std::move(::createCommandPool(m_device.getHandle(), qfIndex))};
+                .qfIndex     = qfIndex,
+                .type        = type,
+                .commandPool = std::move(::createCommandPool(m_device.getHandle(), qfIndex))
+            };
             queueCmdPool.workers.push_back(std::move(workerCmdData));
             return queueCmdPool.workerCount++;
         }
@@ -162,7 +165,7 @@ CommandRegistry CommandRegistry::clone()
 void CommandRegistry::clear() { m_registry.clear(); }
 
 CommandRegistry::CommandRegistry(PhysicalDevice const& physicalDevice, LogicalDevice const& device, registry registry) :
-    m_physicalDevice(physicalDevice), m_device(device), m_registry(std::move(registry))
-{}
-
+    m_physicalDevice(physicalDevice),
+    m_device(device),
+    m_registry(std::move(registry)) {}
 } // namespace ly::renderer

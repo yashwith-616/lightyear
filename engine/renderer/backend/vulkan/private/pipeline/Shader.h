@@ -5,7 +5,6 @@
 
 namespace ly::renderer
 {
-
 class Shader
 {
 public:
@@ -18,5 +17,4 @@ public:
 private:
     vk::raii::ShaderModule m_shaderModule{nullptr};
 };
-
 } // namespace ly::renderer

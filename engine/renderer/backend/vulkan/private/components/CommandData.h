@@ -5,7 +5,6 @@
 
 namespace ly::renderer
 {
-
 struct CommandData
 {
     uint32_t qfIndex{};
@@ -39,5 +38,4 @@ struct CommandStream
     CommandStream(CommandStream&&) = default;
     CommandStream& operator=(CommandStream&&) = default;
 };
-
 } // namespace ly::renderer

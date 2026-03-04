@@ -6,9 +6,7 @@
 
 namespace ly::renderer
 {
-
-struct PipelineCreateInfo
-{};
+struct PipelineCreateInfo {};
 
 
 class Pipeline
@@ -39,5 +37,4 @@ private:
     LogicalDevice const& m_device;
     vk::raii::Pipeline m_pipeline{nullptr};
 };
-
 } // namespace ly::renderer

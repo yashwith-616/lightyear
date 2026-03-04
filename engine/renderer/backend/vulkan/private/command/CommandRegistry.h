@@ -7,7 +7,6 @@
 
 namespace ly::renderer
 {
-
 class PhysicalDevice;
 class LogicalDevice;
 
@@ -131,5 +130,4 @@ private:
     PhysicalDevice const& m_physicalDevice;
     LogicalDevice const& m_device;
 };
-
 } // namespace ly::renderer

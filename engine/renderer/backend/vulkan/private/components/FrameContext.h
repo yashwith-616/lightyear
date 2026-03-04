@@ -5,7 +5,6 @@
 
 namespace ly::renderer
 {
-
 struct FrameContext
 {
     SwapchainData swapchain;
@@ -13,5 +12,4 @@ struct FrameContext
 
     uint32_t currentFrameIndex{};
 };
-
 } // namespace ly::renderer

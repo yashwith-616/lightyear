@@ -7,9 +7,9 @@
 
 namespace ly::renderer
 {
-
 PhysicalDevice::PhysicalDevice(Instance const& vulkanInstance, Surface const& surface) :
-    m_vulkanInstance(vulkanInstance), m_device(pickPhysicalDevice(vulkanInstance))
+    m_vulkanInstance(vulkanInstance),
+    m_device(pickPhysicalDevice(vulkanInstance))
 {
     m_cacheQueueProperties = m_device.getQueueFamilyProperties2();
     m_cachedSurfaceFormatsKhr = m_device.getSurfaceFormatsKHR(surface.getHandle());
@@ -94,6 +94,4 @@ uint32_t PhysicalDevice::getDeviceTypeScore(vk::PhysicalDeviceType deviceType)
         return 0;
     }
 }
-
-
 } // namespace ly::renderer

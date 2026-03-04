@@ -10,16 +10,17 @@
 
 namespace
 {
-
 vk::SurfaceFormatKHR selectSurfaceFormat(std::vector<vk::SurfaceFormatKHR> const& availableSurfaceFormats)
 {
     assert(!availableSurfaceFormats.empty() && "Physical device does not have any surface formats");
 
     // eB8G8R8A8Srgb - may not be available on some older mobile chips
-    auto it = std::ranges::find_if(availableSurfaceFormats, [](auto const& surfaceFormat) {
-        return surfaceFormat.format == vk::Format::eB8G8R8A8Srgb &&
-            surfaceFormat.colorSpace == vk::ColorSpaceKHR::eSrgbNonlinear;
-    });
+    auto it = std::ranges::find_if(
+        availableSurfaceFormats,
+        [] (auto const& surfaceFormat) {
+            return surfaceFormat.format == vk::Format::eB8G8R8A8Srgb &&
+                surfaceFormat.colorSpace == vk::ColorSpaceKHR::eSrgbNonlinear;
+        });
 
     assert(it != availableSurfaceFormats.end() && "Required surface format was not enabled");
     return *it;
@@ -30,13 +31,14 @@ vk::PresentModeKHR selectPresentMode(std::vector<vk::PresentModeKHR> const& avai
     assert(!availablePresentModes.empty() && "Physical device does not have any present mode");
 
     bool isMailboxModePresent = std::ranges::any_of(
-        availablePresentModes, [](auto const& presentMode) { return presentMode == vk::PresentModeKHR::eMailbox; });
+        availablePresentModes,
+        [] (auto const& presentMode) { return presentMode == vk::PresentModeKHR::eMailbox; });
     if (isMailboxModePresent)
     {
         return vk::PresentModeKHR::eMailbox;
     }
 
-    auto checkForFifoMode = [](auto const& presentMode) { return presentMode == vk::PresentModeKHR::eFifo; };
+    auto checkForFifoMode = [] (auto const& presentMode) { return presentMode == vk::PresentModeKHR::eFifo; };
     assert(std::ranges::any_of(availablePresentModes, checkForFifoMode) && "Fifo present mode KHR is not present");
     return vk::PresentModeKHR::eFifo;
 }
@@ -63,7 +65,9 @@ vk::Extent2D resolveExtent(vk::SurfaceCapabilitiesKHR const& surfaceCapabilities
     uint32_t width =
         std::clamp(imgExtent.width, surfaceCapabilities.minImageExtent.width, surfaceCapabilities.maxImageExtent.width);
     uint32_t height = std::clamp(
-        imgExtent.height, surfaceCapabilities.minImageExtent.height, surfaceCapabilities.maxImageExtent.height);
+        imgExtent.height,
+        surfaceCapabilities.minImageExtent.height,
+        surfaceCapabilities.maxImageExtent.height);
 
     return vk::Extent2D{.width = width, .height = height};
 }
@@ -81,31 +85,30 @@ vk::raii::SwapchainKHR createSwapchain(
     vk::SwapchainKHR oldHandle = prevData.has_value() ? *prevData->get().swapchain : nullptr;
 
     vk::SwapchainCreateInfoKHR swapchainCreateInfo{
-        .flags = vk::SwapchainCreateFlagsKHR(),
-        .surface = surface.getHandle(),
-        .minImageCount = minImageCount,
-        .imageFormat = surfaceFormat.format,
-        .imageColorSpace = surfaceFormat.colorSpace,
-        .imageExtent = imgExtent,
+        .flags            = vk::SwapchainCreateFlagsKHR(),
+        .surface          = surface.getHandle(),
+        .minImageCount    = minImageCount,
+        .imageFormat      = surfaceFormat.format,
+        .imageColorSpace  = surfaceFormat.colorSpace,
+        .imageExtent      = imgExtent,
         .imageArrayLayers = 1,
-        .imageUsage = vk::ImageUsageFlagBits::eColorAttachment,
+        .imageUsage       = vk::ImageUsageFlagBits::eColorAttachment,
         .imageSharingMode = vk::SharingMode::eExclusive,
-        .preTransform = surfaceTransformFlag,
-        .compositeAlpha = vk::CompositeAlphaFlagBitsKHR::eOpaque,
-        .presentMode = presentMode,
-        .clipped = true,
-        .oldSwapchain = oldHandle};
+        .preTransform     = surfaceTransformFlag,
+        .compositeAlpha   = vk::CompositeAlphaFlagBitsKHR::eOpaque,
+        .presentMode      = presentMode,
+        .clipped          = true,
+        .oldSwapchain     = oldHandle
+    };
 
     auto expected = device.createSwapchainKHR(swapchainCreateInfo);
     assert(expected.has_value() && "Swapchain has not been created");
     return std::move(expected.value());
 }
-
 } // namespace
 
 namespace ly::renderer
 {
-
 struct SwapchainSystem::SwapchainCache
 {
     vk::SurfaceFormatKHR surfaceFormat;
@@ -123,8 +126,12 @@ struct SwapchainSystem::SwapchainCache
 };
 
 SwapchainSystem::SwapchainSystem(
-    PhysicalDevice const& physicalDevice, LogicalDevice const& device, Surface const& surface) :
-    m_physicalDevice(physicalDevice), m_device(device), m_surface(surface)
+    PhysicalDevice const& physicalDevice,
+    LogicalDevice const& device,
+    Surface const& surface) :
+    m_physicalDevice(physicalDevice),
+    m_device(device),
+    m_surface(surface)
 {
     cacheCapabilities();
 }
@@ -141,12 +148,13 @@ SwapchainData
     }
 
     // if post-processing is applied in different format then surface format cannot be used here
-    auto createImageFactory = [&](vk::Image const& image) {
+    auto createImageFactory = [&] (vk::Image const& image) {
         vk::ImageViewCreateInfo viewInfo{
-            .image = image,
-            .viewType = vk::ImageViewType::e2D,
-            .format = cacheCopy.surfaceFormat.format,
-            .subresourceRange = {vk::ImageAspectFlagBits::eColor, 0, 1, 0, 1}};
+            .image            = image,
+            .viewType         = vk::ImageViewType::e2D,
+            .format           = cacheCopy.surfaceFormat.format,
+            .subresourceRange = {vk::ImageAspectFlagBits::eColor, 0, 1, 0, 1}
+        };
 
         auto expected = m_device.getHandle().createImageView(viewInfo);
         assert(expected.has_value() && "Swapchain ImageView has not been created");
@@ -167,10 +175,11 @@ SwapchainData
         cacheCopy.presentMode);
 
     SwapchainData data{
-        .swapchain = std::move(swapchain),
-        .extent = imgExtent,
-        .colorFormat = cacheCopy.surfaceFormat.format,
-        .sampleCountFlagBits = vk::SampleCountFlagBits::e1};
+        .swapchain           = std::move(swapchain),
+        .extent              = imgExtent,
+        .colorFormat         = cacheCopy.surfaceFormat.format,
+        .sampleCountFlagBits = vk::SampleCountFlagBits::e1
+    };
 
     data.images = data.swapchain.getImages();
     data.imageViews.reserve(data.images.size());
@@ -199,5 +208,4 @@ void SwapchainSystem::cacheCapabilities()
         m_swapchainCache = std::move(newCache);
     }
 }
-
 } // namespace ly::renderer

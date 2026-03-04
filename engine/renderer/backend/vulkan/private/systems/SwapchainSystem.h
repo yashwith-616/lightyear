@@ -12,7 +12,6 @@ struct SurfaceFormatKHR;
 
 namespace ly::renderer
 {
-
 class PhysicalDevice;
 class LogicalDevice;
 class Surface;
@@ -63,5 +62,4 @@ private:
     LogicalDevice const& m_device;
     Surface const& m_surface;
 };
-
 } // namespace ly::renderer

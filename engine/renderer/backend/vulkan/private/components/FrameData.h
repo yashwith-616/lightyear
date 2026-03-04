@@ -7,7 +7,6 @@
 
 namespace ly::renderer
 {
-
 struct FrameData
 {
     vk::raii::Semaphore renderCompleteSemaphore{nullptr};
@@ -16,5 +15,4 @@ struct FrameData
 
     std::unique_ptr<CommandRegistry> commandRegistry;
 };
-
 } // namespace ly::renderer

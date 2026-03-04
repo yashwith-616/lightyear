@@ -4,24 +4,23 @@
 
 namespace ly::renderer
 {
-
 enum class QueueSlot : uint8_t
 {
-    Graphic = 0,
-    Compute = 1,
+    Graphic  = 0,
+    Compute  = 1,
     Transfer = 2,
-    Present = 3,
-    Max = 4
+    Present  = 3,
+    Max      = 4
 };
 
 enum class QueueTypeFlag : uint8_t
 {
-    None = 0,
-    Graphic = 1 << 0,
-    Compute = 1 << 1,
+    None     = 0,
+    Graphic  = 1 << 0,
+    Compute  = 1 << 1,
     Transfer = 1 << 2,
-    Present = 1 << 3,
-    All = Graphic | Compute | Transfer | Present
+    Present  = 1 << 3,
+    All      = Graphic | Compute | Transfer | Present
 };
 
 // Enable bitwise OR: Graphic | Compute
@@ -105,5 +104,4 @@ struct QueueFamilyData
 
     void addSupport(QueueTypeFlag type) { flags |= type; }
 };
-
 } // namespace ly::renderer

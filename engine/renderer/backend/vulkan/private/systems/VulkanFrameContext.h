@@ -7,7 +7,6 @@
 
 namespace ly::renderer
 {
-
 class LogicalDevice;
 class PhysicalDevice;
 class Surface;
@@ -54,5 +53,4 @@ private:
 
     uint32_t m_currSwapChainImageIndex{0};
 };
-
 } // namespace ly::renderer

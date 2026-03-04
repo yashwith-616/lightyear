@@ -10,7 +10,6 @@
 
 namespace
 {
-
 vk::Format getVulkanFormat(ly::renderer::VertexAttributeType type, bool isNormalized)
 {
     using ly::renderer::VertexAttributeType;
@@ -49,17 +48,17 @@ uint32_t getAttributeTypeSize(ly::renderer::VertexAttributeType type)
     case VertexAttributeType::Float4:
         return 16;
 
-        // 4 bytes: RGBA8 (1 byte per channel)
+    // 4 bytes: RGBA8 (1 byte per channel)
     case VertexAttributeType::Byte4:
     case VertexAttributeType::Byte4N:
         return 4;
 
-        // 4 bytes: 2 Shorts (2 bytes per channel)
+    // 4 bytes: 2 Shorts (2 bytes per channel)
     case VertexAttributeType::Short2:
     case VertexAttributeType::Short2N:
         return 4;
 
-        // 4 bytes: Packed 10-10-10-2 bit format
+    // 4 bytes: Packed 10-10-10-2 bit format
     case VertexAttributeType::Int10Pack:
         return 4;
 
@@ -67,15 +66,14 @@ uint32_t getAttributeTypeSize(ly::renderer::VertexAttributeType type)
         std::unreachable();
     }
 }
-
 } // namespace
 
 namespace ly::renderer
 {
-
 BufferElement::BufferElement(VertexAttributeSlot slot, VertexAttributeType type, bool isNormalized) :
-    slot(slot), type(type), isNormalized(isNormalized)
-{}
+    slot(slot),
+    type(type),
+    isNormalized(isNormalized) {}
 
 BufferLayout::BufferLayout(std::vector<BufferElement> elements) : m_elements(std::move(elements))
 {
@@ -102,9 +100,10 @@ std::vector<vk::VertexInputAttributeDescription2EXT>
         result.push_back(
             vk::VertexInputAttributeDescription2EXT{
                 .location = static_cast<uint32_t>(element.slot),
-                .binding = binding,
-                .format = getVulkanFormat(element.type, element.isNormalized),
-                .offset = element.offset});
+                .binding  = binding,
+                .format   = getVulkanFormat(element.type, element.isNormalized),
+                .offset   = element.offset
+            });
     }
 
     return result;
@@ -131,12 +130,12 @@ VertexBuffer::VertexBuffer(LogicalDevice const& device, BufferLayout const& layo
     m_layout(layout)
 {
     vk::BufferCreateInfo bufferCreateInfo{
-        .size = data.size(),
-        .usage = vk::BufferUsageFlagBits::eVertexBuffer,
-        .sharingMode = vk::SharingMode::eExclusive};
+        .size        = data.size(),
+        .usage       = vk::BufferUsageFlagBits::eVertexBuffer,
+        .sharingMode = vk::SharingMode::eExclusive
+    };
     auto expect = device.getHandle().createBuffer(bufferCreateInfo);
     assert(expect.has_value() && "Buffer creation failed");
     m_bufferHandle = std::move(expect.value());
 }
-
 } // namespace ly::renderer

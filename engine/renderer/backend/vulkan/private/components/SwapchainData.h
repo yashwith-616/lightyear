@@ -4,7 +4,6 @@
 
 namespace ly::renderer
 {
-
 // Could use dirty flags and reset the swapchain and start of the renderer
 struct SwapchainData
 {
@@ -24,5 +23,4 @@ struct SwapchainData
     // MSAA
     vk::SampleCountFlagBits sampleCountFlagBits{vk::SampleCountFlagBits::e1};
 };
-
 } // namespace ly::renderer

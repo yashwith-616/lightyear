@@ -6,7 +6,6 @@
 
 namespace ly::renderer
 {
-
 Pipeline::Pipeline(LogicalDevice const& device) :
     m_device(device) {}
 
@@ -57,7 +56,8 @@ void Pipeline::createPipeline(
         .pColorBlendState    = &colorBlendState,
         .pDynamicState       = &dynamicStateCreateInfo,
         .layout              = pipelineLayout,
-        .renderPass          = nullptr};
+        .renderPass          = nullptr
+    };
 
     auto viewportState = configureViewport(extent);
     vk::PipelineRenderingCreateInfo renderingCreateInfo
@@ -88,7 +88,8 @@ vk::Viewport Pipeline::configureViewport(vk::Extent2D extent)
         .width    = static_cast<float>(extent.width),
         .height   = static_cast<float>(extent.height),
         .minDepth = 0.f,
-        .maxDepth = 1.f};
+        .maxDepth = 1.f
+    };
 }
 
 vk::PipelineRasterizationStateCreateInfo Pipeline::configureRasterization()
@@ -101,14 +102,16 @@ vk::PipelineRasterizationStateCreateInfo Pipeline::configureRasterization()
         .frontFace               = vk::FrontFace::eClockwise,
         .depthBiasEnable         = vk::False,
         .depthBiasSlopeFactor    = 1.0,
-        .lineWidth               = 1.f};
+        .lineWidth               = 1.f
+    };
 }
 
 vk::PipelineMultisampleStateCreateInfo Pipeline::configureMultisample()
 {
     return vk::PipelineMultisampleStateCreateInfo{
         .rasterizationSamples = vk::SampleCountFlagBits::e1,
-        .sampleShadingEnable  = vk::False};
+        .sampleShadingEnable  = vk::False
+    };
 }
 
 vk::PipelineColorBlendAttachmentState Pipeline::configureColorBlendAttachment()
@@ -116,7 +119,8 @@ vk::PipelineColorBlendAttachmentState Pipeline::configureColorBlendAttachment()
     return vk::PipelineColorBlendAttachmentState{
         .blendEnable    = vk::False,
         .colorWriteMask = vk::ColorComponentFlagBits::eR | vk::ColorComponentFlagBits::eG
-        | vk::ColorComponentFlagBits::eB | vk::ColorComponentFlagBits::eA};
+        | vk::ColorComponentFlagBits::eB | vk::ColorComponentFlagBits::eA
+    };
 }
 
 vk::PipelineInputAssemblyStateCreateInfo Pipeline::configureInputAssemblyState()
@@ -130,5 +134,4 @@ vk::PipelineVertexInputStateCreateInfo Pipeline::configureVertexInputState()
 {
     return vk::PipelineVertexInputStateCreateInfo{};
 }
-
 } // namespace ly::renderer

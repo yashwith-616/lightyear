@@ -9,7 +9,6 @@
 
 namespace ly::renderer
 {
-
 struct QueueFamilyData;
 enum class QueueTypeFlag : uint8_t;
 enum class QueueSlot : uint8_t;
@@ -47,5 +46,4 @@ private:
     // All queues
     std::array<std::shared_ptr<QueueHandle>, 4> m_allQueues;
 };
-
 } // namespace ly::renderer

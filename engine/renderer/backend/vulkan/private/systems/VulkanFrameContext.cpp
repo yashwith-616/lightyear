@@ -10,7 +10,6 @@
 
 namespace
 {
-
 void transitionImageLayout(
     vk::raii::CommandBuffer const& commandBuffer,
     vk::Image swapchainImage,
@@ -22,33 +21,34 @@ void transitionImageLayout(
     vk::PipelineStageFlags2 dstStageMask)
 {
     auto imgBarrier = vk::ImageMemoryBarrier2{
-        .srcStageMask = srcStageMask,
-        .srcAccessMask = srcAccessMask,
-        .dstStageMask = dstStageMask,
-        .dstAccessMask = dstAccessMask,
-        .oldLayout = oldLayout,
-        .newLayout = newLayout,
-        .image = swapchainImage,
+        .srcStageMask     = srcStageMask,
+        .srcAccessMask    = srcAccessMask,
+        .dstStageMask     = dstStageMask,
+        .dstAccessMask    = dstAccessMask,
+        .oldLayout        = oldLayout,
+        .newLayout        = newLayout,
+        .image            = swapchainImage,
         .subresourceRange = vk::ImageSubresourceRange{
-            .aspectMask = vk::ImageAspectFlagBits::eColor,
-            .baseMipLevel = 0,
-            .levelCount = 1,
+            .aspectMask     = vk::ImageAspectFlagBits::eColor,
+            .baseMipLevel   = 0,
+            .levelCount     = 1,
             .baseArrayLayer = 0,
-            .layerCount = 1}};
+            .layerCount     = 1
+        }
+    };
 
     commandBuffer.pipelineBarrier2(
         {.dependencyFlags = {}, .imageMemoryBarrierCount = 1, .pImageMemoryBarriers = &imgBarrier});
 }
 
 vk::raii::CommandBuffer&
-    getPrimaryCmdBuffer(std::unique_ptr<ly::renderer::CommandRegistry> const& registry, uint32_t qfIndex)
+getPrimaryCmdBuffer(std::unique_ptr<ly::renderer::CommandRegistry> const& registry, uint32_t qfIndex)
 {
     auto cmdExpect = registry->getPrimaryCmdData(qfIndex);
     assert(cmdExpect.has_value() && "No primary command data found");
     auto& primaryBuffer = cmdExpect.value().get().commandBuffers[0];
     return primaryBuffer;
 }
-
 } // namespace
 
 namespace ly::renderer
@@ -56,8 +56,11 @@ namespace ly::renderer
 using limitUint64 = std::numeric_limits<uint64_t>;
 
 VulkanFrameContext::VulkanFrameContext(
-    PhysicalDevice const& physicalDevice, LogicalDevice const& device, Surface const& surface) :
-    m_physicalDevice(physicalDevice), m_device(device)
+    PhysicalDevice const& physicalDevice,
+    LogicalDevice const& device,
+    Surface const& surface) :
+    m_physicalDevice(physicalDevice),
+    m_device(device)
 {
     m_swapchainSystem = std::make_unique<SwapchainSystem>(m_physicalDevice, m_device, surface);
 }
@@ -76,7 +79,8 @@ void VulkanFrameContext::init(uint32_t maxFrameFlights, ImageExtent imageExtent)
     frames.reserve(maxFrameFlights);
 
     std::ranges::for_each(
-        std::views::iota(0u, maxFrameFlights), [&](uint32_t frameIndex) { frames.emplace_back(createPerFrameData()); });
+        std::views::iota(0u, maxFrameFlights),
+        [&] (uint32_t frameIndex) { frames.emplace_back(createPerFrameData()); });
 }
 
 std::unique_ptr<CommandStream> VulkanFrameContext::createQueueSubmissionPipeline(QueueSlot slot)
@@ -156,7 +160,9 @@ void VulkanFrameContext::beginFrame()
 
     // Acquire next semaphore
     auto swapchainExpect = m_frameContext->swapchain.swapchain.acquireNextImage(
-        limitUint64::max(), getCurrentFrame()->presentCompleteSemaphore, nullptr);
+        limitUint64::max(),
+        getCurrentFrame()->presentCompleteSemaphore,
+        nullptr);
     m_currSwapChainImageIndex = swapchainExpect.second;
     auto const& currImage = m_frameContext->swapchain.images[m_currSwapChainImageIndex];
     auto const& currImageView = m_frameContext->swapchain.imageViews[m_currSwapChainImageIndex];
@@ -181,21 +187,24 @@ void VulkanFrameContext::beginFrame()
 
         // secondary buffer begin
         vk::CommandBufferInheritanceRenderingInfo renderingInheritance{
-            .flags = {},
-            .viewMask = 0,
-            .colorAttachmentCount = 1,
+            .flags                   = {},
+            .viewMask                = 0,
+            .colorAttachmentCount    = 1,
             .pColorAttachmentFormats = &m_frameContext->swapchain.colorFormat,
-            .depthAttachmentFormat = {},
+            .depthAttachmentFormat   = {},
             .stencilAttachmentFormat = {},
-            .rasterizationSamples = vk::SampleCountFlagBits::e1};
+            .rasterizationSamples    = vk::SampleCountFlagBits::e1
+        };
         vk::CommandBufferInheritanceInfo inheritance{.pNext = &renderingInheritance};
 
         for (auto& secondaryCmdBuffer : registry->secondaryCmdBuffers(qfIndex))
         {
             secondaryCmdBuffer.begin(
-                {.flags = vk::CommandBufferUsageFlagBits::eRenderPassContinue |
-                     vk::CommandBufferUsageFlagBits::eOneTimeSubmit,
-                 .pInheritanceInfo = &inheritance});
+                {
+                    .flags = vk::CommandBufferUsageFlagBits::eRenderPassContinue |
+                    vk::CommandBufferUsageFlagBits::eOneTimeSubmit,
+                    .pInheritanceInfo = &inheritance
+                });
         }
     }
 
@@ -215,20 +224,22 @@ void VulkanFrameContext::beginFrame()
         vk::ClearValue clearColor = vk::ClearColorValue(0.0f, 0.0f, 0.0f, 1.0f);
 
         vk::RenderingAttachmentInfoKHR attachmentInfoKhr{
-            .imageView = currImageView,
+            .imageView   = currImageView,
             .imageLayout = vk::ImageLayout::eColorAttachmentOptimal,
-            .loadOp = vk::AttachmentLoadOp::eClear,
-            .storeOp = vk::AttachmentStoreOp::eStore,
-            .clearValue = clearColor};
+            .loadOp      = vk::AttachmentLoadOp::eClear,
+            .storeOp     = vk::AttachmentStoreOp::eStore,
+            .clearValue  = clearColor
+        };
 
         vk::RenderingInfo renderingInfo{
-            .renderArea = {.offset = {0, 0}, .extent = m_frameContext->swapchain.extent},
-            .layerCount = 1,
-            .viewMask = 0,
+            .renderArea           = {.offset = {0, 0}, .extent = m_frameContext->swapchain.extent},
+            .layerCount           = 1,
+            .viewMask             = 0,
             .colorAttachmentCount = 1,
-            .pColorAttachments = &attachmentInfoKhr,
-            .pDepthAttachment = nullptr,
-            .pStencilAttachment = nullptr};
+            .pColorAttachments    = &attachmentInfoKhr,
+            .pDepthAttachment     = nullptr,
+            .pStencilAttachment   = nullptr
+        };
 
         primaryBuffer.beginRendering(renderingInfo);
     }
@@ -252,7 +263,7 @@ void VulkanFrameContext::endFrame()
     auto const& registry = getCurrentFrame()->commandRegistry;
     auto& primaryBuffer = getPrimaryCmdBuffer(registry, qfIndex);
 
-    std::ranges::for_each(registry->secondaryCmdBuffers(qfIndex), [](auto& buffer) { buffer.end(); });
+    std::ranges::for_each(registry->secondaryCmdBuffers(qfIndex), [] (auto& buffer) { buffer.end(); });
 
     // EXECUTE SECONDARY BUFFERS
     // May need caching at registry to save performance
@@ -291,23 +302,23 @@ void VulkanFrameContext::submit()
     // submit graphics queue
     vk::PipelineStageFlags waitDestinationStageMask(vk::PipelineStageFlagBits::eColorAttachmentOutput);
     vk::SubmitInfo submitInfo = {
-        .waitSemaphoreCount = 1,
-        .pWaitSemaphores = &*frameData->presentCompleteSemaphore,
-        .pWaitDstStageMask = &waitDestinationStageMask,
-        .commandBufferCount = 1,
-        .pCommandBuffers = &*primaryBuffer,
+        .waitSemaphoreCount   = 1,
+        .pWaitSemaphores      = &*frameData->presentCompleteSemaphore,
+        .pWaitDstStageMask    = &waitDestinationStageMask,
+        .commandBufferCount   = 1,
+        .pCommandBuffers      = &*primaryBuffer,
         .signalSemaphoreCount = 1,
-        .pSignalSemaphores = &*frameData->renderCompleteSemaphore,
+        .pSignalSemaphores    = &*frameData->renderCompleteSemaphore,
     };
     m_device.getQueue(QueueSlot::Graphic).handle.submit(submitInfo, *frameData->drawFence);
 
     // Submit to present queue
     vk::PresentInfoKHR presentInfo = {
         .waitSemaphoreCount = 1,
-        .pWaitSemaphores = &*frameData->renderCompleteSemaphore,
-        .swapchainCount = 1,
-        .pSwapchains = &*m_frameContext->swapchain.swapchain,
-        .pImageIndices = &m_currSwapChainImageIndex,
+        .pWaitSemaphores    = &*frameData->renderCompleteSemaphore,
+        .swapchainCount     = 1,
+        .pSwapchains        = &*m_frameContext->swapchain.swapchain,
+        .pImageIndices      = &m_currSwapChainImageIndex,
     };
     auto presentRes = m_device.getQueue(QueueSlot::Graphic).handle.presentKHR(presentInfo);
     assert(presentRes == vk::Result::eSuccess && "Unexpected result from present call");
@@ -346,5 +357,4 @@ std::unique_ptr<FrameData> const& VulkanFrameContext::getCurrentFrame()
     uint32_t frameIndex = m_frameContext->currentFrameIndex % m_maxFlightFrames;
     return m_frameContext->frames[frameIndex];
 }
-
 } // namespace ly::renderer

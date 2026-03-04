@@ -7,7 +7,6 @@
 
 namespace ly::renderer
 {
-
 struct Version
 {
     int32_t major{};
@@ -16,7 +15,9 @@ struct Version
 
     Version() = default;
 
-    Version(int32_t major, int32_t minor, int32_t patch) : major(major), minor(minor), patch(patch)
+    Version(int32_t major, int32_t minor, int32_t patch) : major(major),
+                                                           minor(minor),
+                                                           patch(patch)
     {
         assert(major >= 0 && minor >= 0 && patch >= 0 && "Version numbers must always be positive");
     }
@@ -58,5 +59,4 @@ private:
     std::vector<std::string> m_vulkanExtensions{};
     std::vector<std::string> m_deviceExtensions{};
 };
-
 } // namespace ly::renderer

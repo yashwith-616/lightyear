@@ -4,7 +4,6 @@
 
 namespace ly::renderer
 {
-
 class Surface
 {
 public:
@@ -15,5 +14,4 @@ public:
 private:
     VkSurfaceKHR m_surface;
 };
-
 } // namespace ly::renderer

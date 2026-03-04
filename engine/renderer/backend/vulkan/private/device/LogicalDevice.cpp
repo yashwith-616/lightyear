@@ -5,7 +5,6 @@
 
 namespace
 {
-
 ly::renderer::QueueTypeFlag
     getQueueFamilyFlags(uint32_t queueIndex, std::vector<vk::QueueFamilyProperties2> const& queueProps)
 {
@@ -25,20 +24,19 @@ ly::renderer::QueueTypeFlag
 }
 
 auto hasSurfaceSupport =
-    [](vk::raii::PhysicalDevice const& physicalDevice, uint32_t queueFamilyIndex, vk::SurfaceKHR const& surface) {
-        return physicalDevice.getSurfaceSupportKHR(queueFamilyIndex, surface);
-    };
-
+    [] (vk::raii::PhysicalDevice const& physicalDevice, uint32_t queueFamilyIndex, vk::SurfaceKHR const& surface) {
+    return physicalDevice.getSurfaceSupportKHR(queueFamilyIndex, surface);
+};
 } // namespace
 
 namespace ly::renderer
 {
-
 static std::pair<QueueTypeFlag, QueueSlot> const k_mapping[] = {
     {QueueTypeFlag::Graphic, QueueSlot::Graphic},
     {QueueTypeFlag::Present, QueueSlot::Present},
     {QueueTypeFlag::Compute, QueueSlot::Compute},
-    {QueueTypeFlag::Transfer, QueueSlot::Transfer}};
+    {QueueTypeFlag::Transfer, QueueSlot::Transfer}
+};
 
 LogicalDevice::LogicalDevice(PhysicalDevice const& physicalDevice, Surface const& surface) :
     m_physicalDevice(physicalDevice)
@@ -51,13 +49,15 @@ LogicalDevice::LogicalDevice(PhysicalDevice const& physicalDevice, Surface const
         assert(queueExpect.has_value() && "Device queue could not be fetched");
         auto queueHandle = std::make_shared<QueueHandle>(std::move(queueExpect.value()), data->internalIndex);
 
-        std::ranges::for_each(k_mapping, [&](auto const& map) {
-            auto [flag, slot] = map;
-            if (test(data->flags, flag))
-            {
-                m_allQueues[static_cast<size_t>(slot)] = queueHandle;
-            }
-        });
+        std::ranges::for_each(
+            k_mapping,
+            [&] (auto const& map) {
+                auto [flag, slot] = map;
+                if (test(data->flags, flag))
+                {
+                    m_allQueues[static_cast<size_t>(slot)] = queueHandle;
+                }
+            });
     }
 }
 
@@ -81,9 +81,14 @@ vk::raii::Device LogicalDevice::createLogicalDevice(Surface const& surface)
 
     std::vector<vk::DeviceQueueCreateInfo> queueCreateInfos;
     std::ranges::transform(
-        m_supportedQueues, std::back_inserter(queueCreateInfos), [](std::unique_ptr<QueueFamilyData> const& data) {
+        m_supportedQueues,
+        std::back_inserter(queueCreateInfos),
+        [] (std::unique_ptr<QueueFamilyData> const& data) {
             vk::DeviceQueueCreateInfo createInfo{
-                .queueFamilyIndex = data->familyIndex, .queueCount = 1, .pQueuePriorities = &data->priority};
+                .queueFamilyIndex = data->familyIndex,
+                .queueCount       = 1,
+                .pQueuePriorities = &data->priority
+            };
             return createInfo;
         });
     assert(queueCreateInfos.size() > 0 && "Device queue create info is empty");
@@ -98,11 +103,12 @@ vk::raii::Device LogicalDevice::createLogicalDevice(Surface const& surface)
     }
 
     vk::DeviceCreateInfo deviceCreateInfo{
-        .pNext = &deviceFeatures.core,
-        .queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size()),
-        .pQueueCreateInfos = queueCreateInfos.data(),
-        .enabledExtensionCount = static_cast<uint32_t>(deviceExtensions.size()),
-        .ppEnabledExtensionNames = vkDeviceExtensions.data()};
+        .pNext                   = &deviceFeatures.core,
+        .queueCreateInfoCount    = static_cast<uint32_t>(queueCreateInfos.size()),
+        .pQueueCreateInfos       = queueCreateInfos.data(),
+        .enabledExtensionCount   = static_cast<uint32_t>(deviceExtensions.size()),
+        .ppEnabledExtensionNames = vkDeviceExtensions.data()
+    };
 
     auto deviceExpected = m_physicalDevice.getHandle().createDevice(deviceCreateInfo);
     assert(deviceExpected.has_value() && "Device was not successfully created");
@@ -164,5 +170,4 @@ void LogicalDevice::resolveQueueFamilies(Surface const& surface)
         }
     }
 }
-
 } // namespace ly::renderer
