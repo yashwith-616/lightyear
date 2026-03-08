@@ -18,7 +18,6 @@
 
 namespace ly::log
 {
-
 struct MemorySinkConfig
 {
     // Buffer size of the ring buffer
@@ -54,15 +53,13 @@ struct LoggerConfig
 //-----------------------------------------------
 // Tag Types for templated log
 //-----------------------------------------------
-struct Info
-{};
-struct Warning
-{};
-struct Debug
-{};
-struct Error
-{};
-struct Critical
-{};
+struct Info {};
 
+struct Warning {};
+
+struct Debug {};
+
+struct Error {};
+
+struct Critical {};
 } // namespace ly::log

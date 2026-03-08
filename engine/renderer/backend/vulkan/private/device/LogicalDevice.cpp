@@ -73,6 +73,18 @@ QueueHandle const& LogicalDevice::getQueue(QueueSlot slot) const
     return *queue;
 }
 
+uint32_t LogicalDevice::findMemoryType(uint32_t typeFilter, vk::MemoryPropertyFlags properties) const
+{
+    vk::PhysicalDeviceMemoryProperties memProperties = m_physicalDevice.getHandle().getMemoryProperties();
+    for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++)
+    {
+        if ((typeFilter & (1 << i)) && (memProperties.memoryTypes[i].propertyFlags & properties) == properties)
+        {
+            return i;
+        }
+    }
+}
+
 vk::raii::Device LogicalDevice::createLogicalDevice(Surface const& surface)
 {
     resolveQueueFamilies(surface);

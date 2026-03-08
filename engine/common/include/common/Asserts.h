@@ -13,7 +13,6 @@
 
 namespace ly::detail
 {
-
 inline void assertFail(char const* expr, char const* msg, char const* file, int line)
 {
     std::fprintf(
@@ -31,7 +30,6 @@ inline void assertFail(char const* expr, char const* msg, char const* file, int 
     LY_DEBUGBREAK();
     std::abort();
 }
-
 } // namespace ly::detail
 
 // NOLINTBEGIN(cppcoreguidelines-avoid-do-while)

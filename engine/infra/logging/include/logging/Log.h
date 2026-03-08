@@ -7,7 +7,6 @@
 
 namespace ly::log
 {
-
 /**
  * API Responsible for lifecycle of the logger
  */
@@ -41,5 +40,4 @@ public:
             logger->log(spdlog::level::critical, fmt, std::forward<Args>(args)...);
     }
 };
-
 } // namespace ly::log

@@ -7,7 +7,6 @@
 
 namespace ly::log
 {
-
 std::shared_ptr<spdlog::logger> Log::logger = nullptr;
 
 void Log::init(LoggerConfig const& loggerConfig)
@@ -32,7 +31,11 @@ void Log::init(LoggerConfig const& loggerConfig)
         assert(fileSinkInfo.maxFiles > 0 && "FileSink max files must be greater than 0");
 
         auto dailyFileSync = std::make_shared<spdlog::sinks::daily_file_format_sink_mt>(
-            fileSinkInfo.fileNamePattern.string(), 0, 0, false, 100);
+            fileSinkInfo.fileNamePattern.string(),
+            0,
+            0,
+            false,
+            100);
         sinks.push_back(dailyFileSync);
     }
 
@@ -53,7 +56,7 @@ void Log::init(LoggerConfig const& loggerConfig)
 
     logger->set_level(spdlog::level::info);
     logger->flush_on(spdlog::level::err);
-    logger->set_error_handler([](std::string const& msg) { fprintf(stderr, "spdlog error: %s\n", msg.c_str()); });
+    logger->set_error_handler([] (std::string const& msg) { fprintf(stderr, "spdlog error: %s\n", msg.c_str()); });
 
     spdlog::register_logger(logger);
     spdlog::set_default_logger(logger);
@@ -71,5 +74,4 @@ void Log::shutdown()
     logger.reset();
     spdlog::shutdown();
 }
-
 } // namespace ly::log

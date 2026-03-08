@@ -43,11 +43,11 @@ target_compile_definitions(logging PRIVATE LOGGING_BUILD_DLL)
 #-------------------------------------------------
 target_sources(logging
         PRIVATE
-            ${LOG_DIR}/src/Log.cpp
+        ${LOG_DIR}/src/Log.cpp
         PUBLIC
         FILE_SET public_headers TYPE HEADERS
         BASE_DIRS ${LOG_DIR}/include
         FILES
-            ${LOG_DIR}/include/logging/Log.h
-            ${LOG_DIR}/include/logging/Config.h
+        ${LOG_DIR}/include/logging/Log.h
+        ${LOG_DIR}/include/logging/Config.h
 )

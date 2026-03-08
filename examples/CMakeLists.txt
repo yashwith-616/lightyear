@@ -2,7 +2,7 @@ option(LIGHTYEAR_BUILD_EXAMPLES "Build Lightyear examples" ON)
 
 if (NOT LIGHTYEAR_BUILD_EXAMPLES)
     return()
-endif()
+endif ()
 
 #------------------------------------------------------------
 # Function that makes it easier to create example executables
@@ -17,7 +17,7 @@ function(ly_add_example)
 
     if (NOT EXAMPLE_NAME)
         message(FATAL_ERROR "ly_add_example requires NAME")
-    endif()
+    endif ()
 
     add_executable(${EXAMPLE_NAME}
             ${EXAMPLE_SOURCES}

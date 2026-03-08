@@ -12,7 +12,6 @@
 
 namespace
 {
-
 struct BlendStrategy
 {
     static vk::PipelineColorBlendAttachmentState opaque()
@@ -37,12 +36,10 @@ struct BlendStrategy
         };
     }
 };
-
 }
 
 namespace ly::renderer
 {
-
 struct PipelineConfig
 {
     vk::PipelineInputAssemblyStateCreateInfo inputAssembly{};
@@ -53,7 +50,7 @@ struct PipelineConfig
     vk::PipelineColorBlendAttachmentState colorBlendAttachment{};
     vk::PipelineDepthStencilStateCreateInfo depthStencil{};
     std::vector<vk::DynamicState> dynamicStates;
-    vk::PipelineLayout layout;
+    vk::raii::PipelineLayout layout{nullptr};
 
     vk::PipelineVertexInputStateCreateInfo vertexInputState{};
 };
@@ -64,7 +61,8 @@ PipelineBuilder::PipelineBuilder(LogicalDevice const& device) :
 {
     m_config->inputAssembly = vk::PipelineInputAssemblyStateCreateInfo{
         .topology               = vk::PrimitiveTopology::eTriangleList,
-        .primitiveRestartEnable = vk::False};
+        .primitiveRestartEnable = vk::False
+    };
 
     m_config->rasterization = vk::PipelineRasterizationStateCreateInfo{
         .depthClampEnable        = vk::False,
@@ -73,11 +71,13 @@ PipelineBuilder::PipelineBuilder(LogicalDevice const& device) :
         .cullMode                = vk::CullModeFlagBits::eBack,
         .frontFace               = vk::FrontFace::eClockwise,
         .depthBiasEnable         = vk::False,
-        .lineWidth               = 1.f};
+        .lineWidth               = 1.f
+    };
 
     m_config->colorBlendAttachment = vk::PipelineColorBlendAttachmentState{
         .blendEnable    = vk::False,
-        .colorWriteMask = vk::ColorComponentFlags(0xb1111)};
+        .colorWriteMask = vk::ColorComponentFlags(0xb1111)
+    };
 
     m_config->depthStencil = vk::PipelineDepthStencilStateCreateInfo{
         .depthTestEnable       = vk::True,
@@ -96,19 +96,10 @@ PipelineBuilder::PipelineBuilder(LogicalDevice const& device) :
         .sampleShadingEnable   = vk::False,
         .minSampleShading      = 1.f,
         .alphaToCoverageEnable = vk::False,
-        .alphaToOneEnable      = vk::False};
+        .alphaToOneEnable      = vk::False
+    };
 
     m_config->dynamicStates = {vk::DynamicState::eViewport, vk::DynamicState::eScissor};
-
-    // Create pipeline layout
-    auto pipelineLayoutCreateInfo = vk::PipelineLayoutCreateInfo{
-        .setLayoutCount         = 0,
-        .pSetLayouts            = nullptr,
-        .pushConstantRangeCount = 0,
-        .pPushConstantRanges    = nullptr};
-    auto expected = m_device.getHandle().createPipelineLayout(pipelineLayoutCreateInfo);
-    assert(expected.has_value() && "Pipeline layout creation failed");
-    m_config->layout = std::move(expected.value());
 }
 
 PipelineBuilder::~PipelineBuilder() = default;
@@ -174,23 +165,35 @@ PipelineBuilder& PipelineBuilder::withMultisampleCount(vk::SampleCountFlagBits s
     return *this;
 }
 
+PipelineBuilder& PipelineBuilder::withLayout(vk::PipelineLayoutCreateInfo layoutInfo)
+{
+    auto layoutExpected = m_device.getHandle().createPipelineLayout(layoutInfo);
+    assert(layoutExpected.has_value() && "Pipeline layout creation failed");
+    m_config->layout = std::move(layoutExpected.value());
+    return *this;
+}
+
 PipelineBuilder& PipelineBuilder::withAlphaToCoverageEnable(bool enable)
 {
     m_config->multisample.alphaToCoverageEnable = enable;
     return *this;
 }
 
-vk::Pipeline
+vk::raii::Pipeline
     PipelineBuilder::build(
         std::vector<vk::PipelineShaderStageCreateInfo> const& stages,
         vk::PipelineVertexInputStateCreateInfo vertexInputState,
+        vk::PipelineLayoutCreateInfo layoutInfo,
         vk::Format colorFormat)
 {
+    assert(m_config->layout != nullptr && "Layout has not been initialized for the pipeline");
+
     auto colorBlendState = vk::PipelineColorBlendStateCreateInfo{
         .logicOpEnable   = vk::False,
         .logicOp         = vk::LogicOp::eCopy,
         .attachmentCount = 1,
-        .pAttachments    = &m_config->colorBlendAttachment};
+        .pAttachments    = &m_config->colorBlendAttachment
+    };
 
     auto dynamicStateCreateInfo = vk::PipelineDynamicStateCreateInfo{
         .dynamicStateCount = static_cast<uint32_t>(m_config->dynamicStates.size()),
@@ -201,14 +204,16 @@ vk::Pipeline
         .viewportCount = 1,
         .pViewports    = nullptr,
         .scissorCount  = 1,
-        .pScissors     = nullptr};
+        .pScissors     = nullptr
+    };
 
     auto renderingCreateInfo = vk::PipelineRenderingCreateInfo{
         .colorAttachmentCount    = 1,
         .pColorAttachmentFormats = &colorFormat,
         // TOD: Get the below formats from frame images
         .depthAttachmentFormat   = vk::Format::eUndefined,
-        .stencilAttachmentFormat = vk::Format::eUndefined};
+        .stencilAttachmentFormat = vk::Format::eUndefined
+    };
 
     auto graphicPipelineCreateInfo = vk::GraphicsPipelineCreateInfo{
         .pNext               = &renderingCreateInfo,
@@ -224,11 +229,11 @@ vk::Pipeline
         .pColorBlendState    = &colorBlendState,
         .pDynamicState       = &dynamicStateCreateInfo,
         .layout              = m_config->layout,
-        .renderPass          = nullptr};
+        .renderPass          = nullptr
+    };
 
     auto expected = m_device.getHandle().createGraphicsPipeline(nullptr, graphicPipelineCreateInfo);
     assert(expected.has_value() && "Pipeline creation failed");
     return std::move(expected.value());
 }
-
 } // namespace ly::renderer

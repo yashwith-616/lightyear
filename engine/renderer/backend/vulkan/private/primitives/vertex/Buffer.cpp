@@ -75,7 +75,8 @@ BufferElement::BufferElement(VertexAttributeSlot slot, VertexAttributeType type,
     type(type),
     isNormalized(isNormalized) {}
 
-BufferLayout::BufferLayout(std::vector<BufferElement> elements) : m_elements(std::move(elements))
+BufferLayout::BufferLayout(std::vector<BufferElement> elements) :
+    m_elements(std::move(elements))
 {
     calculateOffsetsAndStride();
 }
@@ -89,16 +90,16 @@ void BufferLayout::addElement(BufferElement element)
     updateStride();
 }
 
-std::vector<vk::VertexInputAttributeDescription2EXT>
+std::vector<vk::VertexInputAttributeDescription>
     BufferLayout::getVertexAttributeDescriptions(uint32_t binding) const
 {
-    std::vector<vk::VertexInputAttributeDescription2EXT> result;
+    std::vector<vk::VertexInputAttributeDescription> result;
     result.reserve(m_elements.size());
 
     for (auto& element : m_elements)
     {
         result.push_back(
-            vk::VertexInputAttributeDescription2EXT{
+            vk::VertexInputAttributeDescription{
                 .location = static_cast<uint32_t>(element.slot),
                 .binding  = binding,
                 .format   = getVulkanFormat(element.type, element.isNormalized),
@@ -126,7 +127,7 @@ void BufferLayout::updateStride()
     m_stride += getAttributeTypeSize(m_elements.back().type);
 }
 
-VertexBuffer::VertexBuffer(LogicalDevice const& device, BufferLayout const& layout, std::span<std::byte> data) :
+VertexBuffer::VertexBuffer(LogicalDevice const& device, BufferLayout const& layout, std::span<std::byte const> data) :
     m_layout(layout)
 {
     vk::BufferCreateInfo bufferCreateInfo{
@@ -137,5 +138,31 @@ VertexBuffer::VertexBuffer(LogicalDevice const& device, BufferLayout const& layo
     auto expect = device.getHandle().createBuffer(bufferCreateInfo);
     assert(expect.has_value() && "Buffer creation failed");
     m_bufferHandle = std::move(expect.value());
+
+    vk::MemoryRequirements memoryRequirements = m_bufferHandle.getMemoryRequirements();
+
+    vk::MemoryAllocateInfo memoryAllocateInfo{
+        .allocationSize  = memoryRequirements.size,
+        .memoryTypeIndex = device.findMemoryType(
+            memoryRequirements.memoryTypeBits,
+            vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent)
+    };
+
+    auto expectMemory = device.getHandle().allocateMemory(memoryAllocateInfo);
+    assert(expectMemory.has_value() && "Memory allocation failed");
+    m_bufferHandle.bindMemory(*expectMemory, 0);
+
+    void* vkData = expectMemory->mapMemory(0, data.size());
+    memcpy(vkData, data.data(), data.size());
+    expectMemory->unmapMemory();
+}
+
+vk::VertexInputBindingDescription VertexBuffer::getBindingDescription(uint32_t binding) const
+{
+    return {
+        .binding   = binding,
+        .stride    = m_layout.getStride(),
+        .inputRate = vk::VertexInputRate::eVertex
+    };
 }
 } // namespace ly::renderer

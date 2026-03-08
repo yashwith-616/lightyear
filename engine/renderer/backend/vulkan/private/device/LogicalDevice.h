@@ -30,6 +30,8 @@ public:
 
     [[nodiscard]] QueueHandle const& getQueue(QueueSlot slot) const;
 
+    [[nodiscard]] uint32_t findMemoryType(uint32_t typeFilter, vk::MemoryPropertyFlags properties) const;
+
 private:
     vk::raii::Device createLogicalDevice(Surface const& surface);
 

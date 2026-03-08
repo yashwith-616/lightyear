@@ -72,12 +72,10 @@ public:
 
     auto workerCmdData()
     {
-
         return m_registry
             | std::views::values
             | std::views::transform([] (auto const& queuePool) -> auto& { return queuePool.workers; })
             | std::views::join;
-
     }
 
     auto primaryCmdBuffers()
@@ -114,7 +112,6 @@ public:
             | std::views::join
             | std::views::transform([] (auto const& workers) -> auto& { return workers.commandBuffers; })
             | std::views::join;
-
     }
 
 private:

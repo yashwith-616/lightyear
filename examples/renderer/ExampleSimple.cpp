@@ -1,15 +1,20 @@
 #include <bootstrap/Instance.h>
 #include <device/LogicalDevice.h>
 #include <device/PhysicalDevice.h>
+#include <entt/entity/entity.hpp>
 #include <systems/VulkanFrameContext.h>
 
 #include "bootstrap/Surface.h"
 #include "components/CommandData.h"
 #include "device/QueueFamilyData.h"
 #include "pipeline/Pipeline.h"
+#include "pipeline/PipelineBuilder.h"
 #include "pipeline/Shader.h"
+#include "primitives/vertex/Buffer.h"
+
 #include "support/LogScope.hpp"
 #include "support/Window.hpp"
+#include "support/SampleVertices.hpp"
 
 void vulkanRendererExample(Window& window);
 
@@ -41,12 +46,12 @@ void vulkanRendererExample(Window& window)
 
     renderer::InstanceCreateInfo instanceCreateInfo{
         .vulkanValidationLayers = {"VK_LAYER_KHRONOS_validation"},
-        .vulkanExtensions = winExtensions,
-        .deviceExtensions = extensions,
-        .appName = "ExampleRendererTest",
-        .appVersion = renderer::Version(1, 0, 0),
-        .engineName = "No engine",
-        .engineVersion = renderer::Version(1, 0, 0),
+        .vulkanExtensions       = winExtensions,
+        .deviceExtensions       = extensions,
+        .appName                = "ExampleRendererTest",
+        .appVersion             = renderer::Version(1, 0, 0),
+        .engineName             = "No engine",
+        .engineVersion          = renderer::Version(1, 0, 0),
     };
 
     auto vkInstance = renderer::Instance(instanceCreateInfo);
@@ -63,6 +68,14 @@ void vulkanRendererExample(Window& window)
     auto mainVulkanCmd = vkFrameContext.createQueueSubmissionPipeline(renderer::QueueSlot::Graphic);
     auto mainSubmissionKey = vkFrameContext.allocateSubmissionRegion(mainVulkanCmd);
 
+    // Vertex Buffer initialization
+    auto vertexLayout = renderer::BufferLayout();
+    vertexLayout.addElement(
+        renderer::BufferElement(renderer::VertexAttributeSlot::Position, renderer::VertexAttributeType::Float3, false));
+    vertexLayout.addElement(
+        renderer::BufferElement(renderer::VertexAttributeSlot::Color, renderer::VertexAttributeType::Float2, false));
+    auto vertexBuffer = renderer::VertexBuffer(vkDevice, vertexLayout, std::as_bytes(k_planeVerticesSpan));
+
     // Pipeline creation
     std::filesystem::path shaderPath{"F:/workspace/cpp/lightyear/examples/renderer/assets/Shader.spv"};
     renderer::Shader shader(vkDevice, shaderPath);
@@ -71,9 +84,28 @@ void vulkanRendererExample(Window& window)
         shader.createSubShader(vk::ShaderStageFlagBits::eVertex, "vertMain"),
         shader.createSubShader(vk::ShaderStageFlagBits::eFragment, "fragMain")};
 
-    auto graphicPipeline = renderer::Pipeline(vkDevice);
-    graphicPipeline.createPipeline(
-        shaderStages, vk::Extent2D(imgExtent.width, imgExtent.height), vkFrameContext.getSurfaceFormat());
+    auto pipelineLayoutCreateInfo = vk::PipelineLayoutCreateInfo();
+    pipelineLayoutCreateInfo.setSetLayoutCount(0);
+    pipelineLayoutCreateInfo.setPushConstantRangeCount(0);
+
+    auto bindingDescription = vertexBuffer.getBindingDescription(0);
+    auto attributeDescriptions = vertexLayout.getVertexAttributeDescriptions(0);
+
+    auto pipelineInputState = vk::PipelineVertexInputStateCreateInfo();
+    pipelineInputState.setVertexBindingDescriptionCount(1);
+    pipelineInputState.setPVertexBindingDescriptions(&bindingDescription);
+    pipelineInputState.setVertexAttributeDescriptionCount(1);
+    pipelineInputState.setPVertexAttributeDescriptions(attributeDescriptions.data());
+
+    vk::raii::Pipeline graphicPipeline = renderer::PipelineBuilder(vkDevice)
+                                         .withBlendMode(renderer::ColorBlendType::Opaque)
+                                         .withDepthTest(false, std::nullopt)
+                                         .withLayout(pipelineLayoutCreateInfo)
+                                         .build(
+                                             shaderStages,
+                                             pipelineInputState,
+                                             std::move(pipelineLayoutCreateInfo),
+                                             vkFrameContext.getSurfaceFormat().format);
 
     // Till window close loop through this
     while (!window.shouldWindowClose())
@@ -82,11 +114,16 @@ void vulkanRendererExample(Window& window)
         vkFrameContext.beginFrame();
 
         auto mainCmd = vkFrameContext.recordWork(mainVulkanCmd, mainSubmissionKey);
-        mainCmd.bindPipeline(vk::PipelineBindPoint::eGraphics, graphicPipeline.getPipeline());
+        mainCmd.bindPipeline(vk::PipelineBindPoint::eGraphics, graphicPipeline);
         mainCmd.setViewport(
             0,
             vk::Viewport(
-                0.0f, 0.0f, static_cast<float>(imgExtent.width), static_cast<float>(imgExtent.height), 0.0f, 1.0f));
+                0.0f,
+                0.0f,
+                static_cast<float>(imgExtent.width),
+                static_cast<float>(imgExtent.height),
+                0.0f,
+                1.0f));
         mainCmd.setScissor(0, vk::Rect2D(vk::Offset2D(0, 0), vk::Extent2D(imgExtent.width, imgExtent.height)));
         mainCmd.draw(3, 1, 0, 0);
 

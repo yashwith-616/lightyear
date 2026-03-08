@@ -2,7 +2,8 @@ find_package(glfw3 CONFIG REQUIRED)
 
 set(SUPPORT_FILES
         ${CMAKE_CURRENT_SOURCE_DIR}/support/LogScope.hpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/support/Window.hpp)
+        ${CMAKE_CURRENT_SOURCE_DIR}/support/Window.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/support/SampleVertices.hpp)
 
 ly_add_example(
         NAME ExampleSimpleTest

@@ -13,10 +13,11 @@ public:
     LogScope()
     {
         logger::LoggerConfig config{
-            .loggerName = "example_basic",
-            .asyncQueueSize = 8192,
-            .loggerThreadCount = 1,
-            .isConsoleLoggingEnabled = true};
+            .loggerName              = "example_basic",
+            .asyncQueueSize          = 8192,
+            .loggerThreadCount       = 1,
+            .isConsoleLoggingEnabled = true
+        };
 
         m_log = std::make_unique<logger::Log>();
         m_log->init(config);

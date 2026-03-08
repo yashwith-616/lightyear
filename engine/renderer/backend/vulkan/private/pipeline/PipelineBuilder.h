@@ -8,10 +8,8 @@
 
 #include <vulkan/vulkan_raii.hpp>
 
-
 namespace ly::renderer
 {
-
 enum class ColorBlendType : uint8_t
 {
     Opaque,
@@ -44,17 +42,18 @@ public:
 
     PipelineBuilder& withMultisampleCount(vk::SampleCountFlagBits sampleCount);
 
+    PipelineBuilder& withLayout(vk::PipelineLayoutCreateInfo layoutInfo);
+
     PipelineBuilder& withAlphaToCoverageEnable(bool enable);
 
-    vk::Pipeline build(
+    vk::raii::Pipeline build(
         std::vector<vk::PipelineShaderStageCreateInfo> const& stages,
         vk::PipelineVertexInputStateCreateInfo vertexInputState,
+        vk::PipelineLayoutCreateInfo layoutInfo,
         vk::Format colorFormat);
 
 private:
     LogicalDevice const& m_device;
     std::unique_ptr<PipelineConfig> m_config;
 };
-
-
 } // namespace ly::renderer

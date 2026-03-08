@@ -72,7 +72,9 @@ public:
 
     void addElement(BufferElement element);
 
-    std::vector<vk::VertexInputAttributeDescription2EXT> getVertexAttributeDescriptions(uint32_t binding) const;
+    uint32_t getStride() const { return m_stride; }
+
+    std::vector<vk::VertexInputAttributeDescription> getVertexAttributeDescriptions(uint32_t binding) const;
 
 private:
     void calculateOffsetsAndStride();
@@ -91,7 +93,7 @@ public:
      * \param layout the buffer layout reference. Once a buffer is created it can't be repurposed
      * \param data The data is not owned by the buffer, used for one-time update to GPU
      */
-    explicit VertexBuffer(LogicalDevice const& device, BufferLayout const& layout, std::span<std::byte> data);
+    explicit VertexBuffer(LogicalDevice const& device, BufferLayout const& layout, std::span<std::byte const> data);
 
     VertexBuffer(VertexBuffer const&) = delete;
     VertexBuffer(VertexBuffer&&) = default;
@@ -99,6 +101,8 @@ public:
     VertexBuffer& operator=(VertexBuffer const&) = delete;
 
     BufferLayout const& getLayout() const { return m_layout; }
+
+    vk::VertexInputBindingDescription getBindingDescription(uint32_t binding) const;
 
 private:
     BufferLayout const& m_layout;
