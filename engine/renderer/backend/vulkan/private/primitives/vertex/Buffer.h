@@ -104,8 +104,29 @@ public:
 
     vk::VertexInputBindingDescription getBindingDescription(uint32_t binding) const;
 
+    vk::raii::Buffer const& getHandle() const { return m_bufferHandle; }
+
 private:
     BufferLayout const& m_layout;
     vk::raii::Buffer m_bufferHandle{nullptr};
+    vk::raii::DeviceMemory m_bufferMemoryHandle{nullptr};
 };
+
+class IndexBuffer
+{
+public:
+    explicit IndexBuffer(LogicalDevice const& device, std::span<std::byte const> data);
+
+    IndexBuffer(IndexBuffer const&) = delete;
+    IndexBuffer(IndexBuffer&&) = default;
+
+    IndexBuffer& operator=(IndexBuffer const&) = delete;
+
+    vk::raii::Buffer const& getHandle() const { return m_bufferHandle; }
+
+private:
+    vk::raii::Buffer m_bufferHandle{nullptr};
+    vk::raii::DeviceMemory m_bufferMemoryHandle{nullptr};
+};
+
 } // namespace ly::renderer

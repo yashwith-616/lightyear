@@ -76,6 +76,8 @@ void vulkanRendererExample(Window& window)
         renderer::BufferElement(renderer::VertexAttributeSlot::Color, renderer::VertexAttributeType::Float2, false));
     auto vertexBuffer = renderer::VertexBuffer(vkDevice, vertexLayout, std::as_bytes(k_planeVerticesSpan));
 
+    auto indexBuffer = renderer::IndexBuffer(vkDevice, std::as_bytes(k_planeIndicesSpan));
+
     // Pipeline creation
     std::filesystem::path shaderPath{"F:/workspace/cpp/lightyear/examples/renderer/assets/Shader.spv"};
     renderer::Shader shader(vkDevice, shaderPath);
@@ -125,7 +127,10 @@ void vulkanRendererExample(Window& window)
                 0.0f,
                 1.0f));
         mainCmd.setScissor(0, vk::Rect2D(vk::Offset2D(0, 0), vk::Extent2D(imgExtent.width, imgExtent.height)));
-        mainCmd.draw(3, 1, 0, 0);
+
+        mainCmd.bindVertexBuffers(0, *vertexBuffer.getHandle(), {0});
+        mainCmd.bindIndexBuffer(*indexBuffer.getHandle(), 0, vk::IndexType::eUint32);
+        mainCmd.drawIndexed(k_planeIndicesSpan.size(), 1, 0, 0, 0);
 
         vkFrameContext.endFrame();
         vkFrameContext.submit();

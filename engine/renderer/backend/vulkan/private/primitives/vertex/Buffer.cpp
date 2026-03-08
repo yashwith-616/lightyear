@@ -150,11 +150,12 @@ VertexBuffer::VertexBuffer(LogicalDevice const& device, BufferLayout const& layo
 
     auto expectMemory = device.getHandle().allocateMemory(memoryAllocateInfo);
     assert(expectMemory.has_value() && "Memory allocation failed");
-    m_bufferHandle.bindMemory(*expectMemory, 0);
+    m_bufferMemoryHandle = std::move(*expectMemory);
+    m_bufferHandle.bindMemory(m_bufferMemoryHandle, 0);
 
-    void* vkData = expectMemory->mapMemory(0, data.size());
+    void* vkData = m_bufferMemoryHandle.mapMemory(0, data.size());
     memcpy(vkData, data.data(), data.size());
-    expectMemory->unmapMemory();
+    m_bufferMemoryHandle.unmapMemory();
 }
 
 vk::VertexInputBindingDescription VertexBuffer::getBindingDescription(uint32_t binding) const
@@ -164,5 +165,35 @@ vk::VertexInputBindingDescription VertexBuffer::getBindingDescription(uint32_t b
         .stride    = m_layout.getStride(),
         .inputRate = vk::VertexInputRate::eVertex
     };
+}
+
+IndexBuffer::IndexBuffer(LogicalDevice const& device, std::span<std::byte const> data)
+{
+    vk::BufferCreateInfo bufferCreateInfo{
+        .size        = data.size(),
+        .usage       = vk::BufferUsageFlagBits::eIndexBuffer,
+        .sharingMode = vk::SharingMode::eExclusive
+    };
+    auto expect = device.getHandle().createBuffer(bufferCreateInfo);
+    assert(expect.has_value() && "Buffer creation failed");
+    m_bufferHandle = std::move(expect.value());
+
+    vk::MemoryRequirements memoryRequirements = m_bufferHandle.getMemoryRequirements();
+
+    vk::MemoryAllocateInfo memoryAllocateInfo{
+        .allocationSize  = memoryRequirements.size,
+        .memoryTypeIndex = device.findMemoryType(
+            memoryRequirements.memoryTypeBits,
+            vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent)
+    };
+
+    auto expectMemory = device.getHandle().allocateMemory(memoryAllocateInfo);
+    assert(expectMemory.has_value() && "Memory allocation failed");
+    m_bufferMemoryHandle = std::move(*expectMemory);
+    m_bufferHandle.bindMemory(m_bufferMemoryHandle, 0);
+
+    void* vkData = m_bufferMemoryHandle.mapMemory(0, data.size());
+    memcpy(vkData, data.data(), data.size());
+    m_bufferMemoryHandle.unmapMemory();
 }
 } // namespace ly::renderer
