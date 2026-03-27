@@ -4,6 +4,7 @@
   "dependencies": [
     "cereal",
     "entt",
+    "fmt",
     {
       "name": "glad",
       "features": [
@@ -25,6 +26,17 @@
     "spdlog",
     "stb",
     "unordered-dense",
-    "fmt"
+    "vulkan",
+    "vulkan-headers",
+    "vulkan-hpp",
+    "vulkan-loader",
+    "vulkan-sdk-components",
+    "vulkan-tools",
+    "vulkan-utility-libraries",
+    "vulkan-validationlayers",
+    {
+      "name": "shader-slang",
+      "version>=": "2025.14.3"
+    }
   ]
 }

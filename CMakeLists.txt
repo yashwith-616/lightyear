@@ -1,16 +1,44 @@
-﻿cmake_minimum_required(VERSION 3.20)
-project(LightyearWorkspace)
+﻿cmake_minimum_required(VERSION 4.2.1)
 
+project(lightyear
+        VERSION 0.1.0
+        LANGUAGES C CXX)
 
-##################################################
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+include(cmake/CompilerOptions.cmake)
+
+#-------------------------------------------------
+# CMAKE Language Config
+#-------------------------------------------------
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+#-------------------------------------------------
+# Shader Compilation Setup
+#-------------------------------------------------
+include(cmake/SlangUtils.cmake)
+
+#-------------------------------------------------
 # Add the subprojects
-##################################################
+#-------------------------------------------------
 add_subdirectory(Lightyear)
 add_subdirectory(Sandbox)
+add_subdirectory(engine)
 
-##################################################
+#-------------------------------------------------
+# Example
+#-------------------------------------------------
+option(LIGHTYEAR_BUILD_EXAMPLES "Build engine examples" ON)
+
+if (LIGHTYEAR_BUILD_EXAMPLES)
+    add_subdirectory(examples)
+endif()
+
+#-------------------------------------------------
 # Clang Tidy Setup
-##################################################
+#-------------------------------------------------
 
 option(LY_TIDY "Perform clang tidy analysis on lightyear on build" OFF)
 
@@ -29,9 +57,9 @@ if (LY_TIDY)
 endif ()
 
 
-##################################################
+#-------------------------------------------------
 # Clang Format Setup
-##################################################
+#-------------------------------------------------
 find_program(CLANG_FORMAT "clang-format")
 if (CLANG_FORMAT)
         message(STATUS "Found clang-format: ${CLANG_FORMAT}")
@@ -43,4 +71,3 @@ if (CLANG_FORMAT)
 else ()
         message(STATUS "clang-format not found, skipping clang-format target creation")
 endif ()
-
